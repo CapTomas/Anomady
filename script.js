@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
         GEMINI_API_KEY = localStorage.getItem('userGeminiApiKey');
 
         if (!GEMINI_API_KEY) {
-            GEMINI_API_KEY = prompt("Welcome to Odyssey!\nPlease enter your Google Gemini API Key to begin:", "");
+            GEMINI_API_KEY = prompt("Welcome to Space Opera!\nPlease enter your Google Gemini API Key to begin:", "");
             if (GEMINI_API_KEY && GEMINI_API_KEY.trim() !== "") {
                 localStorage.setItem('userGeminiApiKey', GEMINI_API_KEY);
             } else {

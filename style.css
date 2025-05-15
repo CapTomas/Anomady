@@ -191,7 +191,7 @@
   #cockpit-layout {
     display: flex;
     flex-grow: 1;
-    overflow: hidden;
+    overflow: hidden; /* Default for desktop view - sidebars handle their own scroll */
     padding: 0 var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
     gap: var(--spacing-lg);
     background-color: var(--color-bg-console-box);
@@ -210,6 +210,7 @@
     background-color: var( --color-bg-viewport);
     border-radius: var(--radius-md);
     overflow: hidden;
+    flex-shrink: 0; /* Prevent console boxes from shrinking vertically */
   }
   /* Initially hide special consoles, JS will manage their appearance and 'is-expanded' state */
   #comms-channel-console-box,
@@ -240,7 +241,8 @@
   .console-box-content {
     max-height: 0;
     opacity: 0;
-    overflow: hidden;
+    overflow: hidden; /* Content within a box that exceeds its own max-height will be hidden */
+                      /* If individual box content needs scrolling, add overflow-y: auto here too */
     padding: 0 var(--spacing-lg);
     transition: max-height var(--transition-collapsible-content),
       opacity var(--transition-collapsible-opacity),
@@ -606,6 +608,8 @@
       flex-direction: column;
       padding: var(--spacing-md);
       gap: var(--spacing-md);
+      overflow-y: auto; /* Allow #cockpit-layout to scroll if its content exceeds viewport height */
+      overflow-x: hidden;
     }
     .console-sidebar {
       width: 100%;
@@ -613,12 +617,14 @@
       flex-wrap: wrap;
       gap: var(--spacing-md);
       justify-content: flex-start;
-      overflow-y: visible;
+      overflow-y: visible; /* Sidebars now grow in height with wrapped content, #cockpit-layout handles scrolling */
+      overflow-x: hidden; /* Prevent horizontal scroll within sidebars if somehow an item is too wide */
     }
     .console-box {
       flex-basis: calc(50% - (var(--spacing-md) / 2));
       min-width: 200px;
       flex-grow: 1;
+      /* flex-shrink: 0; is still good here if a row of boxes is too wide and we want wrapping */
     }
     #center-column {
       order: -1;
@@ -773,9 +779,6 @@ body.initial-state #name-input-section button#start-game-button.ui-button.primar
     padding-top: var(--spacing-xs); /* Restore padding when expanded */
     padding-bottom: var(--spacing-lg); /* Restore padding when expanded */
 }
-
-
-/* ... (Rest of your existing CSS) ... */
 
 /* Make sure this is at the end or after relevant #cockpit-layout styles if specific overrides are needed */
 /* For example, ensure sidebars are visible even if center content is initially "empty" */

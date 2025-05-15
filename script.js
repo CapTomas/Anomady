@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const uiLangData = {
         en: {
-            "toggle_language": "English",
+            "toggle_language": "Česky",
             "aria_label_toggle_language": "Switch to English",
             "system_status_online_short": "Core Systems Online",
             "system_processing_short": "Running Calculations...",
@@ -178,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "system_model_set_free": "System: Switched to Free AI Model ({MODEL_NAME})."
         },
         cs: {
-            "toggle_language": "Česky",
-            "aria_label_toggle_language": "Přepnout do Češtiny",
+            "toggle_language": "English",
+            "aria_label_toggle_language": "Přepnout do češtiny",
             "system_status_online_short": "Základní systémy online",
             "system_processing_short": "Probíhá výpočet...",
             "title_captain_status": "Kapitánský Záznam",
@@ -1080,18 +1080,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${currentModelName}:generateContent?key=${GEMINI_API_KEY}`;
         console.log(`Using AI Model: ${currentModelName}`);
 
+        let generationConfig = {
+            temperature: 0.7,
+            topP: 0.95,
+            maxOutputTokens: 8000, // Google's documentation often suggests 8192 for flash, but 8000 is safer
+            responseMimeType: "application/json",
+        };
+
+        if (currentModelName === PAID_MODEL_NAME) {
+            generationConfig.thinkingConfig = {
+                thinkingBudget: 0
+            };
+        } else if (currentModelName === FREE_MODEL_NAME) {
+        }
 
         let payload = {
             contents: currentTurnHistory,
-            generationConfig: {
-                temperature: 0.7,
-                topP: 0.95,
-                maxOutputTokens: 8000,
-                responseMimeType: "application/json",
-                thinkingConfig: {
-                    thinkingBudget: 0
-                }
-            },
+            generationConfig: generationConfig,
             safetySettings: [{
                     category: "HARM_CATEGORY_HARASSMENT",
                     threshold: "BLOCK_NONE"

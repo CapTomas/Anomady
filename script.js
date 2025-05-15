@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let GEMINI_API_KEY = ""; // Will be populated by user input or localStorage
     const DEFAULT_LANGUAGE = 'cs';
     const UPDATE_HIGHLIGHT_DURATION = 5000; // ms
-    const GAME_STATE_STORAGE_KEY = 'odysseyGameState';
-    const MODEL_PREFERENCE_STORAGE_KEY = 'odysseyModelPreference'; // For storing model choice
+    const GAME_STATE_STORAGE_KEY = 'soperaGameState';
+    const MODEL_PREFERENCE_STORAGE_KEY = 'soperaModelPreference'; // For storing model choice
 
     // Define Model Names
     const PAID_MODEL_NAME = "gemini-2.5-flash-preview-04-17"; // User's current "paid" model
@@ -365,6 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
             lastKnownDashboardUpdates = savedState.lastDashboardUpdates;
             lastKnownGameStateIndicators = savedState.lastGameStateIndicators;
             currentPromptType = savedState.currentPromptType || 'default';
+            console.log("Default prompt in use.");
             currentNarrativeLanguage = savedState.currentNarrativeLanguage || DEFAULT_LANGUAGE;
             setAppLanguage(currentNarrativeLanguage); // This will also call updateModelToggleButtonText
 
@@ -1044,9 +1045,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (indicators.combat_engaged === true) {
             currentPromptType = 'combat';
+            console.log("Combat prompt in use.");
         } else {
             if (currentPromptType !== 'default') { 
                 currentPromptType = 'default';
+                console.log("Default prompt in use.");
             }
         }
     }
@@ -1232,7 +1235,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }); 
         addMessageToLog(`${uiLangData[currentAppLanguage]?.connecting || 'Connecting as'}: ${playerCallsign}...`, 'system');
 
-        currentPromptType = 'initial'; 
+        currentPromptType = 'initial';
+        console.log("Initial prompt in use.");
         gameHistory = [{ 
             role: "user",
             parts: [{

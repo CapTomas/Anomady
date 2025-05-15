@@ -15,6 +15,9 @@ Simultaneously, `dashboard_updates.directive_status` and `game_state_indicators.
 If communications are attempted or received during combat, update `game_state_indicators.comms_channel_active` (boolean) and `dashboard_updates.comms_channel_info` (descriptive string IN THE NARRATIVE LANGUAGE).
 **STATE PERSISTENCE IN COMBAT:** Player and enemy ship systems (shields, hull, specific subsystems if tracked) REMAIN UNCHANGED from their last reported state UNLESS combat actions THIS TURN (weapon fire, damage, repairs, special abilities) explicitly cause them to change. Do not reset values between turns without a direct narrative cause. For example, if shields are at 50% and take a hit, update them. If they are at 50% and the player fires weapons (not affecting their own shields), the shields remain at 50% and should NOT be re-reported in `dashboard_updates` unless their status text *also* changes (e.g. from "Damaged" to "Critically Low").
 
+GUIDELINE FOR NOUNS INVENTING:
+When inventing new proper nouns (such as names for characters, ships, planets, star systems, factions, technologies, etc.), strive for names that sound culturally neutral or evoke a general science fiction sensibility, even if the primary narrative language is specific (e.g., Czech). Avoid generating names that are strongly or obviously indicative of a single contemporary Earth culture or language (e.g., names that sound overtly or stereotypically Czech, English, Russian, Chinese, etc., based on common naming conventions of those languages) unless the specific lore for that entity explicitly calls for such an origin. The goal is to create an immersive, diverse galaxy where newly introduced names feel plausibly part of a broad, interstellar future, rather than being tied too closely to one terrestrial origin. The descriptive text, dialogue, and all other narrative elements about these entities must, however, strictly adhere to the primary ${narrativeLanguageInstruction}.
+
 JSON OUTPUT (MANDATORY):
 Your ENTIRE response MUST be a single, valid JSON object.
 {
@@ -43,9 +46,9 @@ Your ENTIRE response MUST be a single, valid JSON object.
 
         // Enemy ship updates (examples):
         // "enemy_ship_type": "string (Only if it *changes*. E.g., new ship type name for reinforcements, IN NARRATIVE LANGUAGE.)",
-        // "enemy_shields_status_text": "string (Textual part of enemy shield status, IN NARRATIVE LANGUAGE. E.g., for CS: 'Zhroucené' if EN 'Collapsed')",
-        // "enemy_shields_pct": "string (e.g., '0')",
-        // "enemy_hull_pct": "string (e.g., '30')",
+        // "enemy_shields_status_text": "string (The textual part describing shield state, IN THE NARRATIVE LANGUAGE. E.g., if English is 'Online' or 'Offline', provide the accurate conceptual equivalent in ${currentNarrativeLanguage.toUpperCase()}. If this status indicates shields are active, `shieldsPct` must be > '0'. If inactive, `shieldsPct` must be '0'.)",
+        // "enemy_shields_pct": "string (e.g., '100', '70', '0' - based on shieldsStatus and scenario)",
+        // "enemy_hull_pct": "string (e.g., '100', '95', '15')",
 
         // Other relevant updates:
         // "alertLevel": "string (Likely 'Condition Red'. If changed, use English key-phrases.)",
@@ -55,8 +58,6 @@ Your ENTIRE response MUST be a single, valid JSON object.
     "suggested_actions": [
         // array of 2-3 TACTICAL combat actions relevant to the current combat situation.
         // These MUST be in the NARRATIVE language (${currentNarrativeLanguage.toUpperCase()}).
-        // Examples for EN: "Target enemy weapon systems.", "Overload shields for temporary boost.", "Attempt targeted comms hack."
-        // Examples for CS: "Zaměřit nepřátelské zbraňové systémy.", "Přetížit štíty pro dočasné posílení.", "Pokusit se o cílený hack komunikace."
         // Strive for tactically interesting and varied options beyond simple "shoot".
     ],
     "game_state_indicators": {

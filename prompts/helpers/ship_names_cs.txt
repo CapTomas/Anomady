@@ -1,7 +1,7 @@
-Šepot Větru
+Solární Šepot
 Skokan Prázdnotou
 Hvězdný Poutník
-Železné Odhodlání
+Ocelová Vůle
 Tulák Mlhovin
 Ohon Komety
 Tichý Kartograf
@@ -15,7 +15,7 @@ Maják Solaris
 Vagabund
 Přízračný Běžec
 Paprsek Hélia
-Průzkumník
+Hledač Horizontů
 Šíp Orionu
 Dálný Hledač
 Dítě Novy
@@ -24,7 +24,7 @@ Křídlo Ikara
 Lovec Prázdnoty
 Horizont Událostí
 Hadí Polibek
-Obrněný Posel
+Ocelový Kurýr
 Alchymista
 Okraj Horizontu
 Bludný Proud
@@ -58,14 +58,14 @@ Rychlost Merkuru
 Kouzlo Venuše
 Naděje Terry
 Poslední Archa
-První Průkopník
-Druhá Šance
-Třetí Hlídka
-Čtvrtý Stav
+Průkopník Úsvitu
+Phoenixova Naděje
+Noční Stráž Hvězd
+Nezávislý Kronikář
 Pátý Element
 Šestý Smysl
 Sedmá Pečeť
-Osmý Div
+Artefakt Kosmu
 Devátá Brána
 Desátá Legie
 Odpočinek Nomáda
@@ -83,10 +83,10 @@ Starý Mořeplavec
 Včerejší Duch
 Dlouhá Trať
 Rychlý Únik
-Hbitý Letoun
-Těžký Nákladník
-Hlubinný Sken
-Dálkový Průzkum
+Stínový Běžec
+Kolos Obchodu
+Sonda Abyssu
+Prospektor Hranic
 Tajný Šepot
 Stínový Makléř
 Obchodník s Informacemi
@@ -161,34 +161,34 @@ Vybočující
 Anomálie
 Paradox
 Enigma
-Šifra
-Hádanka
-Otazník
-Vykřičník
-Tečka za Větou
-Čárka v Souvětí
-Spojovník Nákladu
-Apostrofův Odpadlík
-Výprava Uvozovek
-Závorka
-Lamač Závorek
+Stínový Kód
+Sféra Otázek
+Interrogator Prázdnoty
+Impulsor Osudu
+Finis Trajektu
+Nexus Spojení
+Nexus Cargo
+Symbol Psance
+Narátor Hvězdných Písní
+Krypta Obsahu
+Prolomení Bariér
 Výpustka Tuláka
 Středníkova Pouť
-Podtržítko
-Lomítko Vpřed
-Zpětné Lomítko Nárazník
-Ampersand
-Lovec Hashtagů
-Alias Zavináče
-Dolarův Dluh
-Procentní Průchod
-Stříška Vzestupu
-Vlnovky Obrat
-Těžký Přízvuk
-Ostrý Přístup
-Vokáň Křižník
-Přehláska Odysea
-Cedila Okruh
+Základní Vektor
+Progresor Vpřed
+Deflektor Odrazu
+Konjunktor Osudů
+Stopař Signálů
+Identita Nosiče
+Stínová Bilance
+Frakce Nekonečna
+Apex Dráhy
+Oscilátor Křivek
+Gravitas Vektoru
+Acumen Průniku
+Koruna Zenithu
+Dvojitá Stopa Poutě
+Subskript Rezonance
 Rosetta
 Archimedes
 Koperník
@@ -354,9 +354,9 @@ Rudý Trpaslík
 Žlutý Obr
 Fialový Opar
 Oranžový Květ
-Hnědá Hliněná Hvězdolet
+Terrakota Poutník
 Šedý Duch
-Růžové Nebezpečí
+Karmínová Hrozba
 Noční poutník
 Hlas prázdna
 Popel věčnosti

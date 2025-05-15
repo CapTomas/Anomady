@@ -722,7 +722,7 @@ body.initial-state #name-input-section input[type="text"]#player-name-input {
     border-radius: var(--radius-sm); /* Consistent with other inputs */
     background-color: var(--color-bg-input-field);
     color: var(--color-text-primary);
-    text-align: center; /* Center placeholder and input text */
+    text-align: left; /* Center placeholder and input text */
     line-height: var(--line-height-tight); /* Ensure text is vertically centered if padding makes it tall */
     /* Remove default margin which might be inherited */
     margin-left: 0; 

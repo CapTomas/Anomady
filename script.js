@@ -175,7 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "aria_label_current_model_paid": "Currently using Paid AI model. Click to switch to Free model.",
             "aria_label_current_model_free": "Currently using Free AI model. Click to switch to Paid model.",
             "system_model_set_paid": "System: Switched to Paid AI Model ({MODEL_NAME}).",
-            "system_model_set_free": "System: Switched to Free AI Model ({MODEL_NAME})."
+            "system_model_set_free": "System: Switched to Free AI Model ({MODEL_NAME}).",
+            "system_session_resumed": "Welcome back, Captain {CALLSIGN}! Session resumed." 
         },
         cs: {
             "toggle_language": "English",
@@ -251,7 +252,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "aria_label_current_model_paid": "Nyní používáte placený AI model. Kliknutím přepnete na model zdarma.",
             "aria_label_current_model_free": "Nyní používáte AI model zdarma. Kliknutím přepnete na placený model.",
             "system_model_set_paid": "Systém: Přepnuto na placený AI model ({MODEL_NAME}).",
-            "system_model_set_free": "Systém: Přepnuto na model zdarma ({MODEL_NAME})."
+            "system_model_set_free": "Systém: Přepnuto na model zdarma ({MODEL_NAME}).",
+            "system_session_resumed": "Vítejte zpět, kapitáne {CALLSIGN}! Relace obnovena."
         }
     };
     const NARRATIVE_LANG_PROMPT_PARTS = {
@@ -1160,8 +1162,17 @@ document.addEventListener('DOMContentLoaded', () => {
                             text: JSON.stringify(parsed)
                         }]
                     });
+                    const newAiDashboardUpdates = parsed.dashboard_updates;
 
-                    lastKnownDashboardUpdates = parsed.dashboard_updates;
+                    if (!lastKnownDashboardUpdates || Object.keys(lastKnownDashboardUpdates).length === 0) {
+                        lastKnownDashboardUpdates = newAiDashboardUpdates;
+                    } else {
+                        for (const key in newAiDashboardUpdates) {
+                            if (Object.prototype.hasOwnProperty.call(newAiDashboardUpdates, key)) {
+                                lastKnownDashboardUpdates[key] = newAiDashboardUpdates[key];
+                            }
+                        }
+                    }
                     lastKnownGameStateIndicators = parsed.game_state_indicators;
 
                     updateDashboard(parsed.dashboard_updates);
@@ -1498,7 +1509,10 @@ document.addEventListener('DOMContentLoaded', () => {
             animateConsoleBox('mission-intel-console-box', true);
             triggerCockpitBootAnimation(); 
 
-            addMessageToLog(`Welcome back, Captain ${playerCallsign}! Session resumed.`, 'system');
+            let welcomeBackMessage = uiLangData[currentAppLanguage]?.system_session_resumed || "Welcome back, Captain {CALLSIGN}! Session resumed.";
+            welcomeBackMessage = welcomeBackMessage.replace('{CALLSIGN}', playerCallsign);
+            addMessageToLog(welcomeBackMessage, 'system');
+            
             if (playerActionInput) playerActionInput.focus();
 
             if (systemStatusIndicator) {

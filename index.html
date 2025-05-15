@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" class="no-scroll">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Odyssey</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="game-ui-root">
+
+        <header id="app-top-bar">
+            <div class="top-bar-left">
+                <h1 id="game-title">Odyssey</h1>
+            </div>
+            <div class="top-bar-center">
+                <span id="system-status-indicator" class="status-indicator status-ok" data-lang-key="system_status_online_short">Online</span>
+                <span id="gm-activity-indicator" style="display: none;" data-lang-key="system_processing_short">Processing...</span>
+            </div>
+            <div class="top-bar-right">
+                <button id="new-game-button" class="ui-button icon-button" title="Start New Game" data-lang-key="button_new_game" data-lang-key-aria="aria_label_new_game">New Game</button>
+                <button id="language-toggle-button" class="ui-button icon-button" data-lang-key="toggle_language" data-lang-key-aria="aria_label_toggle_language" aria-label="Toggle Language">
+                </button>
+            </div>
+        </header>
+
+        <div id="cockpit-layout">
+
+            <aside id="left-console" class="console-sidebar">
+
+                <div class="console-box collapsible" id="captain-status-console-box">
+                    <div class="console-box-header">
+                        <h3 class="console-box-title" data-lang-key="title_captain_status">Captain</h3>
+                    </div>
+                    <div class="console-box-content">
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_player_callsign">Callsign:</span>
+                            <span id="info-player-callsign" class="value">---</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_player_credits">Credits:</span>
+                            <span id="info-player-credits" class="value">--- UEC</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_player_reputation">Reputation:</span>
+                            <span id="info-player-reputation" class="value">---</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_player_affiliation">Affiliation:</span>
+                            <span id="info-player-affiliation" class="value">---</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="console-box collapsible" id="ship-status-console-box">
+                    <div class="console-box-header">
+                        <h3 class="console-box-title" data-lang-key="title_ship_status">Ship Status</h3>
+                    </div>
+                    <div class="console-box-content">
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_ship_name">Ship Name:</span>
+                            <span id="info-ship-name" class="value">---</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_ship_type">Class:</span>
+                            <span id="info-ship-type" class="value">---</span>
+                        </div>
+                        <div class="info-item-meter">
+                            <span class="label" data-lang-key="label_ship_integrity">Integrity:</span>
+                            <div class="meter-bar-container">
+                                <div id="meter-ship-integrity" class="meter-bar"></div>
+                            </div>
+                            <span id="info-ship-integrity" class="value-overlay">---</span>
+                        </div>
+                        <div class="info-item-meter">
+                            <span class="label" data-lang-key="label_ship_shields">Shields:</span>
+                            <div class="meter-bar-container">
+                                <div id="meter-ship-shields" class="meter-bar"></div>
+                            </div>
+                            <span id="info-ship-shields" class="value-overlay">---</span>
+                        </div>
+                        <div class="info-item-meter">
+                            <span class="label" data-lang-key="label_ship_fuel">Fuel Reserves:</span>
+                            <div class="meter-bar-container">
+                                <div id="meter-ship-fuel" class="meter-bar"></div>
+                            </div>
+                            <span id="info-ship-fuel" class="value-overlay">---</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_ship_cargo">Cargo:</span>
+                            <span id="info-ship-cargo" class="value">--/-- SCU</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_ship_speed">Current Speed:</span>
+                            <span id="info-ship-speed" class="value">--- m/s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="console-box collapsible" id="comms-channel-console-box">
+                    <div class="console-box-header">
+                        <h3 class="console-box-title" data-lang-key="title_comms_channel">Comms Channel</h3>
+                    </div>
+                    <div class="console-box-content">
+                        <div class="info-item full-width">
+                            <span class="label" data-lang-key="label_comms_status">Channel Status:</span>
+                            <span id="info-comms-channel-status" class="value">---</span>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+
+            <main id="center-column">
+                <div id="story-log-viewport">
+                    <div id="story-log">
+
+                    </div>
+                </div>
+                <div id="suggested-actions-wrapper">
+
+                </div>
+                <div id="player-input-control-panel">
+                    <div id="name-input-section" class="input-group">
+                        <input type="text" id="player-name-input" data-lang-key-placeholder="placeholder_callsign_login" placeholder="Enter callsign to access ship systems...">
+                        <button id="start-game-button" class="ui-button primary" data-lang-key="button_access_systems">Access Systems</button>
+                    </div>
+                    <div id="action-input-section" class="input-group" style="display:none;">
+                        <textarea id="player-action-input" data-lang-key-placeholder="placeholder_command" placeholder="Enter command or response..." rows="1"></textarea>
+                        <button id="send-action-button" class="ui-button primary" data-lang-key="button_execute_command">Execute</button>
+                    </div>
+                </div>
+            </main>
+
+            <aside id="right-console" class="console-sidebar">
+
+                <div class="console-box collapsible" id="mission-intel-console-box">
+                    <div class="console-box-header">
+                        <h3 class="console-box-title" data-lang-key="title_active_directive">Active Directive</h3>
+                    </div>
+                    <div class="console-box-content">
+                        <div class="info-item full-width">
+                            <span class="label" data-lang-key="label_directive_details">Directive Details:</span>
+                            <span id="info-objective" class="value objective-text">---</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_directive_reward">Potential Reward:</span>
+                            <span id="info-directive-reward" class="value">---</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_directive_status">Status:</span>
+                            <span id="info-directive-status" class="value">---</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_alert_level">Alert Level:</span>
+                            <span id="info-alert-level" class="value status-ok">---</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="console-box collapsible" id="navigation-data-console-box">
+                    <div class="console-box-header">
+                        <h3 class="console-box-title" data-lang-key="title_navigation_data">Navigation Data</h3>
+                    </div>
+                    <div class="console-box-content">
+                        <div class="info-item full-width">
+                            <span class="label" data-lang-key="label_current_location">Location:</span>
+                            <span id="info-location" class="value location-text">---</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_system_faction">Dominant Faction:</span>
+                            <span id="info-system-faction" class="value">---</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_environment">Environment:</span>
+                            <span id="info-environment" class="value">---</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_sensor_conditions">Sensor Conditions:</span>
+                            <span id="info-sensor-conditions" class="value">---</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_stardate">Stardate:</span>
+                            <span id="info-stardate" class="value">---</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="console-box collapsible" id="enemy-intel-console-box">
+                    <div class="console-box-header">
+                        <h3 class="console-box-title" data-lang-key="title_enemy_intel">Enemy Vessel Intel</h3>
+                    </div>
+                    <div class="console-box-content">
+                        <div class="info-item">
+                            <span class="label" data-lang-key="label_enemy_ship_type">Enemy Type:</span>
+                            <span id="info-enemy-ship-type" class="value">---</span>
+                        </div>
+                        <div class="info-item-meter">
+                            <span class="label" data-lang-key="label_enemy_shields">Enemy Shields:</span>
+                            <div class="meter-bar-container">
+                                <div id="meter-enemy-shields" class="meter-bar"></div>
+                            </div>
+                            <span id="info-enemy-shields-status" class="value-overlay">---</span>
+                        </div>
+                        <div class="info-item-meter">
+                            <span class="label" data-lang-key="label_enemy_hull">Enemy Hull:</span>
+                            <div class="meter-bar-container">
+                                <div id="meter-enemy-hull" class="meter-bar"></div>
+                            </div>
+                            <span id="info-enemy-hull-integrity" class="value-overlay">---</span>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+
+        </div>
+
+        <footer id="app-bottom-bar">
+            <p>© 2025 Odyssey. Created by Tomas Cap with AI.</p>
+        </footer>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

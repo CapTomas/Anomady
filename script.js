@@ -1442,7 +1442,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function initializeApp() {
         // 1. Load model preference first or set default
-        currentModelName = localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || PAID_MODEL_NAME;
+        currentModelName = localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME;
         // updateModelToggleButtonText will be called after language is set.
 
         // 2. Set language (from localStorage or default) - this will also call updateModelToggleButtonText

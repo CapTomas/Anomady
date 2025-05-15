@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Define Model Names
     const PAID_MODEL_NAME = "gemini-2.5-flash-preview-04-17"; // User's current "paid" model
     const FREE_MODEL_NAME = "gemini-2.0-flash"; // Suggested "free" model
-    let currentModelName = PAID_MODEL_NAME; // Default to paid
+    let currentModelName = FREE_MODEL_NAME; // Default to paid
 
     const PROMPT_URLS = {
         initial: 'prompts/initial.txt',

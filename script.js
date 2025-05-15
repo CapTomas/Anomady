@@ -4,6 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const DEFAULT_LANGUAGE = 'cs';
     const UPDATE_HIGHLIGHT_DURATION = 5000; // ms
     const GAME_STATE_STORAGE_KEY = 'odysseyGameState';
+    const MODEL_PREFERENCE_STORAGE_KEY = 'odysseyModelPreference'; // For storing model choice
+
+    // Define Model Names
+    const PAID_MODEL_NAME = "gemini-2.5-flash-preview-04-17"; // User's current "paid" model
+    const FREE_MODEL_NAME = "gemini-2.0-flash"; // Suggested "free" model
+    let currentModelName = PAID_MODEL_NAME; // Default to paid
 
     const PROMPT_URLS = {
         initial: 'prompts/initial.txt',
@@ -28,7 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const systemStatusIndicator = document.getElementById('system-status-indicator');
     const gmSpecificActivityIndicator = document.getElementById('gm-activity-indicator');
     const languageToggleButton = document.getElementById('language-toggle-button');
-    const newGameButton = document.getElementById('new-game-button'); // Assuming you add this button
+    const newGameButton = document.getElementById('new-game-button');
+    const modelToggleButton = document.getElementById('model-toggle-button'); // New button
 
     // Player Status
     const infoPlayerCallsign = document.getElementById('info-player-callsign');
@@ -160,7 +167,15 @@ document.addEventListener('DOMContentLoaded', () => {
             "activity_communicating": "Communicating",
             "button_new_game": "New Game",
             "aria_label_new_game": "Start a new game session",
-            "confirm_new_game": "Are you sure you want to start a new game? Current progress will be lost."
+            "confirm_new_game": "Are you sure you want to start a new game? Current progress will be lost.",
+            "label_toggle_model": "Toggle Model", 
+            "aria_label_toggle_model_generic": "Toggle AI Model", 
+            "button_toggle_to_free": "Free Model", 
+            "button_toggle_to_paid": "Paid Model", 
+            "aria_label_current_model_paid": "Currently using Paid AI model. Click to switch to Free model.",
+            "aria_label_current_model_free": "Currently using Free AI model. Click to switch to Paid model.",
+            "system_model_set_paid": "System: Switched to Paid AI Model ({MODEL_NAME}).",
+            "system_model_set_free": "System: Switched to Free AI Model ({MODEL_NAME})."
         },
         cs: {
             "toggle_language": "Česky",
@@ -228,13 +243,54 @@ document.addEventListener('DOMContentLoaded', () => {
             "activity_communicating": "Komunikace",
             "button_new_game": "Nová Hra",
             "aria_label_new_game": "Začít novou herní relaci",
-            "confirm_new_game": "Opravdu chcete začít novou hru? Aktuální postup bude ztracen."
+            "confirm_new_game": "Opravdu chcete začít novou hru? Aktuální postup bude ztracen.",
+            "label_toggle_model": "Přepnout Model",
+            "aria_label_toggle_model_generic": "Přepnout AI Model",
+            "button_toggle_to_free": "Placený model",
+            "button_toggle_to_paid": "Model zdarma",
+            "aria_label_current_model_paid": "Nyní používáte placený AI model. Kliknutím přepnete na model zdarma.",
+            "aria_label_current_model_free": "Nyní používáte AI model zdarma. Kliknutím přepnete na placený model.",
+            "system_model_set_paid": "Systém: Přepnuto na placený AI model ({MODEL_NAME}).",
+            "system_model_set_free": "Systém: Přepnuto na model zdarma ({MODEL_NAME})."
         }
     };
     const NARRATIVE_LANG_PROMPT_PARTS = {
         en: `This narrative must be written in fluent, immersive English, suitable for a high-quality sci-fi novel. Dialogue should be natural.`,
         cs: `Tento příběh musí být napsán plynulou, poutavou češtinou, vhodnou pro kvalitní sci-fi román. Dialogy by měly být přirozené.`
     };
+
+    function updateModelToggleButtonText() {
+        if (!modelToggleButton) return;
+        const isPaidActive = currentModelName === PAID_MODEL_NAME;
+        
+        const textKey = isPaidActive ? "button_toggle_to_free" : "button_toggle_to_paid";
+        const ariaKey = isPaidActive ? "aria_label_current_model_paid" : "aria_label_current_model_free";
+
+        modelToggleButton.textContent = uiLangData[currentAppLanguage]?.[textKey] || (isPaidActive ? "Use Free Model" : "Use Paid Model");
+        
+        const ariaLabelText = uiLangData[currentAppLanguage]?.[ariaKey] || 
+                              (isPaidActive ? "Currently using Paid AI model. Click to switch to Free model." 
+                                            : "Currently using Free AI model. Click to switch to Paid model.");
+        modelToggleButton.setAttribute('aria-label', ariaLabelText);
+        modelToggleButton.setAttribute('title', ariaLabelText); // Also update title for tooltip
+    }
+
+    function toggleModelType() {
+        if (currentModelName === PAID_MODEL_NAME) {
+            currentModelName = FREE_MODEL_NAME;
+        } else {
+            currentModelName = PAID_MODEL_NAME;
+        }
+        localStorage.setItem(MODEL_PREFERENCE_STORAGE_KEY, currentModelName);
+        updateModelToggleButtonText();
+
+        const isPaidNow = currentModelName === PAID_MODEL_NAME;
+        const messageKey = isPaidNow ? "system_model_set_paid" : "system_model_set_free";
+        let systemMessage = uiLangData[currentAppLanguage]?.[messageKey] || `System: Switched to ${isPaidNow ? 'Paid' : 'Free'} AI Model ({MODEL_NAME}).`;
+        systemMessage = systemMessage.replace('{MODEL_NAME}', currentModelName);
+        addMessageToLog(systemMessage, 'system');
+        // Note: We don't call saveGameState() here as model preference is global, not per-game-session.
+    }
 
 
     function setupApiKey() {
@@ -310,8 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
             lastKnownGameStateIndicators = savedState.lastGameStateIndicators;
             currentPromptType = savedState.currentPromptType || 'default';
             currentNarrativeLanguage = savedState.currentNarrativeLanguage || DEFAULT_LANGUAGE;
-
-            setAppLanguage(currentNarrativeLanguage);
+            setAppLanguage(currentNarrativeLanguage); // This will also call updateModelToggleButtonText
 
             if (storyLog) storyLog.innerHTML = '';
             gameHistory.forEach(turn => {
@@ -430,16 +485,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const key = el.getAttribute('data-lang-key');
             if (uiLangData[lang] && uiLangData[lang][key]) {
                 if ((el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA')) {
-                     // Special handling for console box titles (H3) vs other elements within the header
                     if (el.classList.contains('console-box-title') && el.tagName.toLowerCase() === 'h3') {
                         el.textContent = uiLangData[lang][key];
-                    } else if (!el.classList.contains('console-box-title')) { // Affects non-title elements
+                    } else if (!el.classList.contains('console-box-title')) { 
                         el.textContent = uiLangData[lang][key];
                     }
                 }
             }
         });
-        // Ensure console box titles are updated if they were missed by the above logic
         document.querySelectorAll('.console-box-title[data-lang-key]').forEach(el => {
             const key = el.getAttribute('data-lang-key');
             if (uiLangData[lang] && uiLangData[lang][key]) {
@@ -461,30 +514,35 @@ document.addEventListener('DOMContentLoaded', () => {
             const key = el.getAttribute('data-lang-key-aria');
             if (uiLangData[lang] && uiLangData[lang][key]) {
                 el.setAttribute('aria-label', uiLangData[lang][key]);
+                if (el.tagName === 'BUTTON' && el.title) {
+                     el.title = uiLangData[lang][key];
+                }
             }
         });
-        // Update the language toggle button text and ARIA label
+
         if (languageToggleButton) {
             const otherLang = lang === 'en' ? 'cs' : 'en';
             languageToggleButton.textContent = uiLangData[otherLang]?.toggle_language || (otherLang === 'cs' ? 'Česky' : 'English');
             const ariaKeyForToggleAction = `aria_label_toggle_language`;
             const ariaLabelText = uiLangData[otherLang]?.[ariaKeyForToggleAction] || `Switch to ${otherLang === 'cs' ? 'Czech' : 'English'}`;
             languageToggleButton.setAttribute('aria-label', ariaLabelText);
+            languageToggleButton.title = ariaLabelText;
         }
 
-        initializeDashboardDefaultTexts(); // Re-initialize texts with current lang if they are at default
+        initializeDashboardDefaultTexts(); 
+        updateModelToggleButtonText(); 
     }
 
     function toggleAppLanguage() {
         const newLang = currentAppLanguage === 'en' ? 'cs' : 'en';
-        setAppLanguage(newLang); // This will update UI and call initializeDashboardDefaultTexts
-        currentNarrativeLanguage = newLang; // Sync narrative language
+        setAppLanguage(newLang); 
+        currentNarrativeLanguage = newLang; 
         localStorage.setItem('preferredNarrativeLanguage', newLang);
 
         const systemMessageKey = newLang === 'en' ? "system_lang_set_en" : "system_lang_set_cs";
         let systemMessage = uiLangData[newLang]?.[systemMessageKey] || `System: UI & Narrative language set to ${newLang.toUpperCase()}.`;
         addMessageToLog(systemMessage, 'system');
-        saveGameState(); // Save state after language change if a game is in progress
+        saveGameState(); 
     }
 
     const getSystemPrompt = (currentCallsignForPrompt, promptTypeToUse) => {
@@ -987,7 +1045,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (indicators.combat_engaged === true) {
             currentPromptType = 'combat';
         } else {
-            if (currentPromptType !== 'default') { // Avoid unnecessary changes if already default
+            if (currentPromptType !== 'default') { 
                 currentPromptType = 'default';
             }
         }
@@ -1018,7 +1076,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return null;
         }
 
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent?key=${GEMINI_API_KEY}`;
+        // Use currentModelName in the API URL
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${currentModelName}:generateContent?key=${GEMINI_API_KEY}`;
+        console.log(`Using AI Model: ${currentModelName}`);
+
 
         let payload = {
             contents: currentTurnHistory,
@@ -1099,10 +1160,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     displaySuggestedActions(parsed.suggested_actions);
                     handleGameStateIndicators(parsed.game_state_indicators, isInitialGameLoad);
 
-                    if (isInitialGameLoad) { // isInitialGameLoad is true for the very first turn of a new game
-                        isInitialGameLoad = false; // Set to false after the first successful AI response
+                    if (isInitialGameLoad) { 
+                        isInitialGameLoad = false; 
                     }
-                    saveGameState(); // Save after successful processing
+                    saveGameState(); 
 
                     const onlineText = (uiLangData[currentAppLanguage]?.system_status_online_short || "System Online");
                     if (systemStatusIndicator) {
@@ -1144,15 +1205,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        clearGameState(); // Clear any old state for a new game
-        playerCallsign = enteredCallsign; // Set callsign after clearing
+        clearGameState(); 
+        playerCallsign = enteredCallsign; 
 
         document.body.classList.remove('initial-state');
         if (nameInputSection) nameInputSection.style.display = 'none';
         if (actionInputSection) actionInputSection.style.display = 'flex';
         if (storyLogViewport) storyLogViewport.classList.add('spawn-animation');
 
-        isInitialGameLoad = true; // This is the initial load for this new game session
+        isInitialGameLoad = true; 
 
         if (playerActionInput) {
             playerActionInput.value = '';
@@ -1163,11 +1224,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateDashboard({
             callsign: playerCallsign
-        }); // Show callsign immediately
+        }); 
         addMessageToLog(`${uiLangData[currentAppLanguage]?.connecting || 'Connecting as'}: ${playerCallsign}...`, 'system');
 
-        currentPromptType = 'initial'; // Ensure initial prompt for a new game
-        gameHistory = [{ // Reset game history for the new game
+        currentPromptType = 'initial'; 
+        gameHistory = [{ 
             role: "user",
             parts: [{
                 text: `My callsign is ${playerCallsign}. I am ready to start the game.`
@@ -1175,7 +1236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }];
         clearSuggestedActions();
 
-        const narrative = await callGeminiAPI(gameHistory); // This will call saveGameState on success
+        const narrative = await callGeminiAPI(gameHistory); 
         if (narrative) {
             addMessageToLog(narrative, 'gm');
             triggerCockpitBootAnimation();
@@ -1185,7 +1246,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (actionInputSection) actionInputSection.style.display = 'none';
             if (storyLogViewport) storyLogViewport.classList.remove('spawn-animation');
             addMessageToLog("Failed to initialize session. Please check console and try again.", 'system');
-            // isInitialGameLoad remains true, as the game didn't successfully start
         }
     }
 
@@ -1211,8 +1271,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 text: action
             }]
         });
-        // isInitialGameLoad should be false here if game is ongoing
-        const narrative = await callGeminiAPI(gameHistory); // This will save state on success
+        const narrative = await callGeminiAPI(gameHistory); 
         if (narrative) {
             addMessageToLog(narrative, 'gm');
         }
@@ -1220,11 +1279,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initializeDashboardDefaultTexts() {
         const unknown = uiLangData[currentAppLanguage]?.unknown || '---';
-        const na = uiLangData[currentAppLanguage]?.not_available_short || 'N/A'; // Use N/A for cargo
+        const na = uiLangData[currentAppLanguage]?.not_available_short || 'N/A'; 
         const onlineText = uiLangData[currentAppLanguage]?.online || 'Online';
         const offlineText = uiLangData[currentAppLanguage]?.offline || 'Offline';
 
-        // Only set to default if no playerCallsign (i.e., truly new game or after clearGameState)
         if (!playerCallsign && infoPlayerCallsign) infoPlayerCallsign.textContent = unknown;
         if (infoPlayerCredits) infoPlayerCredits.textContent = `${unknown} UEC`;
         if (infoPlayerReputation) infoPlayerReputation.textContent = unknown;
@@ -1233,7 +1291,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (infoShipName) infoShipName.textContent = unknown;
         if (infoShipType) infoShipType.textContent = unknown;
 
-        // For meters, set to a defined initial state, updateDashboard will fill them if data exists
         setMeter(meterShipIntegrity, infoShipIntegrity, '0', 'integrity', { highlight: false, initialPlaceholder: '0%' });
         setMeter(meterShipShields, infoShipShields, '0', 'shields', { highlight: false, newStatusText: onlineText, initialPlaceholder: `${onlineText}: 0%` });
         setMeter(meterShipFuel, infoShipFuel, '0', 'fuel', { highlight: false, initialPlaceholder: '0%' });
@@ -1266,10 +1323,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (playerCallsignInput) playerCallsignInput.placeholder = uiLangData[currentAppLanguage]?.placeholder_callsign_login || "Enter callsign...";
         if (playerActionInput) playerActionInput.placeholder = uiLangData[currentAppLanguage]?.placeholder_command || "Enter command...";
-
-        // These are handled by handleGameStateIndicators or clearGameState for visibility
-        // if (commsChannelConsoleBox) commsChannelConsoleBox.style.display = 'none';
-        // if (enemyIntelConsoleBox) enemyIntelConsoleBox.style.display = 'none';
     }
 
     function autoGrowTextarea(textarea) {
@@ -1316,7 +1369,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 box.classList.remove('is-expanded');
                 header.setAttribute('aria-expanded', 'false');
                 content.setAttribute('aria-hidden', 'true');
-                // Note: Hiding the box after collapse for conditional ones is handled by handleGameStateIndicators or clearGameState
             }
         });
     }
@@ -1352,7 +1404,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     content.setAttribute('aria-hidden', 'true');
                     box.classList.remove('is-expanded');
                 } else if (isConditionalConsole) {
-                    box.style.display = 'none'; // Initially hidden, handleGameStateIndicators will show them
+                    box.style.display = 'none'; 
                     header.setAttribute('aria-expanded', 'false');
                     content.setAttribute('aria-hidden', 'true');
                     box.classList.remove('is-expanded');
@@ -1379,79 +1431,77 @@ document.addEventListener('DOMContentLoaded', () => {
     function startNewGameSession() {
         if (confirm(uiLangData[currentAppLanguage]?.confirm_new_game || "Are you sure you want to start a new game? Current progress will be lost.")) {
             clearGameState();
-            // Reloading is often the simplest way to ensure a completely fresh state for UI and logic.
-            // Alternatively, you could call initializeApp() again after clearing, but reload is safer.
             window.location.reload();
         }
     }
 
     async function initializeApp() {
-        // 1. Set language (from localStorage or default)
-        setAppLanguage(currentAppLanguage);
+        // 1. Load model preference first or set default
+        currentModelName = localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || PAID_MODEL_NAME;
+        // updateModelToggleButtonText will be called after language is set.
 
-        // 2. Setup API Key (prompt if not found in localStorage)
+        // 2. Set language (from localStorage or default) - this will also call updateModelToggleButtonText
+        setAppLanguage(currentAppLanguage); 
+
+        // 3. Setup API Key (prompt if not found in localStorage)
         const apiKeyAvailable = setupApiKey();
         if (!apiKeyAvailable) {
-            // UI should reflect that game cannot start: initial state with name input and error message
             document.body.classList.add('initial-state');
             if (nameInputSection) nameInputSection.style.display = 'flex';
             if (actionInputSection) actionInputSection.style.display = 'none';
-            if (storyLogViewport) storyLogViewport.classList.remove('spawn-animation'); // Not yet spawned
-            initializeDashboardDefaultTexts(); // Show default placeholders
-            initializeCollapsibleConsoleBoxes(); // Set up console structure
-            return; // Stop initialization
+            if (storyLogViewport) storyLogViewport.classList.remove('spawn-animation'); 
+            initializeDashboardDefaultTexts(); 
+            initializeCollapsibleConsoleBoxes(); 
+            updateModelToggleButtonText(); // Ensure button is updated even in error state
+            return; 
         }
 
-        // 3. Try to load existing game state
-        const gameWasLoaded = loadGameState(); // This also sets isInitialGameLoad
+        // 4. Try to load existing game state
+        const gameWasLoaded = loadGameState(); 
 
-        // 4. Load all necessary game prompts
+        // 5. Load all necessary game prompts
         const promptsLoaded = await loadAllPrompts();
         if (!promptsLoaded) {
-            // This is a critical failure.
             addMessageToLog("CRITICAL: Essential game prompts failed to load. The game cannot continue.", 'system');
             if (startGameButton) startGameButton.disabled = true;
             if (playerCallsignInput) playerCallsignInput.disabled = true;
             if (actionInputSection) actionInputSection.style.display = 'none';
-            // Ensure UI reflects error state regardless of whether a game was loaded
-            document.body.classList.remove('initial-state'); // Show main layout
-            if (nameInputSection && !gameWasLoaded) nameInputSection.style.display = 'flex'; // Show name input if no game loaded
+            document.body.classList.remove('initial-state'); 
+            if (nameInputSection && !gameWasLoaded) nameInputSection.style.display = 'flex'; 
             else if (nameInputSection) nameInputSection.style.display = 'none';
             if (storyLogViewport) storyLogViewport.classList.remove('spawn-animation');
-            return; // Stop further initialization
+            updateModelToggleButtonText(); // Ensure button is updated even in error state
+            return; 
         }
 
-        // 5. Finalize UI based on whether a game was loaded or it's a new start
+        // 6. Finalize UI based on whether a game was loaded or it's a new start
         if (gameWasLoaded) {
             document.body.classList.remove('initial-state');
             if (nameInputSection) nameInputSection.style.display = 'none';
             if (actionInputSection) actionInputSection.style.display = 'flex';
             if (storyLogViewport) {
-                storyLogViewport.classList.remove('spawn-animation'); // Remove if it was there from a failed previous init
-                storyLogViewport.style.opacity = 1; // Ensure visible
+                storyLogViewport.classList.remove('spawn-animation'); 
+                storyLogViewport.style.opacity = 1; 
                 storyLogViewport.style.transform = 'none';
             }
 
-            // Run boot animations for always-on and standard consoles
             animateConsoleBox('captain-status-console-box', true);
             animateConsoleBox('mission-intel-console-box', true);
-            triggerCockpitBootAnimation(); // Animates Ship Status & Nav Data
+            triggerCockpitBootAnimation(); 
 
             addMessageToLog(`Welcome back, Captain ${playerCallsign}! Session resumed.`, 'system');
             if (playerActionInput) playerActionInput.focus();
 
-            // System status should reflect online if game loaded and prompts are OK
             if (systemStatusIndicator) {
                 systemStatusIndicator.textContent = (uiLangData[currentAppLanguage]?.system_status_online_short || "System Online");
                 systemStatusIndicator.className = 'status-indicator status-ok';
             }
 
         } else {
-            // No saved game, or load failed: UI for new game start
             document.body.classList.add('initial-state');
             if (nameInputSection) nameInputSection.style.display = 'flex';
             if (actionInputSection) actionInputSection.style.display = 'none';
-            initializeDashboardDefaultTexts(); // Reset dashboard for a new game
+            initializeDashboardDefaultTexts(); 
             if (playerCallsignInput) playerCallsignInput.focus();
 
             if (systemStatusIndicator) {
@@ -1460,16 +1510,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        initializeCollapsibleConsoleBoxes(); // Initialize console collapse/expand behavior
+        initializeCollapsibleConsoleBoxes(); 
         if (playerActionInput) {
             autoGrowTextarea(playerActionInput);
         }
-        clearSuggestedActions(); // Clear any lingering suggestions from previous state
+        clearSuggestedActions(); 
+        updateModelToggleButtonText(); // Final update for the model toggle button after all setup.
     }
 
     // Event Listeners
     if (languageToggleButton) languageToggleButton.addEventListener('click', toggleAppLanguage);
     if (newGameButton) newGameButton.addEventListener('click', startNewGameSession);
+    if (modelToggleButton) modelToggleButton.addEventListener('click', toggleModelType); // Listener for new button
     if (startGameButton) startGameButton.addEventListener('click', startGame);
     if (playerCallsignInput) playerCallsignInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') startGame();

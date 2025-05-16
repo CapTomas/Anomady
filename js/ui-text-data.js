@@ -1,0 +1,123 @@
+// --- UI Text Data (Localization) ---
+const uiTextData = {
+    scifi: {
+        en: {
+            "theme_name": "Sci-Fi", "toggle_language": "Česky", "aria_label_toggle_language": "Switch to Czech",
+            "system_status_online_short": "Core Online", "system_processing_short": "Processing...",
+            "title_captain_status": "Captain's Log", "label_player_callsign": "Callsign:", "label_player_credits": "Credits:", "label_player_reputation": "Reputation:", "label_player_affiliation": "Affiliation:",
+            "title_ship_status": "Ship Diagnostics", "label_ship_name": "Registry:", "label_ship_type": "Class:", "label_ship_integrity": "Integrity:", "label_ship_shields": "Shields:", "label_ship_fuel": "Fuel:", "label_ship_cargo": "Cargo:", "label_ship_speed": "Speed:",
+            "title_comms_channel": "Comms Channel", "label_comms_status": "Channel:",
+            "title_active_directive": "Directive", "label_directive_details": "Objective:", "label_directive_reward": "Reward:", "label_directive_status": "Status:", "label_alert_level": "Alert:",
+            "title_navigation_data": "NavData", "label_current_location": "Location:", "label_system_faction": "Faction:", "label_environment": "Env.:", "label_sensor_conditions": "Sensors:", "label_stardate": "Stardate:",
+            "title_enemy_intel": "Enemy Intel", "label_enemy_ship_type": "Target Type:", "label_enemy_shields": "Target Shields:", "label_enemy_hull": "Target Hull:",
+            "placeholder_callsign_login": "Enter Callsign...", "placeholder_command": "Enter command...", "button_access_systems": "Access Systems", "button_execute_command": "Transmit",
+            "status_ok": "Operational", "status_warning": "Caution", "status_danger": "Critical", "status_error": "System Fault", "unknown": "Unknown", "standby": "Standby", "online": "Online", "offline": "Offline", "none": "None", "not_available_short": "N/A", "cargo_empty_scu": "Empty / 0 SCU", "comms_inactive": "Inactive", "objective_none": "No active objective.", "status_idle": "Idle",
+            "initializing": "Initializing...", "connecting": "Authenticating: {PLAYER_ID}", "active": "Active", "failed": "Failure",
+            "system_lang_set_en": "System: UI & Narrative set to ENGLISH.", "system_lang_set_cs": "System: UI & Narrative set to CZECH.",
+            "alert_level_green": "Condition Green", "alert_level_yellow": "Condition Yellow", "alert_level_red": "Condition Red", "alert_level_info": "Status Nominal",
+            "alert_level_green_val": "Green", "alert_level_yellow_val": "Yellow", "alert_level_red_val": "Red", "alert_level_info_val": "Nominal",
+            "activity_exploring": "Exploring", "activity_fighting": "Combat", "activity_communicating": "Comms Active",
+            "button_new_game": "New Game", "aria_label_new_game": "Start a new game",
+            "confirm_new_game": "Start new game? Progress in the current theme will be lost.",
+            "confirm_new_game_theme_scifi": "Start new Sci-Fi adventure? Current Sci-Fi progress will be lost.", "confirm_new_game_theme_fantasy": "Start new Fantasy adventure? Current Fantasy progress will be lost.",
+            "label_toggle_model": "Model", "aria_label_toggle_model_generic": "Toggle AI Model",
+            "button_toggle_to_free": "Free Model", "button_toggle_to_paid": "Paid Model",
+            "aria_label_current_model_paid": "Using Paid AI. Switch to Free.", "aria_label_current_model_free": "Using Free AI. Switch to Paid.",
+            "system_model_set_paid": "System: Switched to Paid AI Model ({MODEL_NAME}).", "system_model_set_free": "System: Switched to Free AI Model ({MODEL_NAME}).",
+            "system_session_resumed": "Welcome back, {PLAYER_ID}! Session resumed for {THEME_NAME}.",
+            "system_theme_set_scifi": "System: Sci-Fi theme activated. Loading assets...", "system_theme_set_fantasy": "System: Fantasy theme activated. Loading assets...",
+            "system_new_game_initiated": "System: New {THEME_NAME} game sequence initiated.", "prompt_enter_api_key": "Welcome! Please enter your Google Gemini API Key:", "alert_api_key_required":"Gemini API Key is required. Please refresh and provide a key.", "error_critical_no_api_key":"CRITICAL: Gemini API Key not provided. Application cannot connect to AI.", "error_saving_progress": "System: Error saving game progress.", "error_reconstruct_story": "Error: Could not reconstruct part of the story.", "error_load_prompt_file": "SYSTEM ERROR: Could not load prompt: {THEME}/{PROMPT_NAME}.", "error_no_prompts_for_theme":"SYSTEM ERROR: Prompts for theme \"{THEME}\" are not configured.", "error_api_call_failed":"SYSTEM ERROR: {ERROR_MSG}", "alert_identifier_required": "Please enter your identifier (name/callsign).", "error_session_init_failed": "Failed to initialize session. Please check panel and try again.", "error_load_prompts_critical": "CRITICAL: Essential game prompts for theme \"{THEME}\" failed to load. Cannot continue."
+        },
+        cs: { 
+            "theme_name": "Sci-Fi", "toggle_language": "English", "aria_label_toggle_language": "Přepnout do angličtiny",
+            "system_status_online_short": "Jádro OK", "system_processing_short": "Zpracovávám...",
+            "title_captain_status": "Kapitánský Záznam", "label_player_callsign": "Volací Znak:", "label_player_credits": "Kredity:", "label_player_reputation": "Reputace:", "label_player_affiliation": "Příslušnost:",
+            "title_ship_status": "Diagnostika Lodi", "label_ship_name": "Registrace:", "label_ship_type": "Třída:", "label_ship_integrity": "Integrita:", "label_ship_shields": "Štíty:", "label_ship_fuel": "Palivo:", "label_ship_cargo": "Náklad:", "label_ship_speed": "Rychlost:",
+            "title_comms_channel": "Kom. Kanál", "label_comms_status": "Kanál:",
+            "title_active_directive": "Direktiva", "label_directive_details": "Úkol:", "label_directive_reward": "Odměna:", "label_directive_status": "Stav:", "label_alert_level": "Výstraha:",
+            "title_navigation_data": "NavData", "label_current_location": "Pozice:", "label_system_faction": "Frakce:", "label_environment": "Prostředí:", "label_sensor_conditions": "Senzory:", "label_stardate": "Hvězdné datum:",
+            "title_enemy_intel": "Nepřítel Info", "label_enemy_ship_type": "Typ Cíle:", "label_enemy_shields": "Štíty Cíle:", "label_enemy_hull": "Trup Cíle:",
+            "placeholder_callsign_login": "Zadejte volací znak...", "placeholder_command": "Zadejte příkaz...", "button_access_systems": "Připojit k Systému", "button_execute_command": "Odeslat",
+            "status_ok": "V provozu", "status_warning": "Pozor", "status_danger": "Kritické", "status_error": "Chyba systému", "unknown": "Neznámý", "standby": "Pohotovost", "online": "Online", "offline": "Offline", "none": "Žádný", "not_available_short": "N/A", "cargo_empty_scu": "Prázdný / 0 SCU", "comms_inactive": "Neaktivní", "objective_none": "Žádný aktivní úkol.", "status_idle": "Nečinný",
+            "initializing": "Inicializuji...", "connecting": "Ověřuji totožnost: {PLAYER_ID}", "active": "Aktivní", "failed": "Selhání",
+            "system_lang_set_en": "Systém: UI a Příběh nastaveny na ANGLIČTINU.", "system_lang_set_cs": "Systém: UI a Příběh nastaveny na ČEŠTINU.",
+            "alert_level_green": "Stav Zelený", "alert_level_yellow": "Stav Žlutý", "alert_level_red": "Stav Červený", "alert_level_info": "Stav Nominální",
+            "alert_level_green_val": "Zelená", "alert_level_yellow_val": "Žlutá", "alert_level_red_val": "Červená", "alert_level_info_val": "Nominální",
+            "activity_exploring": "Průzkum", "activity_fighting": "Boj", "activity_communicating": "Komunikace Aktivní",
+            "button_new_game": "Nová Hra", "aria_label_new_game": "Začít novou hru",
+            "confirm_new_game": "Začít novou hru? Postup v aktuálním tématu bude ztracen.",
+            "confirm_new_game_theme_scifi": "Začít nové Sci-Fi dobrodružství? Aktuální Sci-Fi postup bude ztracen.", "confirm_new_game_theme_fantasy": "Začít nové Fantasy dobrodružství? Aktuální Fantasy postup bude ztracen.",
+            "label_toggle_model": "Model", "aria_label_toggle_model_generic": "Přepnout AI Model",
+            "button_toggle_to_free": "Model Zdarma", "button_toggle_to_paid": "Placený Model",
+            "aria_label_current_model_paid": "Používáte Placený AI. Přepnout na Zdarma.", "aria_label_current_model_free": "Používáte Zdarma AI. Přepnout na Placený.",
+            "system_model_set_paid": "Systém: Přepnuto na Placený AI Model ({MODEL_NAME}).", "system_model_set_free": "Systém: Přepnuto na Model Zdarma ({MODEL_NAME}).",
+            "system_session_resumed": "Vítejte zpět, {PLAYER_ID}! Relace obnovena pro {THEME_NAME}.",
+            "system_theme_set_scifi": "Systém: Sci-Fi téma aktivováno. Nahrávám zdroje...", "system_theme_set_fantasy": "Systém: Fantasy téma aktivováno. Nahrávám zdroje...",
+            "system_new_game_initiated": "Systém: Zahájena sekvence nové hry ({THEME_NAME}).", "prompt_enter_api_key": "Vítejte! Zadejte prosím svůj Google Gemini API klíč:", "alert_api_key_required":"Je vyžadován Gemini API klíč. Obnovte stránku a zadejte klíč.", "error_critical_no_api_key":"KRITICKÉ: Gemini API klíč nebyl zadán. Aplikace se nemůže připojit k AI.", "error_saving_progress": "Systém: Chyba při ukládání postupu hry.", "error_reconstruct_story": "Chyba: Nelze rekonstruovat část příběhu.", "error_load_prompt_file": "SYSTÉMOVÁ CHYBA: Nelze načíst skript: {THEME}/{PROMPT_NAME}.", "error_no_prompts_for_theme":"SYSTÉMOVÁ CHYBA: Skripty pro téma \"{THEME}\" nejsou nakonfigurovány.", "error_api_call_failed":"SYSTÉMOVÁ CHYBA: {ERROR_MSG}", "alert_identifier_required": "Zadejte prosím svůj identifikátor (jméno/volací znak).", "error_session_init_failed": "Nepodařilo se inicializovat relaci. Zkontrolujte konzoli a zkuste to znovu.", "error_load_prompts_critical": "KRITICKÉ: Nepodařilo se načíst základní herní skripty pro téma \"{THEME}\". Nelze pokračovat."
+        }
+    },
+    fantasy: {
+        en: { 
+            "theme_name": "Fantasy", "toggle_language": "Česky", "aria_label_toggle_language": "Switch to Czech",
+            "system_status_online_short": "Magic Active", "system_processing_short": "Divining...",
+            "title_character_overview": "Character", "label_character_name": "Name:", "label_character_class": "Class:", "label_character_level": "Level:", "label_gold": "Gold:",
+            "title_character_vitals": "Vitals", "label_hp": "Health:", "label_mana": "Mana:", "label_stamina": "Stamina:", "label_equipped_weapon": "Weapon:", "label_equipped_armor": "Armor:",
+            "title_quest_log": "Quest Log", "label_current_quest": "Current Quest:", "label_quest_reward": "Reward:", "label_quest_status": "Status:", "label_alert_level_fantasy": "Awareness:",
+            "title_enemy_focus": "Enemy Focus", "label_enemy_name": "Enemy:", "label_enemy_hp": "Enemy Health:",
+            "placeholder_callsign_login": "Enter Character Name...", "placeholder_command": "Declare action...", "button_access_systems": "Begin Adventure", "button_execute_command": "Declare",
+            "status_ok": "Stable", "status_warning": "Wary", "status_danger": "Peril", "status_error": "Curse Active", "unknown": "Obscured", "standby": "Ready", "online": "Awake", "offline": "Dormant", "none": "None", "not_available_short": "N/A", "objective_none": "No active quest.", "status_idle": "Resting",
+            "initializing": "Awakening...", "connecting": "Known as: {PLAYER_ID}", "active": "Engaged", "failed": "Defeated",
+            "system_lang_set_en": "System: Scrolls and whispers now in ENGLISH.", "system_lang_set_cs": "System: Scrolls and whispers now in CZECH.",
+            "alert_level_calm": "Calm", "alert_level_wary": "Wary", "alert_level_danger": "Danger!", "alert_level_info": "Situation Normal",
+            "alert_level_calm_val": "Calm", "alert_level_wary_val": "Wary", "alert_level_danger_val": "Danger", "alert_level_info_val": "Normal",
+            "activity_exploring": "Exploring", "activity_fighting": "Combat", "activity_communicating": "Speaking",
+            "button_new_game": "New Tale", "aria_label_new_game": "Start a new tale",
+            "confirm_new_game": "Begin new tale? Progress in the current realm will be lost.",
+            "confirm_new_game_theme_scifi": "Start new Sci-Fi adventure? Current Sci-Fi progress will be lost.", "confirm_new_game_theme_fantasy": "Start new Fantasy adventure? Current Fantasy progress will be lost.",
+            "label_toggle_model": "Oracle", "aria_label_toggle_model_generic": "Toggle Oracle Source",
+            "button_toggle_to_free": "Free Oracle", "button_toggle_to_paid": "True Oracle",
+            "aria_label_current_model_paid": "Using True Oracle. Switch to Free.", "aria_label_current_model_free": "Using Free Oracle. Switch to True.",
+            "system_model_set_paid": "System: Switched to True Oracle ({MODEL_NAME}).", "system_model_set_free": "System: Switched to Free Oracle ({MODEL_NAME}).",
+            "system_session_resumed": "Welcome back, {PLAYER_ID}! Your legend continues in {THEME_NAME}.",
+            "system_theme_set_scifi": "System: Sci-Fi theme activated. Loading assets...", "system_theme_set_fantasy": "System: Fantasy theme activated. Loading assets...",
+            "system_new_game_initiated": "System: New {THEME_NAME} tale begins.", "prompt_enter_api_key": "Welcome! Please enter your Google Gemini API Key:", "alert_api_key_required":"Gemini API Key is required. Please refresh and provide a key.", "error_critical_no_api_key":"CRITICAL: Gemini API Key not provided. Application cannot connect to AI.", "error_saving_progress": "System: Error saving game progress.", "error_reconstruct_story": "Error: Could not reconstruct part of the story.", "error_load_prompt_file": "SYSTEM ERROR: Could not load prompt: {THEME}/{PROMPT_NAME}.", "error_no_prompts_for_theme":"SYSTEM ERROR: Prompts for theme \"{THEME}\" are not configured.", "error_api_call_failed":"SYSTEM ERROR: {ERROR_MSG}", "alert_identifier_required": "Please enter your identifier (name/callsign).", "error_session_init_failed": "Failed to initialize session. Please check panel and try again.", "error_load_prompts_critical": "CRITICAL: Essential game prompts for theme \"{THEME}\" failed to load. Cannot continue."
+        },
+        cs: { 
+            "theme_name": "Fantasy", "toggle_language": "English", "aria_label_toggle_language": "Přepnout do angličtiny",
+            "system_status_online_short": "Magie Aktivní", "system_processing_short": "Věštím...",
+            "title_character_overview": "Postava", "label_character_name": "Jméno:", "label_character_class": "Třída:", "label_character_level": "Úroveň:", "label_gold": "Zlaťáky:",
+            "title_character_vitals": "Životní síly", "label_hp": "Zdraví:", "label_mana": "Mana:", "label_stamina": "Výdrž:", "label_equipped_weapon": "Zbraň:", "label_equipped_armor": "Zbroj:",
+            "title_quest_log": "Deník Úkolů", "label_current_quest": "Aktuální Úkol:", "label_quest_reward": "Odměna:", "label_quest_status": "Stav:", "label_alert_level_fantasy": "Ostražitost:",
+            "title_enemy_focus": "Zaměření na Nepřítele", "label_enemy_name": "Nepřítel:", "label_enemy_hp": "Zdraví Nepřítele:",
+            "placeholder_callsign_login": "Zadejte jméno postavy...", "placeholder_command": "Popište akci...", "button_access_systems": "Začít Dobrodružství", "button_execute_command": "Provést",
+            "status_ok": "Stabilní", "status_warning": "Obezřetný", "status_danger": "Nebezpečí", "status_error": "Kletba Aktivní", "unknown": "Zahalené", "standby": "Připraven", "online": "Vzhůru", "offline": "Spící", "none": "Žádné", "not_available_short": "N/A", "objective_none": "Žádný aktivní úkol.", "status_idle": "Odpočívám",
+            "initializing": "Probouzím se...", "connecting": "Známý jako: {PLAYER_ID}", "active": "V akci", "failed": "Poražen",
+            "system_lang_set_en": "Systém: Svityky a šepot nyní v ANGLIČTINĚ.", "system_lang_set_cs": "Systém: Svityky a šepot nyní v ČEŠTINĚ.",
+            "alert_level_calm": "Klid", "alert_level_wary": "Ostražitý", "alert_level_danger": "Nebezpečí!", "alert_level_info": "Situace Normální",
+            "alert_level_calm_val": "Klid", "alert_level_wary_val": "Ostražitý", "alert_level_danger_val": "Nebezpečí", "alert_level_info_val": "Normální",
+            "activity_exploring": "Průzkum", "activity_fighting": "Boj", "activity_communicating": "Rozmluva",
+            "button_new_game": "Nový Příběh", "aria_label_new_game": "Začít nový příběh",
+            "confirm_new_game": "Začít nový příběh? Postup v aktuální říši bude ztracen.",
+            "confirm_new_game_theme_scifi": "Začít nové Sci-Fi dobrodružství? Aktuální Sci-Fi postup bude ztracen.", "confirm_new_game_theme_fantasy": "Začít nové Fantasy dobrodružství? Aktuální Fantasy postup bude ztracen.",
+            "label_toggle_model": "Věštba", "aria_label_toggle_model_generic": "Přepnout Zdroj Věštby",
+            "button_toggle_to_free": "Věštba Zdarma", "button_toggle_to_paid": "Pravá Věštba",
+            "aria_label_current_model_paid": "Používáte Pravou Věštbu. Přepnout na Zdarma.", "aria_label_current_model_free": "Používáte Věštbu Zdarma. Přepnout na Pravou.",
+            "system_model_set_paid": "Systém: Přepnuto na Pravou Věštbu ({MODEL_NAME}).", "system_model_set_free": "Systém: Přepnuto na Věštbu Zdarma ({MODEL_NAME}).",
+            "system_session_resumed": "Vítejte zpět, {PLAYER_ID}! Vaše legenda pokračuje v {THEME_NAME}.",
+            "system_theme_set_scifi": "Systém: Sci-Fi téma aktivováno. Nahrávám zdroje...", "system_theme_set_fantasy": "Systém: Fantasy téma aktivováno. Nahrávám zdroje...",
+            "system_new_game_initiated": "Systém: Začíná nový příběh ({THEME_NAME}).", "prompt_enter_api_key": "Vítejte! Zadejte prosím svůj Google Gemini API klíč:", "alert_api_key_required":"Je vyžadován Gemini API klíč. Obnovte stránku a zadejte klíč.", "error_critical_no_api_key":"KRITICKÉ: Gemini API klíč nebyl zadán. Aplikace se nemůže připojit k AI.", "error_saving_progress": "Systém: Chyba při ukládání postupu hry.", "error_reconstruct_story": "Chyba: Nelze rekonstruovat část příběhu.", "error_load_prompt_file": "SYSTÉMOVÁ CHYBA: Nelze načíst skript: {THEME}/{PROMPT_NAME}.", "error_no_prompts_for_theme":"SYSTÉMOVÁ CHYBA: Skripty pro téma \"{THEME}\" nejsou nakonfigurovány.", "error_api_call_failed":"SYSTÉMOVÁ CHYBA: {ERROR_MSG}", "alert_identifier_required": "Zadejte prosím svůj identifikátor (jméno/volací znak).", "error_session_init_failed": "Nepodařilo se inicializovat relaci. Zkontrolujte konzoli a zkuste to znovu.", "error_load_prompts_critical": "KRITICKÉ: Nepodařilo se načíst základní herní skripty pro téma \"{THEME}\". Nelze pokračovat."
+        }
+    }
+};
+
+// Narrative Language Instructions for AI Prompts
+const NARRATIVE_LANG_PROMPT_PARTS_BY_THEME = {
+    scifi: {
+        en: `This narrative must be written in fluent, immersive English, suitable for a high-quality sci-fi novel. Dialogue should be natural.`,
+        cs: `Tento příběh musí být napsán plynulou, poutavou češtinou, vhodnou pro kvalitní sci-fi román. Dialogy by měly být přirozené.`
+    },
+    fantasy: {
+        en: `This narrative must be written in fluent, immersive English, suitable for a high-quality fantasy novel. Dialogue should be epic and archaic or modern as appropriate.`,
+        cs: `Tento příběh musí být napsán plynulou, poutavou češtinou, vhodnou pro kvalitní fantasy román. Dialogy by měly být epické a archaické nebo moderní podle potřeby.`
+    }
+};

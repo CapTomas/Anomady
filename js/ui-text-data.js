@@ -1,5 +1,65 @@
 // --- UI Text Data (Localization) ---
-const uiTextData = {
+    const uiTextData = {
+        landing: {
+            en: {
+                // Generic Landing Page UI
+                "landing_theme_description_title": "World Profile",
+                "landing_theme_info_title": "Scenario Briefing",
+                "landing_select_theme_prompt_lore": "Select a scenario from the grid to view its background.",
+                "landing_select_theme_prompt_details": "Select a scenario to view its parameters and objectives.",
+                "landing_theme_setting_label": "Setting",
+                "landing_theme_details_label": "Overview",
+                "landing_choose_theme_button": "Engage This Scenario",
+                "alert_select_theme_first": "Please select a theme scenario from the grid first.",
+                "aria_label_like_theme": "Add to Favorites",
+                "aria_label_unlike_theme": "Remove from Favorites",
+                "toggle_language": "Česky",
+                "aria_label_toggle_language": "Switch to Czech",
+    
+                // Sci-Fi Theme specific text FOR LANDING PAGE
+                "theme_name_scifi": "Stellar Anomaly", 
+                "theme_lore_scifi": "In the year 2247, humanity has scattered across the stars. You are a captain on the fringes of known space, where strange signals and ancient mysteries await. Every jump could be your last, or your greatest discovery.",
+                "theme_setting_scifi": "Deep Space, Far Future",
+                "theme_details_scifi": "Navigate treacherous asteroid fields, encounter alien civilizations, and upgrade your starship. Resource management, tactical combat, and compelling narrative choices define this sci-fi adventure.",
+                "theme_icon_alt_text_default_scifi": "Stellar Anomaly Scenario",
+    
+                // Fantasy Theme specific text FOR LANDING PAGE
+                "theme_name_fantasy": "Whispers of Eldoria",
+                "theme_lore_fantasy": "The ancient kingdom of Eldoria is shrouded in mist and fading magic. Prophecies speak of a hero who will rise to challenge the encroaching darkness. Your journey begins in a humble village, unaware of the destiny that awaits.",
+                "theme_setting_fantasy": "Medieval Fantasy World",
+                "theme_details_fantasy": "Explore forgotten ruins, master powerful spells, and battle mythical creatures. Your choices will shape the fate of Eldoria. Features deep lore, character progression, and impactful decisions.",
+                "theme_icon_alt_text_default_fantasy": "Whispers of Eldoria Adventure"
+            },
+            cs: {
+                // Generic Landing Page UI
+                "landing_theme_description_title": "Profil Světa",
+                "landing_theme_info_title": "Přehled Scénáře",
+                "landing_select_theme_prompt_lore": "Vyberte scénář z mřížky pro zobrazení jeho pozadí.",
+                "landing_select_theme_prompt_details": "Vyberte scénář pro zobrazení jeho parametrů a cílů.",
+                "landing_theme_setting_label": "Prostředí",
+                "landing_theme_details_label": "Přehled",
+                "landing_choose_theme_button": "Spustit Scénář",
+                "alert_select_theme_first": "Prosím, nejprve vyberte tématický scénář z mřížky.",
+                "aria_label_like_theme": "Přidat k oblíbeným",
+                "aria_label_unlike_theme": "Odebrat z oblíbených",
+                "toggle_language": "English",
+                "aria_label_toggle_language": "Přepnout do angličtiny",
+    
+                // Sci-Fi Theme specific text FOR LANDING PAGE (Czech)
+                "theme_name_scifi": "Hvězdná Anomálie",
+                "theme_lore_scifi": "V roce 2247 se lidstvo rozprchlo mezi hvězdy. Jste kapitán na okraji známého vesmíru, kde čekají podivné signály a prastaré záhady. Každý skok může být váš poslední, nebo váš největší objev.",
+                "theme_setting_scifi": "Hluboký Vesmír, Daleká Budoucnost",
+                "theme_details_scifi": "Proplouvejte zrádnými poli asteroidů, setkávejte se s mimozemskými civilizacemi a vylepšujte svou hvězdnou loď. Správa zdrojů, taktický boj a poutavé narativní volby definují toto sci-fi dobrodružství.",
+                "theme_icon_alt_text_default_scifi": "Scénář Hvězdná Anomálie",
+    
+                // Fantasy Theme specific text FOR LANDING PAGE (Czech)
+                "theme_name_fantasy": "Šepoty Eldorie",
+                "theme_lore_fantasy": "Starobylé království Eldoria je zahaleno mlhou a slábnoucí magií. Proroctví hovoří o hrdinovi, který povstane, aby vyzval blížící se temnotu. Vaše cesta začíná v poklidné vesnici, aniž byste tušili osud, který na vás čeká.",
+                "theme_setting_fantasy": "Středověký Fantasy Svět",
+                "theme_details_fantasy": "Prozkoumejte zapomenuté ruiny, ovládněte mocná kouzla a bojujte s mýtickými stvořeními. Vaše volby budou formovat osud Eldorie. Obsahuje hluboký příběh, vývoj postavy a významná rozhodnutí.",
+                "theme_icon_alt_text_default_fantasy": "Dobrodružství Šepoty Eldorie"
+            }
+        },
     scifi: {
         en: {
             "theme_name": "Sci-Fi", "toggle_language": "Česky", "aria_label_toggle_language": "Switch to Czech",
@@ -144,7 +204,7 @@ const uiTextData = {
         },
         cs: { 
             "theme_name": "Fantasy", "toggle_language": "English", "aria_label_toggle_language": "Přepnout do angličtiny",
-            "theme_name_fantasy": "Šepoty Eldorie", // Příklad
+            "theme_name_fantasy": "Šepoty Eldorie", 
             "theme_lore_fantasy": "Starobylé království Eldoria je zahaleno mlhou a slábnoucí magií. Proroctví hovoří o hrdinovi, který povstane, aby vyzval blížící se temnotu. Vaše cesta začíná v poklidné vesnici, aniž byste tušili osud, který na vás čeká.",
             "theme_setting_fantasy": "Středověký Fantasy Svět",
             "theme_details_fantasy": "Prozkoumejte zapomenuté ruiny, ovládněte mocná kouzla a bojujte s mýtickými stvořeními. Vaše volby budou formovat osud Eldorie. Obsahuje hluboký příběh, vývoj postavy a významná rozhodnutí.",

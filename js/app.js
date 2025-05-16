@@ -138,19 +138,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Core Utility Functions ---
-    function getUIText(key, replacements = {}) {
-        // Use currentTheme if available for theme-specific UI text, otherwise default to a general context (e.g., DEFAULT_THEME_ID or a dedicated 'app' context)
-        const themeForUI = currentTheme || DEFAULT_THEME_ID;
-        let text = uiTextData[themeForUI]?.[currentAppLanguage]?.[key] ||
-            uiTextData[themeForUI]?.en?.[key] ||
-            uiTextData[DEFAULT_THEME_ID]?.[currentAppLanguage]?.[key] || // Fallback to default theme
-            uiTextData[DEFAULT_THEME_ID]?.en?.[key] ||
-            key; // Fallback to key itself
-        for (const placeholder in replacements) {
-            text = text.replace(new RegExp(`{${placeholder}}`, 'g'), replacements[placeholder]);
-        }
-        return text;
+// --- Core Utility Functions ---
+function getUIText(key, replacements = {}, explicitThemeContext = null) {
+    let text;
+    const onLandingPage = document.body.classList.contains('landing-page-active');
+
+    if (explicitThemeContext) { // Highest priority: if an explicit theme context is given
+        text = uiTextData[explicitThemeContext]?.[currentAppLanguage]?.[key] ||
+               uiTextData[explicitThemeContext]?.en?.[key];
+    } else if (onLandingPage && uiTextData.landing) { // Next: if on landing, try 'landing' context
+        text = uiTextData.landing[currentAppLanguage]?.[key] ||
+               uiTextData.landing.en?.[key];
     }
+
+    // If not found by explicit or landing context, try currentTheme/defaultTheme
+    if (!text) {
+        const themeForUI = currentTheme || DEFAULT_THEME_ID;
+        text = uiTextData[themeForUI]?.[currentAppLanguage]?.[key] ||
+               uiTextData[themeForUI]?.en?.[key];
+    }
+    
+    // A final global fallback if you had a 'common' section
+    // if (!text && uiTextData.common) {
+    // text = uiTextData.common[currentAppLanguage]?.[key] || uiTextData.common.en?.[key];
+    // }
+
+    text = text || key; // Fallback to key itself
+
+    for (const placeholder in replacements) {
+        text = text.replace(new RegExp(`{${placeholder}}`, 'g'), replacements[placeholder]);
+    }
+    return text;
+}
 
     function setupApiKey() {
         GEMINI_API_KEY = localStorage.getItem('userGeminiApiKey');
@@ -886,51 +905,57 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function createThemeTopbarIcon(themeId, type) { // type is now more of a HINT for styling 'active'
+    function createThemeTopbarIcon(themeId, type) {
         const themeConfig = ALL_THEMES_CONFIG[themeId];
         if (!themeConfig) return null;
-
-        const isCurrentlyPlaying = isThemePlaying(themeId); // Primary determinant for section
+    
+        // ... (isCurrentlyPlaying, isCurrentlyLiked logic as before) ...
+        const isCurrentlyPlaying = isThemePlaying(themeId);
         const isCurrentlyLiked = isThemeLiked(themeId);
-
+    
         const button = document.createElement('button');
         button.classList.add('theme-button');
         
-        // The 'active' class is for the theme that matches `currentTheme` (the one in game view)
         if (isCurrentlyPlaying && themeId === currentTheme) {
             button.classList.add('active');
         }
         button.dataset.theme = themeId;
-        // dataset.type could indicate 'playing' or 'liked' based on where it's rendered by updateTopbarThemeIcons
-        // but the click handler logic will mainly use isThemePlaying and isThemeLiked.
-
-        const themeNameText = getUIText(themeConfig.name_key);
+    
+        // CRITICAL: For topbar icons, always get the theme name from ITS OWN context.
+        // The `name_key` (e.g., 'theme_name_scifi') should exist in `uiTextData.scifi` (for in-game canonical name)
+        // AND in `uiTextData.landing` (for how it's displayed on landing).
+        // For topbar, it's best to use the theme's own direct translation.
+        const themeNameText = getUIText(themeConfig.name_key, {}, themeId); // Pass themeId as explicit context
+    
         let statusText = "";
         if (isCurrentlyPlaying) {
+            // The 'theme_icon_alt_text_playing' key should be generic or in a common/app section.
+            // Or, if it varies per theme even when "playing", then it needs a themeId context too.
+            // Let's assume it's generic for now.
             statusText = getUIText('theme_icon_alt_text_playing');
         } else if (isCurrentlyLiked) {
             statusText = getUIText('theme_icon_alt_text_liked');
         }
         button.title = `${themeNameText}${statusText ? ` (${statusText})` : ''}`;
-
-
+    
         const img = document.createElement('img');
         img.src = themeConfig.icon;
-        img.alt = button.title;
+        img.alt = button.title; // Alt text can be same as title for simplicity here
         button.appendChild(img);
-
+    
         const closeBtn = document.createElement('button');
         closeBtn.classList.add('theme-button-close');
-        closeBtn.innerHTML = '×'; 
+        closeBtn.innerHTML = '×';
+        // For close button, use the themeNameText derived above with its specific context
         closeBtn.title = getUIText('close_theme_button_aria_label', {THEME_NAME: themeNameText});
         closeBtn.setAttribute('aria-label', closeBtn.title);
         closeBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); 
-            handleCloseTopbarIcon(themeId); // Use the new handler
+            e.stopPropagation();
+            handleCloseTopbarIcon(themeId);
         });
         button.appendChild(closeBtn);
-
-        button.addEventListener('click', () => handleTopbarThemeIconClick(themeId)); // Simplified click handler
+    
+        button.addEventListener('click', () => handleTopbarThemeIconClick(themeId));
         return button;
     }
 
@@ -989,67 +1014,89 @@ document.addEventListener('DOMContentLoaded', () => {
         addMessageToLog(getUIText(msgKey, { MODEL_NAME: currentModelName }), 'system');
     }
 
-    function setAppLanguageAndThemeUI(lang, themeIdForUIContext) { // Renamed to avoid conflict
+    function setAppLanguageAndThemeUI(lang, themeIdForUIContextIfGameActive) {
         currentAppLanguage = lang; localStorage.setItem(LANGUAGE_PREFERENCE_STORAGE_KEY, lang);
         if (document.documentElement) document.documentElement.lang = lang;
-
-        // Set body class based on actual currentTheme if game is active, or default for landing
-        const bodyTheme = currentTheme || DEFAULT_THEME_ID;
+    
+        const onLandingPage = document.body.classList.contains('landing-page-active');
         document.body.className = ''; // Clear existing theme classes
-        document.body.classList.add(`theme-${bodyTheme}`);
-        if (!currentTheme) document.body.classList.add('landing-page-active'); // Specific class for landing styling
-        else document.body.classList.remove('landing-page-active');
-
-
-        if (languageToggleButton) {
-            const otherLang = lang === 'en' ? 'cs' : 'en';
-            languageToggleButton.textContent = uiTextData[themeIdForUIContext]?.[otherLang]?.toggle_language || (otherLang === 'cs' ? 'Česky' : 'English');
-            const ariaToggleKey = `aria_label_toggle_language`;
-            const toggleAria = uiTextData[themeIdForUIContext]?.[otherLang]?.[ariaToggleKey] || `Switch to ${otherLang}`;
-            languageToggleButton.setAttribute('aria-label', toggleAria); languageToggleButton.title = toggleAria;
+        if (onLandingPage) {
+            document.body.classList.add('landing-page-active');
+            document.body.classList.add(`theme-landing`);
+        } else if (currentTheme) {
+            document.body.classList.add(`theme-${currentTheme}`);
+        } else {
+             document.body.classList.add(`theme-${DEFAULT_THEME_ID}`);
         }
-
+    
+        // For global UI elements like language toggle, new game button, model toggle,
+        // getUIText will now correctly use the 'landing' context if on landing,
+        // or the currentTheme context if in-game.
+        if (languageToggleButton) {
+            // The key "toggle_language" should exist in uiTextData.landing and in each theme's data.
+            // The text content of the button should be the name of the OTHER language.
+            const otherLangKeyForButtonText = currentAppLanguage === 'en' ? uiTextData.landing?.cs?.toggle_language || "Česky" : uiTextData.landing?.en?.toggle_language || "English";
+            languageToggleButton.textContent = otherLangKeyForButtonText;
+            
+            const ariaToggleKey = `aria_label_toggle_language`;
+            languageToggleButton.setAttribute('aria-label', getUIText(ariaToggleKey));
+            languageToggleButton.title = getUIText(ariaToggleKey);
+        }
+    
         if (newGameButton) { newGameButton.textContent = getUIText('button_new_game'); newGameButton.title = getUIText('aria_label_new_game'); newGameButton.setAttribute('aria-label', getUIText('aria_label_new_game')); }
-        if (modelToggleButton) modelToggleButton.title = getUIText('aria_label_toggle_model_generic'); // Generic as it's not theme dependent
-
-        // Status indicators can use default theme texts if no currentTheme
+        if (modelToggleButton) modelToggleButton.title = getUIText('aria_label_toggle_model_generic');
+    
         if (systemStatusIndicator) systemStatusIndicator.textContent = getUIText(systemStatusIndicator.dataset.langKey || 'system_status_online_short');
         if (gmSpecificActivityIndicator) gmSpecificActivityIndicator.textContent = getUIText(gmSpecificActivityIndicator.dataset.langKey || 'system_processing_short');
-
-        // Update panel titles and labels if in game view
-        if (currentTheme) {
+    
+        if (!onLandingPage && currentTheme) { // In-game specific UI updates
             const currentThemeFullCfg = ALL_THEMES_CONFIG[currentTheme];
-            const dashboardCfg = THEME_DASHBOARD_CONFIGS[currentThemeFullCfg.dashboard_config_ref];
-            if (dashboardCfg) {
-                ['left_panel', 'right_panel'].forEach(sideKey => {
-                    if (!dashboardCfg[sideKey]) return;
-                    dashboardCfg[sideKey].forEach(boxCfg => {
-                        const titleEl = document.querySelector(`#${boxCfg.id} .panel-box-title`);
-                        if (titleEl) titleEl.textContent = getUIText(boxCfg.title_key);
-                        boxCfg.items.forEach(itemCfg => {
-                            const labelEl = document.querySelector(`#info-item-container-${itemCfg.id} .label`);
-                            if (labelEl) labelEl.textContent = getUIText(itemCfg.label_key);
+            if (currentThemeFullCfg) {
+                const dashboardCfgRef = currentThemeFullCfg.dashboard_config_ref;
+                const dashboardCfg = THEME_DASHBOARD_CONFIGS[dashboardCfgRef];
+                if (dashboardCfg) {
+                    ['left_panel', 'right_panel'].forEach(sideKey => {
+                        if (!dashboardCfg[sideKey]) return;
+                        dashboardCfg[sideKey].forEach(boxCfg => {
+                            const titleEl = document.querySelector(`#${boxCfg.id} .panel-box-title`);
+                            if (titleEl) titleEl.textContent = getUIText(boxCfg.title_key, {}, currentTheme);
+                            boxCfg.items.forEach(itemCfg => {
+                                const labelEl = document.querySelector(`#info-item-container-${itemCfg.id} .label`);
+                                if (labelEl) labelEl.textContent = getUIText(itemCfg.label_key, {}, currentTheme);
+                            });
                         });
                     });
-                });
+                }
             }
-        } else { // Update landing page panel titles
-            const descTitle = landingThemeDescriptionContainer.querySelector('.panel-box-title');
-            if (descTitle) descTitle.textContent = getUIText('landing_theme_description_title');
-            const detailsTitle = landingThemeDetailsContainer.querySelector('.panel-box-title');
-            if (detailsTitle) detailsTitle.textContent = getUIText('landing_theme_info_title');
+            initializeDashboardDefaultTexts();
+        } else if (onLandingPage) {
+            // ** NEW: Re-render the theme grid to update its text **
+            renderThemeGrid();
+            // Re-highlight the selected grid icon if one was selected
+            if (currentLandingGridSelection && themeGridContainer) {
+                const selectedBtn = themeGridContainer.querySelector(`.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`);
+                if (selectedBtn) selectedBtn.classList.add('active');
+            }
+            // Landing page panel titles are set by updateLandingPagePanels / switchToLandingView
         }
-
+    
         if (playerIdentifierInputEl) playerIdentifierInputEl.placeholder = getUIText('placeholder_callsign_login');
         if (startGameButton) startGameButton.textContent = getUIText('button_access_systems');
         if (playerActionInput) playerActionInput.placeholder = getUIText('placeholder_command');
         if (sendActionButton) sendActionButton.textContent = getUIText('button_execute_command');
-
-        if (currentTheme) initializeDashboardDefaultTexts(); // Only if a game is active
+    
         updateModelToggleButtonText();
-        updateTopbarThemeIcons(); // Re-render topbar icons with new lang titles
-        if (!currentTheme && currentLandingGridSelection) { // If on landing page, re-render selected theme info
-            updateLandingPagePanels(currentLandingGridSelection, false); // Don't re-animate panels
+        updateTopbarThemeIcons();
+    
+        if (onLandingPage && currentLandingGridSelection) {
+            updateLandingPagePanels(currentLandingGridSelection, false); // false: don't re-animate
+        } else if (onLandingPage) {
+            landingThemeLoreText.textContent = getUIText('landing_select_theme_prompt_lore');
+            landingThemeInfoContent.innerHTML = `<p>${getUIText('landing_select_theme_prompt_details')}</p>`;
+            const descTitle = landingThemeDescriptionContainer.querySelector('.panel-box-title');
+            if (descTitle) descTitle.textContent = getUIText('landing_theme_description_title');
+            const detailsTitle = landingThemeDetailsContainer.querySelector('.panel-box-title');
+            if (detailsTitle) detailsTitle.textContent = getUIText('landing_theme_info_title');
         }
     }
 
@@ -1402,83 +1449,68 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
         playerIdentifier = '';
         gameHistory = [];
-
+    
         document.body.classList.add('landing-page-active');
         document.body.classList.remove(...Array.from(document.body.classList).filter(cn => cn.startsWith('theme-')));
-        document.body.classList.add(`theme-${DEFAULT_THEME_ID}`);
-
+    
         storyLogViewport.style.display = 'none';
         suggestedActionsWrapper.style.display = 'none';
         playerInputControlPanel.style.display = 'none';
         nameInputSection.style.display = 'none';
         actionInputSection.style.display = 'none';
-
-        // Clear game panels first to ensure clean sidebars
+    
         const gameLeftPanelContent = Array.from(leftPanel.children).filter(el => el.id !== 'landing-theme-description-container');
         gameLeftPanelContent.forEach(el => el.remove());
         const gameRightPanelContent = Array.from(rightPanel.children).filter(el => el.id !== 'landing-theme-details-container');
         gameRightPanelContent.forEach(el => el.remove());
-
+    
         themeGridContainer.style.display = 'grid';
-
-        // Ensure landing panel containers are present and visible
+    
         landingThemeDescriptionContainer.style.display = 'flex';
         landingThemeDetailsContainer.style.display = 'flex';
-
+    
         if (!leftPanel.contains(landingThemeDescriptionContainer)) {
             leftPanel.appendChild(landingThemeDescriptionContainer);
         }
         if (!rightPanel.contains(landingThemeDetailsContainer)) {
             rightPanel.appendChild(landingThemeDetailsContainer);
         }
-
-        const descTitle = landingThemeDescriptionContainer.querySelector('.panel-box-title');
-        if (descTitle) descTitle.textContent = getUIText('landing_theme_description_title');
+    
+        // getUIText will now correctly use the 'landing' context because 'landing-page-active' is set
         landingThemeLoreText.textContent = getUIText('landing_select_theme_prompt_lore');
-
-        const detailsTitle = landingThemeDetailsContainer.querySelector('.panel-box-title');
-        if (detailsTitle) detailsTitle.textContent = getUIText('landing_theme_info_title');
         landingThemeInfoContent.innerHTML = `<p>${getUIText('landing_select_theme_prompt_details')}</p>`;
         landingThemeActions.style.display = 'none';
         landingThemeActions.innerHTML = '';
-
-        // --- CRITICAL FIX: Add IDs to the .panel-box elements within landing containers if not already ---
-        // Assuming your HTML for landing panels is:
-        // <div id="landing-theme-description-container"> <div class="panel-box" id="landing-lore-panel"> ... </div> </div>
-        // If the .panel-box doesn't have an ID, animatePanelBox won't find it.
-        // Let's assume the container IDs ARE the box IDs for simplicity or assign them:
+    
+        // Set initial panel titles from 'landing' context
+        const descTitle = landingThemeDescriptionContainer.querySelector('.panel-box-title');
+        if (descTitle) descTitle.textContent = getUIText('landing_theme_description_title'); // Generic title for landing
+        const detailsTitle = landingThemeDetailsContainer.querySelector('.panel-box-title');
+        if (detailsTitle) detailsTitle.textContent = getUIText('landing_theme_info_title'); // Generic title for landing
+    
         const lorePanelBox = landingThemeDescriptionContainer.querySelector('.panel-box');
-        if (lorePanelBox && !lorePanelBox.id) lorePanelBox.id = 'landing-lore-panel-box'; // Assign ID if missing
+        if (lorePanelBox && !lorePanelBox.id) lorePanelBox.id = 'landing-lore-panel-box';
+        if (lorePanelBox && lorePanelBox.id) animatePanelBox(lorePanelBox.id, true, false);
+        initializeSpecificPanelHeader(landingThemeDescriptionContainer);
+    
         const detailsPanelBox = landingThemeDetailsContainer.querySelector('.panel-box');
-        if (detailsPanelBox && !detailsPanelBox.id) detailsPanelBox.id = 'landing-details-panel-box'; // Assign ID if missing
-
-        // Expand them and add click listeners
-        const lorePanelBoxInContainer = landingThemeDescriptionContainer.querySelector('.panel-box');
-        if (lorePanelBoxInContainer) {
-            if (!lorePanelBoxInContainer.id) lorePanelBoxInContainer.id = 'landing-lore-panel-box-generated';
-            animatePanelBox(lorePanelBoxInContainer.id, true, false);
-        }
-        initializeSpecificPanelHeader(landingThemeDescriptionContainer); // Pass the container
-
-        const detailsPanelBoxInContainer = landingThemeDetailsContainer.querySelector('.panel-box');
-        if (detailsPanelBoxInContainer) {
-            if (!detailsPanelBoxInContainer.id) detailsPanelBoxInContainer.id = 'landing-details-panel-box-generated';
-            animatePanelBox(detailsPanelBoxInContainer.id, true, false);
-        }
-        initializeSpecificPanelHeader(landingThemeDetailsContainer); // Pass the containernelHeader(detailsPanelBox ? detailsPanelBox.id : landingThemeDetailsContainer.id);
-
-
+        if (detailsPanelBox && !detailsPanelBox.id) detailsPanelBox.id = 'landing-details-panel-box';
+        if (detailsPanelBox && detailsPanelBox.id) animatePanelBox(detailsPanelBox.id, true, false);
+        initializeSpecificPanelHeader(landingThemeDetailsContainer);
+    
         currentLandingGridSelection = localStorage.getItem(LANDING_SELECTED_GRID_THEME_KEY);
-        renderThemeGrid();
+        renderThemeGrid(); // Will use getUIText which now respects 'landing' context for theme names
+    
         if (currentLandingGridSelection && ALL_THEMES_CONFIG[currentLandingGridSelection]) {
-            updateLandingPagePanels(currentLandingGridSelection, false);
+            updateLandingPagePanels(currentLandingGridSelection, false); // Will correctly get lore/details from 'landing' context
             const selectedBtn = themeGridContainer.querySelector(`.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`);
             if (selectedBtn) selectedBtn.classList.add('active');
         }
-
+    
         if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText('standby'); systemStatusIndicator.className = 'status-indicator status-warning'; }
-        updateTopbarThemeIcons();
-        setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID);
+        updateTopbarThemeIcons(); // Topbar icons might use non-landing text keys, ensure they work
+        // For setAppLanguageAndThemeUI, the context for generic UI might be DEFAULT_THEME_ID or a new 'app' context
+        setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID); // Or 'landing' as the context for setting global UI texts when on landing
     }
 
     function switchToGameView(themeId) {
@@ -1510,24 +1542,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderThemeGrid() {
         if (!themeGridContainer) return;
-        themeGridContainer.innerHTML = '';
+        themeGridContainer.innerHTML = ''; // Good, this clears previous icons
         Object.values(ALL_THEMES_CONFIG).forEach(theme => {
             const button = document.createElement('button');
             button.classList.add('theme-grid-icon');
             button.dataset.theme = theme.id;
-            button.title = getUIText(theme.name_key);
-
+            const themeDisplayNameOnGrid = getUIText(theme.name_key); // Will use 'landing' context
+            button.title = themeDisplayNameOnGrid;
+    
             const img = document.createElement('img');
             img.src = theme.icon;
-            img.alt = getUIText('theme_icon_alt_text_default', { THEME_NAME: getUIText(theme.name_key) }); // Placeholder
-
+            const altTextKey = `theme_icon_alt_text_default_${theme.id}`;
+            img.alt = getUIText(altTextKey) || themeDisplayNameOnGrid;
+    
             const nameSpan = document.createElement('span');
             nameSpan.classList.add('theme-grid-icon-name');
-            nameSpan.textContent = getUIText(theme.name_key);
-
+            nameSpan.textContent = themeDisplayNameOnGrid;
+    
             button.appendChild(img);
             button.appendChild(nameSpan);
-
+    
             button.addEventListener('click', () => handleThemeGridIconClick(theme.id));
             themeGridContainer.appendChild(button);
         });
@@ -1548,43 +1582,63 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateLandingPagePanels(themeId, animate = true) {
         const themeConfig = ALL_THEMES_CONFIG[themeId];
         if (!themeConfig) return;
-
-        // Left Panel: Lore
+    
+        const descPanelContainer = document.getElementById('landing-theme-description-container');
+        const descTitle = descPanelContainer ? descPanelContainer.querySelector('.panel-box-title') : null;
+        if (descTitle) descTitle.textContent = getUIText('landing_theme_description_title');
+    
+        const detailsPanelContainer = document.getElementById('landing-theme-details-container');
+        const detailsTitle = detailsPanelContainer ? detailsPanelContainer.querySelector('.panel-box-title') : null;
+        if (detailsTitle) detailsTitle.textContent = getUIText('landing_theme_info_title');
+    
         landingThemeLoreText.textContent = getUIText(themeConfig.lore_key);
-        if (animate) animatePanelBox(landingThemeDescriptionContainer.id, true, false);
-
-
+        if (animate) {
+            const lorePanelBox = landingThemeDescriptionContainer.querySelector('.panel-box');
+            if (lorePanelBox && lorePanelBox.id) animatePanelBox(lorePanelBox.id, true, false);
+        }
+    
         // Right Panel: Details & Actions
         landingThemeInfoContent.innerHTML = `
-            <p><strong data-lang-key="landing_theme_setting_label">${getUIText('landing_theme_setting_label')}:</strong> <span id="landing-selected-theme-setting">${getUIText(themeConfig.setting_key)}</span></p>
-            <p><strong data-lang-key="landing_theme_details_label">${getUIText('landing_theme_details_label')}:</strong> <span id="landing-selected-theme-details-text">${getUIText(themeConfig.details_key)}</span></p>
+            <p><strong>${getUIText('landing_theme_setting_label')}:</strong> <span id="landing-selected-theme-setting">${getUIText(themeConfig.setting_key)}</span></p>
+            <p><strong>${getUIText('landing_theme_details_label')}:</strong> <span id="landing-selected-theme-details-text">${getUIText(themeConfig.details_key)}</span></p>
         `;
-
+    
         renderLandingPageActionButtons(themeId);
-        landingThemeActions.style.display = 'flex'; // Assuming flex for button layout
-        if (animate) animatePanelBox(landingThemeDetailsContainer.id, true, false);
+        landingThemeActions.style.display = 'flex';
+        if (animate) {
+            const detailsPanelBox = landingThemeDetailsContainer.querySelector('.panel-box');
+            if (detailsPanelBox && detailsPanelBox.id) animatePanelBox(detailsPanelBox.id, true, false);
+        }
     }
 
     function renderLandingPageActionButtons(themeId) {
         landingThemeActions.innerHTML = '';
-
+    
         const chooseButton = document.createElement('button');
         chooseButton.id = 'choose-theme-button';
         chooseButton.classList.add('ui-button', 'primary');
+    
+        // Option 1: Generic button text from "landing" context
         chooseButton.textContent = getUIText('landing_choose_theme_button');
+        // Option 2: Theme-specific button text from "landing" context
+        // const chooseButtonTextKey = `landing_choose_theme_button_${themeId}`;
+        // chooseButton.textContent = getUIText(chooseButtonTextKey, {}, null) || getUIText('landing_choose_theme_button'); // Fallback to generic
+    
         chooseButton.addEventListener('click', () => handleChooseThisThemeClick(themeId));
-
+    
         const likeButton = document.createElement('button');
         likeButton.id = 'like-theme-button';
-        likeButton.classList.add('ui-button', 'icon-button', 'like-theme-button'); // Add specific class for styling heart
+        likeButton.classList.add('ui-button', 'icon-button', 'like-theme-button');
         const liked = isThemeLiked(themeId);
-        likeButton.innerHTML = `<img src="${liked ? 'images/icon_heart_filled.svg' : 'images/icon_heart_empty.svg'}" alt="${liked ? getUIText('aria_label_unlike_theme') : getUIText('aria_label_like_theme')}" class="like-icon">`;
-        likeButton.setAttribute('aria-label', liked ? getUIText('aria_label_unlike_theme') : getUIText('aria_label_like_theme'));
-        likeButton.title = likeButton.getAttribute('aria-label');
+        const likeTextKey = liked ? 'aria_label_unlike_theme' : 'aria_label_like_theme';
+        const likeText = getUIText(likeTextKey); // Fetches from 'landing' context
+        likeButton.innerHTML = `<img src="${liked ? 'images/icon_heart_filled.svg' : 'images/icon_heart_empty.svg'}" alt="${likeText}" class="like-icon">`;
+        likeButton.setAttribute('aria-label', likeText);
+        likeButton.title = likeText;
         if (liked) likeButton.classList.add('liked');
-
+    
         likeButton.addEventListener('click', () => handleLikeThemeClick(themeId, likeButton));
-
+    
         landingThemeActions.appendChild(chooseButton);
         landingThemeActions.appendChild(likeButton);
     }

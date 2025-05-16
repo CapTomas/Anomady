@@ -9,7 +9,7 @@
   --font-size-md: 1rem;
   --font-size-lg: 1.125rem;
   --font-size-xl: 1.375rem;
-  --font-size-title-panel: 0.875rem; /* Renamed from --font-size-title-console */
+  --font-size-title-panel: 0.875rem; /* Renamed from --font-size-title-panel */
   --line-height-tight: 1.4;
   --line-height-base: 1.6;
   --font-weight-normal: 400;
@@ -19,7 +19,7 @@
   /* Colors - Base */
   --color-bg-page-root: #121212;
   --color-bg-content-view: #1e1e1e; /* Renamed from --color-bg-viewport */
-  --color-bg-panel: #181818; /* Renamed from --color-bg-console-box */
+  --color-bg-panel: #181818; /* Renamed from --color-bg-panel-box */
   --color-bg-input-area: #252525;
   --color-bg-input-field: #2e2e2e;
   --color-bg-element-hover: #333333;
@@ -71,7 +71,7 @@
   --color-status-offline-text: var(--color-text-muted);
 
   /* Shadows & Highlights */
-  --shadow-panel: 0px 2px 8px rgba(0, 0, 0, 0.2); /* Renamed from --shadow-console-box */
+  --shadow-panel: 0px 2px 8px rgba(0, 0, 0, 0.2); /* Renamed from --shadow-panel-box */
   --shadow-input-area: 0px -2px 5px rgba(0, 0, 0, 0.15);
   --shadow-focus-ring: 0 0 0 2px var(--color-text-accent-interactive);
   --highlight-bg-value-update: rgba(var(--color-accent-light-gray-rgb), 0.06);
@@ -265,8 +265,8 @@ body {
   background-color: var(--color-bg-panel);
 }
 
-/* Side Panels (Consoles) */
-.console-sidebar { /* Generic sidebar container */
+/* Side Panels (Panels) */
+.panel-sidebar { /* Generic sidebar container */
   width: var(--sidebar-width);
   flex-shrink: 0;
   display: flex;
@@ -277,7 +277,7 @@ body {
   padding-bottom: var(--spacing-xs);
 }
 
-.panel-box { /* Generic panel box, renamed from .console-box */
+.panel-box { /* Generic panel box, renamed from .panel-box */
   background-color: var(--color-bg-content-view);
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -285,12 +285,12 @@ body {
 }
 
 /* Specific theme-related panels are hidden by default, JS manages visibility */
-#comms-channel-console-box,
-#enemy-intel-console-box { /* These IDs are used by JS, keep them */
+#comms-channel-panel-box,
+#enemy-intel-panel-box { /* These IDs are used by JS, keep them */
   display: none;
 }
 
-.panel-box-header { /* Renamed from .console-box-header */
+.panel-box-header { /* Renamed from .panel-box-header */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -303,7 +303,7 @@ body {
   background-color: rgb(46 46 46); /* Consider a variable if this color is reused */
 }
 
-.panel-box-title { /* Renamed from .console-box-title */
+.panel-box-title { /* Renamed from .panel-box-title */
   font-size: var(--font-size-title-panel);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
@@ -311,7 +311,7 @@ body {
   letter-spacing: 0.5px;
 }
 
-.panel-box-content { /* Renamed from .console-box-content */
+.panel-box-content { /* Renamed from .panel-box-content */
   max-height: 0;
   opacity: 0;
   overflow: hidden;
@@ -717,7 +717,7 @@ body {
     overflow-x: hidden;
   }
 
-  .console-sidebar {
+  .panel-sidebar {
     width: 100%;
     flex-direction: row;
     flex-wrap: wrap;
@@ -727,7 +727,7 @@ body {
     overflow-x: hidden;
   }
 
-  .panel-box { /* Was .console-box */
+  .panel-box { /* Was .panel-box */
     flex-basis: calc(50% - (var(--spacing-md) / 2));
     min-width: 200px;
     flex-grow: 1;
@@ -789,7 +789,7 @@ body {
     margin-right: auto; /* Push theme selector to the right */
   }
 
-  .panel-box { /* Was .console-box */
+  .panel-box { /* Was .panel-box */
     flex-basis: 100%; /* Full width panels */
   }
 
@@ -893,7 +893,7 @@ body.initial-state #name-input-section button#start-game-button.ui-button.primar
 }
 
 /* Ensure side panels are visible during initial state if main content is hidden */
-body.initial-state #left-console,
-body.initial-state #right-console {
+body.initial-state #left-panel,
+body.initial-state #right-panel {
   opacity: 1;
 }

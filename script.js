@@ -58,8 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const languageToggleButton = document.getElementById('language-toggle-button');
     const newGameButton = document.getElementById('new-game-button');
     const modelToggleButton = document.getElementById('model-toggle-button');
-    const leftConsole = document.getElementById('left-console');
-    const rightConsole = document.getElementById('right-console');
+    const leftPanel = document.getElementById('left-panel');
+    const rightPanel = document.getElementById('right-panel');
     const storyLog = document.getElementById('story-log');
     const storyLogViewport = document.getElementById('story-log-viewport');
     const suggestedActionsWrapper = document.getElementById('suggested-actions-wrapper');
@@ -74,14 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Theme-Specific Dashboard Configurations ---
     const THEME_DASHBOARD_CONFIGS = { /* IDENTICAL TO PREVIOUS VERSION */
         scifi: {
-            left_console: [
-                { id: 'captain-status-console-box', title_key: 'title_captain_status', type: 'collapsible', initial_expanded: true, items: [
+            left_panel: [
+                { id: 'captain-status-panel-box', title_key: 'title_captain_status', type: 'collapsible', initial_expanded: true, items: [
                     { id: 'callsign', label_key: 'label_player_callsign', type: 'text', default_value_key: 'unknown' },
                     { id: 'credits', label_key: 'label_player_credits', type: 'number_text', default_value_key: 'unknown', suffix: ' UEC' },
                     { id: 'reputation', label_key: 'label_player_reputation', type: 'text', default_value_key: 'unknown' },
                     { id: 'affiliation', label_key: 'label_player_affiliation', type: 'text', default_value_key: 'unknown' }
                 ]},
-                { id: 'ship-status-console-box', title_key: 'title_ship_status', type: 'collapsible', initial_expanded: false, boot_delay: 1200, items: [
+                { id: 'ship-status-panel-box', title_key: 'title_ship_status', type: 'collapsible', initial_expanded: false, boot_delay: 1200, items: [
                     { id: 'shipName', label_key: 'label_ship_name', type: 'text', default_value_key: 'unknown' },
                     { id: 'shipType', label_key: 'label_ship_type', type: 'text', default_value_key: 'unknown' },
                     { id: 'integrityPct', label_key: 'label_ship_integrity', type: 'meter', meter_type: 'integrity', default_value: '0' },
@@ -90,25 +90,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     { id: 'cargo', label_key: 'label_ship_cargo', type: 'text_long', default_value_key: 'cargo_empty_scu' },
                     { id: 'currentShipSpeed', label_key: 'label_ship_speed', type: 'text', default_value: '0 m/s' }
                 ]},
-                { id: 'comms-channel-console-box', title_key: 'title_comms_channel', type: 'hidden_until_active', initial_expanded: true, indicator_key: 'comms_channel_active', items: [
+                { id: 'comms-channel-panel-box', title_key: 'title_comms_channel', type: 'hidden_until_active', initial_expanded: true, indicator_key: 'comms_channel_active', items: [
                     { id: 'comms_channel_info', label_key: 'label_comms_status', type: 'text_long', default_value_key: 'comms_inactive' }
                 ]}
             ],
-            right_console: [
-                { id: 'mission-intel-console-box', title_key: 'title_active_directive', type: 'collapsible', initial_expanded: true, items: [
+            right_panel: [
+                { id: 'mission-intel-panel-box', title_key: 'title_active_directive', type: 'collapsible', initial_expanded: true, items: [
                     { id: 'objective', label_key: 'label_directive_details', type: 'text_long', default_value_key: 'objective_none' },
                     { id: 'directiveReward', label_key: 'label_directive_reward', type: 'text', default_value_key: 'unknown' },
                     { id: 'directive_status', label_key: 'label_directive_status', type: 'text', default_value_key: 'status_idle' },
                     { id: 'alertLevel', label_key: 'label_alert_level', type: 'status_text', default_value_key: 'alert_level_green', default_status_key: 'alert_level_green_val' }
                 ]},
-                { id: 'navigation-data-console-box', title_key: 'title_navigation_data', type: 'collapsible', initial_expanded: false, boot_delay: 1200, items: [
+                { id: 'navigation-data-panel-box', title_key: 'title_navigation_data', type: 'collapsible', initial_expanded: false, boot_delay: 1200, items: [
                     { id: 'location', label_key: 'label_current_location', type: 'text_long', default_value_key: 'unknown' },
                     { id: 'systemFaction', label_key: 'label_system_faction', type: 'text', default_value_key: 'unknown' },
                     { id: 'environment', label_key: 'label_environment', type: 'text_long', default_value_key: 'unknown' },
                     { id: 'sensorConditions', label_key: 'label_sensor_conditions', type: 'text_long', default_value_key: 'unknown' },
                     { id: 'stardate', label_key: 'label_stardate', type: 'text', default_value_key: 'unknown' }
                 ]},
-                { id: 'enemy-intel-console-box', title_key: 'title_enemy_intel', type: 'hidden_until_active', initial_expanded: true, indicator_key: 'combat_engaged', items: [
+                { id: 'enemy-intel-panel-box', title_key: 'title_enemy_intel', type: 'hidden_until_active', initial_expanded: true, indicator_key: 'combat_engaged', items: [
                     { id: 'enemy_ship_type', label_key: 'label_enemy_ship_type', type: 'text', default_value_key: 'none' },
                     { id: 'enemy_shields_pct', label_key: 'label_enemy_shields', type: 'meter', meter_type: 'enemy_shields', default_value: '0', status_text_id: 'enemy_shields_status_text', default_status_key: 'offline' },
                     { id: 'enemy_hull_pct', label_key: 'label_enemy_hull', type: 'meter', meter_type: 'enemy_hull', default_value: '0' }
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         fantasy: {
-            left_console: [
+            left_panel: [
                 { id: 'character-overview-box', title_key: 'title_character_overview', type: 'static', items: [
                     { id: 'character_name', label_key: 'label_character_name', type: 'text', default_value_key: 'unknown' },
                     { id: 'character_class', label_key: 'label_character_class', type: 'text', default_value_key: 'unknown' },
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { id: 'equipped_armor', label_key: 'label_equipped_armor', type: 'text', default_value_key: 'none' }
                 ]}
             ],
-            right_console: [
+            right_panel: [
                 { id: 'quest-log-box', title_key: 'title_quest_log', type: 'static', items: [
                     { id: 'current_quest', label_key: 'label_current_quest', type: 'text_long', default_value_key: 'objective_none' },
                     { id: 'quest_reward', label_key: 'label_quest_reward', type: 'text', default_value_key: 'unknown' },
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "system_model_set_paid": "System: Switched to Paid AI Model ({MODEL_NAME}).", "system_model_set_free": "System: Switched to Free AI Model ({MODEL_NAME}).",
                 "system_session_resumed": "Welcome back, {PLAYER_ID}! Session resumed for {THEME_NAME}.",
                 "system_theme_set_scifi": "System: Sci-Fi theme activated. Loading assets...", "system_theme_set_fantasy": "System: Fantasy theme activated. Loading assets...",
-                "system_new_game_initiated": "System: New {THEME_NAME} game sequence initiated.", "prompt_enter_api_key": "Welcome! Please enter your Google Gemini API Key:", "alert_api_key_required":"Gemini API Key is required. Please refresh and provide a key.", "error_critical_no_api_key":"CRITICAL: Gemini API Key not provided. Application cannot connect to AI.", "error_saving_progress": "System: Error saving game progress.", "error_reconstruct_story": "Error: Could not reconstruct part of the story.", "error_load_prompt_file": "SYSTEM ERROR: Could not load prompt: {THEME}/{PROMPT_NAME}.", "error_no_prompts_for_theme":"SYSTEM ERROR: Prompts for theme \"{THEME}\" are not configured.", "error_api_call_failed":"SYSTEM ERROR: {ERROR_MSG}", "alert_identifier_required": "Please enter your identifier (name/callsign).", "error_session_init_failed": "Failed to initialize session. Please check console and try again.", "error_load_prompts_critical": "CRITICAL: Essential game prompts for theme \"{THEME}\" failed to load. Cannot continue."
+                "system_new_game_initiated": "System: New {THEME_NAME} game sequence initiated.", "prompt_enter_api_key": "Welcome! Please enter your Google Gemini API Key:", "alert_api_key_required":"Gemini API Key is required. Please refresh and provide a key.", "error_critical_no_api_key":"CRITICAL: Gemini API Key not provided. Application cannot connect to AI.", "error_saving_progress": "System: Error saving game progress.", "error_reconstruct_story": "Error: Could not reconstruct part of the story.", "error_load_prompt_file": "SYSTEM ERROR: Could not load prompt: {THEME}/{PROMPT_NAME}.", "error_no_prompts_for_theme":"SYSTEM ERROR: Prompts for theme \"{THEME}\" are not configured.", "error_api_call_failed":"SYSTEM ERROR: {ERROR_MSG}", "alert_identifier_required": "Please enter your identifier (name/callsign).", "error_session_init_failed": "Failed to initialize session. Please check panel and try again.", "error_load_prompts_critical": "CRITICAL: Essential game prompts for theme \"{THEME}\" failed to load. Cannot continue."
             },
             cs: { 
                 "theme_name": "Sci-Fi", "toggle_language": "English", "aria_label_toggle_language": "Přepnout do angličtiny",
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "system_model_set_paid": "System: Switched to True Oracle ({MODEL_NAME}).", "system_model_set_free": "System: Switched to Free Oracle ({MODEL_NAME}).",
                 "system_session_resumed": "Welcome back, {PLAYER_ID}! Your legend continues in {THEME_NAME}.",
                 "system_theme_set_scifi": "System: Sci-Fi theme activated. Loading assets...", "system_theme_set_fantasy": "System: Fantasy theme activated. Loading assets...",
-                "system_new_game_initiated": "System: New {THEME_NAME} tale begins.", "prompt_enter_api_key": "Welcome! Please enter your Google Gemini API Key:", "alert_api_key_required":"Gemini API Key is required. Please refresh and provide a key.", "error_critical_no_api_key":"CRITICAL: Gemini API Key not provided. Application cannot connect to AI.", "error_saving_progress": "System: Error saving game progress.", "error_reconstruct_story": "Error: Could not reconstruct part of the story.", "error_load_prompt_file": "SYSTEM ERROR: Could not load prompt: {THEME}/{PROMPT_NAME}.", "error_no_prompts_for_theme":"SYSTEM ERROR: Prompts for theme \"{THEME}\" are not configured.", "error_api_call_failed":"SYSTEM ERROR: {ERROR_MSG}", "alert_identifier_required": "Please enter your identifier (name/callsign).", "error_session_init_failed": "Failed to initialize session. Please check console and try again.", "error_load_prompts_critical": "CRITICAL: Essential game prompts for theme \"{THEME}\" failed to load. Cannot continue."
+                "system_new_game_initiated": "System: New {THEME_NAME} tale begins.", "prompt_enter_api_key": "Welcome! Please enter your Google Gemini API Key:", "alert_api_key_required":"Gemini API Key is required. Please refresh and provide a key.", "error_critical_no_api_key":"CRITICAL: Gemini API Key not provided. Application cannot connect to AI.", "error_saving_progress": "System: Error saving game progress.", "error_reconstruct_story": "Error: Could not reconstruct part of the story.", "error_load_prompt_file": "SYSTEM ERROR: Could not load prompt: {THEME}/{PROMPT_NAME}.", "error_no_prompts_for_theme":"SYSTEM ERROR: Prompts for theme \"{THEME}\" are not configured.", "error_api_call_failed":"SYSTEM ERROR: {ERROR_MSG}", "alert_identifier_required": "Please enter your identifier (name/callsign).", "error_session_init_failed": "Failed to initialize session. Please check panel and try again.", "error_load_prompts_critical": "CRITICAL: Essential game prompts for theme \"{THEME}\" failed to load. Cannot continue."
             },
             cs: { 
                 "theme_name": "Fantasy", "toggle_language": "English", "aria_label_toggle_language": "Přepnout do angličtiny",
@@ -402,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const getSystemPrompt = (currentPlayerIdentifierParam, promptTypeToUse) => {
         const narrativeLangInstruction = NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[currentTheme]?.[currentNarrativeLanguage] || NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[DEFAULT_THEME]?.[DEFAULT_LANGUAGE];
         let basePromptText = gamePrompts[currentTheme]?.[promptTypeToUse] || gamePrompts[currentTheme]?.default;
-        if (!basePromptText || basePromptText.startsWith("Error:")) return `{"narrative": "SYSTEM ERROR: Prompt data missing for ${currentTheme}/${promptTypeToUse}.", "dashboard_updates": {}, "suggested_actions": ["Check console.", "Change theme."], "game_state_indicators": {"activity_status": "Error", "combat_engaged": false, "comms_channel_active": false}}`;
+        if (!basePromptText || basePromptText.startsWith("Error:")) return `{"narrative": "SYSTEM ERROR: Prompt data missing for ${currentTheme}/${promptTypeToUse}.", "dashboard_updates": {}, "suggested_actions": ["Check panel.", "Change theme."], "game_state_indicators": {"activity_status": "Error", "combat_engaged": false, "comms_channel_active": false}}`;
         basePromptText = basePromptText.replace(/\$\{narrativeLanguageInstruction\}/g, narrativeLangInstruction);
         basePromptText = basePromptText.replace(/\$\{currentCallsignForPrompt\}/g, currentPlayerIdentifierParam || getUIText('unknown'));
         basePromptText = basePromptText.replace(/\$\{currentPlayerIdentifier\}/g, currentPlayerIdentifierParam || getUIText('unknown'));
@@ -577,9 +577,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const themeConfig = THEME_DASHBOARD_CONFIGS[currentTheme];
         if (!themeConfig) return null;
 
-        for (const consoleSideKey of ['left_console', 'right_console']) {
-            if (themeConfig[consoleSideKey]) {
-                for (const panelConfig of themeConfig[consoleSideKey]) {
+        for (const panelSideKey of ['left_panel', 'right_panel']) {
+            if (themeConfig[panelSideKey]) {
+                for (const panelConfig of themeConfig[panelSideKey]) {
                     if (panelConfig.items && panelConfig.items.some(item => item.id === itemId)) {
                         return panelConfig;
                     }
@@ -594,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!updatesFromAI || Object.keys(updatesFromAI).length === 0) return;
         const themeCfg = THEME_DASHBOARD_CONFIGS[currentTheme]; if (!themeCfg) return;
         
-        const allItems = [...themeCfg.left_console.flatMap(b => b.items), ...themeCfg.right_console.flatMap(b => b.items)];
+        const allItems = [...themeCfg.left_panel.flatMap(b => b.items), ...themeCfg.right_panel.flatMap(b => b.items)];
         const itemCfgsMap = new Map(allItems.map(i => [i.id, i]));
 
         for (const key in updatesFromAI) { // 'key' is the itemId
@@ -661,7 +661,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (parentPanelConfig && parentPanelConfig.type === 'collapsible') {
                         const panelElement = document.getElementById(parentPanelConfig.id);
                         if (panelElement && !panelElement.classList.contains('is-expanded')) {
-                            animateConsoleBox(parentPanelConfig.id, true, false); // Expand, don't manage visibility here
+                            animatePanelBox(parentPanelConfig.id, true, false); // Expand, don't manage visibility here
                         }
                     }
                 }
@@ -671,11 +671,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ... (initializeDashboardDefaultTexts, findItemConfigById, autoGrowTextarea remain the same)
-    // ... (animateConsoleBox, initializeCollapsibleConsoleBoxes remain the same)
+    // ... (animatePanelBox, initializeCollapsiblePanelBoxes remain the same)
     // ... (updateModelToggleButtonText, updateThemeSelectorActiveState remain the same)
     function initializeDashboardDefaultTexts() {
         const themeCfg = THEME_DASHBOARD_CONFIGS[currentTheme]; if (!themeCfg) return;
-        ['left_console', 'right_console'].forEach(sideKey => {
+        ['left_panel', 'right_panel'].forEach(sideKey => {
             themeCfg[sideKey].forEach(boxCfg => {
                 boxCfg.items.forEach(itemCfg => {
                     const valEl = document.getElementById(`info-${itemCfg.id}`); const meterBarEl = document.getElementById(`meter-${itemCfg.id}`);
@@ -703,7 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function findItemConfigById(themeDashCfg, itemId) {
         if (!themeDashCfg) return null;
-        for (const sideKey of ['left_console', 'right_console']) {
+        for (const sideKey of ['left_panel', 'right_panel']) {
             for (const boxCfg of themeDashCfg[sideKey]) {
                 const found = boxCfg.items.find(i => i.id === itemId);
                 if (found) return found;
@@ -720,7 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
         textarea.style.height = newH + 'px';
     }
 
-    function animateConsoleBox(boxId, shouldExpand, manageVisibility = false) {
+    function animatePanelBox(boxId, shouldExpand, manageVisibility = false) {
         const box = document.getElementById(boxId); if (!box) return;
         const header = box.querySelector('.panel-box-header'); 
         const content = box.querySelector('.panel-box-content'); 
@@ -741,21 +741,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function initializeCollapsibleConsoleBoxes() {
+    function initializeCollapsiblePanelBoxes() {
         const themeCfg = THEME_DASHBOARD_CONFIGS[currentTheme]; if (!themeCfg) return;
-        const allCfgs = [...themeCfg.left_console, ...themeCfg.right_console];
+        const allCfgs = [...themeCfg.left_panel, ...themeCfg.right_panel];
         allCfgs.forEach(boxCfg => {
             const box = document.getElementById(boxCfg.id); if (!box) return;
             const header = box.querySelector('.panel-box-header'); 
             if (!header) return;
             if (boxCfg.type === 'collapsible' || boxCfg.type === 'hidden_until_active') {
-                header.addEventListener('click', () => { if (box.style.display !== 'none') animateConsoleBox(boxCfg.id, !box.classList.contains('is-expanded')); });
+                header.addEventListener('click', () => { if (box.style.display !== 'none') animatePanelBox(boxCfg.id, !box.classList.contains('is-expanded')); });
                 header.setAttribute('tabindex', '0');
-                header.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && box.style.display !== 'none') { e.preventDefault(); animateConsoleBox(boxCfg.id, !box.classList.contains('is-expanded')); } });
+                header.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && box.style.display !== 'none') { e.preventDefault(); animatePanelBox(boxCfg.id, !box.classList.contains('is-expanded')); } });
             }
-            if (boxCfg.type === 'static') { animateConsoleBox(boxCfg.id, true, false); box.style.display = 'block'; box.style.opacity = '1'; }
-            else if (boxCfg.type === 'hidden_until_active') { box.style.display = 'none'; box.style.opacity = '0'; animateConsoleBox(boxCfg.id, false); }
-            else { box.style.display = 'block'; box.style.opacity = '1'; const delay = boxCfg.boot_delay || 0; setTimeout(() => animateConsoleBox(boxCfg.id, boxCfg.initial_expanded || false), delay); }
+            if (boxCfg.type === 'static') { animatePanelBox(boxCfg.id, true, false); box.style.display = 'block'; box.style.opacity = '1'; }
+            else if (boxCfg.type === 'hidden_until_active') { box.style.display = 'none'; box.style.opacity = '0'; animatePanelBox(boxCfg.id, false); }
+            else { box.style.display = 'block'; box.style.opacity = '1'; const delay = boxCfg.boot_delay || 0; setTimeout(() => animatePanelBox(boxCfg.id, boxCfg.initial_expanded || false), delay); }
         });
     }
 
@@ -778,7 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Application Flow & Game Logic Functions ---
     // ... (toggleModelType, setAppLanguageAndTheme, toggleAppLanguage, handleGameStateIndicators remain the same)
     // ... (callGeminiAPI, startGameAfterIdentifier, sendPlayerAction, startNewGameSession remain the same)
-    // ... (generateConsolesForTheme, changeTheme, initializeApp, and Event Listeners remain the same)
+    // ... (generatePanelsForTheme, changeTheme, initializeApp, and Event Listeners remain the same)
 
     function toggleModelType() {
         currentModelName = (currentModelName === PAID_MODEL_NAME) ? FREE_MODEL_NAME : PAID_MODEL_NAME;
@@ -805,7 +805,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(gmSpecificActivityIndicator) gmSpecificActivityIndicator.textContent = getUIText(gmSpecificActivityIndicator.dataset.langKey || 'system_processing_short');
         const themeCfg = THEME_DASHBOARD_CONFIGS[theme];
         if (themeCfg) {
-            ['left_console', 'right_console'].forEach(sideKey => {
+            ['left_panel', 'right_panel'].forEach(sideKey => {
                 themeCfg[sideKey].forEach(boxCfg => {
                     const titleEl = document.querySelector(`#${boxCfg.id} .panel-box-title`); 
                     if (titleEl) titleEl.textContent = getUIText(boxCfg.title_key);
@@ -834,14 +834,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleGameStateIndicators(indicators, isInitialBoot = false) {
         if (!indicators || !THEME_DASHBOARD_CONFIGS[currentTheme]) return;
         lastKnownGameStateIndicators = {...lastKnownGameStateIndicators, ...indicators};
-        const themeConsoles = [...THEME_DASHBOARD_CONFIGS[currentTheme].left_console, ...THEME_DASHBOARD_CONFIGS[currentTheme].right_console];
-        themeConsoles.forEach(boxCfg => {
+        const themePanels = [...THEME_DASHBOARD_CONFIGS[currentTheme].left_panel, ...THEME_DASHBOARD_CONFIGS[currentTheme].right_panel];
+        themePanels.forEach(boxCfg => {
             if (boxCfg.type === 'hidden_until_active' && boxCfg.indicator_key) {
                 const boxEl = document.getElementById(boxCfg.id); if (!boxEl) return;
                 const shouldShow = indicators[boxCfg.indicator_key] === true;
                 const isShowing = boxEl.style.display !== 'none' && boxEl.style.opacity !== '0';
-                if (shouldShow && !isShowing) { const delay = isInitialBoot && boxCfg.boot_delay ? boxCfg.boot_delay : 0; setTimeout(() => animateConsoleBox(boxCfg.id, true, true), delay); }
-                else if (!shouldShow && isShowing) animateConsoleBox(boxCfg.id, false, true);
+                if (shouldShow && !isShowing) { const delay = isInitialBoot && boxCfg.boot_delay ? boxCfg.boot_delay : 0; setTimeout(() => animatePanelBox(boxCfg.id, true, true), delay); }
+                else if (!shouldShow && isShowing) animatePanelBox(boxCfg.id, false, true);
             }
         });
         if (indicators.combat_engaged === true && currentPromptType !== 'combat') currentPromptType = 'combat';
@@ -928,9 +928,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm(confirmMsg)) { addMessageToLog(getUIText('system_new_game_initiated', { THEME_NAME: themeName }), 'system'); changeTheme(currentTheme, true); }
     }
     
-    function generateConsolesForTheme(themeName) {
-        const config = THEME_DASHBOARD_CONFIGS[themeName]; if (!config || !leftConsole || !rightConsole) return;
-        leftConsole.innerHTML = ''; rightConsole.innerHTML = '';
+    function generatePanelsForTheme(themeName) {
+        const config = THEME_DASHBOARD_CONFIGS[themeName]; if (!config || !leftPanel || !rightPanel) return;
+        leftPanel.innerHTML = ''; rightPanel.innerHTML = '';
         const createSide = (sideContainer, panelConfigs) => {
             panelConfigs.forEach(panelConfig => {
                 const panelBox = document.createElement('div'); panelBox.id = panelConfig.id;
@@ -960,8 +960,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 panelBox.appendChild(content); sideContainer.appendChild(panelBox);
             });
         };
-        createSide(leftConsole, config.left_console); createSide(rightConsole, config.right_console);
-        initializeDashboardDefaultTexts(); initializeCollapsibleConsoleBoxes();
+        createSide(leftPanel, config.left_panel); createSide(rightPanel, config.right_panel);
+        initializeDashboardDefaultTexts(); initializeCollapsiblePanelBoxes();
     }
 
     async function changeTheme(newTheme, forceNewGame = false) {
@@ -969,7 +969,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const oldTheme = currentTheme; currentTheme = newTheme;
         localStorage.setItem(THEME_STORAGE_KEY, currentTheme); clearGameStateInternal(); 
         if (forceNewGame) localStorage.removeItem(GAME_STATE_STORAGE_KEY_PREFIX + newTheme);
-        generateConsolesForTheme(currentTheme);
+        generatePanelsForTheme(currentTheme);
         const promptsOk = await loadAllPromptsForTheme(currentTheme);
         if (!promptsOk) { addMessageToLog(getUIText('error_load_prompts_critical', { THEME: currentTheme }), 'system-error'); if (startGameButton) startGameButton.disabled = true; return; }
         if (startGameButton) startGameButton.disabled = false;
@@ -1000,7 +1000,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentAppLanguage = localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
         currentNarrativeLanguage = localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) || currentAppLanguage;
         currentModelName = localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME;
-        generateConsolesForTheme(currentTheme); setAppLanguageAndTheme(currentAppLanguage, currentTheme); updateThemeSelectorActiveState();
+        generatePanelsForTheme(currentTheme); setAppLanguageAndTheme(currentAppLanguage, currentTheme); updateThemeSelectorActiveState();
         if (!setupApiKey()) { document.body.classList.add('initial-state'); if (nameInputSection) nameInputSection.style.display = 'flex'; if (actionInputSection) actionInputSection.style.display = 'none'; return; }
         if (!await loadAllPromptsForTheme(currentTheme)) {
             addMessageToLog(getUIText('error_load_prompts_critical', { THEME: currentTheme }), 'system-error');

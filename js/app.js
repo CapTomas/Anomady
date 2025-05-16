@@ -133,6 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const playerActionInput = document.getElementById('player-action-input');
     const sendActionButton = document.getElementById('send-action-button');
 
+    let userHasManuallyScrolledLog = false;
+    const AUTOSCROLL_THRESHOLD = 40;
+
 
     // --- Core Utility Functions ---
     function getUIText(key, replacements = {}) {
@@ -375,16 +378,27 @@ document.addEventListener('DOMContentLoaded', () => {
             p.innerHTML = para.replace(/\n/g, '<br>'); 
             msgDiv.appendChild(p);
         });
+
+                const viewport = storyLog.parentElement; // This is storyLogViewport
+                let shouldScroll = false;
+                if (viewport && storyLogViewport.style.display !== 'none') {
+                    // Check if we should scroll BEFORE adding the new message and changing scrollHeight
+                    if (!userHasManuallyScrolledLog) {
+                        shouldScroll = true;
+                    } else {
+                        // If user had manually scrolled, check if they've scrolled back to the bottom
+                        if (viewport.scrollHeight - viewport.clientHeight <= viewport.scrollTop + AUTOSCROLL_THRESHOLD) {
+                            shouldScroll = true;
+                            userHasManuallyScrolledLog = false; // They are back at the bottom, resume auto-scroll
+                        }
+                    }
+                }
         
         storyLog.appendChild(msgDiv);
         
-        // Scroll to bottom only if the viewport is actually visible and the user isn't trying to scroll manually
-        if (storyLog.parentElement && storyLogViewport.style.display !== 'none') {
-            // More advanced scroll check: only scroll if user is already near the bottom
-            const isScrolledToBottom = storyLog.parentElement.scrollHeight - storyLog.parentElement.clientHeight <= storyLog.parentElement.scrollTop + 1;
-            if(isScrolledToBottom || storyLog.children.length <= 2) { // Auto-scroll if at bottom or very few messages
-                 storyLog.parentElement.scrollTop = storyLog.parentElement.scrollHeight;
-            }
+        // Perform scroll AFTER new message is added and scrollHeight has updated
+        if (shouldScroll && viewport) { // Check viewport again just in case
+            viewport.scrollTop = viewport.scrollHeight;
         }
     }
 
@@ -664,7 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 box.style.display = 'flex';
             }
             // Ensure content is visible before trying to measure scrollHeight for expansion
-            content.style.display = 'block'; // Temporarily ensure it's block for correct height calculation
+            // content.style.display = 'block'; // Temporarily ensure it's block for correct height calculation
 
             requestAnimationFrame(() => { // Allow DOM to update
                 box.classList.add('is-expanded');
@@ -790,11 +804,12 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTopbarThemeIcons(); // This will correctly place it based on playingThemes precedence
     }
 
-    function addLikedTheme(themeId) { // Called from landing page "like" button
+    function addLikedTheme(themeId) { // Called from landing page "like" button or an in-game "like"
         if (!isThemeLiked(themeId)) { // Only add if not already liked
             likedThemes.push(themeId);
             saveThemeListsToStorage();
-            updateTopbarThemeIcons();
+            updateTopbarThemeIcons(); // This will re-render icons. "Playing" takes precedence in display.
+    
             // If on landing page and this is the selected grid theme, update its heart icon
             if (!currentTheme && currentLandingGridSelection === themeId) {
                 const likeButton = document.getElementById('like-theme-button');
@@ -805,14 +820,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     likeButton.classList.add('liked');
                 }
             }
-        }
-    }
-
-    function addLikedTheme(themeId) {
-        if (!isThemeLiked(themeId) && !isThemePlaying(themeId)) { // Can't like if already playing
-            likedThemes.push(themeId);
-            saveThemeListsToStorage();
-            updateTopbarThemeIcons();
+            // If in game view and the liked theme is the current one,
+            // potentially update an in-game like button's state here if you have one.
         }
     }
 

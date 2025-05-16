@@ -1,6 +1,4 @@
-/* --- Root Variables --- */
 :root {
-  /* Typography */
   --font-family-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI", "Segoe UI Symbol";
   --font-family-mono: "Roboto Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   --font-size-xs: 0.75rem;
@@ -9,46 +7,33 @@
   --font-size-md: 1rem;
   --font-size-lg: 1.125rem;
   --font-size-xl: 1.375rem;
-  --font-size-title-panel: 0.875rem;
+  --font-size-title-panel: var(--font-size-sm);
   --line-height-tight: 1.4;
   --line-height-base: 1.6;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
 
-  /* Colors - Base */
   --color-bg-page-root: #121212;
   --color-bg-content-view: #1e1e1e;
   --color-bg-panel: #181818;
   --color-bg-input-area: #252525;
   --color-bg-input-field: #2e2e2e;
   --color-bg-element-hover: #333333;
+  --color-bg-button-default-hover: #404040;
+  --color-bg-button-default-active: #2b2b2b;
   --color-bg-button-primary: #3a3a3e;
   --color-bg-button-primary-hover: #4a4a4e;
   --color-bg-theme-grid-icon-hover: #2a2a2a;
 
-
-  /* Colors - Text */
   --color-text-primary: #d1d1d6;
   --color-text-secondary: #8a8a8e;
   --color-text-muted: #5a5a5e;
   --color-text-on-primary-button: #ffffff;
   --color-text-accent-interactive: #5a5a5e;
-  --color-heart-icon-liked: #ef4444; /* Red for liked heart */
+  --color-heart-icon-liked: #ef4444;
   --color-heart-icon-default: var(--color-text-secondary);
 
-  /* Colors - Meters (theme-specific values set by JS or theme CSS) */
-  --color-meter-critical: #ef4444;
-  --color-meter-low: #f58c0b;
-  --color-meter-medium: #eac108;
-  --color-meter-full: #14b8a6;
-  --color-meter-offline-bg: #4a5568;
-  --color-meter-mana: #3b82f6; /* Example for fantasy */
-  --color-meter-shield: #3b82f6; /* Example for scifi */
-  --color-meter-stamina: #8b5cf6; /* Example for fantasy */
-  --color-meter-fuel: #8b5cf6; /* Example for scifi */
-
-  /* Colors - Accents & Status */
   --color-accent-teal: #14b8a6;
   --color-accent-green: #22c55e;
   --color-accent-blue: #3b82f6;
@@ -60,27 +45,25 @@
   --color-accent-red-rgb: 239, 68, 68;
   --color-accent-light-gray-rgb: 229, 231, 235;
 
-  --color-status-ok-bar: var(--color-accent-teal);
+  --color-meter-critical: #ef4444;
+  --color-meter-low: #f58c0b;
+  --color-meter-medium: #eac108;
+  --color-meter-full: #14b8a6;
+  --color-meter-offline-bg: #4a5568;
+  --color-meter-mana: var(--color-accent-blue);
+  --color-meter-shield: var(--color-accent-blue);
+  --color-meter-stamina: var(--color-accent-violet);
+  --color-meter-fuel: var(--color-accent-violet);
+
   --color-status-ok-text: var(--color-accent-teal);
-  --color-status-integrity-ok-bar: var(--color-accent-green);
-  --color-status-fuel-ok-bar: var(--color-accent-amber);
-  --color-status-fuel-warning-bar: var(--color-accent-amber);
-  --color-status-warning-bar: var(--color-accent-amber);
-  --color-status-danger-bar: #ef4444;
-  --color-status-info-bar: var(--color-accent-blue);
-  --color-status-offline-bar: #4a5568;
   --color-status-warning-text: var(--color-accent-amber);
   --color-status-danger-text: #ef4444;
   --color-status-info-text: var(--color-text-accent-interactive);
   --color-status-offline-text: var(--color-text-muted);
 
-  /* Shadows & Highlights */
-  --shadow-panel: 0px 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-input-area: 0px -2px 5px rgba(0, 0, 0, 0.15);
   --shadow-focus-ring: 0 0 0 2px var(--color-text-accent-interactive);
   --highlight-bg-value-update: rgba(var(--color-accent-light-gray-rgb), 0.06);
 
-  /* Spacing & Sizing */
   --spacing-unit: 4px;
   --spacing-xs: var(--spacing-unit);
   --spacing-sm: calc(var(--spacing-unit) * 2);
@@ -93,24 +76,25 @@
   --radius-sm: 10px;
   --radius-md: 20px;
   --sidebar-width: 280px;
-  --header-height: 60px;
+  --header-height: 70px;
   --footer-height: 28px;
   --input-control-panel-height: auto;
   --input-button-size: 32px;
   --textarea-max-height: 150px;
-  --theme-icon-size: 28px; /* Topbar theme icon size */
-  --theme-grid-icon-size: 100px; /* Landing page theme grid icon size */
+  --theme-icon-size: 28px;
+  --theme-grid-icon-size: 130px;
+  --theme-grid-icon-image-size: 50px;
+  --theme-grid-icon-max-width: 130px;
+  --theme-grid-gap: var(--spacing-lg);
   --theme-button-close-size: 16px;
 
-  /* Transitions & Animations */
   --transition-fast: 0.15s ease-out;
   --transition-std: 0.25s ease-out;
-  --transition-collapsible-content: 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Faster for panels */
-  --transition-collapsible-opacity: 0.25s ease-out 0.05s; /* Faster opacity for panels */
+  --transition-collapsible-content: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-collapsible-opacity: 0.25s ease-out 0.05s;
   --UPDATE_HIGHLIGHT_DURATION: 5s;
 }
 
-/* --- Global Resets & Base Styles --- */
 *,
 *::before,
 *::after {
@@ -140,10 +124,8 @@ body {
   overflow: hidden;
   height: 100vh;
   width: 100vw;
-  /* Default theme class applied by JS */
 }
 
-/* --- Main Application Layout --- */
 #app-root {
   display: flex;
   flex-direction: column;
@@ -167,7 +149,7 @@ body {
   flex: 1;
   display: flex;
   align-items: center;
-  min-width: 0; /* Prevent overflow issues with many theme icons */
+  min-width: 0;
 }
 
 #application-header .top-bar-center {
@@ -182,6 +164,11 @@ body {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-sm);
+}
+
+body.landing-page-active #application-header .top-bar-right #new-game-button,
+body.landing-page-active #application-header .top-bar-right #model-toggle-button {
+  display: none;
 }
 
 #system-status-indicator,
@@ -205,42 +192,42 @@ body {
   50% { opacity: 1; }
 }
 
-#gm-activity-indicator[style*="inline-flex"] { /* Indicates GM is processing */
+#gm-activity-indicator[style*="inline-flex"] {
   animation: subtlePulse 1.5s infinite ease-in-out;
 }
 
-/* Application Logo & Theme Selector */
 #application-logo {
   display: block;
   width: 40px;
   height: 40px;
   padding: 4px;
   margin-right: var(--spacing-md);
-  background-color: #e3e3e3; /* Or transparent if SVG has its own bg */
+  background-color: #e3e3e3;
   border-radius: var(--radius-sm);
-  color: var(--color-text-primary); /* SVG currentColor */
+  color: var(--color-text-primary);
   box-sizing: border-box;
-  cursor: pointer; /* To indicate it's clickable to go to landing */
+  cursor: pointer;
   transition: background-color var(--transition-fast);
 }
 #application-logo:hover {
-    background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
 
-#application-logo svg { /* If your logo is an inline SVG */
+#application-logo svg {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-#theme-selector { /* Container for playing and liked themes in topbar */
-  display: flex; /* Changed from inline-flex to flex for better control */
+#theme-selector {
+  display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  overflow-x: auto; /* Allow horizontal scrolling if many themes */
+  overflow-x: auto;
   overflow-y: hidden;
-  max-width: calc(var(--sidebar-width) * 1.5); /* Limit width, adjust as needed */
-  padding-bottom: var(--spacing-xs); /* For scrollbar */
+  flex-grow: 1;
+  min-width: 0;
+  min-height: 60px;
 }
 
 #playing-themes-container,
@@ -257,7 +244,7 @@ body {
   margin: 0 var(--spacing-xs);
 }
 
-.theme-button { /* Topbar theme icons */
+.theme-button {
   background-color: transparent;
   border: 2px solid transparent;
   padding: var(--spacing-xs);
@@ -266,8 +253,8 @@ body {
   transition: all var(--transition-fast);
   opacity: 0.6;
   filter: grayscale(50%);
-  position: relative; /* For close button */
-  display: flex; /* To align icon and close button if needed */
+  position: relative;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
@@ -279,7 +266,7 @@ body {
 }
 
 .theme-button:hover,
-.theme-button.active:hover { /* Ensure hover on active is distinct if needed */
+.theme-button.active:hover {
   opacity: 1;
   filter: grayscale(0%);
   background-color: var(--color-bg-element-hover);
@@ -288,8 +275,7 @@ body {
 .theme-button.active {
   opacity: 1;
   filter: grayscale(0%);
-  /* background-color: var(--color-bg-element-hover); Potentially a different color for active */
-  border-color: var(--color-accent-teal); /* Highlight active theme */
+  border-color: var(--color-accent-teal);
 }
 
 .theme-button-close {
@@ -308,7 +294,7 @@ body {
   cursor: pointer;
   opacity: 0;
   transition: opacity var(--transition-fast);
-  z-index: 1; /* Above theme icon image */
+  z-index: 1;
 }
 
 .theme-button:hover .theme-button-close {
@@ -318,78 +304,63 @@ body {
   background-color: rgba(var(--color-accent-red-rgb), 0.8);
 }
 
-
-/* Main Content Layout */
 #main-layout {
   display: flex;
   flex-grow: 1;
   overflow: hidden;
-  padding: var(--spacing-lg); /* Symmetrical padding */
+  padding: 0 var(--spacing-lg);
   gap: var(--spacing-lg);
-  background-color: var(--color-bg-panel); /* Consistent bg with center column */
+  background-color: var(--color-bg-panel);
 }
 
-/* Side Panels (Panels) */
 .panel-sidebar {
   width: var(--sidebar-width);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Align panel boxes to the top */
+  justify-content: flex-start;
   gap: var(--spacing-lg);
-  overflow-y: auto;
-  padding-bottom: var(--spacing-xs);
+  overflow-y: hidden;
+  height: 100%;
 }
 
-/* Landing Page Specific Panel Containers in Sidebars */
 #landing-theme-description-container,
 #landing-theme-details-container {
-    width: 100%; /* Take full width of sidebar */
-    /* display: flex; is already set by JS on switch */
-    flex-direction: column; /* Ensure their inner .panel-box stacks correctly */
+  width: 100%;
+  flex-direction: column;
+  overflow: hidden;
 }
-/* Hide game specific panels by default, JS manages visibility based on game state */
-/* This approach assumes JS will add/remove panel-box elements for game view */
-/* If panel-box elements for game view are always in DOM and hidden/shown, this is fine */
-.panel-sidebar > *:not(#landing-theme-description-container):not(#landing-theme-details-container) {
-    /* Styles for game-specific panels if needed, or rely on their own classes */
-}
-
 
 .panel-box {
   background-color: var(--color-bg-content-view);
   border-radius: var(--radius-md);
-  overflow: hidden; 
-  flex-shrink: 0; 
-  display: flex; 
+  flex-shrink: 0;
+  display: flex;
   flex-direction: column;
-  width: 100%; /* Ensure panel-box takes full width of its parent container */
+  width: 100%;
+  overflow: hidden;
 }
 
-/* Specific theme-related panels are hidden by default, JS manages visibility */
-/* IDs like #comms-channel-panel-box, #enemy-intel-panel-box from theme-dashboard-configs */
-/* JS will set display: flex on these when they should appear */
 #comms-channel-panel-box,
-#enemy-intel-panel-box { 
-  display: none; /* Initially hidden, JS controls visibility */
+#enemy-intel-panel-box {
+  display: none;
 }
-
 
 .panel-box-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: var(--spacing-lg);
   cursor: pointer;
   transition: background-color var(--transition-fast);
-  user-select: none; /* Prevent text selection on click */
+  user-select: none;
 }
 
 .panel-box-header:hover {
-  background-color: var(--color-bg-element-hover); /* Darken slightly on hover */
+  background-color: var(--color-bg-element-hover);
 }
 
-.panel-box-title { 
+.panel-box-title {
   font-size: var(--font-size-title-panel);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
@@ -398,29 +369,27 @@ body {
 }
 
 .panel-box-content {
-  max-height: 0; 
-  opacity: 0;    
-  overflow: hidden; /* This is key for collapsing */
-  padding: 0 var(--spacing-lg); 
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 0 var(--spacing-lg);
   transition: max-height var(--transition-collapsible-content),
     opacity var(--transition-collapsible-opacity),
     padding-top var(--transition-collapsible-content),
     padding-bottom var(--transition-collapsible-content);
-  /* Add this to prevent content from breaking out and causing width issues */
-  word-break: break-word; /* Or break-all if necessary, but break-word is often better */
+  word-break: break-word;
 }
 
 .panel-box.is-expanded .panel-box-content {
-  max-height: 80vh; /* Or a fixed large value like 600px or 1000px */
+  max-height: 80vh;
   opacity: 1;
-  padding-top: var(--spacing-xs);    
-  padding-bottom: var(--spacing-lg); 
-  overflow-y: auto; /* Allow vertical scroll if content exceeds max-height */
+  padding-top: var(--spacing-xs);
+  padding-bottom: var(--spacing-lg);
+  overflow-y: auto;
 }
 
-/* Information Items within Panels */
 .info-item,
-.info-item-meter { /* Data display containers */
+.info-item-meter {
   margin-bottom: var(--spacing-md);
   position: relative;
 }
@@ -431,7 +400,7 @@ body {
 }
 
 .info-item .label,
-.info-item-meter .label { /* Label for an info item */
+.info-item-meter .label {
   display: block;
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
@@ -440,7 +409,7 @@ body {
 }
 
 .info-item .value,
-.info-item-meter .value-overlay { /* Value display for an info item */
+.info-item-meter .value-overlay {
   display: block;
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
@@ -448,41 +417,45 @@ body {
   line-height: var(--line-height-tight);
 }
 
-.info-item .value.objective-text, /* Specific value types allowing scroll */
+.info-item .value.objective-text,
 .info-item .value.location-text {
-  max-height: calc(var(--line-height-tight) * var(--font-size-base) * 5); /* Approx 5 lines */
+  max-height: calc(var(--line-height-tight) * var(--font-size-base) * 5);
   overflow-y: auto;
   padding-right: var(--spacing-sm);
 }
 
-/* Landing Page Theme Details Panel Actions */
 #landing-theme-actions {
-    display: flex; /* JS will change to flex when buttons are added */
-    gap: var(--spacing-md);
-    align-items: center;
-    margin-top: var(--spacing-lg);
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  margin-top: var(--spacing-lg);
+}
+
+#landing-theme-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+#landing-theme-info-content p {
+  margin-bottom: 0;
 }
 
 #landing-theme-actions .ui-button.primary {
-    flex-grow: 1; /* Make "Choose this theme" button take available space */
+  flex-grow: 1;
 }
 
 .like-theme-button img.like-icon {
-    width: calc(var(--font-size-lg) * 1.2); /* Adjust size as needed */
-    height: calc(var(--font-size-lg) * 1.2);
-    transition: transform 0.2s ease;
+  width: calc(var(--font-size-lg) * 1.2);
+  height: calc(var(--font-size-lg) * 1.2);
+  transition: transform 0.2s ease;
 }
 .like-theme-button:hover img.like-icon {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 .like-theme-button.liked img.like-icon {
-    filter: drop-shadow(0 0 3px var(--color-heart-icon-liked)); /* Subtle glow */
+  filter: drop-shadow(0 0 3px var(--color-accent-teal));
 }
-/* If using SVG for heart, you can use fill color: */
-.like-theme-button.liked img.like-icon { fill: var(--color-heart-icon-liked); }
 
-
-/* Meter Bar Styling */
 .meter-bar-container {
   width: 100%;
   height: 8px;
@@ -492,29 +465,26 @@ body {
   margin-top: var(--spacing-xs);
 }
 
-.meter-bar { /* The actual fill of the meter */
+.meter-bar {
   height: 100%;
-  width: 0%; /* JS updates this */
-  background-color: var(--color-meter-critical); /* Default, JS updates based on value/type */
+  width: 0%;
+  background-color: var(--color-meter-critical);
   border-radius: var(--radius-full);
   transition: width 0.4s ease-out, background-color 0.4s ease;
 }
 
-/* Meter color states */
 .meter-bar.meter-critical { background-color: var(--color-meter-critical); }
 .meter-bar.meter-low { background-color: var(--color-meter-low); }
 .meter-bar.meter-medium { background-color: var(--color-meter-medium); }
 .meter-bar.meter-full { background-color: var(--color-meter-full); }
 .meter-bar.meter-offline { background-color: var(--color-meter-offline-bg); }
-/* Theme-specific meter 'full' colors */
+
 .meter-bar.meter-ok-fuel.meter-full { background-color: var(--color-meter-fuel); }
 .meter-bar.meter-ok-mana.meter-full { background-color: var(--color-meter-mana); }
 .meter-bar.meter-ok-stamina.meter-full { background-color: var(--color-meter-stamina); }
 .meter-bar.meter-ok-shield.meter-full { background-color: var(--color-meter-shield); }
 
-
-/* Specific value overlays for some themed meters (Sci-Fi context) */
-#info-ship-shields.value-overlay, /* These IDs are from JS THEME_DASHBOARD_CONFIGS */
+#info-ship-shields.value-overlay,
 #info-ship-integrity.value-overlay,
 #info-ship-fuel.value-overlay,
 #info-enemy-shields-status.value-overlay,
@@ -524,95 +494,100 @@ body {
   margin-top: var(--spacing-xs);
   text-align: right;
 }
-/* Center Column: Story Log & Input OR Theme Grid */
+
 #center-column {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-bg-panel);
+  background-color: var(--color-bg-content-view);
   overflow: hidden;
   border-radius: var(--radius-md);
 }
 
-/* Landing Page Theme Grid */
 #theme-grid-container {
-    display: grid; /* JS will toggle to 'grid' or 'none' */
-    grid-template-columns: repeat(auto-fill, minmax(var(--theme-grid-icon-size), 1fr));
-    gap: var(--spacing-lg);
-    padding: var(--spacing-xl);
-    overflow-y: auto;
-    align-content: start; /* Align items to the start of the grid */
-    height: 100%; /* Fill center column */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--theme-grid-icon-size), var(--theme-grid-icon-max-width)));
+  gap: var(--theme-grid-gap);
+  padding: var(--spacing-xl);
+  overflow-y: auto;
+  align-content: start;
+  height: 100%;
 }
 
-/* Styles for 6 icons per row on 2K display (approx 2560px wide) */
-/* Sidebar widths: 2 * 280px = 560px. Gaps: 2 * 16px (main layout) = 32px. Total horizontal space for center: 2560 - 560 - 32 = 1968px */
-/* Icon width for 6 per row: (1968px - 5 * 16px (grid gaps) - 2 * 24px (grid padding)) / 6 = (1968 - 80 - 48) / 6 = 1840 / 6 ~= 306px */
-/* This means minmax should allow icons to grow up to this size. Default --theme-grid-icon-size is a minimum. */
-@media (min-width: 2000px) { /* Targeting 2K and above */
-    #theme-grid-container {
-        grid-template-columns: repeat(6, 1fr); /* Force 6 columns */
-    }
+@media (min-width: 2000px) {
+  #theme-grid-container {
+    grid-template-columns: repeat(6, 1fr);
+    gap: calc(var(--theme-grid-gap) * 1.5);
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1999px) {
+  #theme-grid-container {
+    gap: calc(var(--theme-grid-gap) * 1.25);
+  }
 }
 
 .theme-grid-icon {
-    background-color: var(--color-bg-content-view);
-    border: 2px solid transparent;
-    border-radius: var(--radius-md);
-    padding: var(--spacing-md);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    aspect-ratio: 1 / 1; /* Make them square-ish */
-    min-height: calc(var(--theme-grid-icon-size) * 1.2); /* Ensure enough height for text */
+  background-color: var(--color-bg-panel);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  aspect-ratio: 1 / 1;
+  min-height: var(--theme-grid-icon-size);
+  max-width: var(--theme-grid-icon-max-width);
+  overflow: hidden;
 }
 
 .theme-grid-icon img {
-    width: var(--theme-grid-icon-size);
-    height: var(--theme-grid-icon-size);
-    display: block;
-    margin-bottom: var(--spacing-sm);
-    transition: transform var(--transition-fast);
+  width: var(--theme-grid-icon-image-size) !important;
+  height: var(--theme-grid-icon-image-size) !important;
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .theme-grid-icon .theme-grid-icon-name {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: var(--line-height-tight);
 }
 
 .theme-grid-icon:hover {
-    background-color: var(--color-bg-theme-grid-icon-hover);
-    border-color: var(--color-text-accent-interactive);
-    transform: translateY(-2px);
+  background-color: var(--color-bg-theme-grid-icon-hover);
+  border-color: var(--color-text-accent-interactive);
+  transform: translateY(-2px);
 }
 .theme-grid-icon:hover img {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
-.theme-grid-icon.active { /* Style for selected theme in grid */
-    border-color: var(--color-accent-teal);
-    background-color: var(--color-bg-theme-grid-icon-hover);
+.theme-grid-icon.active {
+  border-color: var(--color-accent-teal);
+  background-color: var(--color-bg-panel);
 }
 .theme-grid-icon.active .theme-grid-icon-name {
-    color: var(--color-text-primary);
+  color: var(--color-text-primary);
 }
 
-
-#story-log-viewport { /* Scrollable area for messages */
+#story-log-viewport {
   flex-grow: 1;
   overflow-y: auto;
   padding: var(--spacing-xl);
   background-color: var(--color-bg-content-view);
-  border-radius: var(--radius-md); /* Inner viewport rounding */
-  /* display: none; by default if landing page is active, JS handles this */
+  border-radius: var(--radius-md);
 }
 
-
-#story-log .message { /* Individual message bubble */
+#story-log .message {
   margin-bottom: var(--spacing-lg);
   padding: var(--spacing-md) var(--spacing-lg);
   border-radius: var(--radius-md);
@@ -630,24 +605,24 @@ body {
   }
 }
 
-#story-log .gm-message { /* Message from the game master */
+#story-log .gm-message {
   color: var(--color-text-primary);
-  margin-right: auto; /* Aligns left */
+  margin-right: auto;
 }
 
-#story-log .gm-message em { /* Italicized text in GM messages */
+#story-log .gm-message em {
   color: var(--color-text-secondary);
   font-style: italic;
 }
 
-#story-log .player-message { /* Message from the player */
+#story-log .player-message {
   background-color: var(--color-bg-panel);
   color: var(--color-text-primary);
   font-weight: var(--font-weight-medium);
-  margin-left: auto; /* Aligns right */
+  margin-left: auto;
 }
 
-#story-log .system-message { /* System-generated messages */
+#story-log .system-message {
   background-color: transparent;
   color: var(--color-text-muted);
   font-style: italic;
@@ -660,26 +635,22 @@ body {
   max-width: 100%;
 }
 
-/* Suggested Actions Area */
 #suggested-actions-wrapper {
   padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-xs) var(--spacing-lg);
-  display: flex; /* JS will toggle to 'flex' or 'none' */
+  display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-sm);
   flex-shrink: 0;
-  max-height: 100px; /* Limits height, scrolls if more actions */
+  max-height: 100px;
   overflow-y: auto;
 }
 
-/* Player Input Control Panel */
 #player-input-control-panel {
   padding: var(--spacing-xs);
   flex-shrink: 0;
-  /* display: none; by default if landing page is active, JS handles this */
 }
 
-
-.input-group { /* Container for input field and send button */
+.input-group {
   display: flex;
   align-items: flex-end;
   background-color: var(--color-bg-input-field);
@@ -694,8 +665,8 @@ body {
   box-shadow: var(--shadow-focus-ring);
 }
 
-#player-input-control-panel input[type="text"], /* Covers #player-identifier-input */
-#player-input-control-panel textarea { /* Covers #player-action-input */
+#player-input-control-panel input[type="text"],
+#player-input-control-panel textarea {
   flex-grow: 1;
   align-self: center;
   background-color: transparent;
@@ -709,13 +680,13 @@ body {
   margin-left: var(--spacing-lg);
 }
 
-#player-input-control-panel textarea { /* Specific to action textarea */
+#player-input-control-panel textarea {
   resize: none;
-  height: auto; /* Grows with content */
-  min-height: calc(1.4em + var(--spacing-sm) * 0.8); /* Base height for one line */
+  height: auto;
+  min-height: calc(1.4em + var(--spacing-sm) * 0.8);
   max-height: var(--textarea-max-height);
-  overflow-y: auto; /* Scroll if exceeds max-height */
-  padding-top: calc(var(--spacing-sm) * 0.8); /* Fine-tune vertical alignment */
+  overflow-y: auto;
+  padding-top: calc(var(--spacing-sm) * 0.8);
   padding-bottom: calc(var(--spacing-sm) * 0.8);
 }
 
@@ -725,7 +696,6 @@ body {
   opacity: 1;
 }
 
-/* UI Buttons */
 .ui-button {
   padding: var(--spacing-sm) var(--spacing-lg);
   border-radius: var(--radius-md);
@@ -737,23 +707,20 @@ body {
   white-space: nowrap;
   background-color: var(--color-bg-element-hover);
   color: var(--color-text-secondary);
-  border: 1px solid transparent; /* For consistent sizing if borders are added on hover/active */
+  border: 1px solid transparent;
 }
 
 .ui-button:hover {
-  background-color: lighten(var(--color-bg-element-hover), 5%); /* Non-standard, will remove if problematic */
-  /* Fallback if lighten doesn't work as expected with CSS vars: */
-  /* background-color: var(--color-bg-element-hover-lighter); Define this variable */
+  background-color: var(--color-bg-button-default-hover);
   color: var(--color-text-primary);
 }
 
 .ui-button:active {
   transform: translateY(1px);
-  background-color: darken(var(--color-bg-element-hover), 5%); /* Non-standard, will remove if problematic */
-  /* Fallback: background-color: var(--color-bg-element-hover-darker); */
+  background-color: var(--color-bg-button-default-active);
 }
 
-.ui-button.icon-button { /* For buttons that are mainly icons or small text */
+.ui-button.icon-button {
   background-color: transparent;
   color: var(--color-text-secondary);
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -762,24 +729,24 @@ body {
 
 .ui-button.icon-button:hover {
   color: var(--color-text-primary);
-  background-color: rgba(255, 255, 255, 0.05); /* Subtle hover for icon buttons */
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
-#player-input-control-panel .ui-button.primary { /* Primary action buttons in input panel */
+#player-input-control-panel .ui-button.primary {
   background-color: var(--color-bg-button-primary);
   color: var(--color-text-on-primary-button);
   font-weight: var(--font-weight-medium);
   flex-shrink: 0;
-  margin-left: var(--spacing-sm); /* Spacing within the input group */
+  margin-left: var(--spacing-sm);
   margin-right: var(--spacing-lg);
-  height: auto; /* Fit content */
+  height: auto;
   min-width: var(--input-button-size);
   padding: var(--spacing-sm) var(--spacing-md);
   font-size: var(--font-size-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: var(--spacing-lg); /* Align with textarea behavior */
+  margin-top: var(--spacing-lg);
   margin-bottom: var(--spacing-lg);
 }
 
@@ -788,13 +755,13 @@ body {
 }
 
 #player-input-control-panel .ui-button.primary:active {
-  background-color: var(--color-bg-input-field); /* Darker primary for active state */
+  background-color: var(--color-bg-input-field);
 }
 
-#suggested-actions-wrapper .ui-button { /* Buttons for suggested actions */
+#suggested-actions-wrapper .ui-button {
   background-color: var(--color-bg-input-field);
   color: var(--color-text-secondary);
-  flex-grow: 1; /* Allow buttons to fill space */
+  flex-grow: 1;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-normal);
   padding: var(--spacing-xs) var(--spacing-md);
@@ -808,7 +775,7 @@ body {
 
 .ui-button:disabled,
 .ui-button:disabled:hover,
-.ui-button:disabled:active { /* Disabled state for all buttons */
+.ui-button:disabled:active {
   background-color: var(--color-text-muted) !important;
   color: var(--color-bg-input-field) !important;
   cursor: not-allowed;
@@ -816,9 +783,8 @@ body {
   opacity: 0.5;
 }
 
-/* Application Footer */
 #application-footer {
-  display: flex; /* Changed to flex to center content */
+  display: flex;
   align-items: center;
   justify-content: center;
   height: var(--footer-height);
@@ -829,7 +795,6 @@ body {
   flex-shrink: 0;
 }
 
-/* Status Text Colors */
 .status-ok { color: var(--color-status-ok-text) !important; }
 .status-ok-integrity { color: var(--color-accent-green) !important; }
 .status-ok-fuel { color: var(--color-accent-amber) !important; }
@@ -838,8 +803,7 @@ body {
 .status-info { color: var(--color-status-info-text) !important; }
 .status-offline { color: var(--color-status-offline-text) !important; }
 
-/* Value Update Highlight Animation */
-.value-updated { /* Applied to .info-item or .info-item-meter */
+.value-updated {
   animation: flash-value-update-bg var(--UPDATE_HIGHLIGHT_DURATION) ease-out forwards;
 }
 
@@ -848,7 +812,6 @@ body {
   100% { background-color: transparent; }
 }
 
-/* Ensure pseudo-element for highlight is positioned correctly if direct class fails */
 .info-item.value-updated::after,
 .info-item-meter.value-updated::after {
   content: "";
@@ -860,98 +823,84 @@ body {
   border-radius: var(--radius-xs);
   animation: flash-value-update-bg var(--UPDATE_HIGHLIGHT_DURATION) ease-out forwards;
   pointer-events: none;
-  z-index: -1; /* Behind the content */
+  z-index: -1;
 }
 
-/* Custom Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.05);
 }
-
 ::-webkit-scrollbar-thumb {
   background-color: var(--color-text-muted);
   border-radius: var(--radius-full);
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-text-secondary);
 }
-
-* { /* Firefox scrollbar */
+* {
   scrollbar-width: thin;
   scrollbar-color: var(--color-text-muted) rgba(0, 0, 0, 0.05);
 }
 
-/* --- Responsive Adjustments --- */
 @media (max-width: 1100px) {
   :root {
     --sidebar-width: 240px;
-    --theme-grid-icon-size: 80px;
-  }
-  #theme-selector {
-    max-width: calc(var(--sidebar-width) * 1.2); /* Adjust topbar theme selector width */
+    --theme-grid-icon-size: 100px;
+    --theme-grid-icon-image-size: 50px;
+    --theme-grid-icon-max-width: 130px;
+    --theme-grid-gap: var(--spacing-md);
   }
 }
 
 @media (max-width: 900px) {
-  #main-layout { 
+  #main-layout {
     flex-direction: column;
     padding: var(--spacing-md);
     gap: var(--spacing-md);
     overflow-y: auto;
     overflow-x: hidden;
   }
-
   .panel-sidebar {
     width: 100%;
-    flex-direction: row; /* Sidebars become horizontal rows of panels */
-    flex-wrap: wrap;     /* Allow panels to wrap */
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: var(--spacing-md);
-    justify-content: flex-start; /* Align panels to the start */
-    overflow-y: visible; /* Remove individual scroll from sidebar container */
+    justify-content: flex-start;
+    overflow-y: visible;
     overflow-x: hidden;
-    padding-bottom: 0; /* Remove bottom padding for scrollbar */
+    padding-bottom: 0;
   }
-
-  .panel-box { 
-    flex-basis: calc(50% - (var(--spacing-md) / 2)); /* Two panels per row */
-    min-width: 200px; /* Minimum width for a panel */
-    flex-grow: 1;     /* Allow panels to grow and fill space */
+  .panel-box {
+    flex-basis: calc(50% - (var(--spacing-md) / 2));
+    min-width: 200px;
+    flex-grow: 1;
   }
-  /* Landing page panels in sidebar also follow this */
   #landing-theme-description-container,
   #landing-theme-details-container {
     flex-basis: calc(50% - (var(--spacing-md) / 2));
     min-width: 200px;
     flex-grow: 1;
   }
-
-
   #center-column {
-    order: -1; /* Display story log/theme grid above side panels on smaller screens */
-    min-height: 350px; /* Ensure it has some height */
+    order: -1;
+    min-height: 350px;
   }
-
   #story-log-viewport {
     padding: var(--spacing-lg);
   }
-    #theme-grid-container {
-    padding: var(--spacing-lg); /* Reduce padding on smaller screens */
+  #theme-grid-container {
+    padding: var(--spacing-lg);
+    gap: var(--spacing-md);
   }
-
   #player-input-control-panel {
     padding: var(--spacing-sm);
   }
-
   .input-group {
     min-height: 48px;
   }
-
   #player-input-control-panel textarea {
     max-height: calc(var(--textarea-max-height) * 0.75);
   }
@@ -959,169 +908,181 @@ body {
 
 @media (max-width: 600px) {
   :root {
-    --header-height: auto; 
+    --header-height: auto;
     --spacing-lg: 12px;
     --spacing-xl: 16px;
     --font-size-base: 0.875rem;
-    --theme-grid-icon-size: 70px;
+    --theme-grid-icon-size: 90px;
+    --theme-grid-icon-image-size: 45px;
+    --theme-grid-icon-max-width: 110px;
+    --theme-grid-gap: var(--spacing-sm);
   }
-
-  #application-header { 
+  #application-header {
     padding: var(--spacing-sm) var(--spacing-md);
     flex-wrap: wrap;
-    min-height: var(--header-height-unwrapped, 60px); /* Fallback to ensure some height */
-    /* header-height:auto might make it too small when items wrap. JS could set a fixed height after wrap if needed. */
+    min-height: var(--header-height-unwrapped, 60px);
   }
-
-  #application-header .top-bar-center { /* Hide status indicators on small screens */
+  #application-header .top-bar-center {
     display: none;
   }
-
   #application-header .top-bar-left {
-    flex-basis: 100%;
-    order: 1; /* Logo and theme selector first */
-    margin-bottom: var(--spacing-sm); /* Space before right content */
-    justify-content: space-between; /* Push theme selector to right of logo if space allows */
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    overflow: hidden;
   }
-   #application-logo {
-      margin-right: var(--spacing-md); /* Ensure some space from themes if they are many */
-   }
+  #application-logo {
+    margin-right: var(--spacing-md);
+  }
   #theme-selector {
-    max-width: none; /* Allow it to take available space or wrap if needed */
+    max-width: none;
     justify-content: flex-end;
   }
-
-
   #application-header .top-bar-right {
     flex-basis: 100%;
-    order: 2; /* Buttons below logo/themes */
-    justify-content: space-around; /* Distribute buttons */
+    order: 2;
+    justify-content: space-around;
   }
-
   .panel-box,
   #landing-theme-description-container,
   #landing-theme-details-container {
-    flex-basis: 100%; /* Full width panels */
+    flex-basis: 100%;
   }
-
   #story-log .message {
     max-width: 95%;
     padding: var(--spacing-sm) var(--spacing-md);
   }
-
   #suggested-actions-wrapper {
     padding: var(--spacing-xs) var(--spacing-md) var(--spacing-sm) var(--spacing-md);
   }
-
   #suggested-actions-wrapper .ui-button {
-    flex-basis: calc(50% - (var(--spacing-sm) / 2)); /* Two buttons per row */
+    flex-basis: calc(50% - (var(--spacing-sm) / 2));
   }
 }
 
 @media (max-width: 400px) {
   :root {
-    --theme-grid-icon-size: 60px;
+    --theme-grid-icon-size: 80px;
+    --theme-grid-icon-image-size: 40px;
+    --theme-grid-icon-max-width: 100px;
   }
   #suggested-actions-wrapper .ui-button {
-    flex-basis: 100%; /* One button per row */
+    flex-basis: 100%;
   }
-
   #player-input-control-panel .ui-button.primary {
-    padding: 0 var(--spacing-sm); /* Smaller padding for send button */
+    padding: 0 var(--spacing-sm);
     font-size: var(--font-size-xs);
   }
-
   #player-input-control-panel textarea {
-    margin-left: var(--spacing-sm); /* Reduce left margin for textarea */
+    margin-left: var(--spacing-sm);
   }
   #theme-grid-container {
-    grid-template-columns: repeat(auto-fill, minmax(calc(var(--theme-grid-icon-size) * 1.5), 1fr)); /* Allow for 2-3 icons per row */
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--theme-grid-icon-size) * 1.5), 1fr));
   }
 }
 
-/* --- View States: Landing Page vs Game View --- */
-
-/* When body has .landing-page-active (set by JS) */
 body.landing-page-active #story-log-viewport,
 body.landing-page-active #suggested-actions-wrapper,
 body.landing-page-active #player-input-control-panel {
-    display: none !important; /* Hide game-specific central column content */
+  display: none !important;
 }
 
 body.landing-page-active #theme-grid-container {
-    display: grid !important; /* Show theme grid */
+  display: grid !important;
 }
 
-/* Ensure landing page panels in sidebars are visible */
+body.landing-page-active .panel-sidebar {
+  overflow-y: hidden;
+}
+
 body.landing-page-active #landing-theme-description-container,
 body.landing-page-active #landing-theme-details-container {
-    display: flex !important; /* Show landing panels */
+  display: flex !important;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
-/* Hide game-specific panels when on landing page */
-/* This assumes game panels are direct children of .panel-sidebar */
-/* and do NOT have the landing-specific IDs */
-body.landing-page-active .panel-sidebar > .panel-box:not(#landing-theme-description-container .panel-box):not(#landing-theme-details-container .panel-box) {
-    display: none !important;
+body.landing-page-active #landing-theme-description-container > .panel-box,
+body.landing-page-active #landing-theme-details-container > .panel-box {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-
-/* When NOT .landing-page-active (i.e., in game view) */
-body:not(.landing-page-active) #theme-grid-container {
-    display: none !important; /* Hide theme grid */
+body.landing-page-active #landing-theme-description-container > .panel-box.is-expanded > .panel-box-content,
+body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content {
+  flex-grow: 1;
+  max-height: none;
+  opacity: 1;
+  overflow-y: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--spacing-xs);
+  padding-bottom: var(--spacing-lg);
+  padding-left: var(--spacing-lg);
+  padding-right: var(--spacing-lg);
 }
 
+body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content > #landing-theme-info-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  min-height: 0;
+  margin-bottom: var(--spacing-md);
+}
+
+body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content > #landing-theme-actions {
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+body.landing-page-active .panel-sidebar > *:not(#landing-theme-description-container):not(#landing-theme-details-container) {
+  display: none !important;
+}
+
+body:not(.landing-page-active) #theme-grid-container,
 body:not(.landing-page-active) #landing-theme-description-container,
 body:not(.landing-page-active) #landing-theme-details-container {
-    display: none !important; /* Hide landing panels */
+  display: none !important;
 }
 
-body:not(.landing-page-active) #story-log-viewport,
-body:not(.landing-page-active) #suggested-actions-wrapper,
+body:not(.landing-page-active) #story-log-viewport {
+  display: block !important;
+}
+body:not(.landing-page-active) #suggested-actions-wrapper {
+  display: flex !important;
+}
 body:not(.landing-page-active) #player-input-control-panel {
-    display: flex !important; /* Or block, as appropriate for their layout */
+  display: block !important;
 }
-body:not(.landing-page-active) #story-log-viewport { display: block !important; } /* story-log-viewport is block */
-body:not(.landing-page-active) #player-input-control-panel { display: block !important; } /* player-input-control-panel is block */
 
-/* --- Initial Application State (Pre-Game Start, after theme chosen) --- */
-/* This .initial-state is for when a theme is CHOSEN, but name not yet entered */
-/* It's different from .landing-page-active */
-
-body.initial-state #story-log-viewport { /* Story log hidden before game starts (name input phase) */
+body.initial-state #story-log-viewport {
   opacity: 0;
   transform: translateY(20px) scale(0.98);
   pointer-events: none;
 }
 
-body.initial-state #suggested-actions-wrapper { /* Suggested actions hidden */
+body.initial-state #suggested-actions-wrapper,
+body.initial-state #action-input-section {
   display: none !important;
 }
-
-body.initial-state #action-input-section { /* Action input (textarea) hidden */
-  display: none !important;
-}
-
-/* Name input section is positioned by JS when theme is chosen and game starts */
-/* The old fixed positioning for #name-input-section is for a different flow. */
-/* Now, #name-input-section appears within #player-input-control-panel normally */
-/* when JS sets its display to 'flex'. */
 
 body.initial-state #name-input-section {
-  display: flex !important; /* Ensure it's flex when shown in this state */
-  /* No fixed positioning needed here as it's part of the normal flow now */
-  /* width, padding, gap handled by .input-group styles */
+  display: flex !important;
 }
 
-/* Styles for player identifier input specifically in the initial (name entry) state */
 body.initial-state #player-identifier-input {
-  padding: var(--spacing-lg); /* Larger padding for prominence */
+  padding: var(--spacing-lg);
   font-size: var(--font-size-md);
   border-radius: var(--radius-sm);
   background-color: var(--color-bg-input-field);
   color: var(--color-text-primary);
   text-align: left;
-  margin-left: 0; /* Override default */
+  margin-left: 0;
 }
 
 body.initial-state #player-identifier-input::placeholder {
@@ -1130,20 +1091,18 @@ body.initial-state #player-identifier-input::placeholder {
 }
 
 body.initial-state #start-game-button.ui-button.primary {
-  padding-top: var(--spacing-md);    /* Ensure consistent padding */
+  padding-top: var(--spacing-md);
   padding-bottom: var(--spacing-md);
   font-size: var(--font-size-base);
   height: auto;
   margin-left: 0;
-  margin-right: 0; /* Handled by input-group gap */
+  margin-right: 0;
 }
 
-
-/* Spawn Animation for Story Log Viewport After Game Start */
 #story-log-viewport.spawn-animation {
   animation: spawnViewportAnimation 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-  opacity: 0; /* Start transparent for animation, JS sets this before adding class */
-  pointer-events: auto; /* Re-enable interaction */
+  opacity: 0;
+  pointer-events: auto;
 }
 
 @keyframes spawnViewportAnimation {
@@ -1156,15 +1115,3 @@ body.initial-state #start-game-button.ui-button.primary {
     transform: translateY(0) scale(1);
   }
 }
-
-/* Ensure side panels are visible during initial state if main content is hidden */
-/* This is tricky because landing page also uses side panels. */
-/* Game-specific side panels are generated by JS. */
-/* Landing page side panels are always there but content changes. */
-
-/* General panel visibility is handled by JS and .is-expanded on .panel-box */
-/* The body.initial-state should not force panel opacity if they are correctly managed by JS */
-/* body.initial-state #left-panel,
-body.initial-state #right-panel {
-  opacity: 1; 
-} */

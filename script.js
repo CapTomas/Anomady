@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // UI Element References
+    // ... (UI element references remain the same)
     const applicationLogoElement = document.getElementById('application-logo');
     const themeSelectorElement = document.getElementById('theme-selector');
     const systemStatusIndicator = document.getElementById('system-status-indicator');
@@ -68,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const actionInputSection = document.getElementById('action-input-section');
     const playerActionInput = document.getElementById('player-action-input');
     const sendActionButton = document.getElementById('send-action-button');
+
 
     // --- Theme-Specific Dashboard Configurations ---
     const THEME_DASHBOARD_CONFIGS = { /* IDENTICAL TO PREVIOUS VERSION */
@@ -269,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Core Utility Functions ---
+    // ... (getUIText, setupApiKey, saveGameState, loadGameState, clearGameStateInternal, clearGameState, fetchPrompt, loadAllPromptsForTheme, getSystemPrompt remain the same)
     function getUIText(key, replacements = {}) {
         let text = uiTextData[currentTheme]?.[currentAppLanguage]?.[key] ||
                    uiTextData[currentTheme]?.en?.[key] ||
@@ -429,6 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return basePromptText;
     };
 
+
     // --- UI Manipulation & State Display Functions ---
     function setGMActivity(isProcessing) {
         if (gmSpecificActivityIndicator) gmSpecificActivityIndicator.style.display = isProcessing ? 'inline-flex' : 'none';
@@ -476,14 +480,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function clearSuggestedActions() { if (suggestedActionsWrapper) suggestedActionsWrapper.innerHTML = ''; }
 
+    // MODIFIED: setMeter now returns true if an update occurred, false otherwise.
     const setMeter = (barEl, textEl, newPctStr, meterType, opts = {}) => {
         const { highlight = true, newStatusText, initialPlaceholder } = opts;
+        let updatedOccurred = false; // Track if any change happens
+
         if (!barEl) {
             if (textEl && newPctStr !== undefined && newPctStr !== null) {
                 const na = getUIText('not_available_short'), unk = getUIText('unknown');
-                textEl.textContent = (newPctStr === "---" || newPctStr === na || String(newPctStr).toLowerCase() === unk.toLowerCase()) ? newPctStr : `${parseInt(newPctStr,10)}%`;
-            } return;
+                const newContent = (newPctStr === "---" || newPctStr === na || String(newPctStr).toLowerCase() === unk.toLowerCase()) ? newPctStr : `${parseInt(newPctStr,10)}%`;
+                if (textEl.textContent !== newContent) {
+                    textEl.textContent = newContent;
+                    updatedOccurred = true;
+                }
+            }
+            return updatedOccurred;
         }
+
         let finalPct = -1;
         if (newPctStr !== undefined && newPctStr !== null) {
             let pPct = parseInt(newPctStr, 10);
@@ -491,10 +504,12 @@ document.addEventListener('DOMContentLoaded', () => {
             else {
                 const na = getUIText('not_available_short'), unk = getUIText('unknown');
                 if (textEl && (newPctStr === "---" || newPctStr === na || String(newPctStr).toLowerCase() === unk.toLowerCase())) {
-                    if (textEl.textContent !== newPctStr) textEl.textContent = newPctStr;
-                    if (barEl.style.width !== '0%') barEl.style.width = '0%';
-                    Array.from(barEl.classList).filter(c => c.startsWith('meter-')).forEach(c => barEl.classList.remove(c));
-                    return;
+                    if (textEl.textContent !== newPctStr) { textEl.textContent = newPctStr; updatedOccurred = true;}
+                    if (barEl.style.width !== '0%') { barEl.style.width = '0%'; updatedOccurred = true;}
+                    const oldClasses = Array.from(barEl.classList).filter(c => c.startsWith('meter-'));
+                    if (oldClasses.length > 0) updatedOccurred = true;
+                    oldClasses.forEach(c => barEl.classList.remove(c));
+                    return updatedOccurred;
                 }
                 finalPct = (meterType === 'shields' || meterType === 'enemy_shields' || meterType === 'mana') ? 0 : 100;
             }
@@ -506,6 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         finalPct = Math.max(0, Math.min(100, finalPct));
+
         let finalStatusTxt = null;
         if (meterType === 'shields' || meterType === 'enemy_shields') {
             if (newStatusText !== undefined && newStatusText !== null) finalStatusTxt = newStatusText;
@@ -516,10 +532,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (finalPct === 0) finalStatusTxt = getUIText('offline');
             else if (finalStatusTxt && finalStatusTxt.toLowerCase() === getUIText('offline').toLowerCase()) finalStatusTxt = getUIText('online');
         } else if ((meterType === 'mana' || meterType === 'stamina') && newStatusText !== undefined && newStatusText !== null) finalStatusTxt = newStatusText;
+
         let newTxt = '';
         if (meterType === 'shields' || meterType === 'enemy_shields') newTxt = `${finalStatusTxt || getUIText('unknown')}: ${finalPct}%`;
         else if ((meterType === 'mana' || meterType === 'stamina') && finalStatusTxt && finalStatusTxt.toLowerCase() !== getUIText('unknown').toLowerCase()) newTxt = `${finalStatusTxt}: ${finalPct}%`;
         else newTxt = `${finalPct}%`;
+
         let newBarClasses = [];
         const isOffline = (meterType === 'shields' || meterType === 'enemy_shields') && finalStatusTxt && finalStatusTxt.toLowerCase() === getUIText('offline').toLowerCase();
         if (isOffline) newBarClasses.push('meter-offline');
@@ -536,45 +554,115 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (meterType === 'mana') newBarClasses.push('meter-ok-mana');
             }
         }
-        let txtChanged = false, barStyleChanged = false;
-        if (textEl && textEl.textContent !== newTxt) { textEl.textContent = newTxt; txtChanged = true; }
-        if (barEl.style.width !== `${finalPct}%`) { barEl.style.width = `${finalPct}%`; barStyleChanged = true; }
+        
+        if (textEl && textEl.textContent !== newTxt) { textEl.textContent = newTxt; updatedOccurred = true; }
+        if (barEl.style.width !== `${finalPct}%`) { barEl.style.width = `${finalPct}%`; updatedOccurred = true; }
+        
         const exClasses = Array.from(barEl.classList).filter(cls => cls.startsWith('meter-'));
         let classesDiff = newBarClasses.length !== exClasses.length || !newBarClasses.every(cls => exClasses.includes(cls));
         if (classesDiff) {
             exClasses.forEach(cls => { if (cls !== 'meter-bar') barEl.classList.remove(cls); });
             if (!barEl.classList.contains('meter-bar')) barEl.classList.add('meter-bar');
             newBarClasses.forEach(cls => { if (cls && cls.trim() !== '' && cls !== 'meter-bar') barEl.classList.add(cls); });
-            barStyleChanged = true;
-        } else if (!barEl.classList.contains('meter-bar')) barEl.classList.add('meter-bar');
-        if (highlight && (txtChanged || barStyleChanged)) { const c = textEl ? textEl.closest('.info-item, .info-item-meter') : barEl.closest('.info-item, .info-item-meter'); if (c) highlightElementUpdate(c); }
+            updatedOccurred = true;
+        } else if (!barEl.classList.contains('meter-bar')) barEl.classList.add('meter-bar'); // Ensure base class
+
+        if (highlight && updatedOccurred) { const c = textEl ? textEl.closest('.info-item, .info-item-meter') : barEl.closest('.info-item, .info-item-meter'); if (c) highlightElementUpdate(c); }
+        return updatedOccurred;
     };
 
+    // NEW HELPER FUNCTION
+    // Finds the configuration of the parent panel for a given item ID.
+    function getParentPanelConfig(itemId) {
+        const themeConfig = THEME_DASHBOARD_CONFIGS[currentTheme];
+        if (!themeConfig) return null;
+
+        for (const consoleSideKey of ['left_console', 'right_console']) {
+            if (themeConfig[consoleSideKey]) {
+                for (const panelConfig of themeConfig[consoleSideKey]) {
+                    if (panelConfig.items && panelConfig.items.some(item => item.id === itemId)) {
+                        return panelConfig;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    // MODIFIED: updateDashboard to auto-expand parent panel on update.
     function updateDashboard(updatesFromAI, highlightChanges = true) {
         if (!updatesFromAI || Object.keys(updatesFromAI).length === 0) return;
         const themeCfg = THEME_DASHBOARD_CONFIGS[currentTheme]; if (!themeCfg) return;
+        
         const allItems = [...themeCfg.left_console.flatMap(b => b.items), ...themeCfg.right_console.flatMap(b => b.items)];
         const itemCfgsMap = new Map(allItems.map(i => [i.id, i]));
-        for (const key in updatesFromAI) {
+
+        for (const key in updatesFromAI) { // 'key' is the itemId
             if (Object.prototype.hasOwnProperty.call(updatesFromAI, key)) {
-                const val = updatesFromAI[key]; let itemCfg = itemCfgsMap.get(key);
-                if (!itemCfg && key === 'callsign' && currentTheme === 'fantasy') { itemCfg = itemCfgsMap.get('character_name'); if (itemCfg) playerIdentifier = val; }
+                const val = updatesFromAI[key]; 
+                let itemCfg = itemCfgsMap.get(key);
+                let actualUpdateOccurred = false;
+
+                if (!itemCfg && key === 'callsign' && currentTheme === 'fantasy') { 
+                    itemCfg = itemCfgsMap.get('character_name'); 
+                    if (itemCfg) playerIdentifier = val; // Direct update, may not trigger panel open unless 'character_name' also updated
+                }
                 if (!itemCfg) continue;
+                
                 if (key === 'callsign' || key === 'character_name') playerIdentifier = val;
-                const valEl = document.getElementById(`info-${itemCfg.id}`); const meterBarEl = document.getElementById(`meter-${itemCfg.id}`);
+                
+                const valEl = document.getElementById(`info-${itemCfg.id}`); 
+                const meterBarEl = document.getElementById(`meter-${itemCfg.id}`);
+
                 if (itemCfg.type === 'meter') {
-                    if (valEl || meterBarEl) setMeter(meterBarEl, valEl, String(val), itemCfg.meter_type, { highlight: highlightChanges, newStatusText: itemCfg.status_text_id ? updatesFromAI[itemCfg.status_text_id] : undefined });
+                    if (valEl || meterBarEl) {
+                        actualUpdateOccurred = setMeter(meterBarEl, valEl, String(val), itemCfg.meter_type, { 
+                            highlight: highlightChanges, 
+                            newStatusText: itemCfg.status_text_id ? updatesFromAI[itemCfg.status_text_id] : undefined 
+                        });
+                    }
                 } else if (itemCfg.type === 'status_text') {
                     if (valEl) {
-                        const newStatTxt = String(val); let statClass = 'status-info'; const lowVal = newStatTxt.toLowerCase();
-                        if (itemCfg.id === 'alertLevel') { if (lowVal.includes('red')) statClass = 'status-danger'; else if (lowVal.includes('yellow')) statClass = 'status-warning'; else if (lowVal.includes('green')) statClass = 'status-ok'; }
-                        else if (itemCfg.id === 'alert_level') { if (lowVal.includes(getUIText('alert_level_danger_val').toLowerCase())) statClass = 'status-danger'; else if (lowVal.includes(getUIText('alert_level_wary_val').toLowerCase())) statClass = 'status-warning'; else if (lowVal.includes(getUIText('alert_level_calm_val').toLowerCase())) statClass = 'status-ok';}
-                        if (valEl.textContent !== newStatTxt || !valEl.className.includes(statClass)) { valEl.textContent = newStatTxt; valEl.className = `value ${statClass}`; if (highlightChanges) highlightElementUpdate(valEl); }
+                        const newStatTxt = String(val); 
+                        let statClass = 'status-info'; 
+                        const lowVal = newStatTxt.toLowerCase();
+                        // Determine statusClass based on item ID and value
+                        if (itemCfg.id === 'alertLevel') { 
+                            if (lowVal.includes('red')) statClass = 'status-danger'; 
+                            else if (lowVal.includes('yellow')) statClass = 'status-warning'; 
+                            else if (lowVal.includes('green')) statClass = 'status-ok'; 
+                        } else if (itemCfg.id === 'alert_level') { 
+                            if (lowVal.includes(getUIText('alert_level_danger_val').toLowerCase())) statClass = 'status-danger'; 
+                            else if (lowVal.includes(getUIText('alert_level_wary_val').toLowerCase())) statClass = 'status-warning'; 
+                            else if (lowVal.includes(getUIText('alert_level_calm_val').toLowerCase())) statClass = 'status-ok';
+                        }
+                        if (valEl.textContent !== newStatTxt || !valEl.className.includes(statClass)) { 
+                            valEl.textContent = newStatTxt; 
+                            valEl.className = `value ${statClass}`; 
+                            if (highlightChanges) highlightElementUpdate(valEl);
+                            actualUpdateOccurred = true;
+                        }
                     }
-                } else {
+                } else { // text, number_text, text_long
                     if (valEl) {
-                        const suffix = itemCfg.suffix || ''; const newVTxt = `${val}${suffix}`;
-                        if (valEl.textContent !== newVTxt) { valEl.textContent = newVTxt; if (highlightChanges) highlightElementUpdate(valEl); }
+                        const suffix = itemCfg.suffix || ''; 
+                        const newVTxt = `${val}${suffix}`;
+                        if (valEl.textContent !== newVTxt) { 
+                            valEl.textContent = newVTxt; 
+                            if (highlightChanges) highlightElementUpdate(valEl); 
+                            actualUpdateOccurred = true;
+                        }
+                    }
+                }
+
+                // If an update occurred, check if the parent panel needs to be expanded
+                if (actualUpdateOccurred) {
+                    const parentPanelConfig = getParentPanelConfig(key); // key is itemId
+                    if (parentPanelConfig && parentPanelConfig.type === 'collapsible') {
+                        const panelElement = document.getElementById(parentPanelConfig.id);
+                        if (panelElement && !panelElement.classList.contains('is-expanded')) {
+                            animateConsoleBox(parentPanelConfig.id, true, false); // Expand, don't manage visibility here
+                        }
                     }
                 }
             }
@@ -582,6 +670,9 @@ document.addEventListener('DOMContentLoaded', () => {
         lastKnownDashboardUpdates = {...lastKnownDashboardUpdates, ...updatesFromAI};
     }
 
+    // ... (initializeDashboardDefaultTexts, findItemConfigById, autoGrowTextarea remain the same)
+    // ... (animateConsoleBox, initializeCollapsibleConsoleBoxes remain the same)
+    // ... (updateModelToggleButtonText, updateThemeSelectorActiveState remain the same)
     function initializeDashboardDefaultTexts() {
         const themeCfg = THEME_DASHBOARD_CONFIGS[currentTheme]; if (!themeCfg) return;
         ['left_console', 'right_console'].forEach(sideKey => {
@@ -631,8 +722,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function animateConsoleBox(boxId, shouldExpand, manageVisibility = false) {
         const box = document.getElementById(boxId); if (!box) return;
-        const header = box.querySelector('.panel-box-header'); // CORRECTED
-        const content = box.querySelector('.panel-box-content'); // CORRECTED
+        const header = box.querySelector('.panel-box-header'); 
+        const content = box.querySelector('.panel-box-content'); 
         if (!header || !content) return;
         if (shouldExpand) {
             if (box.style.display === 'none') { box.style.opacity = '0'; box.style.display = 'block'; }
@@ -655,7 +746,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const allCfgs = [...themeCfg.left_console, ...themeCfg.right_console];
         allCfgs.forEach(boxCfg => {
             const box = document.getElementById(boxCfg.id); if (!box) return;
-            const header = box.querySelector('.panel-box-header'); // CORRECTED
+            const header = box.querySelector('.panel-box-header'); 
             if (!header) return;
             if (boxCfg.type === 'collapsible' || boxCfg.type === 'hidden_until_active') {
                 header.addEventListener('click', () => { if (box.style.display !== 'none') animateConsoleBox(boxCfg.id, !box.classList.contains('is-expanded')); });
@@ -683,7 +774,12 @@ document.addEventListener('DOMContentLoaded', () => {
         themeSelectorElement.querySelectorAll('.theme-button').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === currentTheme));
     }
 
+
     // --- Application Flow & Game Logic Functions ---
+    // ... (toggleModelType, setAppLanguageAndTheme, toggleAppLanguage, handleGameStateIndicators remain the same)
+    // ... (callGeminiAPI, startGameAfterIdentifier, sendPlayerAction, startNewGameSession remain the same)
+    // ... (generateConsolesForTheme, changeTheme, initializeApp, and Event Listeners remain the same)
+
     function toggleModelType() {
         currentModelName = (currentModelName === PAID_MODEL_NAME) ? FREE_MODEL_NAME : PAID_MODEL_NAME;
         localStorage.setItem(MODEL_PREFERENCE_STORAGE_KEY, currentModelName);
@@ -711,7 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (themeCfg) {
             ['left_console', 'right_console'].forEach(sideKey => {
                 themeCfg[sideKey].forEach(boxCfg => {
-                    const titleEl = document.querySelector(`#${boxCfg.id} .panel-box-title`); // CORRECTED
+                    const titleEl = document.querySelector(`#${boxCfg.id} .panel-box-title`); 
                     if (titleEl) titleEl.textContent = getUIText(boxCfg.title_key);
                     boxCfg.items.forEach(itemCfg => {
                         const labelEl = document.querySelector(`#info-item-container-${itemCfg.id} .label`);
@@ -838,13 +934,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const createSide = (sideContainer, panelConfigs) => {
             panelConfigs.forEach(panelConfig => {
                 const panelBox = document.createElement('div'); panelBox.id = panelConfig.id;
-                panelBox.classList.add('panel-box'); // CORRECTED
+                panelBox.classList.add('panel-box'); 
                 if (panelConfig.type === 'collapsible' || panelConfig.type === 'hidden_until_active') panelBox.classList.add('collapsible');
-                const header = document.createElement('div'); header.classList.add('panel-box-header'); // CORRECTED
-                const title = document.createElement('h3'); title.classList.add('panel-box-title'); // CORRECTED
+                const header = document.createElement('div'); header.classList.add('panel-box-header'); 
+                const title = document.createElement('h3'); title.classList.add('panel-box-title'); 
                 title.textContent = getUIText(panelConfig.title_key);
                 header.appendChild(title); panelBox.appendChild(header);
-                const content = document.createElement('div'); content.classList.add('panel-box-content'); // CORRECTED
+                const content = document.createElement('div'); content.classList.add('panel-box-content'); 
                 panelConfig.items.forEach(item => {
                     const itemCont = document.createElement('div'); itemCont.id = `info-item-container-${item.id}`;
                     itemCont.classList.add(item.type === 'meter' ? 'info-item-meter' : 'info-item');

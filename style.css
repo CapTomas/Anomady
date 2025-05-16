@@ -477,7 +477,7 @@ body {
 
 /* Suggested Actions Area */
 #suggested-actions-wrapper {
-  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md) var(--spacing-lg);
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-xs) var(--spacing-lg);
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-sm);

@@ -34,6 +34,16 @@
     --color-text-on-primary-button: #ffffff;
     --color-text-accent-interactive: #5a5a5e;
   
+    --color-meter-critical: #ef4444;
+    --color-meter-low: #f58c0b; 
+    --color-meter-medium: #eac108;
+    --color-meter-full: #14b8a6;
+    --color-meter-offline-bg: #4a5568;
+    --color-meter-mana: #3b82f6;
+    --color-meter-shield: #3b82f6;
+    --color-meter-stamina: #8b5cf6;
+    --color-meter-fuel: #8b5cf6;
+
     --color-accent-teal: #14b8a6;
     --color-accent-green: #22c55e;
     --color-accent-blue: #3b82f6;
@@ -92,6 +102,9 @@
     --transition-collapsible-content: 1.5s cubic-bezier(0.4, 0, 0.2, 1); /* Default from existing */
     --transition-collapsible-opacity: 1.2s ease-out 0.3s; /* Default from existing */
     --UPDATE_HIGHLIGHT_DURATION: 5s;
+
+    --theme-icon-size: 28px; /* For theme selector icons */
+
   }
   *,
   *::before,
@@ -142,6 +155,8 @@
   }
   #app-top-bar .top-bar-left {
     flex: 1;
+    display: flex;
+    align-items: center;
   }
   #app-top-bar .top-bar-center {
     display: flex;
@@ -187,6 +202,63 @@
   #gm-activity-indicator[style*="inline-flex"] {
     animation: subtlePulse 1.5s infinite ease-in-out;
   }
+
+
+/* Platform Logo and Theme Selector */
+#platform-logo {
+  display: block; /* Or inline-block */
+  width: 40px;    /* Desired width of the logo icon */
+  height: 40px;   /* Desired height of the logo icon */
+  padding: 4px;   /* Padding inside the background, around the SVG content */
+  margin-right: var(--spacing-md);
+  background-color: #e3e3e3; /* Your desired background */
+  border-radius: var(--radius-sm); /* Rounded corners */
+  color: var(--color-text-primary); /* This will be the 'currentColor' for the SVG */
+  box-sizing: border-box; /* Ensures padding is included in width/height */
+}
+
+#platform-logo svg { 
+  width: var(--theme-icon-size);
+  height: var(--theme-icon-size);
+  display: block;
+  background-color: var(--color-bg-element-hover);
+}
+
+#theme-selector {
+  display: inline-flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.theme-button {
+  background-color: transparent;
+  border: 2px solid transparent; /* For active state */
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  opacity: 0.6; /* Dim inactive themes */
+  filter: grayscale(50%);
+}
+
+.theme-button img {
+  width: var(--theme-icon-size);
+  height: var(--theme-icon-size);
+  display: block;
+}
+
+.theme-button:hover {
+  opacity: 1;
+  filter: grayscale(0%);
+  background-color: var(--color-bg-element-hover);
+}
+
+.theme-button.active {
+  opacity: 1;
+  filter: grayscale(0%);
+  background-color: var(--color-bg-element-hover);
+}
+
   
   #cockpit-layout {
     display: flex;
@@ -241,8 +313,7 @@
   .console-box-content {
     max-height: 0;
     opacity: 0;
-    overflow: hidden; /* Content within a box that exceeds its own max-height will be hidden */
-                      /* If individual box content needs scrolling, add overflow-y: auto here too */
+    overflow: hidden;
     padding: 0 var(--spacing-lg);
     transition: max-height var(--transition-collapsible-content),
       opacity var(--transition-collapsible-opacity),
@@ -299,12 +370,21 @@
     margin-top: var(--spacing-xs);
   }
   .meter-bar {
-    height: 100%;
-    background-color: var(--color-status-ok-bar);
+    height: 8px;
     width: 0%;
+    background-color: var(--color-meter-critical);
     border-radius: var(--radius-full);
     transition: width 0.4s ease-out, background-color 0.4s ease;
   }
+  .meter-bar.meter-critical { background-color: var(--color-meter-critical); }
+  .meter-bar.meter-low { background-color: var(--color-meter-low); }
+  .meter-bar.meter-medium { background-color: var(--color-meter-medium); }
+  .meter-bar.meter-full { background-color: var(--color-meter-full); }
+  .meter-bar.meter-offline { background-color: var(--color-meter-offline-bg); } 
+  .meter-bar.meter-ok-fuel.meter-full { background-color: var(--color-meter-fuel); } 
+  .meter-bar.meter-ok-mana.meter-full { background-color: var(--color-meter-mana); }
+  .meter-bar.meter-ok-stamina.meter-full { background-color: var(--color-meter-stamina); }
+  .meter-bar.meter-ok-shield.meter-full { background-color: var(--color-meter-shield); }
   
   #info-ship-shields.value-overlay,
   #info-ship-integrity.value-overlay,
@@ -394,14 +474,14 @@
   
   .input-group {
     display: flex;
-    align-items: center;
+    align-items: flex-end; /* Align items to the bottom, good for growing textarea */
     background-color: var(--color-bg-input-field);
     border-radius: var(--radius-md);
-    padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-xs)
-      var(--spacing-md);
-    min-height: 70px;
+    padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-xs) var(--spacing-md);
+    min-height: 70px; /* Or adjust as needed */
     transition: box-shadow var(--transition-fast);
-  }
+    gap: var(--spacing-sm); /* Add gap between textarea and button */
+}
   .input-group:focus-within {
     box-shadow: var(--shadow-focus-ring);
   }
@@ -409,6 +489,7 @@
   #player-input-control-panel input[type="text"],
   #player-input-control-panel textarea {
     flex-grow: 1;
+    align-self: center;
     background-color: transparent;
     color: var(--color-text-primary);
     padding: var(--spacing-sm) 0;
@@ -476,15 +557,17 @@
     flex-shrink: 0;
     margin-left: var(--spacing-sm);
     margin-right: var(--spacing-lg);
-    height: calc(var(--input-button-size) + var(--spacing-xs) * 2 + 2px);
+    height: auto;
     min-width: var(--input-button-size);
-    padding: 0 var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
     font-size: var(--font-size-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg); 
+}
   #player-input-control-panel .ui-button.primary:hover {
     background-color: var(--color-bg-button-primary-hover);
   }
@@ -608,6 +691,7 @@
       flex-direction: column;
       padding: var(--spacing-md);
       gap: var(--spacing-md);
+      padding-right: 0;
       overflow-y: auto; /* Allow #cockpit-layout to scroll if its content exceeds viewport height */
       overflow-x: hidden;
     }
@@ -658,6 +742,19 @@
     }
     #app-top-bar .top-bar-center {
       display: none;
+    }
+    #app-top-bar .top-bar-left {
+      flex-basis: 100%; /* Allow logo and theme selector to take full width initially */
+      display: flex;
+      align-items: center;
+      margin-bottom: var(--spacing-sm); /* Add some space if they wrap */
+    }
+    #app-top-bar .top-bar-right {
+      flex-basis: 100%; /* Allow control buttons to take full width if needed */
+      justify-content: space-around; /* Distribute buttons more evenly on small screens */
+    }
+    #platform-logo {
+        margin-right: auto; /* Push theme selector to the right of logo */
     }
     .console-box {
       flex-basis: 100%;
@@ -774,7 +871,10 @@ body.initial-state #name-input-section button#start-game-button.ui-button.primar
     padding-top: 0;
     padding-bottom: 0;
 }
+
 .console-box.is-expanded .console-box-content {
+  max-height: 600px; /* Adjust as needed */
+  opacity: 1;
     /* existing: max-height: 600px; opacity: 1; */
     padding-top: var(--spacing-xs); /* Restore padding when expanded */
     padding-bottom: var(--spacing-lg); /* Restore padding when expanded */
@@ -786,3 +886,4 @@ body.initial-state #left-console,
 body.initial-state #right-console {
     opacity: 1; /* Or ensure they are not accidentally hidden */
 }
+

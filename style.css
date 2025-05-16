@@ -1,223 +1,219 @@
+/* --- Root Variables --- */
 :root {
-    --font-family-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-      Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-      "Segoe UI Symbol";
-    --font-family-mono: "Roboto Mono", "SFMono-Regular", Consolas,
-      "Liberation Mono", Menlo, Courier, monospace;
-  
-    --font-size-xs: 0.75rem;
-    --font-size-sm: 0.875rem;
-    --font-size-base: 0.9375rem;
-    --font-size-md: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.375rem;
-    --font-size-title-console: 0.875rem;
-  
-    --line-height-tight: 1.4;
-    --line-height-base: 1.6;
-    --font-weight-normal: 400;
-    --font-weight-medium: 500;
-    --font-weight-semibold: 600;
-  
-    --color-bg-page-root: #121212;
-    --color-bg-viewport: #1e1e1e;
-    --color-bg-console-box: #181818;
-    --color-bg-input-area: #252525;
-    --color-bg-input-field: #2e2e2e;
-    --color-bg-element-hover: #333333;
-    --color-bg-button-primary: #3a3a3e;
-    --color-bg-button-primary-hover: #4a4a4e;
-  
-    --color-text-primary: #d1d1d6;
-    --color-text-secondary: #8a8a8e;
-    --color-text-muted: #5a5a5e;
-    --color-text-on-primary-button: #ffffff;
-    --color-text-accent-interactive: #5a5a5e;
-  
-    --color-meter-critical: #ef4444;
-    --color-meter-low: #f58c0b; 
-    --color-meter-medium: #eac108;
-    --color-meter-full: #14b8a6;
-    --color-meter-offline-bg: #4a5568;
-    --color-meter-mana: #3b82f6;
-    --color-meter-shield: #3b82f6;
-    --color-meter-stamina: #8b5cf6;
-    --color-meter-fuel: #8b5cf6;
+  /* Typography */
+  --font-family-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-family-mono: "Roboto Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 0.9375rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.375rem;
+  --font-size-title-panel: 0.875rem; /* Renamed from --font-size-title-console */
+  --line-height-tight: 1.4;
+  --line-height-base: 1.6;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
 
-    --color-accent-teal: #14b8a6;
-    --color-accent-green: #22c55e;
-    --color-accent-blue: #3b82f6;
-    --color-accent-amber: #f59e0b;
-    --color-accent-violet: #8b5cf6;
-    --color-accent-teal-rgb: 20, 184, 166;
-    --color-accent-blue-rgb: 59, 130, 246;
-    --color-accent-amber-rgb: 245, 158, 11;
-    --color-accent-red-rgb: 239, 68, 68;
-    --color-accent-light-gray-rgb: 229, 231, 235;
-  
-    --color-status-ok-bar: var(--color-accent-teal);
-    --color-status-ok-text: var(--color-accent-teal);
-  
-    --color-status-integrity-ok-bar: var(--color-accent-green);
-  
-    --color-status-fuel-ok-bar: var(--color-accent-amber);
-    --color-status-fuel-warning-bar: var(--color-accent-amber);
-  
-    --color-status-warning-bar: var(--color-accent-amber);
-    --color-status-danger-bar: #ef4444;
-    --color-status-info-bar: var(--color-accent-blue);
-    --color-status-offline-bar: #4a5568;
-  
-    --color-status-warning-text: var(--color-accent-amber);
-    --color-status-danger-text: #ef4444;
-    --color-status-info-text: var(--color-text-accent-interactive);
-    --color-status-offline-text: var(--color-text-muted);
-  
-    --shadow-console-box: 0px 2px 8px rgba(0, 0, 0, 0.2);
-    --shadow-input-area: 0px -2px 5px rgba(0, 0, 0, 0.15);
-    --shadow-focus-ring: 0 0 0 2px var(--color-text-accent-interactive);
-    --highlight-bg-value-update: rgba(var(--color-accent-light-gray-rgb), 0.06);
-  
-    --spacing-unit: 4px;
-    --spacing-xs: var(--spacing-unit);
-    --spacing-sm: calc(var(--spacing-unit) * 2);
-    --spacing-md: calc(var(--spacing-unit) * 3);
-    --spacing-lg: calc(var(--spacing-unit) * 4);
-    --spacing-xl: calc(var(--spacing-unit) * 5);
-    --spacing-xxl: calc(var(--spacing-unit) * 6);
-  
-    --radius-full: 9999px;
-    --radius-xs: 8px;
-    --radius-sm: 10px;
-    --radius-md: 20px;
-    --sidebar-width: 280px;
-    --top-bar-height: 60px;
-    --bottom-bar-height: 28px;
-    --input-panel-height: auto;
-    --input-button-size: 32px;
-    --textarea-max-height: 150px;
-  
-    --transition-fast: 0.15s ease-out;
-    --transition-std: 0.25s ease-out;
-    --transition-collapsible-content: 1.5s cubic-bezier(0.4, 0, 0.2, 1); /* Default from existing */
-    --transition-collapsible-opacity: 1.2s ease-out 0.3s; /* Default from existing */
-    --UPDATE_HIGHLIGHT_DURATION: 5s;
+  /* Colors - Base */
+  --color-bg-page-root: #121212;
+  --color-bg-content-view: #1e1e1e; /* Renamed from --color-bg-viewport */
+  --color-bg-panel: #181818; /* Renamed from --color-bg-console-box */
+  --color-bg-input-area: #252525;
+  --color-bg-input-field: #2e2e2e;
+  --color-bg-element-hover: #333333;
+  --color-bg-button-primary: #3a3a3e;
+  --color-bg-button-primary-hover: #4a4a4e;
 
-    --theme-icon-size: 28px; /* For theme selector icons */
+  /* Colors - Text */
+  --color-text-primary: #d1d1d6;
+  --color-text-secondary: #8a8a8e;
+  --color-text-muted: #5a5a5e;
+  --color-text-on-primary-button: #ffffff;
+  --color-text-accent-interactive: #5a5a5e;
 
-  }
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    border: 0;
-  }
-  
-  html {
-    font-size: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-  
-  html.no-scroll {
-    overflow: hidden;
-  }
-  
-  body {
-    font-family: var(--font-family-main);
-    background-color: var(--color-bg-page-root);
-    color: var(--color-text-primary);
-    line-height: var(--line-height-base);
-    font-size: var(--font-size-base);
-    overflow: hidden;
-    height: 100vh;
-    width: 100vw;
-  }
-  #game-ui-root {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-  }
-  #app-top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 var(--spacing-xl);
-    background-color: var(--color-bg-console-box);
-    flex-shrink: 0;
-    height: var(--top-bar-height);
-    position: relative;
-    z-index: 100;
-  }
-  #app-top-bar .top-bar-left {
-    flex: 1;
-    display: flex;
-    align-items: center;
-  }
-  #app-top-bar .top-bar-center {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    font-size: var(--font-size-sm);
-  }
-  #app-top-bar .top-bar-right {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  #game-title {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-  }
-  
-  #system-status-indicator,
-  #gm-activity-indicator {
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-xs);
-    font-weight: var(--font-weight-medium);
-    font-size: var(--font-size-xs);
-  }
-  #system-status-indicator.status-ok {
-    color: var(--color-status-ok-text);
-  }
-  #gm-activity-indicator {
-    color: var(--color-status-info-text);
-  }
-  
-  @keyframes subtlePulse {
-    0%,
-    100% {
-      opacity: 0.75;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
-  #gm-activity-indicator[style*="inline-flex"] {
-    animation: subtlePulse 1.5s infinite ease-in-out;
-  }
+  /* Colors - Meters (theme-specific values set by JS or theme CSS) */
+  --color-meter-critical: #ef4444;
+  --color-meter-low: #f58c0b;
+  --color-meter-medium: #eac108;
+  --color-meter-full: #14b8a6;
+  --color-meter-offline-bg: #4a5568;
+  --color-meter-mana: #3b82f6; /* Example for fantasy */
+  --color-meter-shield: #3b82f6; /* Example for scifi */
+  --color-meter-stamina: #8b5cf6; /* Example for fantasy */
+  --color-meter-fuel: #8b5cf6; /* Example for scifi */
 
+  /* Colors - Accents & Status */
+  --color-accent-teal: #14b8a6;
+  --color-accent-green: #22c55e;
+  --color-accent-blue: #3b82f6;
+  --color-accent-amber: #f59e0b;
+  --color-accent-violet: #8b5cf6;
+  --color-accent-teal-rgb: 20, 184, 166;
+  --color-accent-blue-rgb: 59, 130, 246;
+  --color-accent-amber-rgb: 245, 158, 11;
+  --color-accent-red-rgb: 239, 68, 68;
+  --color-accent-light-gray-rgb: 229, 231, 235;
 
-/* Platform Logo and Theme Selector */
-#platform-logo {
-  display: block; /* Or inline-block */
-  width: 40px;    /* Desired width of the logo icon */
-  height: 40px;   /* Desired height of the logo icon */
-  padding: 4px;   /* Padding inside the background, around the SVG content */
-  margin-right: var(--spacing-md);
-  background-color: #e3e3e3; /* Your desired background */
-  border-radius: var(--radius-sm); /* Rounded corners */
-  color: var(--color-text-primary); /* This will be the 'currentColor' for the SVG */
-  box-sizing: border-box; /* Ensures padding is included in width/height */
+  --color-status-ok-bar: var(--color-accent-teal);
+  --color-status-ok-text: var(--color-accent-teal);
+  --color-status-integrity-ok-bar: var(--color-accent-green);
+  --color-status-fuel-ok-bar: var(--color-accent-amber);
+  --color-status-fuel-warning-bar: var(--color-accent-amber);
+  --color-status-warning-bar: var(--color-accent-amber);
+  --color-status-danger-bar: #ef4444;
+  --color-status-info-bar: var(--color-accent-blue);
+  --color-status-offline-bar: #4a5568;
+  --color-status-warning-text: var(--color-accent-amber);
+  --color-status-danger-text: #ef4444;
+  --color-status-info-text: var(--color-text-accent-interactive);
+  --color-status-offline-text: var(--color-text-muted);
+
+  /* Shadows & Highlights */
+  --shadow-panel: 0px 2px 8px rgba(0, 0, 0, 0.2); /* Renamed from --shadow-console-box */
+  --shadow-input-area: 0px -2px 5px rgba(0, 0, 0, 0.15);
+  --shadow-focus-ring: 0 0 0 2px var(--color-text-accent-interactive);
+  --highlight-bg-value-update: rgba(var(--color-accent-light-gray-rgb), 0.06);
+
+  /* Spacing & Sizing */
+  --spacing-unit: 4px;
+  --spacing-xs: var(--spacing-unit);
+  --spacing-sm: calc(var(--spacing-unit) * 2);
+  --spacing-md: calc(var(--spacing-unit) * 3);
+  --spacing-lg: calc(var(--spacing-unit) * 4);
+  --spacing-xl: calc(var(--spacing-unit) * 5);
+  --spacing-xxl: calc(var(--spacing-unit) * 6);
+  --radius-full: 9999px;
+  --radius-xs: 8px;
+  --radius-sm: 10px;
+  --radius-md: 20px;
+  --sidebar-width: 280px;
+  --header-height: 60px; /* Renamed from --top-bar-height */
+  --footer-height: 28px; /* Renamed from --bottom-bar-height */
+  --input-control-panel-height: auto; /* Renamed from --input-panel-height */
+  --input-button-size: 32px;
+  --textarea-max-height: 150px;
+  --theme-icon-size: 28px;
+
+  /* Transitions & Animations */
+  --transition-fast: 0.15s ease-out;
+  --transition-std: 0.25s ease-out;
+  --transition-collapsible-content: 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-collapsible-opacity: 1.2s ease-out 0.3s;
+  --UPDATE_HIGHLIGHT_DURATION: 5s;
 }
 
-#platform-logo svg { 
+/* --- Global Resets & Base Styles --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+html {
+  font-size: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html.no-scroll {
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-family-main);
+  background-color: var(--color-bg-page-root);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-base);
+  font-size: var(--font-size-base);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* --- Main Application Layout --- */
+#app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+#application-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-xl);
+  background-color: var(--color-bg-panel);
+  flex-shrink: 0;
+  height: var(--header-height);
+  position: relative;
+  z-index: 100;
+}
+
+#application-header .top-bar-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+#application-header .top-bar-center {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+#application-header .top-bar-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#system-status-indicator,
+#gm-activity-indicator {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-xs);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-xs);
+}
+
+#system-status-indicator.status-ok {
+  color: var(--color-status-ok-text);
+}
+
+#gm-activity-indicator {
+  color: var(--color-status-info-text);
+}
+
+@keyframes subtlePulse {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+
+#gm-activity-indicator[style*="inline-flex"] { /* Indicates GM is processing */
+  animation: subtlePulse 1.5s infinite ease-in-out;
+}
+
+/* Application Logo & Theme Selector */
+#application-logo {
+  display: block;
+  width: 40px;
+  height: 40px;
+  padding: 4px;
+  margin-right: var(--spacing-md);
+  background-color: #e3e3e3;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary); /* SVG currentColor */
+  box-sizing: border-box;
+}
+
+#application-logo svg {
   width: var(--theme-icon-size);
   height: var(--theme-icon-size);
   display: block;
@@ -232,12 +228,12 @@
 
 .theme-button {
   background-color: transparent;
-  border: 2px solid transparent; /* For active state */
+  border: 2px solid transparent;
   padding: var(--spacing-xs);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
-  opacity: 0.6; /* Dim inactive themes */
+  opacity: 0.6;
   filter: grayscale(50%);
 }
 
@@ -259,631 +255,645 @@
   background-color: var(--color-bg-element-hover);
 }
 
-  
-  #cockpit-layout {
-    display: flex;
-    flex-grow: 1;
-    overflow: hidden; /* Default for desktop view - sidebars handle their own scroll */
-    padding: 0 var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
-    gap: var(--spacing-lg);
-    background-color: var(--color-bg-console-box);
+/* Main Content Layout */
+#main-layout { /* Renamed from #cockpit-layout */
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+  padding: 0 var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
+  gap: var(--spacing-lg);
+  background-color: var(--color-bg-panel);
+}
+
+/* Side Panels (Consoles) */
+.console-sidebar { /* Generic sidebar container */
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--spacing-lg);
+  overflow-y: auto;
+  padding-bottom: var(--spacing-xs);
+}
+
+.panel-box { /* Generic panel box, renamed from .console-box */
+  background-color: var(--color-bg-content-view);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Specific theme-related panels are hidden by default, JS manages visibility */
+#comms-channel-console-box,
+#enemy-intel-console-box { /* These IDs are used by JS, keep them */
+  display: none;
+}
+
+.panel-box-header { /* Renamed from .console-box-header */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.panel-box-header:hover {
+  background-color: rgb(46 46 46); /* Consider a variable if this color is reused */
+}
+
+.panel-box-title { /* Renamed from .console-box-title */
+  font-size: var(--font-size-title-panel);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.panel-box-content { /* Renamed from .console-box-content */
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 0 var(--spacing-lg); /* Padding applied when expanded */
+  transition: max-height var(--transition-collapsible-content),
+    opacity var(--transition-collapsible-opacity),
+    padding-top var(--transition-collapsible-content),
+    padding-bottom var(--transition-collapsible-content);
+}
+
+.panel-box.is-expanded .panel-box-content {
+  max-height: 600px; /* Sufficiently large to accommodate content */
+  opacity: 1;
+  padding-top: var(--spacing-xs);
+  padding-bottom: var(--spacing-lg);
+}
+
+/* Information Items within Panels */
+.info-item,
+.info-item-meter { /* Data display containers */
+  margin-bottom: var(--spacing-md);
+  position: relative;
+}
+
+.info-item:last-child,
+.info-item-meter:last-child {
+  margin-bottom: 0;
+}
+
+.info-item .label,
+.info-item-meter .label { /* Label for an info item */
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.info-item .value,
+.info-item-meter .value-overlay { /* Value display for an info item */
+  display: block;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-tight);
+}
+
+.info-item .value.objective-text, /* Specific value types allowing scroll */
+.info-item .value.location-text {
+  max-height: calc(var(--line-height-tight) * var(--font-size-base) * 5); /* Approx 5 lines */
+  overflow-y: auto;
+  padding-right: var(--spacing-sm);
+}
+
+/* Meter Bar Styling */
+.meter-bar-container {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: var(--spacing-xs);
+}
+
+.meter-bar { /* The actual fill of the meter */
+  height: 100%;
+  width: 0%; /* JS updates this */
+  background-color: var(--color-meter-critical); /* Default, JS updates based on value/type */
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease-out, background-color 0.4s ease;
+}
+
+/* Meter color states */
+.meter-bar.meter-critical { background-color: var(--color-meter-critical); }
+.meter-bar.meter-low { background-color: var(--color-meter-low); }
+.meter-bar.meter-medium { background-color: var(--color-meter-medium); }
+.meter-bar.meter-full { background-color: var(--color-meter-full); }
+.meter-bar.meter-offline { background-color: var(--color-meter-offline-bg); }
+/* Theme-specific meter 'full' colors */
+.meter-bar.meter-ok-fuel.meter-full { background-color: var(--color-meter-fuel); }
+.meter-bar.meter-ok-mana.meter-full { background-color: var(--color-meter-mana); }
+.meter-bar.meter-ok-stamina.meter-full { background-color: var(--color-meter-stamina); }
+.meter-bar.meter-ok-shield.meter-full { background-color: var(--color-meter-shield); }
+
+
+/* Specific value overlays for some themed meters (Sci-Fi context) */
+#info-ship-shields.value-overlay, /* These IDs are from JS THEME_DASHBOARD_CONFIGS */
+#info-ship-integrity.value-overlay,
+#info-ship-fuel.value-overlay,
+#info-enemy-shields-status.value-overlay,
+#info-enemy-hull-integrity.value-overlay {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-xs);
+  text-align: right;
+}
+
+/* Center Column: Story Log & Input */
+#center-column {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-panel);
+  overflow: hidden;
+  border-radius: var(--radius-md); /* Added for consistency with panels */
+}
+
+#story-log-viewport { /* Scrollable area for messages */
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: var(--spacing-xl);
+  background-color: var(--color-bg-content-view);
+  border-radius: var(--radius-md); /* Inner viewport rounding */
+}
+
+#story-log .message { /* Individual message bubble */
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  line-height: var(--line-height-base);
+  max-width: 90%;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInMessage 0.3s ease-out forwards;
+}
+
+@keyframes fadeInMessage {
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
+
+#story-log .gm-message { /* Message from the game master */
+  color: var(--color-text-primary);
+  margin-right: auto; /* Aligns left */
+}
+
+#story-log .gm-message em { /* Italicized text in GM messages */
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+#story-log .player-message { /* Message from the player */
+  background-color: var(--color-bg-panel);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  margin-left: auto; /* Aligns right */
+}
+
+#story-log .system-message { /* System-generated messages */
+  background-color: transparent;
+  color: var(--color-text-muted);
+  font-style: italic;
+  font-size: var(--font-size-sm);
+  text-align: center;
+  margin: var(--spacing-lg) auto;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px dashed var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  max-width: 100%;
+}
+
+/* Suggested Actions Area */
+#suggested-actions-wrapper {
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+  max-height: 100px; /* Limits height, scrolls if more actions */
+  overflow-y: auto;
+}
+
+/* Player Input Control Panel */
+#player-input-control-panel {
+  padding: var(--spacing-xs);
+  flex-shrink: 0;
+}
+
+.input-group { /* Container for input field and send button */
+  display: flex;
+  align-items: flex-end;
+  background-color: var(--color-bg-input-field);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-xs) var(--spacing-md);
+  min-height: 70px;
+  transition: box-shadow var(--transition-fast);
+  gap: var(--spacing-sm);
+}
+
+.input-group:focus-within {
+  box-shadow: var(--shadow-focus-ring);
+}
+
+#player-input-control-panel input[type="text"], /* Covers #player-identifier-input */
+#player-input-control-panel textarea { /* Covers #player-action-input */
+  flex-grow: 1;
+  align-self: center;
+  background-color: transparent;
+  color: var(--color-text-primary);
+  padding: var(--spacing-sm) 0;
+  font-family: var(--font-family-main);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  outline: none;
+  line-height: var(--line-height-tight);
+  margin-left: var(--spacing-lg);
+}
+
+#player-input-control-panel textarea { /* Specific to action textarea */
+  resize: none;
+  height: auto; /* Grows with content */
+  min-height: calc(1.4em + var(--spacing-sm) * 0.8); /* Base height for one line */
+  max-height: var(--textarea-max-height);
+  overflow-y: auto; /* Scroll if exceeds max-height */
+  padding-top: calc(var(--spacing-sm) * 0.8); /* Fine-tune vertical alignment */
+  padding-bottom: calc(var(--spacing-sm) * 0.8);
+}
+
+#player-input-control-panel input[type="text"]::placeholder,
+#player-input-control-panel textarea::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+/* UI Buttons */
+.ui-button {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-main);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+  background-color: var(--color-bg-element-hover);
+  color: var(--color-text-secondary);
+  border: 1px solid transparent; /* For consistent sizing if borders are added on hover/active */
+}
+
+.ui-button:hover {
+  background-color: lighten(var(--color-bg-element-hover), 5%); /* Non-standard, will remove if problematic */
+  /* Fallback if lighten doesn't work as expected with CSS vars: */
+  /* background-color: var(--color-bg-element-hover-lighter); Define this variable */
+  color: var(--color-text-primary);
+}
+
+.ui-button:active {
+  transform: translateY(1px);
+  background-color: darken(var(--color-bg-element-hover), 5%); /* Non-standard, will remove if problematic */
+  /* Fallback: background-color: var(--color-bg-element-hover-darker); */
+}
+
+.ui-button.icon-button { /* For buttons that are mainly icons or small text */
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+.ui-button.icon-button:hover {
+  color: var(--color-text-primary);
+  background-color: rgba(255, 255, 255, 0.05); /* Subtle hover for icon buttons */
+}
+
+#player-input-control-panel .ui-button.primary { /* Primary action buttons in input panel */
+  background-color: var(--color-bg-button-primary);
+  color: var(--color-text-on-primary-button);
+  font-weight: var(--font-weight-medium);
+  flex-shrink: 0;
+  margin-left: var(--spacing-sm); /* Spacing within the input group */
+  margin-right: var(--spacing-lg);
+  height: auto; /* Fit content */
+  min-width: var(--input-button-size);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--spacing-lg); /* Align with textarea behavior */
+  margin-bottom: var(--spacing-lg);
+}
+
+#player-input-control-panel .ui-button.primary:hover {
+  background-color: var(--color-bg-button-primary-hover);
+}
+
+#player-input-control-panel .ui-button.primary:active {
+  background-color: var(--color-bg-input-field); /* Darker primary for active state */
+}
+
+#suggested-actions-wrapper .ui-button { /* Buttons for suggested actions */
+  background-color: var(--color-bg-input-field);
+  color: var(--color-text-secondary);
+  flex-grow: 1; /* Allow buttons to fill space */
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  padding: var(--spacing-xs) var(--spacing-md);
+  text-align: center;
+}
+
+#suggested-actions-wrapper .ui-button:hover {
+  background-color: var(--color-bg-element-hover);
+  color: var(--color-text-primary);
+}
+
+.ui-button:disabled,
+.ui-button:disabled:hover,
+.ui-button:disabled:active { /* Disabled state for all buttons */
+  background-color: var(--color-text-muted) !important;
+  color: var(--color-bg-input-field) !important;
+  cursor: not-allowed;
+  transform: none !important;
+  opacity: 0.5;
+}
+
+/* Application Footer */
+#application-footer { /* Renamed from #app-bottom-bar */
+  display: none; /* Currently hidden, can be enabled if needed */
+  /* Styles for height, padding, text align etc. would go here if visible */
+  height: var(--footer-height);
+  padding: var(--spacing-xs) var(--spacing-lg);
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-panel);
+  flex-shrink: 0;
+}
+
+/* Status Text Colors */
+.status-ok { color: var(--color-status-ok-text) !important; }
+.status-ok-integrity { color: var(--color-accent-green) !important; }
+.status-ok-fuel { color: var(--color-accent-amber) !important; }
+.status-warning { color: var(--color-status-warning-text) !important; }
+.status-danger { color: var(--color-status-danger-text) !important; }
+.status-info { color: var(--color-status-info-text) !important; }
+.status-offline { color: var(--color-status-offline-text) !important; }
+
+/* Value Update Highlight Animation */
+.value-updated { /* Applied to .info-item or .info-item-meter */
+  animation: flash-value-update-bg var(--UPDATE_HIGHLIGHT_DURATION) ease-out forwards;
+}
+
+@keyframes flash-value-update-bg {
+  0%, 15% { background-color: var(--highlight-bg-value-update); }
+  100% { background-color: transparent; }
+}
+
+/* Ensure pseudo-element for highlight is positioned correctly if direct class fails */
+.info-item.value-updated::after,
+.info-item-meter.value-updated::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--spacing-xs) * -0.5);
+  left: calc(var(--spacing-xs) * -0.5);
+  right: calc(var(--spacing-xs) * -0.5);
+  bottom: calc(var(--spacing-xs) * -0.5);
+  border-radius: var(--radius-xs);
+  animation: flash-value-update-bg var(--UPDATE_HIGHLIGHT_DURATION) ease-out forwards;
+  pointer-events: none;
+  z-index: -1; /* Behind the content */
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-text-muted);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-secondary);
+}
+
+* { /* Firefox scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-text-muted) rgba(0, 0, 0, 0.05);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1100px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+}
+
+@media (max-width: 900px) {
+  #main-layout { /* Was #cockpit-layout */
+    flex-direction: column;
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+    /* padding-right: 0; Removed, padding is symmetrical now */
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
   .console-sidebar {
-    width: var(--sidebar-width);
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: var(--spacing-lg);
-    overflow-y: auto;
-    padding-bottom: var(--spacing-xs);
-  }
-  .console-box {
-    background-color: var( --color-bg-viewport);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    flex-shrink: 0; /* Prevent console boxes from shrinking vertically */
-  }
-  /* Initially hide special consoles, JS will manage their appearance and 'is-expanded' state */
-  #comms-channel-console-box,
-  #enemy-intel-console-box {
-    display: none; /* Will be set to flex/block by JS when active */
-  }
-  
-  .console-box-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--spacing-md) var(--spacing-lg);
-    cursor: pointer;
-    transition: background-color var(--transition-fast);
-  }
-  .console-box-header:hover {
-    background-color: rgb(46 46 46);
-  }
-  
-  .console-box-title {
-    font-size: var(--font-size-title-console);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .console-box-content {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    padding: 0 var(--spacing-lg);
-    transition: max-height var(--transition-collapsible-content),
-      opacity var(--transition-collapsible-opacity),
-      padding-top var(--transition-collapsible-content),
-      padding-bottom var(--transition-collapsible-content);
-  }
-  .console-box.is-expanded .console-box-content {
-    max-height: 600px; /* Adjust as needed, should be large enough for content */
-    opacity: 1;
-    padding-top: var(--spacing-xs);
-    padding-bottom: var(--spacing-lg);
-  }
-  
-  .info-item,
-  .info-item-meter {
-    margin-bottom: var(--spacing-md);
-    position: relative;
-  }
-  .info-item:last-child,
-  .info-item-meter:last-child {
-    margin-bottom: 0;
-  }
-  
-  .info-item .label,
-  .info-item-meter .label {
-    display: block;
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    margin-bottom: var(--spacing-xs);
-    font-weight: var(--font-weight-medium);
-  }
-  
-  .info-item .value,
-  .info-item-meter .value-overlay {
-    display: block;
-    font-size: var(--font-size-base);
-    color: var(--color-text-primary);
-    font-weight: var(--font-weight-normal);
-    line-height: var(--line-height-tight);
-  }
-  .info-item .value.objective-text,
-  .info-item .value.location-text {
-    max-height: calc(var(--line-height-tight) * var(--font-size-base) * 5);
-    overflow-y: auto;
-    padding-right: var(--spacing-sm);
-  }
-  
-  .meter-bar-container {
     width: 100%;
-    height: 8px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: var(--radius-full);
-    overflow: hidden;
-    margin-top: var(--spacing-xs);
-  }
-  .meter-bar {
-    height: 8px;
-    width: 0%;
-    background-color: var(--color-meter-critical);
-    border-radius: var(--radius-full);
-    transition: width 0.4s ease-out, background-color 0.4s ease;
-  }
-  .meter-bar.meter-critical { background-color: var(--color-meter-critical); }
-  .meter-bar.meter-low { background-color: var(--color-meter-low); }
-  .meter-bar.meter-medium { background-color: var(--color-meter-medium); }
-  .meter-bar.meter-full { background-color: var(--color-meter-full); }
-  .meter-bar.meter-offline { background-color: var(--color-meter-offline-bg); } 
-  .meter-bar.meter-ok-fuel.meter-full { background-color: var(--color-meter-fuel); } 
-  .meter-bar.meter-ok-mana.meter-full { background-color: var(--color-meter-mana); }
-  .meter-bar.meter-ok-stamina.meter-full { background-color: var(--color-meter-stamina); }
-  .meter-bar.meter-ok-shield.meter-full { background-color: var(--color-meter-shield); }
-  
-  #info-ship-shields.value-overlay,
-  #info-ship-integrity.value-overlay,
-  #info-ship-fuel.value-overlay,
-  #info-enemy-shields-status.value-overlay,
-  #info-enemy-hull-integrity.value-overlay {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    margin-top: var(--spacing-xs);
-    text-align: right;
-  }
-  #center-column {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--color-bg-console-box);
-    overflow: hidden;
-  }
-  
-  #story-log-viewport {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: var(--spacing-xl);
-    border-radius: var(--radius-md);
-    background-color: var(--color-bg-viewport);
-  }
-  
-  #story-log .message {
-    margin-bottom: var(--spacing-lg);
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: var(--radius-md);
-    line-height: var(--line-height-base);
-    max-width: 90%;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeInMessage 0.3s ease-out forwards;
-  }
-  @keyframes fadeInMessage {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  #story-log .gm-message {
-    color: var(--color-text-primary);
-    margin-right: auto;
-  }
-  #story-log .gm-message em {
-    color: var(--color-text-secondary);
-    font-style: italic;
-  }
-  
-  #story-log .player-message {
-    background-color: var(--color-bg-console-box);
-    color: var(--color-text-primary);
-    font-weight: var(--font-weight-medium);
-    margin-left: auto;
-  }
-  
-  #story-log .system-message {
-    background-color: transparent;
-    color: var(--color-text-muted);
-    font-style: italic;
-    font-size: var(--font-size-sm);
-    text-align: center;
-    margin: var(--spacing-lg) auto;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border: 1px dashed var(--color-text-muted);
-    border-radius: var(--radius-sm);
-    max-width: 100%;
-  }
-  #suggested-actions-wrapper {
-    padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md)
-      var(--spacing-lg);
-    display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
-    gap: var(--spacing-sm);
-    flex-shrink: 0;
-    max-height: 100px;
-    overflow-y: auto;
+    gap: var(--spacing-md);
+    justify-content: flex-start;
+    overflow-y: visible;
+    overflow-x: hidden;
   }
+
+  .panel-box { /* Was .console-box */
+    flex-basis: calc(50% - (var(--spacing-md) / 2));
+    min-width: 200px;
+    flex-grow: 1;
+  }
+
+  #center-column {
+    order: -1; /* Display story log and input above side panels */
+    min-height: 350px;
+  }
+
+  #story-log-viewport {
+    padding: var(--spacing-lg);
+  }
+
   #player-input-control-panel {
-    padding: var(--spacing-xs);
-    flex-shrink: 0;
+    padding: var(--spacing-sm);
   }
-  
+
   .input-group {
-    display: flex;
-    align-items: flex-end; /* Align items to the bottom, good for growing textarea */
-    background-color: var(--color-bg-input-field);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-xs) var(--spacing-md);
-    min-height: 70px; /* Or adjust as needed */
-    transition: box-shadow var(--transition-fast);
-    gap: var(--spacing-sm); /* Add gap between textarea and button */
+    min-height: 48px;
+  }
+
+  #player-input-control-panel textarea {
+    max-height: calc(var(--textarea-max-height) * 0.75);
+  }
 }
-  .input-group:focus-within {
-    box-shadow: var(--shadow-focus-ring);
+
+@media (max-width: 600px) {
+  :root {
+    --header-height: auto; /* Was --top-bar-height */
+    --spacing-lg: 12px;
+    --spacing-xl: 16px;
+    --font-size-base: 0.875rem;
   }
-  
-  #player-input-control-panel input[type="text"],
-  #player-input-control-panel textarea {
-    flex-grow: 1;
-    align-self: center;
-    background-color: transparent;
-    color: var(--color-text-primary);
-    padding: var(--spacing-sm) 0;
-    font-family: var(--font-family-main);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-normal);
-    outline: none;
-    line-height: var(--line-height-tight);
-    margin-left: var(--spacing-lg);
-  }
-  #player-input-control-panel textarea {
-    resize: none;
-    height: auto;
-    min-height: calc(1.4em + var(--spacing-sm) * 0.8);
-    max-height: var(--textarea-max-height);
-    overflow-y: auto;
-    margin-left: var(--spacing-lg);
-    padding-top: calc(var(--spacing-sm) * 0.8);
-    padding-bottom: calc(var(--spacing-sm) * 0.8);
-  }
-  #player-input-control-panel input[type="text"]::placeholder,
-  #player-input-control-panel textarea::placeholder {
-    color: var(--color-text-muted);
-    opacity: 1;
-  }
-  .ui-button {
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var(--radius-md);
-    font-family: var(--font-family-main);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-medium);
-    cursor: pointer;
-    transition: background-color var(--transition-fast),
-      transform var(--transition-fast), color var(--transition-fast);
-    white-space: nowrap;
-    background-color: var(--color-bg-element-hover);
-    color: var(--color-text-secondary);
-    border: 1px solid transparent;
-  }
-  .ui-button:hover {
-    background-color: lighten(var(--color-bg-element-hover), 5%);
-    color: var(--color-text-primary);
-  }
-  .ui-button:active {
-    transform: translateY(1px);
-    background-color: darken(var(--color-bg-element-hover), 5%);
-  }
-  
-  .ui-button.icon-button {
-    background-color: transparent;
-    color: var(--color-text-secondary);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: var(--font-size-sm);
-    border-radius: var(--radius-md);
-  }
-  .ui-button.icon-button:hover {
-    color: var(--color-text-primary);
-    background-color: rgba(255, 255, 255, 0.05);
-  }
-  
-  #player-input-control-panel .ui-button.primary {
-    background-color: var(--color-bg-button-primary);
-    color: var(--color-text-on-primary-button);
-    font-weight: var(--font-weight-medium);
-    flex-shrink: 0;
-    margin-left: var(--spacing-sm);
-    margin-right: var(--spacing-lg);
-    height: auto;
-    min-width: var(--input-button-size);
+
+  #application-header { /* Was #app-top-bar */
     padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--radius-md);
-    font-size: var(--font-size-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: var(--spacing-lg);
-    margin-bottom: var(--spacing-lg); 
-}
-  #player-input-control-panel .ui-button.primary:hover {
-    background-color: var(--color-bg-button-primary-hover);
+    flex-wrap: wrap;
+    min-height: 40px; /* Ensure it has some height even when wrapping */
   }
-  #player-input-control-panel .ui-button.primary:active {
-    background-color: var(--color-bg-input-field);
-  }
-  
-  #suggested-actions-wrapper .ui-button {
-    background-color: var(--color-bg-input-field);
-    color: var(--color-text-secondary);
-    flex-grow: 1;
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-normal);
-    padding: var(--spacing-xs) var(--spacing-md);
-    text-align: center;
-    border-radius: var(--radius-md);
-    border: 1px solid transparent;
-  }
-  #suggested-actions-wrapper .ui-button:hover {
-    background-color: var(--color-bg-element-hover);
-    color: var(--color-text-primary);
-  }
-  
-  .ui-button:disabled,
-  .ui-button:disabled:hover,
-  .ui-button:disabled:active {
-    background-color: var(--color-text-muted) !important;
-    color: var(--color-bg-input-field) !important;
-    cursor: not-allowed;
-    transform: none !important;
-    opacity: 0.5;
-  }
-  #app-bottom-bar {
+
+  #application-header .top-bar-center { /* Hide status indicators on small screens */
     display: none;
   }
-  .status-ok {
-    color: var(--color-status-ok-text) !important;
-  }
-  
-  .status-ok-integrity {
-    color: var(--color-accent-green) !important;
-  }
-  
-  .status-ok-fuel {
-    color: var(--color-accent-amber) !important;
-  }
-  
-  .status-warning {
-    color: var(--color-status-warning-text) !important;
-  }
-  .status-danger {
-    color: var(--color-status-danger-text) !important;
-  }
-  .status-info {
-    color: var(--color-status-info-text) !important;
-  }
-  .status-offline {
-    color: var(--color-status-offline-text) !important;
-  }
-  .value-updated {
-    animation: flash-value-update-bg var(--UPDATE_HIGHLIGHT_DURATION) ease-out
-      forwards;
-  }
-  @keyframes flash-value-update-bg {
-    0%,
-    15% {
-      background-color: var(--highlight-bg-value-update);
-    }
-    100% {
-      background-color: transparent;
-    }
-  }
-  .info-item.value-updated,
-  .info-item-meter.value-updated {
-    background-color: transparent;
-    position: relative;
-    z-index: 0;
-  }
-  .info-item.value-updated::after,
-  .info-item-meter.value-updated::after {
-    content: "";
-    position: absolute;
-    top: calc(var(--spacing-xs) * -0.5);
-    left: calc(var(--spacing-xs) * -0.5);
-    right: calc(var(--spacing-xs) * -0.5);
-    bottom: calc(var(--spacing-xs) * -0.5);
-    border-radius: var(--radius-xs);
-    animation: flash-value-update-bg var(--UPDATE_HIGHLIGHT_DURATION) ease-out
-      forwards;
-    pointer-events: none;
-    z-index: -1;
-  }
-  
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-  }
-  ::-webkit-scrollbar-thumb {
-    background-color: var(--color-text-muted);
-    border-radius: var(--radius-full);
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-text-secondary);
-  }
-  
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-text-muted) rgba(0, 0, 0, 0.05);
-  }
-  @media (max-width: 1100px) {
-    :root {
-      --sidebar-width: 240px;
-    }
-  }
-  
-  @media (max-width: 900px) {
-    #cockpit-layout {
-      flex-direction: column;
-      padding: var(--spacing-md);
-      gap: var(--spacing-md);
-      padding-right: 0;
-      overflow-y: auto; /* Allow #cockpit-layout to scroll if its content exceeds viewport height */
-      overflow-x: hidden;
-    }
-    .console-sidebar {
-      width: 100%;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: var(--spacing-md);
-      justify-content: flex-start;
-      overflow-y: visible; /* Sidebars now grow in height with wrapped content, #cockpit-layout handles scrolling */
-      overflow-x: hidden; /* Prevent horizontal scroll within sidebars if somehow an item is too wide */
-    }
-    .console-box {
-      flex-basis: calc(50% - (var(--spacing-md) / 2));
-      min-width: 200px;
-      flex-grow: 1;
-      /* flex-shrink: 0; is still good here if a row of boxes is too wide and we want wrapping */
-    }
-    #center-column {
-      order: -1;
-      min-height: 350px;
-    }
-    #story-log-viewport {
-      padding: var(--spacing-lg);
-    }
-    #player-input-control-panel {
-      padding: var(--spacing-sm);
-    }
-    .input-group {
-      min-height: 48px;
-    }
-    #player-input-control-panel textarea {
-      max-height: calc(var(--textarea-max-height) * 0.75);
-    }
-  }
-  
-  @media (max-width: 600px) {
-    :root {
-      --top-bar-height: auto;
-      --spacing-lg: 12px;
-      --spacing-xl: 16px;
-      --font-size-base: 0.875rem;
-    }
-    #app-top-bar {
-      padding: var(--spacing-sm) var(--spacing-md);
-      flex-wrap: wrap;
-      min-height: 40px;
-    }
-    #app-top-bar .top-bar-center {
-      display: none;
-    }
-    #app-top-bar .top-bar-left {
-      flex-basis: 100%; /* Allow logo and theme selector to take full width initially */
-      display: flex;
-      align-items: center;
-      margin-bottom: var(--spacing-sm); /* Add some space if they wrap */
-    }
-    #app-top-bar .top-bar-right {
-      flex-basis: 100%; /* Allow control buttons to take full width if needed */
-      justify-content: space-around; /* Distribute buttons more evenly on small screens */
-    }
-    #platform-logo {
-        margin-right: auto; /* Push theme selector to the right of logo */
-    }
-    .console-box {
-      flex-basis: 100%;
-    }
-    #story-log .message {
-      max-width: 95%;
-      padding: var(--spacing-sm) var(--spacing-md);
-    }
-    #suggested-actions-wrapper {
-      padding: var(--spacing-xs) var(--spacing-md) var(--spacing-sm)
-        var(--spacing-md);
-    }
-    #suggested-actions-wrapper .ui-button {
-      flex-basis: calc(50% - (var(--spacing-sm) / 2));
-    }
-  }
-  @media (max-width: 400px) {
-    #suggested-actions-wrapper .ui-button {
-      flex-basis: 100%;
-    }
-    #player-input-control-panel .ui-button.primary {
-      padding: 0 var(--spacing-sm);
-      font-size: var(--font-size-xs);
-    }
-    #player-input-control-panel textarea {
-      margin-left: var(--spacing-sm);
-    }
+
+  #application-header .top-bar-left {
+    flex-basis: 100%;
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
   }
 
-  body.initial-state #story-log-viewport {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98); /* Start slightly down and scaled for animation */
-    pointer-events: none; /* Prevent interaction when hidden */
-    /* It will occupy space as a block, but be invisible. This is fine since name-input is fixed. */
+  #application-header .top-bar-right {
+    flex-basis: 100%;
+    justify-content: space-around;
+  }
+
+  #application-logo { /* Was #platform-logo */
+    margin-right: auto; /* Push theme selector to the right */
+  }
+
+  .panel-box { /* Was .console-box */
+    flex-basis: 100%; /* Full width panels */
+  }
+
+  #story-log .message {
+    max-width: 95%;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  #suggested-actions-wrapper {
+    padding: var(--spacing-xs) var(--spacing-md) var(--spacing-sm) var(--spacing-md);
+  }
+
+  #suggested-actions-wrapper .ui-button {
+    flex-basis: calc(50% - (var(--spacing-sm) / 2)); /* Two buttons per row */
+  }
 }
 
-body.initial-state #suggested-actions-wrapper {
-    display: none !important; /* Ensure it's hidden */
+@media (max-width: 400px) {
+  #suggested-actions-wrapper .ui-button {
+    flex-basis: 100%; /* One button per row */
+  }
+
+  #player-input-control-panel .ui-button.primary {
+    padding: 0 var(--spacing-sm); /* Smaller padding for send button */
+    font-size: var(--font-size-xs);
+  }
+
+  #player-input-control-panel textarea {
+    margin-left: var(--spacing-sm); /* Reduce left margin for textarea */
+  }
 }
 
-/* Hide action input during initial state, name input is shown instead */
-body.initial-state #action-input-section {
-    display: none !important;
+/* --- Initial Application State (Pre-Game Start) --- */
+body.initial-state #story-log-viewport { /* Story log hidden before game starts */
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  pointer-events: none;
 }
 
-/* Styles for the centered name input section */
-body.initial-state #name-input-section {
-    display: flex !important; /* Override JS inline style from normal operation */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: clamp(350px, 70vw, 750px); /* Responsive width */
-    padding: var(--spacing-xl);
-    gap: var(--spacing-lg); /* Space between input and button */
-    z-index: 200; /* Ensure it's above other cockpit elements */
+body.initial-state #suggested-actions-wrapper { /* Suggested actions hidden */
+  display: none !important;
 }
 
-body.initial-state #name-input-section input[type="text"]#player-name-input {
-    padding: var(--spacing-lg);
-    font-size: var(--font-size-md); /* Larger font for prominence */
-    border-radius: var(--radius-sm); /* Consistent with other inputs */
-    background-color: var(--color-bg-input-field);
-    color: var(--color-text-primary);
-    text-align: left; /* Center placeholder and input text */
-    line-height: var(--line-height-tight); /* Ensure text is vertically centered if padding makes it tall */
-    /* Remove default margin which might be inherited */
-    margin-left: 0; 
-}
-body.initial-state #name-input-section input[type="text"]#player-name-input::placeholder {
-    color: var(--color-text-muted);
-    opacity: 1;
+body.initial-state #action-input-section { /* Action input (textarea) hidden */
+  display: none !important;
 }
 
-
-body.initial-state #name-input-section button#start-game-button.ui-button.primary {
-    padding-top: var(--spacing-md);
-    padding-bottom: var(--spacing-md);
-    font-size: var(--font-size-base);
-    height: auto; /* Let padding define height */
-    /* margin-left and margin-right are not needed due to align-items: stretch */
-    margin-left: 0;
-    margin-right: 0;
+body.initial-state #name-input-section { /* Player name/identifier input centered and prominent */
+  display: flex !important;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(350px, 70vw, 750px); /* Responsive width */
+  padding: var(--spacing-xl);
+  gap: var(--spacing-lg);
+  z-index: 200; /* Above other UI elements */
 }
 
-/* Spawn animation for story log viewport */
+body.initial-state #name-input-section input[type="text"]#player-identifier-input { /* Was #player-name-input */
+  padding: var(--spacing-lg);
+  font-size: var(--font-size-md);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-input-field);
+  color: var(--color-text-primary);
+  text-align: left;
+  line-height: var(--line-height-tight);
+  margin-left: 0; /* Override default margin from .input-group */
+}
+
+body.initial-state #name-input-section input[type="text"]#player-identifier-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+body.initial-state #name-input-section button#start-game-button.ui-button.primary { /* Start game button style in initial state */
+  padding-top: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  font-size: var(--font-size-base);
+  height: auto;
+  margin-left: 0; /* No extra margin needed due to gap in flex container */
+  margin-right: 0;
+}
+
+/* Spawn Animation for Story Log Viewport After Game Start */
 #story-log-viewport.spawn-animation {
-    animation: spawnViewportAnimation 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-    opacity: 0; /* Start from opacity 0 for the animation */
-    pointer-events: auto; /* Re-enable interaction */
+  animation: spawnViewportAnimation 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  opacity: 0; /* Start transparent for animation */
+  pointer-events: auto; /* Re-enable interaction */
 }
 
 @keyframes spawnViewportAnimation {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.98);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-
-/* Ensure other console box content transitions smoothly */
-.console-box .console-box-content {
-    /* existing transitions are fine:
-      max-height var(--transition-collapsible-content),
-      opacity var(--transition-collapsible-opacity),
-      padding-top var(--transition-collapsible-content),
-      padding-bottom var(--transition-collapsible-content);
-    */
-    /* Ensure padding transitions correctly when expanding from 0 */
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-.console-box.is-expanded .console-box-content {
-  max-height: 600px; /* Adjust as needed */
-  opacity: 1;
-    /* existing: max-height: 600px; opacity: 1; */
-    padding-top: var(--spacing-xs); /* Restore padding when expanded */
-    padding-bottom: var(--spacing-lg); /* Restore padding when expanded */
-}
-
-/* Make sure this is at the end or after relevant #cockpit-layout styles if specific overrides are needed */
-/* For example, ensure sidebars are visible even if center content is initially "empty" */
+/* Ensure side panels are visible during initial state if main content is hidden */
 body.initial-state #left-console,
 body.initial-state #right-console {
-    opacity: 1; /* Or ensure they are not accidentally hidden */
+  opacity: 1;
 }
-

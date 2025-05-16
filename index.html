@@ -6,18 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Anomalia</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="images/favicon.png"> <!-- Assuming you still have this -->
+    <link rel="icon" type="image/png" href="images/favicon.png">
 </head>
 
-<body class="theme-scifi"> <!-- Default theme class, JS will update -->
-    <div id="game-ui-root">
+<body class="theme-scifi">
+    <div id="app-root">
 
-        <header id="app-top-bar">
+        <header id="application-header">
             <div class="top-bar-left">
-                <img id="platform-logo" src="images/platform_logo.svg" alt="Platform Logo"> 
-
+                <img id="application-logo" src="images/platform_logo.svg" alt="Application Logo">
                 <div id="theme-selector">
-                    <!-- Theme buttons will be added here by JS if needed, or can be static -->
                     <button class="theme-button" data-theme="scifi" title="Sci-Fi Theme">
                         <img src="images/icon_scifi.svg" alt="Sci-Fi Theme">
                     </button>
@@ -27,51 +25,55 @@
                 </div>
             </div>
             <div class="top-bar-center">
-                <span id="system-status-indicator" class="status-indicator status-ok" data-lang-key="system_status_online_short">Online</span>
-                <span id="gm-activity-indicator" style="display: none;" data-lang-key="system_processing_short">Processing...</span>
+                <span id="system-status-indicator" class="status-indicator status-ok"
+                    data-lang-key="system_status_online_short">Online</span>
+                <span id="gm-activity-indicator" style="display: none;"
+                    data-lang-key="system_processing_short">Processing...</span>
             </div>
             <div class="top-bar-right">
-                <button id="new-game-button" class="ui-button icon-button" title="Start New Game" data-lang-key="button_new_game" data-lang-key-aria="aria_label_new_game">New Game</button>
-                <button id="model-toggle-button" class="ui-button icon-button" title="Toggle AI Model" data-lang-key="label_toggle_model" data-lang-key-aria="aria_label_toggle_model_generic">Toggle Model</button>
-                <button id="language-toggle-button" class="ui-button icon-button" data-lang-key="toggle_language" data-lang-key-aria="aria_label_toggle_language" aria-label="Toggle Language">
-                </button>
+                <button id="new-game-button" class="ui-button icon-button" data-lang-key="button_new_game"
+                    data-lang-key-aria="aria_label_new_game">New Game</button>
+                <button id="model-toggle-button" class="ui-button icon-button" data-lang-key="label_toggle_model"
+                    data-lang-key-aria="aria_label_toggle_model_generic">Toggle Model</button>
+                <button id="language-toggle-button" class="ui-button icon-button" data-lang-key="toggle_language"
+                    data-lang-key-aria="aria_label_toggle_language" aria-label="Toggle Language"></button>
             </div>
         </header>
 
-        <div id="cockpit-layout">
-
+        <div id="main-layout">
             <aside id="left-console" class="console-sidebar">
-                <!-- Console boxes will be dynamically generated here -->
             </aside>
 
             <main id="center-column">
                 <div id="story-log-viewport">
                     <div id="story-log">
-                        <!-- Messages will appear here -->
                     </div>
                 </div>
                 <div id="suggested-actions-wrapper">
-                    <!-- Suggested actions will appear here -->
+
                 </div>
                 <div id="player-input-control-panel">
                     <div id="name-input-section" class="input-group">
-                        <input type="text" id="player-name-input" data-lang-key-placeholder="placeholder_callsign_login" placeholder="Enter your name...">
-                        <button id="start-game-button" class="ui-button primary" data-lang-key="button_access_systems">Begin</button>
+                        <input type="text" id="player-identifier-input"
+                            data-lang-key-placeholder="placeholder_callsign_login" placeholder="Enter your name...">
+                        <button id="start-game-button" class="ui-button primary"
+                            data-lang-key="button_access_systems">Begin</button>
                     </div>
                     <div id="action-input-section" class="input-group" style="display:none;">
-                        <textarea id="player-action-input" data-lang-key-placeholder="placeholder_command" placeholder="Enter command or response..." rows="1"></textarea>
-                        <button id="send-action-button" class="ui-button primary" data-lang-key="button_execute_command">Send</button>
+                        <textarea id="player-action-input" data-lang-key-placeholder="placeholder_command"
+                            placeholder="Enter command or response..." rows="1"></textarea>
+                        <button id="send-action-button" class="ui-button primary"
+                            data-lang-key="button_execute_command">Send</button>
                     </div>
                 </div>
             </main>
 
             <aside id="right-console" class="console-sidebar">
-                <!-- Console boxes will be dynamically generated here -->
-            </aside>
 
+            </aside>
         </div>
 
-        <footer id="app-bottom-bar">
+        <footer id="application-footer">
             <p>© 2025 Anomalia. Created by Tomas Cap with AI.</p>
         </footer>
 

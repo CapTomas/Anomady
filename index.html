@@ -9,19 +9,18 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
 </head>
 
-<body class="theme-scifi">
+<body> 
     <div id="app-root">
-
         <header id="application-header">
             <div class="top-bar-left">
                 <img id="application-logo" src="images/platform_logo.svg" alt="Application Logo">
                 <div id="theme-selector">
-                    <button class="theme-button" data-theme="scifi" title="Sci-Fi Theme">
-                        <img src="images/icon_scifi.svg" alt="Sci-Fi Theme">
-                    </button>
-                    <button class="theme-button" data-theme="fantasy" title="Fantasy Theme">
-                        <img src="images/icon_fantasy.svg" alt="Fantasy Theme">
-                    </button>
+                    <div id="playing-themes-container">
+                    </div>
+                    <div id="liked-themes-separator" class="theme-section-separator" style="display: none;">
+                    </div>
+                    <div id="liked-themes-container">
+                    </div>
                 </div>
             </div>
             <div class="top-bar-center">
@@ -42,24 +41,35 @@
 
         <div id="main-layout">
             <aside id="left-panel" class="panel-sidebar">
+                <div id="landing-theme-description-container" style="display: none;">
+                    <div class="panel-box"> 
+                        <div class="panel-box-header">
+                            <h3 class="panel-box-title" data-lang-key="landing_theme_description_title">World Lore</h3>
+                        </div>
+                        <div class="panel-box-content">
+                            <p id="landing-theme-lore-text" data-lang-key="landing_select_theme_prompt_lore">Select a theme from the center to see its description.</p>
+                             
+                        </div>
+                    </div>
+                </div>
             </aside>
-
             <main id="center-column">
-                <div id="story-log-viewport">
+                <div id="theme-grid-container">
+                </div>
+                <div id="story-log-viewport" style="display: none;"> 
                     <div id="story-log">
                     </div>
                 </div>
-                <div id="suggested-actions-wrapper">
-
+                <div id="suggested-actions-wrapper" style="display: none;"> 
                 </div>
-                <div id="player-input-control-panel">
-                    <div id="name-input-section" class="input-group">
+                <div id="player-input-control-panel" style="display: none;"> 
+                    <div id="name-input-section" class="input-group" style="display:none;"> 
                         <input type="text" id="player-identifier-input"
                             data-lang-key-placeholder="placeholder_callsign_login" placeholder="Enter your name...">
                         <button id="start-game-button" class="ui-button primary"
                             data-lang-key="button_access_systems">Begin</button>
                     </div>
-                    <div id="action-input-section" class="input-group" style="display:none;">
+                    <div id="action-input-section" class="input-group" style="display:none;"> 
                         <textarea id="player-action-input" data-lang-key-placeholder="placeholder_command"
                             placeholder="Enter command or response..." rows="1"></textarea>
                         <button id="send-action-button" class="ui-button primary"
@@ -67,16 +77,26 @@
                     </div>
                 </div>
             </main>
-
             <aside id="right-panel" class="panel-sidebar">
-
+                <div id="landing-theme-details-container" style="display: none;">
+                     <div class="panel-box"> 
+                        <div class="panel-box-header">
+                            <h3 class="panel-box-title" data-lang-key="landing_theme_info_title">Theme Details</h3>
+                        </div>
+                        <div class="panel-box-content">
+                            <div id="landing-theme-info-content">
+                                <p data-lang-key="landing_select_theme_prompt_details">Select a theme from the center to see its details.</p>
+                            </div>
+                            <div id="landing-theme-actions" style="display: none; margin-top: var(--spacing-md);">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </aside>
         </div>
-
         <footer id="application-footer">
-            <p>© 2025 Anomalia. Created by Tomas Cap with AI.</p>
+            <p>© 2025 Anomalia. Created by Tomas Cap </p>
         </footer>
-
     </div>
     <script src="js/ui-text-data.js"></script>
     <script src="js/theme-dashboard-configs.js"></script>

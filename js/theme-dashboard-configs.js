@@ -1,3 +1,25 @@
+const ALL_THEMES_CONFIG = {
+    scifi: {
+        id: 'scifi',
+        name_key: 'theme_name_scifi',
+        icon: 'images/icon_scifi.svg',
+        lore_key: 'theme_lore_scifi',
+        setting_key: 'theme_setting_scifi',
+        details_key: 'theme_details_scifi',
+        dashboard_config_ref: 'scifi'
+    },
+    fantasy: {
+        id: 'fantasy',
+        name_key: 'theme_name_fantasy',
+        icon: 'images/icon_fantasy.svg',
+        lore_key: 'theme_lore_fantasy',
+        setting_key: 'theme_setting_fantasy',
+        details_key: 'theme_details_fantasy',
+        dashboard_config_ref: 'fantasy'
+    }
+    // ... more themes
+};
+
 // --- Theme-Specific Dashboard Configurations ---
 const THEME_DASHBOARD_CONFIGS = {
     scifi: {

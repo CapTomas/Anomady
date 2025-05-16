@@ -9,19 +9,32 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
 </head>
 
-<body class="theme-scifi">
+<body> <!-- Removed initial theme-scifi class, JS will handle this -->
     <div id="app-root">
 
         <header id="application-header">
             <div class="top-bar-left">
                 <img id="application-logo" src="images/platform_logo.svg" alt="Application Logo">
                 <div id="theme-selector">
-                    <button class="theme-button" data-theme="scifi" title="Sci-Fi Theme">
-                        <img src="images/icon_scifi.svg" alt="Sci-Fi Theme">
-                    </button>
-                    <button class="theme-button" data-theme="fantasy" title="Fantasy Theme">
-                        <img src="images/icon_fantasy.svg" alt="Fantasy Theme">
-                    </button>
+                    <div id="playing-themes-container">
+                        <!-- Playing theme icons will be dynamically added here by JS -->
+                        <!-- Example structure:
+                        <button class="theme-button active" data-theme="scifi" title="Sci-Fi Theme (Playing)">
+                            <img src="images/icon_scifi.svg" alt="Sci-Fi Theme">
+                        </button>
+                        -->
+                    </div>
+                    <div id="liked-themes-separator" class="theme-section-separator" style="display: none;">
+                        <!-- Styled as a vertical line by CSS -->
+                    </div>
+                    <div id="liked-themes-container">
+                        <!-- Liked theme icons will be dynamically added here by JS -->
+                        <!-- Example structure:
+                        <button class="theme-button" data-theme="fantasy" title="Fantasy Theme (Liked)">
+                            <img src="images/icon_fantasy.svg" alt="Fantasy Theme">
+                        </button>
+                        -->
+                    </div>
                 </div>
             </div>
             <div class="top-bar-center">
@@ -42,24 +55,45 @@
 
         <div id="main-layout">
             <aside id="left-panel" class="panel-sidebar">
+                <div id="landing-theme-description-container" style="display: none;">
+                    <div class="panel-box"> <!-- JS will add 'is-expanded' when shown -->
+                        <div class="panel-box-header">
+                            <h3 class="panel-box-title" data-lang-key="landing_theme_description_title">World Lore</h3>
+                        </div>
+                        <div class="panel-box-content">
+                            <p id="landing-theme-lore-text" data-lang-key="landing_select_theme_prompt_lore">Select a theme from the center to see its description.</p>
+                             <!-- JS will populate this with actual theme lore -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Existing game-specific panel boxes will be generated/managed by JS -->
             </aside>
 
             <main id="center-column">
-                <div id="story-log-viewport">
+                <div id="theme-grid-container">
+                    <!-- Theme icons for landing page will be dynamically added here by JS -->
+                    <!-- Example structure for a theme icon in the grid:
+                    <button class="theme-grid-icon" data-theme="scifi" title="Sci-Fi Theme">
+                        <img src="images/icon_scifi.svg" alt="Sci-Fi Theme Icon">
+                        <span class="theme-grid-icon-name">Sci-Fi</span>
+                    </button>
+                    -->
+                </div>
+
+                <div id="story-log-viewport" style="display: none;"> <!-- Hidden on landing page -->
                     <div id="story-log">
                     </div>
                 </div>
-                <div id="suggested-actions-wrapper">
-
+                <div id="suggested-actions-wrapper" style="display: none;"> <!-- Hidden on landing page -->
                 </div>
-                <div id="player-input-control-panel">
-                    <div id="name-input-section" class="input-group">
+                <div id="player-input-control-panel" style="display: none;"> <!-- Hidden on landing page -->
+                    <div id="name-input-section" class="input-group" style="display:none;"> <!-- Shown after theme choice, before gameplay -->
                         <input type="text" id="player-identifier-input"
                             data-lang-key-placeholder="placeholder_callsign_login" placeholder="Enter your name...">
                         <button id="start-game-button" class="ui-button primary"
                             data-lang-key="button_access_systems">Begin</button>
                     </div>
-                    <div id="action-input-section" class="input-group" style="display:none;">
+                    <div id="action-input-section" class="input-group" style="display:none;"> <!-- Shown during gameplay -->
                         <textarea id="player-action-input" data-lang-key-placeholder="placeholder_command"
                             placeholder="Enter command or response..." rows="1"></textarea>
                         <button id="send-action-button" class="ui-button primary"
@@ -69,7 +103,32 @@
             </main>
 
             <aside id="right-panel" class="panel-sidebar">
-
+                <div id="landing-theme-details-container" style="display: none;">
+                     <div class="panel-box"> <!-- JS will add 'is-expanded' when shown -->
+                        <div class="panel-box-header">
+                            <h3 class="panel-box-title" data-lang-key="landing_theme_info_title">Theme Details</h3>
+                        </div>
+                        <div class="panel-box-content">
+                            <div id="landing-theme-info-content">
+                                <p data-lang-key="landing_select_theme_prompt_details">Select a theme from the center to see its details.</p>
+                                <!-- JS will populate this with actual theme details:
+                                <p><strong data-lang-key="landing_theme_setting_label">Setting:</strong> <span id="landing-selected-theme-setting"></span></p>
+                                <p><strong data-lang-key="landing_theme_details_label">Details:</strong> <span id="landing-selected-theme-details-text"></span></p>
+                                -->
+                            </div>
+                            <div id="landing-theme-actions" style="display: none; margin-top: var(--spacing-md);">
+                                <!-- Populated by JS when a theme is selected in the grid -->
+                                <!-- Example Structure:
+                                <button id="choose-theme-button" class="ui-button primary" data-lang-key="landing_choose_theme_button">Choose this theme</button>
+                                <button id="like-theme-button" class="ui-button icon-button" data-lang-key-aria="aria_label_like_theme" aria-label="Like theme">
+                                    <img src="images/icon_heart_empty.svg" alt="Like" class="like-icon">
+                                </button>
+                                -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Existing game-specific panel boxes will be generated/managed by JS -->
             </aside>
         </div>
 
@@ -80,6 +139,8 @@
     </div>
     <script src="js/ui-text-data.js"></script>
     <script src="js/theme-dashboard-configs.js"></script>
+    <!-- Add a new JS file for theme definitions (lore, details, icon paths) if not in theme-dashboard-configs.js -->
+    <!-- e.g. <script src="js/theme-definitions.js"></script> -->
     <script src="js/app.js"></script>
 </body>
 

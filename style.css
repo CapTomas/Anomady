@@ -9,7 +9,7 @@
   --font-size-md: 1rem;
   --font-size-lg: 1.125rem;
   --font-size-xl: 1.375rem;
-  --font-size-title-panel: 0.875rem; /* Renamed from --font-size-title-panel */
+  --font-size-title-panel: 0.875rem;
   --line-height-tight: 1.4;
   --line-height-base: 1.6;
   --font-weight-normal: 400;
@@ -18,8 +18,8 @@
 
   /* Colors - Base */
   --color-bg-page-root: #121212;
-  --color-bg-content-view: #1e1e1e; /* Renamed from --color-bg-viewport */
-  --color-bg-panel: #181818; /* Renamed from --color-bg-panel-box */
+  --color-bg-content-view: #1e1e1e;
+  --color-bg-panel: #181818;
   --color-bg-input-area: #252525;
   --color-bg-input-field: #2e2e2e;
   --color-bg-element-hover: #333333;
@@ -71,7 +71,7 @@
   --color-status-offline-text: var(--color-text-muted);
 
   /* Shadows & Highlights */
-  --shadow-panel: 0px 2px 8px rgba(0, 0, 0, 0.2); /* Renamed from --shadow-panel-box */
+  --shadow-panel: 0px 2px 8px rgba(0, 0, 0, 0.2);
   --shadow-input-area: 0px -2px 5px rgba(0, 0, 0, 0.15);
   --shadow-focus-ring: 0 0 0 2px var(--color-text-accent-interactive);
   --highlight-bg-value-update: rgba(var(--color-accent-light-gray-rgb), 0.06);
@@ -89,9 +89,9 @@
   --radius-sm: 10px;
   --radius-md: 20px;
   --sidebar-width: 280px;
-  --header-height: 60px; /* Renamed from --top-bar-height */
-  --footer-height: 28px; /* Renamed from --bottom-bar-height */
-  --input-control-panel-height: auto; /* Renamed from --input-panel-height */
+  --header-height: 60px;
+  --footer-height: 28px;
+  --input-control-panel-height: auto;
   --input-button-size: 32px;
   --textarea-max-height: 150px;
   --theme-icon-size: 28px;
@@ -256,7 +256,7 @@ body {
 }
 
 /* Main Content Layout */
-#main-layout { /* Renamed from #cockpit-layout */
+#main-layout {
   display: flex;
   flex-grow: 1;
   overflow: hidden;
@@ -277,7 +277,7 @@ body {
   padding-bottom: var(--spacing-xs);
 }
 
-.panel-box { /* Generic panel box, renamed from .panel-box */
+.panel-box {
   background-color: var(--color-bg-content-view);
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -290,7 +290,7 @@ body {
   display: none;
 }
 
-.panel-box-header { /* Renamed from .panel-box-header */
+.panel-box-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -300,10 +300,10 @@ body {
 }
 
 .panel-box-header:hover {
-  background-color: rgb(46 46 46); /* Consider a variable if this color is reused */
+  background-color: rgb(46 46 46);
 }
 
-.panel-box-title { /* Renamed from .panel-box-title */
+.panel-box-title { 
   font-size: var(--font-size-title-panel);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
@@ -311,7 +311,7 @@ body {
   letter-spacing: 0.5px;
 }
 
-.panel-box-content { /* Renamed from .panel-box-content */
+.panel-box-content {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
@@ -630,7 +630,7 @@ body {
 }
 
 /* Application Footer */
-#application-footer { /* Renamed from #app-bottom-bar */
+#application-footer {
   display: none; /* Currently hidden, can be enabled if needed */
   /* Styles for height, padding, text align etc. would go here if visible */
   height: var(--footer-height);

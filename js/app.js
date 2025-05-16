@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // UI Element References
-    // ... (UI element references remain the same)
     const applicationLogoElement = document.getElementById('application-logo');
     const themeSelectorElement = document.getElementById('theme-selector');
     const systemStatusIndicator = document.getElementById('system-status-indicator');
@@ -70,12 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const playerActionInput = document.getElementById('player-action-input');
     const sendActionButton = document.getElementById('send-action-button');
 
-    // THEME_DASHBOARD_CONFIGS is now in theme-dashboard-configs.js
-    // uiTextData is now in ui-text-data.js
-    // NARRATIVE_LANG_PROMPT_PARTS_BY_THEME is now in ui-text-data.js
-
     // --- Core Utility Functions ---
-    // ... (getUIText, setupApiKey, saveGameState, loadGameState, clearGameStateInternal, clearGameState, fetchPrompt, loadAllPromptsForTheme, getSystemPrompt remain the same)
     function getUIText(key, replacements = {}) {
         let text = uiTextData[currentTheme]?.[currentAppLanguage]?.[key] ||
                    uiTextData[currentTheme]?.en?.[key] ||
@@ -474,9 +468,6 @@ document.addEventListener('DOMContentLoaded', () => {
         lastKnownDashboardUpdates = {...lastKnownDashboardUpdates, ...updatesFromAI};
     }
 
-    // ... (initializeDashboardDefaultTexts, findItemConfigById, autoGrowTextarea remain the same)
-    // ... (animatePanelBox, initializeCollapsiblePanelBoxes remain the same)
-    // ... (updateModelToggleButtonText, updateThemeSelectorActiveState remain the same)
     function initializeDashboardDefaultTexts() {
         const themeCfg = THEME_DASHBOARD_CONFIGS[currentTheme]; if (!themeCfg) return;
         ['left_panel', 'right_panel'].forEach(sideKey => {
@@ -580,10 +571,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Application Flow & Game Logic Functions ---
-    // ... (toggleModelType, setAppLanguageAndTheme, toggleAppLanguage, handleGameStateIndicators remain the same)
-    // ... (callGeminiAPI, startGameAfterIdentifier, sendPlayerAction, startNewGameSession remain the same)
-    // ... (generatePanelsForTheme, changeTheme, initializeApp, and Event Listeners remain the same)
-
     function toggleModelType() {
         currentModelName = (currentModelName === PAID_MODEL_NAME) ? FREE_MODEL_NAME : PAID_MODEL_NAME;
         localStorage.setItem(MODEL_PREFERENCE_STORAGE_KEY, currentModelName);

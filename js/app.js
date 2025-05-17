@@ -94,38 +94,38 @@ document.addEventListener('DOMContentLoaded', () => {
     function getUIText(key, replacements = {}, explicitThemeContext = null) {
         let text;
         const onLandingPage = document.body.classList.contains('landing-page-active');
-        const lang = currentAppLanguage; // Use currentAppLanguage consistently for lookups
+        const lang = currentAppLanguage;
 
-        // Try landing page specific texts if on landing page and key exists there
-        if (onLandingPage && uiTextData.landing?.[lang]?.[key]) {
-            text = uiTextData.landing[lang][key];
-        } else if (onLandingPage && uiTextData.landing?.en?.[key] && !uiTextData.landing?.[lang]?.[key]) {
-            text = uiTextData.landing.en[key]; // Fallback to English for landing if lang key missing
+        // 1. Try landing page specific texts from globalTextData.landing
+        if (onLandingPage && globalTextData.landing?.[lang]?.[key]) {
+            text = globalTextData.landing[lang][key];
+        } else if (onLandingPage && globalTextData.landing?.en?.[key] && !globalTextData.landing?.[lang]?.[key]) {
+            text = globalTextData.landing.en[key]; // Fallback to English for landing
         }
 
-        // If not found on landing page, or not on landing page, try explicit theme context
-        if (!text && explicitThemeContext) {
-            text = uiTextData[explicitThemeContext]?.[lang]?.[key] ||
-                   uiTextData[explicitThemeContext]?.en?.[key]; // Fallback to English for explicit theme
+        // 2. If not found on landing, or not on landing, try explicit theme context from themeTextData
+        if (!text && explicitThemeContext && themeTextData[explicitThemeContext]) {
+            text = themeTextData[explicitThemeContext]?.[lang]?.[key] ||
+                   themeTextData[explicitThemeContext]?.en?.[key]; // Fallback to English for explicit theme
         }
 
-        // If not found yet, try current game theme context
-        if (!text && currentTheme) {
-            text = uiTextData[currentTheme]?.[lang]?.[key] ||
-                   uiTextData[currentTheme]?.en?.[key]; // Fallback to English for current theme
+        // 3. If not found yet, try current game theme context from themeTextData
+        if (!text && currentTheme && themeTextData[currentTheme]) {
+            text = themeTextData[currentTheme]?.[lang]?.[key] ||
+                   themeTextData[currentTheme]?.en?.[key]; // Fallback to English for current theme
         }
         
-        // If still not found, try the global/common section
-        if (!text && uiTextData.global) {
-            text = uiTextData.global[lang]?.[key] ||
-                   uiTextData.global.en?.[key]; // Fallback to English for global
+        // 4. If still not found, try the globalTextData.global section
+        if (!text && globalTextData.global) {
+            text = globalTextData.global[lang]?.[key] ||
+                   globalTextData.global.en?.[key]; // Fallback to English for global
         }
 
-        // Fallback to default theme's UI text if it was a game-specific context and text still not found
-        if (!text && !onLandingPage && !explicitThemeContext && currentTheme !== DEFAULT_THEME_ID) {
+        // 5. Fallback to default theme's UI text (from themeTextData) if it was a game-specific context and text still not found
+        if (!text && !onLandingPage && !explicitThemeContext && currentTheme !== DEFAULT_THEME_ID && themeTextData[DEFAULT_THEME_ID]) {
              const themeForUI = DEFAULT_THEME_ID;
-             text = uiTextData[themeForUI]?.[lang]?.[key] ||
-                    uiTextData[themeForUI]?.en?.[key];
+             text = themeTextData[themeForUI]?.[lang]?.[key] ||
+                    themeTextData[themeForUI]?.en?.[key];
         }
         
         text = text || key; // Use key as ultimate fallback if no translation found
@@ -144,18 +144,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupApiKey() {
         GEMINI_API_KEY = localStorage.getItem('userGeminiApiKey');
         if (!GEMINI_API_KEY) {
-            GEMINI_API_KEY = prompt(getUIText('prompt_enter_api_key', { "DEFAULT_VALUE": "" }), "");
+            GEMINI_API_KEY = prompt(getUIText('prompt_enter_api_key', { "DEFAULT_VALUE": "" }), ""); // Uses globalTextData
             if (GEMINI_API_KEY && GEMINI_API_KEY.trim() !== "") {
                 localStorage.setItem('userGeminiApiKey', GEMINI_API_KEY);
             } else {
                 GEMINI_API_KEY = ""; // Ensure it's an empty string if user cancels or enters nothing
-                alert(getUIText('alert_api_key_required'));
+                alert(getUIText('alert_api_key_required')); // Uses globalTextData
             }
         }
 
         if (!GEMINI_API_KEY) {
-            const errorMsg = uiTextData[DEFAULT_THEME_ID]?.[currentAppLanguage]?.error_critical_no_api_key || "CRITICAL: Gemini API Key not provided.";
-            const statusErrorMsg = uiTextData[DEFAULT_THEME_ID]?.[currentAppLanguage]?.status_error || "Error";
+            // These keys are in globalTextData.global
+            const errorMsg = getUIText('error_critical_no_api_key'); 
+            const statusErrorMsg = getUIText('status_error'); 
+            
             addMessageToLog(errorMsg, 'system');
             console.error(errorMsg);
             if (systemStatusIndicator) {
@@ -1066,7 +1068,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!currentTheme && currentLandingGridSelection === themeId) {
                 const likeButton = document.getElementById('like-theme-button');
                 if (likeButton) {
-                    likeButton.innerHTML = `<img src="images/icon_heart_filled.svg" alt="${getUIText('aria_label_unlike_theme')}" class="like-icon">`;
+                    likeButton.innerHTML = `<img src="images/app/icon_heart_filled.svg" alt="${getUIText('aria_label_unlike_theme')}" class="like-icon">`;
                     likeButton.setAttribute('aria-label', getUIText('aria_label_unlike_theme'));
                     likeButton.title = likeButton.getAttribute('aria-label');
                     likeButton.classList.add('liked');
@@ -1107,7 +1109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!currentTheme && currentLandingGridSelection === themeId) {
                 const likeButton = document.getElementById('like-theme-button');
                 if (likeButton) {
-                    likeButton.innerHTML = `<img src="images/icon_heart_empty.svg" alt="${getUIText('aria_label_like_theme')}" class="like-icon">`;
+                    likeButton.innerHTML = `<img src="images/app/icon_heart_empty.svg" alt="${getUIText('aria_label_like_theme')}" class="like-icon">`;
                     likeButton.setAttribute('aria-label', getUIText('aria_label_like_theme'));
                     likeButton.title = likeButton.getAttribute('aria-label');
                     likeButton.classList.remove('liked');
@@ -1292,10 +1294,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update language toggle button text and ARIA
         if (languageToggleButton) {
             const otherLangKeyForButtonText = currentAppLanguage === 'en' ?
-                (uiTextData.landing?.cs?.toggle_language || "Česky") :
-                (uiTextData.landing?.en?.toggle_language || "English");
+                (globalTextData.landing?.cs?.toggle_language || "Česky") : // Corrected to globalTextData
+                (globalTextData.landing?.en?.toggle_language || "English"); // Corrected to globalTextData
             languageToggleButton.textContent = otherLangKeyForButtonText;
-            const ariaToggleKey = `aria_label_toggle_language`;
+            // Assuming 'aria_label_toggle_language' is in globalTextData.global as 'toggle_language_aria'
+            const ariaToggleKey = `toggle_language_aria`; 
             languageToggleButton.setAttribute('aria-label', getUIText(ariaToggleKey));
             languageToggleButton.title = getUIText(ariaToggleKey);
         }
@@ -1306,7 +1309,7 @@ document.addEventListener('DOMContentLoaded', () => {
             newGameButton.title = getUIText('aria_label_new_game');
             newGameButton.setAttribute('aria-label', getUIText('aria_label_new_game'));
         }
-        if (modelToggleButton) modelToggleButton.title = getUIText('aria_label_toggle_model_generic'); // Generic title, specific text updated by its own function
+        if (modelToggleButton) modelToggleButton.title = getUIText('aria_label_toggle_model_generic'); 
 
         // Update status indicators
         if (systemStatusIndicator) systemStatusIndicator.textContent = getUIText(systemStatusIndicator.dataset.langKey || 'system_status_online_short');
@@ -1332,10 +1335,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
             }
-            initializeDashboardDefaultTexts(); // Re-initialize with new language
+            initializeDashboardDefaultTexts(); 
         } else if (onLandingPage) {
-            renderThemeGrid(); // Re-render grid with new language
-            // Re-select active grid item if any
+            renderThemeGrid(); 
             if (currentLandingGridSelection && themeGridContainer) {
                 const selectedBtn = themeGridContainer.querySelector(`.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`);
                 if (selectedBtn) selectedBtn.classList.add('active');
@@ -1348,15 +1350,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (playerActionInput) playerActionInput.placeholder = getUIText('placeholder_command');
         if (sendActionButton) sendActionButton.textContent = getUIText('button_execute_command');
 
-        updateModelToggleButtonText(); // Ensure model button text is correct
-        updateTopbarThemeIcons(); // Refresh top bar icons with new language
+        updateModelToggleButtonText(); 
+        updateTopbarThemeIcons(); 
 
         // Update landing page panel content if on landing page
         if (onLandingPage && currentLandingGridSelection) {
-            updateLandingPagePanels(currentLandingGridSelection, false); // false = no animation
-        } else if (onLandingPage) { // Default text if no theme selected on landing
-            landingThemeLoreText.textContent = getUIText('landing_select_theme_prompt_lore');
-            landingThemeInfoContent.innerHTML = `<p>${getUIText('landing_select_theme_prompt_details')}</p>`;
+            updateLandingPagePanels(currentLandingGridSelection, false); 
+        } else if (onLandingPage) { 
+            // The following line was landingThemeLoreText.textContent, should be .value for textarea
+            if(landingThemeLoreText) landingThemeLoreText.value = getUIText('landing_select_theme_prompt_lore'); 
+            if(landingThemeInfoContent) landingThemeInfoContent.innerHTML = `<p>${getUIText('landing_select_theme_prompt_details')}</p>`;
             const descTitle = landingThemeDescriptionContainer.querySelector('.panel-box-title');
             if (descTitle) descTitle.textContent = getUIText('landing_theme_description_title');
             const detailsTitle = landingThemeDetailsContainer.querySelector('.panel-box-title');
@@ -2128,7 +2131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const isCurrentlyLiked = isThemeLiked(themeId);
         const likeTextKey = isCurrentlyLiked ? 'aria_label_unlike_theme' : 'aria_label_like_theme';
         const likeText = getUIText(likeTextKey);
-        likeButton.innerHTML = `<img src="${isCurrentlyLiked ? 'images/icon_heart_filled.svg' : 'images/icon_heart_empty.svg'}" alt="${likeText}" class="like-icon">`;
+        likeButton.innerHTML = `<img src="${isCurrentlyLiked ? 'images/app/icon_heart_filled.svg' : 'images/app/icon_heart_empty.svg'}" alt="${likeText}" class="like-icon">`;
         likeButton.setAttribute('aria-label', likeText);
         likeButton.title = likeText; // Tooltip
         if (isCurrentlyLiked) likeButton.classList.add('liked'); // Style if liked

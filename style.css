@@ -368,6 +368,9 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	align-items: center;
 	margin-top: var(--spacing-lg)
 }
+#landing-theme-lore-text { 
+    white-space: pre-line
+}
 #landing-theme-info-content {
 	display: flex;
 	flex-direction: column;
@@ -489,7 +492,8 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	display: block;
 	margin-bottom: var(--spacing-sm);
 	transition: transform var(--transition-fast);
-	flex-shrink: 0
+	flex-shrink: 0;
+	opacity: 0.6;
 }
 .theme-grid-icon .theme-grid-icon-name {
 	font-size: var(--font-size-sm);
@@ -513,6 +517,9 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 }
 .theme-grid-icon.active .theme-grid-icon-name {
 	color: var(--color-text-primary)
+}
+.theme-grid-icon.active img {
+	opacity: 1
 }
 #story-log-viewport {
 	flex-grow: 1;

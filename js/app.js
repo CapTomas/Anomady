@@ -40,49 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let likedThemes = []; // Themes the user has marked as liked
     let currentLandingGridSelection = null; // Theme ID selected in the landing page grid
 
-    // Configuration for all available themes
-    const ALL_THEMES_CONFIG = {
-        scifi: {
-            id: 'scifi',
-            name_key: 'theme_name_scifi', // i18n key for theme name
-            icon: 'images/icon_scifi.svg', // Path to theme icon
-            lore_key: 'theme_lore_scifi', // i18n key for theme lore
-            setting_key: 'theme_setting_scifi', // i18n key for theme setting description
-            details_key: 'theme_details_scifi', // i18n key for theme details
-            dashboard_config_ref: 'scifi' // Reference to dashboard layout configuration
-        },
-        fantasy: {
-            id: 'fantasy',
-            name_key: 'theme_name_fantasy',
-            icon: 'images/icon_fantasy.svg',
-            lore_key: 'theme_lore_fantasy',
-            setting_key: 'theme_setting_fantasy',
-            details_key: 'theme_details_fantasy',
-            dashboard_config_ref: 'fantasy'
-        }
-        // Add more themes here
-    };
-
-    // Paths to prompt files, organized by theme and prompt type
-    const PROMPT_URLS_BY_THEME = {
-        scifi: {
-            initial: 'prompts/scifi/initial.txt',
-            default: 'prompts/scifi/default.txt',
-            combat: 'prompts/scifi/combat.txt',
-            starts: 'prompts/scifi/helpers/starts.txt',
-            asset_names_en: 'prompts/scifi/helpers/ship_names_en.txt',
-            asset_names_cs: 'prompts/scifi/helpers/ship_names_cs.txt'
-        },
-        fantasy: {
-            initial: 'prompts/fantasy/initial.txt',
-            default: 'prompts/fantasy/default.txt',
-            combat: 'prompts/fantasy/combat.txt',
-            starts: 'prompts/fantasy/helpers/start_scenarios.txt',
-            entity_names_en: 'prompts/fantasy/helpers/character_names_en.txt',
-            entity_names_cs: 'prompts/fantasy/helpers/character_names_cs.txt'
-        }
-    };
-
     // DOM Element References
     const appRoot = document.getElementById('app-root'); // Main application container
     const applicationLogoElement = document.getElementById('application-logo'); // App logo in the header
@@ -137,25 +94,41 @@ document.addEventListener('DOMContentLoaded', () => {
     function getUIText(key, replacements = {}, explicitThemeContext = null) {
         let text;
         const onLandingPage = document.body.classList.contains('landing-page-active');
+        const lang = currentAppLanguage; // Use currentAppLanguage consistently for lookups
 
-        // Prioritize explicit theme context if provided
-        if (explicitThemeContext) {
-            text = uiTextData[explicitThemeContext]?.[currentAppLanguage]?.[key] ||
-                uiTextData[explicitThemeContext]?.en?.[key];
-        } else if (onLandingPage && uiTextData.landing) {
-            // Use landing page specific texts if on landing page
-            text = uiTextData.landing[currentAppLanguage]?.[key] ||
-                uiTextData.landing.en?.[key];
+        // Try landing page specific texts if on landing page and key exists there
+        if (onLandingPage && uiTextData.landing?.[lang]?.[key]) {
+            text = uiTextData.landing[lang][key];
+        } else if (onLandingPage && uiTextData.landing?.en?.[key] && !uiTextData.landing?.[lang]?.[key]) {
+            text = uiTextData.landing.en[key]; // Fallback to English for landing if lang key missing
         }
 
-        // Fallback to current theme or default theme if text not found
-        if (!text) {
-            const themeForUI = currentTheme || DEFAULT_THEME_ID;
-            text = uiTextData[themeForUI]?.[currentAppLanguage]?.[key] ||
-                uiTextData[themeForUI]?.en?.[key];
+        // If not found on landing page, or not on landing page, try explicit theme context
+        if (!text && explicitThemeContext) {
+            text = uiTextData[explicitThemeContext]?.[lang]?.[key] ||
+                   uiTextData[explicitThemeContext]?.en?.[key]; // Fallback to English for explicit theme
         }
 
-        text = text || key; // Use key as fallback if no translation found
+        // If not found yet, try current game theme context
+        if (!text && currentTheme) {
+            text = uiTextData[currentTheme]?.[lang]?.[key] ||
+                   uiTextData[currentTheme]?.en?.[key]; // Fallback to English for current theme
+        }
+        
+        // If still not found, try the global/common section
+        if (!text && uiTextData.global) {
+            text = uiTextData.global[lang]?.[key] ||
+                   uiTextData.global.en?.[key]; // Fallback to English for global
+        }
+
+        // Fallback to default theme's UI text if it was a game-specific context and text still not found
+        if (!text && !onLandingPage && !explicitThemeContext && currentTheme !== DEFAULT_THEME_ID) {
+             const themeForUI = DEFAULT_THEME_ID;
+             text = uiTextData[themeForUI]?.[lang]?.[key] ||
+                    uiTextData[themeForUI]?.en?.[key];
+        }
+        
+        text = text || key; // Use key as ultimate fallback if no translation found
 
         // Apply replacements
         for (const placeholder in replacements) {
@@ -1671,15 +1644,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         const themeToStartNewGameIn = currentTheme || currentLandingGridSelection;
-        if (!themeToStartNewGameIn) return; // Should not happen if above check passes
+        if (!themeToStartNewGameIn || !ALL_THEMES_CONFIG[themeToStartNewGameIn]) { // Added check for theme existence
+            alert(getUIText('alert_select_theme_first')); // Or a more specific error
+            return;
+        }
 
-        const themeName = getUIText(ALL_THEMES_CONFIG[themeToStartNewGameIn].name_key);
+        const themeName = getUIText(ALL_THEMES_CONFIG[themeToStartNewGameIn].name_key, {}, themeToStartNewGameIn);
         // Use a theme-specific confirmation key if available, else generic
         const confirmKey = `confirm_new_game_theme_${themeToStartNewGameIn}`;
-        const confirmMsg = getUIText(confirmKey, { THEME_NAME: themeName }) ||
+        const confirmMsg = getUIText(confirmKey, { THEME_NAME: themeName }, themeToStartNewGameIn) || // Pass theme context for confirmKey too
             getUIText('confirm_new_game_generic', { THEME_NAME: themeName });
 
         if (confirm(confirmMsg)) {
+            // Pass theme context for system message if THEME_NAME is used in its string
             addMessageToLog(getUIText('system_new_game_initiated', { THEME_NAME: themeName }), 'system');
             changeThemeAndStart(themeToStartNewGameIn, true); // true = force new game
         }
@@ -1839,7 +1816,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (actionInputSection) actionInputSection.style.display = 'flex';
             if (playerActionInput) playerActionInput.focus();
 
-            addMessageToLog(getUIText('system_session_resumed', { PLAYER_ID: playerIdentifier, THEME_NAME: getUIText(ALL_THEMES_CONFIG[currentTheme].name_key) }), 'system');
+            addMessageToLog(getUIText('system_session_resumed', { PLAYER_ID: playerIdentifier, THEME_NAME: getUIText(ALL_THEMES_CONFIG[currentTheme].name_key, {}, currentTheme) }), 'system');
             if (systemStatusIndicator) { // Set status to online
                 systemStatusIndicator.textContent = getUIText('system_status_online_short');
                 systemStatusIndicator.className = 'status-indicator status-ok';
@@ -1855,7 +1832,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (actionInputSection) actionInputSection.style.display = 'none';
             if (playerIdentifierInputEl) {
                 playerIdentifierInputEl.value = '';
-                playerIdentifierInputEl.placeholder = getUIText('placeholder_callsign_login');
+                playerIdentifierInputEl.placeholder = getUIText('placeholder_callsign_login'); // This getUIText is theme-independent or uses currentTheme implicitly
                 playerIdentifierInputEl.focus();
             }
 
@@ -1864,14 +1841,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 systemStatusIndicator.className = 'status-indicator status-warning';
             }
             if (oldThemeId !== newThemeId) { // Log theme change if it occurred
-                addMessageToLog(getUIText('system_theme_set_generic', { THEME_NAME: getUIText(ALL_THEMES_CONFIG[newThemeId].name_key) }), 'system');
+                addMessageToLog(getUIText('system_theme_set_generic', { THEME_NAME: getUIText(ALL_THEMES_CONFIG[newThemeId].name_key, {}, newThemeId) }), 'system');
             }
-            if (forceNewGame) { // Log new game initiation
-                addMessageToLog(getUIText('system_new_game_initiated', { THEME_NAME: getUIText(ALL_THEMES_CONFIG[currentTheme].name_key) }), 'system');
+            // Log new game initiation (themeName for message already fetched by startNewGameSession or implicitly here)
+            if (forceNewGame) { 
+                addMessageToLog(getUIText('system_new_game_initiated', { THEME_NAME: getUIText(ALL_THEMES_CONFIG[currentTheme].name_key, {}, currentTheme) }), 'system');
             }
         }
 
-        if (startGameButton) startGameButton.textContent = getUIText('button_access_systems');
+        if (startGameButton) startGameButton.textContent = getUIText('button_access_systems'); // Also theme-independent or uses currentTheme
     }
 
     /**
@@ -2050,13 +2028,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = document.createElement('button');
             button.classList.add('theme-grid-icon');
             button.dataset.theme = theme.id; // Store theme ID for click handling
-            const themeDisplayNameOnGrid = getUIText(theme.name_key); // Localized name
+            const themeDisplayNameOnGrid = getUIText(theme.name_key, {}, theme.id); // Localized name with theme context
             button.title = themeDisplayNameOnGrid; // Tooltip
 
             const img = document.createElement('img');
             img.src = theme.icon;
             const altTextKey = `theme_icon_alt_text_default_${theme.id}`; // Specific alt text key
-            img.alt = getUIText(altTextKey) || themeDisplayNameOnGrid; // Fallback to display name
+            img.alt = getUIText(altTextKey, {}, theme.id) || themeDisplayNameOnGrid; // Fallback to display name, with theme context
 
             const nameSpan = document.createElement('span');
             nameSpan.classList.add('theme-grid-icon-name');
@@ -2098,23 +2076,25 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update panel titles (they are generic, but good to ensure they are set)
         const descPanelContainer = document.getElementById('landing-theme-description-container');
         const descTitle = descPanelContainer ? descPanelContainer.querySelector('.panel-box-title') : null;
-        if (descTitle) descTitle.textContent = getUIText('landing_theme_description_title');
+        if (descTitle) descTitle.textContent = getUIText('landing_theme_description_title'); // Generic title
 
         const detailsPanelContainer = document.getElementById('landing-theme-details-container');
         const detailsTitle = detailsPanelContainer ? detailsPanelContainer.querySelector('.panel-box-title') : null;
-        if (detailsTitle) detailsTitle.textContent = getUIText('landing_theme_info_title');
+        if (detailsTitle) detailsTitle.textContent = getUIText('landing_theme_info_title'); // Generic title
 
-        // Set lore text
-        landingThemeLoreText.textContent = getUIText(themeConfig.lore_key);
+        // Set lore text, using themeId for context
+        landingThemeLoreText.textContent = getUIText(themeConfig.lore_key, {}, themeId);
         if (animate) { // Optionally animate lore panel expansion
             const lorePanelBox = landingThemeDescriptionContainer.querySelector('.panel-box');
             if (lorePanelBox && lorePanelBox.id) animatePanelBox(lorePanelBox.id, true, false);
         }
 
-        // Set setting and details text
+        // Set name, inspiration, tone, and concept text using themeId for context
         landingThemeInfoContent.innerHTML = `
-            <p><strong>${getUIText('landing_theme_setting_label')}:</strong> <span id="landing-selected-theme-setting">${getUIText(themeConfig.setting_key)}</span></p>
-            <p><strong>${getUIText('landing_theme_details_label')}:</strong> <span id="landing-selected-theme-details-text">${getUIText(themeConfig.details_key)}</span></p>
+            <p><strong>${getUIText('landing_theme_name_label')}:</strong> <span id="landing-selected-theme-name">${getUIText(themeConfig.name_key, {}, themeId)}</span></p>
+            <p><strong>${getUIText('landing_theme_inspiration_label')}:</strong> <span id="landing-selected-theme-inspiration">${getUIText(themeConfig.inspiration_key, {}, themeId)}</span></p>
+            <p><strong>${getUIText('landing_theme_tone_label')}:</strong> <span id="landing-selected-theme-tone">${getUIText(themeConfig.tone_key, {}, themeId)}</span></p>
+            <p><strong>${getUIText('landing_theme_concept_label')}:</strong> <span id="landing-selected-theme-concept">${getUIText(themeConfig.concept_key, {}, themeId)}</span></p>
         `;
 
         renderLandingPageActionButtons(themeId); // Create "Choose" and "Like" buttons

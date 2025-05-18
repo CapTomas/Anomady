@@ -42,6 +42,21 @@ const globalTextData = {
             "button_access_systems": "Begin",
             "button_execute_command": "Execute",
             "coming_soon_button": "Coming Soon",
+            "prompt_enter_api_key_title": "API Key Required",
+            "placeholder_api_key_input": "Enter your Gemini API Key here",
+            "alert_title_error": "Error",
+            "alert_title_notice": "Notice",
+            "confirm_new_game_title": "Confirm New Game",
+
+            // Modal
+            "modal_ok_button": "OK",
+            "modal_confirm_button": "Confirm",
+            "modal_cancel_button": "Cancel",
+            "modal_yes_button": "Yes",
+            "modal_no_button": "No",
+            "modal_default_title_alert": "Alert",
+            "modal_default_title_confirm": "Confirmation",
+            "modal_default_title_prompt": "Input Required",
 
             // Confirmations & Alerts
             "confirm_new_game_generic": "Start new game in {THEME_NAME}? Progress in this theme will be lost.",
@@ -107,6 +122,21 @@ const globalTextData = {
             "button_access_systems": "Spustit",
             "button_execute_command": "Provést",
             "coming_soon_button": "Již Brzy",
+            "prompt_enter_api_key_title": "Vyžadován API Klíč",
+            "placeholder_api_key_input": "Zadejte svůj Gemini API Klíč",
+            "alert_title_error": "Chyba",
+            "alert_title_notice": "Upozornění",
+            "confirm_new_game_title": "Potvrdit Novou Hru",
+
+            // Modal
+            "modal_ok_button": "OK",
+            "modal_confirm_button": "Potvrdit",
+            "modal_cancel_button": "Zrušit",
+            "modal_yes_button": "Ano",
+            "modal_no_button": "Ne",
+            "modal_default_title_alert": "Upozornění",
+            "modal_default_title_confirm": "Potvrzení",
+            "modal_default_title_prompt": "Vyžadován vstup",
 
             // Confirmations & Alerts
             "confirm_new_game_generic": "Začít novou hru v {THEME_NAME}? Postup v tomto tématu bude ztracen.",

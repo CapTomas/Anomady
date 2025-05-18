@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isInitialGameLoad = true; // Flag indicating if this is the first load of a game session
     let lastKnownDashboardUpdates = {}; // Cache of the last AI-provided dashboard values
     let lastKnownGameStateIndicators = {}; // Cache of the last AI-provided game state flags
+    let currentModalResolve = null; // To handle Promises for prompt/confirm
+
 
     // User's theme lists
     let playingThemes = []; // Themes the user has active sessions for
@@ -67,6 +69,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const landingThemeDetailsContainer = document.getElementById('landing-theme-details-container'); // Panel for theme details on landing page
     const landingThemeInfoContent = document.getElementById('landing-theme-info-content'); // Content area for theme details
     const landingThemeActions = document.getElementById('landing-theme-actions'); // Container for action buttons (choose/like theme)
+
+    // Custom Modal Elements
+    const customModalOverlay = document.getElementById('custom-modal-overlay');
+    const customModalElement = document.getElementById('custom-modal');
+    const customModalTitle = document.getElementById('custom-modal-title');
+    const customModalMessage = document.getElementById('custom-modal-message');
+    const customModalInputContainer = document.getElementById('custom-modal-input-container');
+    const customModalInput = document.getElementById('custom-modal-input');
+    const customModalActions = document.getElementById('custom-modal-actions');
 
     // Game view specific elements
     const storyLog = document.getElementById('story-log'); // Container for narrative messages
@@ -141,37 +152,50 @@ document.addEventListener('DOMContentLoaded', () => {
      * Sets up the Gemini API key, prompting the user if not found in localStorage.
      * @returns {boolean} True if API key is successfully set, false otherwise.
      */
-    function setupApiKey() {
+    async function setupApiKey() { // Make function async
         GEMINI_API_KEY = localStorage.getItem('userGeminiApiKey');
         if (!GEMINI_API_KEY) {
-            GEMINI_API_KEY = prompt(getUIText('prompt_enter_api_key', { "DEFAULT_VALUE": "" }), ""); // Uses globalTextData
-            if (GEMINI_API_KEY && GEMINI_API_KEY.trim() !== "") {
+            const apiKeyInput = await showCustomModal({ // await the promise
+                type: 'prompt',
+                titleKey: 'prompt_enter_api_key_title', 
+                messageKey: 'prompt_enter_api_key',
+                confirmTextKey: 'modal_confirm_button',
+                cancelTextKey: 'modal_cancel_button',
+                inputPlaceholderKey: 'placeholder_api_key_input' 
+            });
+
+            if (apiKeyInput && apiKeyInput.trim() !== "") {
+                GEMINI_API_KEY = apiKeyInput.trim();
                 localStorage.setItem('userGeminiApiKey', GEMINI_API_KEY);
-            } else {
-                GEMINI_API_KEY = ""; // Ensure it's an empty string if user cancels or enters nothing
-                alert(getUIText('alert_api_key_required')); // Uses globalTextData
+            } else if (apiKeyInput !== null) { 
+                GEMINI_API_KEY = ""; 
+                await showCustomModal({ 
+                    type: 'alert',
+                    titleKey: 'alert_title_error', 
+                    messageKey: 'alert_api_key_required'
+                });
+            } else { 
+                 GEMINI_API_KEY = ""; 
             }
         }
 
         if (!GEMINI_API_KEY) {
-            // These keys are in globalTextData.global
             const errorMsg = getUIText('error_critical_no_api_key'); 
             const statusErrorMsg = getUIText('status_error'); 
             
-            addMessageToLog(errorMsg, 'system');
+            addMessageToLog(errorMsg, 'system'); 
             console.error(errorMsg);
             if (systemStatusIndicator) {
                 systemStatusIndicator.textContent = statusErrorMsg;
                 systemStatusIndicator.className = 'status-indicator status-danger';
             }
-            // Disable critical UI elements if no API key
             [startGameButton, playerIdentifierInputEl, playerActionInput, sendActionButton].forEach(el => {
                 if (el) el.disabled = true;
             });
-            if (themeGridContainer) themeGridContainer.style.pointerEvents = 'none'; // Disable theme grid interaction
+            if (themeGridContainer) themeGridContainer.style.pointerEvents = 'none';
             return false;
         }
-        if (themeGridContainer) themeGridContainer.style.pointerEvents = 'auto'; // Re-enable if key is present
+        if (themeGridContainer) themeGridContainer.style.pointerEvents = 'auto';
         return true;
     }
 
@@ -1552,57 +1576,55 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Starts the game session after the player enters their identifier.
      */
-    async function startGameAfterIdentifier() {
+    async function startGameAfterIdentifier() { // Make async
         const enteredIdentifier = playerIdentifierInputEl ? playerIdentifierInputEl.value.trim() : "";
         if (!enteredIdentifier) {
-            alert(getUIText('alert_identifier_required'));
+            await showCustomModal({ 
+                type: 'alert',
+                titleKey: 'alert_title_notice',
+                messageKey: 'alert_identifier_required'
+            });
             if (playerIdentifierInputEl) playerIdentifierInputEl.focus();
             return;
         }
 
         playerIdentifier = enteredIdentifier;
-        isInitialGameLoad = true; // This is the start of a new session flow
-        currentPromptType = 'initial'; // Use initial prompt for the very first AI interaction
+        isInitialGameLoad = true; 
+        currentPromptType = 'initial'; 
 
-        // Switch UI from name input to action input
         if (nameInputSection) nameInputSection.style.display = 'none';
         if (actionInputSection) actionInputSection.style.display = 'flex';
 
-        // Animate story log appearance if it was hidden
         if (storyLogViewport && storyLogViewport.classList.contains('spawn-animation')) {
-            // Animation already handled or will be by switchToGameView
         } else if (storyLogViewport) {
             storyLogViewport.style.opacity = '1';
             storyLogViewport.style.transform = 'translateY(0) scale(1)';
         }
 
-        if (playerActionInput) { // Prepare action input field
+        if (playerActionInput) { 
             playerActionInput.value = '';
-            playerActionInput.dispatchEvent(new Event('input', { bubbles: true })); // For auto-grow
+            playerActionInput.dispatchEvent(new Event('input', { bubbles: true })); 
             autoGrowTextarea(playerActionInput);
             playerActionInput.focus();
         }
 
-        // Update dashboard with player identifier
         const idKey = currentTheme === 'scifi' ? 'callsign' : 'character_name';
-        updateDashboard({ [idKey]: playerIdentifier }, false); // No highlight for this initial set
+        updateDashboard({ [idKey]: playerIdentifier }, false); 
 
         addMessageToLog(getUIText('connecting', { PLAYER_ID: playerIdentifier }), 'system');
 
-        // Create initial game history entry for the AI
         gameHistory = [{
             role: "user",
             parts: [{ text: `My identifier is ${playerIdentifier}. I am ready to start the game in ${currentTheme} theme.` }]
         }];
-        saveGameState(); // Save this initial state
+        saveGameState(); 
 
         clearSuggestedActions();
-        const narrative = await callGeminiAPI(gameHistory); // Make the first call to AI
+        const narrative = await callGeminiAPI(gameHistory); 
 
         if (narrative) {
-            addMessageToLog(narrative, 'gm'); // Display AI's opening narrative
+            addMessageToLog(narrative, 'gm'); 
         } else {
-            // If initial AI call fails, revert to name input
             if (nameInputSection) nameInputSection.style.display = 'flex';
             if (actionInputSection) actionInputSection.style.display = 'none';
             addMessageToLog(getUIText('error_session_init_failed'), 'system');
@@ -1641,27 +1663,46 @@ document.addEventListener('DOMContentLoaded', () => {
      * Initiates a new game session, prompting for confirmation.
      * Uses current theme or landing page selection if no game is active.
      */
-    function startNewGameSession() {
+    async function startNewGameSession() { // Make function async
         if (!currentTheme && !currentLandingGridSelection) {
-            alert(getUIText('alert_select_theme_first'));
+            await showCustomModal({ 
+                type: 'alert',
+                titleKey: 'alert_title_notice', 
+                messageKey: 'alert_select_theme_first'
+            });
             return;
         }
         const themeToStartNewGameIn = currentTheme || currentLandingGridSelection;
-        if (!themeToStartNewGameIn || !ALL_THEMES_CONFIG[themeToStartNewGameIn]) { // Added check for theme existence
-            alert(getUIText('alert_select_theme_first')); // Or a more specific error
+        if (!themeToStartNewGameIn || !ALL_THEMES_CONFIG[themeToStartNewGameIn]) {
+             await showCustomModal({ 
+                type: 'alert',
+                titleKey: 'alert_title_error', 
+                messageKey: 'alert_select_theme_first' 
+            });
             return;
         }
 
-        const themeName = getUIText(ALL_THEMES_CONFIG[themeToStartNewGameIn].name_key, {}, themeToStartNewGameIn);
-        // Use a theme-specific confirmation key if available, else generic
+        const themeConfig = ALL_THEMES_CONFIG[themeToStartNewGameIn];
+        const themeName = getUIText(themeConfig.name_key, {}, themeToStartNewGameIn);
+        
         const confirmKey = `confirm_new_game_theme_${themeToStartNewGameIn}`;
-        const confirmMsg = getUIText(confirmKey, { THEME_NAME: themeName }, themeToStartNewGameIn) || // Pass theme context for confirmKey too
-            getUIText('confirm_new_game_generic', { THEME_NAME: themeName });
+        let messageToDisplayKey = (themeTextData[themeToStartNewGameIn]?.[currentAppLanguage]?.[confirmKey] || themeTextData[themeToStartNewGameIn]?.en?.[confirmKey]) 
+                                   ? confirmKey 
+                                   : 'confirm_new_game_generic';
 
-        if (confirm(confirmMsg)) {
-            // Pass theme context for system message if THEME_NAME is used in its string
+        const userConfirmed = await showCustomModal({ 
+            type: 'confirm',
+            titleKey: 'confirm_new_game_title', 
+            messageKey: messageToDisplayKey,
+            replacements: { THEME_NAME: themeName },
+            confirmTextKey: 'modal_yes_button',
+            cancelTextKey: 'modal_no_button',
+            explicitThemeContext: (messageToDisplayKey === confirmKey) ? themeToStartNewGameIn : null 
+        });
+
+        if (userConfirmed) {
             addMessageToLog(getUIText('system_new_game_initiated', { THEME_NAME: themeName }), 'system');
-            changeThemeAndStart(themeToStartNewGameIn, true); // true = force new game
+            changeThemeAndStart(themeToStartNewGameIn, true); 
         }
     }
 
@@ -2197,13 +2238,113 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Hides the custom modal.
+     */
+    function hideCustomModal() {
+        if (customModalOverlay) {
+            customModalOverlay.classList.remove('active');
+            // Clear input field after hiding
+            if (customModalInput) customModalInput.value = '';
+            if (customModalInputContainer) customModalInputContainer.style.display = 'none';
+        }
+    }
+
+    /**
+     * Shows a custom modal.
+     * @param {object} options - Configuration for the modal.
+     * @param {string} options.type - 'alert', 'confirm', or 'prompt'.
+     * @param {string} options.titleKey - i18n key for the modal title.
+     * @param {string} options.messageKey - i18n key for the modal message.
+     * @param {object} [options.replacements={}] - Replacements for title/message.
+     * @param {string} [options.confirmTextKey] - i18n key for confirm button. Defaults based on type.
+     * @param {string} [options.cancelTextKey] - i18n key for cancel button (for 'confirm'/'prompt').
+     * @param {string} [options.inputPlaceholderKey] - i18n key for prompt input placeholder.
+     * @param {string} [options.defaultValue] - Default value for prompt input.
+     * @returns {Promise<string|boolean|null>} - Resolves with input value for 'prompt',
+     *                                           true/false for 'confirm', null for 'alert'.
+     */
+    function showCustomModal(options) {
+        return new Promise((resolve) => {
+            currentModalResolve = resolve; // Store resolve for button handlers
+
+            const {
+                type = 'alert', // 'alert', 'confirm', 'prompt'
+                titleKey,
+                messageKey,
+                replacements = {},
+                confirmTextKey,
+                cancelTextKey,
+                inputPlaceholderKey,
+                defaultValue = ''
+            } = options;
+
+            if (!customModalOverlay || !customModalTitle || !customModalMessage || !customModalActions) {
+                console.error("Custom modal elements not found!");
+                currentModalResolve(type === 'prompt' ? null : (type === 'confirm' ? false : null)); // Reject or resolve with default
+                return;
+            }
+
+            customModalTitle.textContent = getUIText(titleKey || `modal_default_title_${type}`, replacements);
+            customModalMessage.innerHTML = getUIText(messageKey, replacements).replace(/\n/g, '<br>'); // Allow newlines in message
+
+            customModalActions.innerHTML = ''; // Clear previous buttons
+
+            if (type === 'prompt') {
+                if (customModalInputContainer && customModalInput) {
+                    customModalInputContainer.style.display = 'block';
+                    customModalInput.value = defaultValue;
+                    customModalInput.placeholder = inputPlaceholderKey ? getUIText(inputPlaceholderKey) : '';
+                    setTimeout(() => customModalInput.focus(), 50); // Delay focus slightly for transition
+                } else {
+                    console.error("Modal input elements not found for prompt type.");
+                    customModalInputContainer.style.display = 'none';
+                }
+            } else {
+                if (customModalInputContainer) customModalInputContainer.style.display = 'none';
+            }
+
+            // Confirm/OK/Yes Button
+            const confirmBtn = document.createElement('button');
+            confirmBtn.classList.add('ui-button', 'primary');
+            let defaultConfirmKey = 'modal_ok_button';
+            if (type === 'confirm') defaultConfirmKey = 'modal_yes_button';
+            if (type === 'prompt') defaultConfirmKey = 'modal_confirm_button';
+            
+            confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey);
+            confirmBtn.addEventListener('click', () => {
+                if (type === 'prompt') {
+                    currentModalResolve(customModalInput.value);
+                } else if (type === 'confirm') {
+                    currentModalResolve(true);
+                } else { // alert
+                    currentModalResolve(null);
+                }
+                hideCustomModal();
+            });
+            customModalActions.appendChild(confirmBtn);
+
+            // Cancel/No Button (for confirm and prompt)
+            if (type === 'confirm' || type === 'prompt') {
+                const cancelBtn = document.createElement('button');
+                cancelBtn.classList.add('ui-button'); // Secondary style
+                cancelBtn.textContent = getUIText(cancelTextKey || 'modal_cancel_button');
+                cancelBtn.addEventListener('click', () => {
+                    currentModalResolve(type === 'prompt' ? null : false); // Resolve with null for prompt cancel, false for confirm cancel
+                    hideCustomModal();
+                });
+                customModalActions.appendChild(cancelBtn);
+            }
+            customModalOverlay.classList.add('active');
+        });
+    }
+
+    /**
      * Main application initialization function. Sets up API key, loads preferences,
      * and determines whether to show landing page or resume a game.
      */
-    async function initializeApp() {
-        loadThemeListsFromStorage(); // Load user's playing/liked themes
+    async function initializeApp() { // ENSURE THIS IS ASYNC
+        loadThemeListsFromStorage(); 
 
-        // Load preferences from localStorage or use defaults
         currentTheme = localStorage.getItem(CURRENT_THEME_STORAGE_KEY) || null;
         currentAppLanguage = localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
         currentNarrativeLanguage = localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) || currentAppLanguage;
@@ -2211,38 +2352,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateModelToggleButtonText();
 
-        // Critical: Setup API key. If fails, app remains on landing page with limited functionality.
-        if (!setupApiKey()) {
-            switchToLandingView(); // Ensure landing view is shown
-            setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID); // Set basic UI texts
-            return; // Stop further initialization
+        // Critical: Setup API key.
+        const apiKeyIsSetup = await setupApiKey(); // AWAIT THIS CALL
+        if (!apiKeyIsSetup) { 
+            switchToLandingView(); 
+            setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID); 
+            return; 
         }
 
         let gameToResume = null;
         let successfullyLoadedStateForResume = false;
 
-        // Check if there's a current theme set and if it's in the "playing" list (valid session)
         if (currentTheme && isThemePlaying(currentTheme)) {
-            // Temporarily store potentially unsaved player ID and history in case load fails
             const tempPlayerId = playerIdentifier;
             const tempGameHistory = [...gameHistory];
-            playerIdentifier = ''; // Clear before attempting load
+            playerIdentifier = ''; 
             gameHistory = [];
 
-            if (await loadAllPromptsForTheme(currentTheme)) { // Prompts must load to resume
-                if (loadGameState(currentTheme)) { // Attempt to load saved state
+            if (await loadAllPromptsForTheme(currentTheme)) { 
+                if (loadGameState(currentTheme)) { 
                     gameToResume = currentTheme;
                     successfullyLoadedStateForResume = true;
                 } else {
-                    // Load failed: remove from playing themes, clear currentTheme, restore temp state
-                    removePlayingTheme(currentTheme, false); // false = don't move to liked, it was a failed session
+                    removePlayingTheme(currentTheme, false); 
                     currentTheme = null;
                     localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
-                    playerIdentifier = tempPlayerId; // Restore previous in-memory values if any
+                    playerIdentifier = tempPlayerId; 
                     gameHistory = tempGameHistory;
                 }
             } else {
-                // Prompts failed to load: treat as session failure
                 removePlayingTheme(currentTheme, false);
                 currentTheme = null;
                 localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
@@ -2251,78 +2389,103 @@ document.addEventListener('DOMContentLoaded', () => {
                 addMessageToLog(getUIText('error_resume_failed_prompts', { THEME: currentTheme }), 'system-error');
             }
         } else if (currentTheme) {
-            // If currentTheme was set but not in playingThemes, it's an invalid/stale reference
             currentTheme = null;
             localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
         }
 
         if (gameToResume && successfullyLoadedStateForResume) {
-            currentTheme = gameToResume; // Confirm the theme to resume
+            currentTheme = gameToResume; 
 
-            switchToGameView(currentTheme); // Show game UI
+            switchToGameView(currentTheme); 
 
-            generatePanelsForTheme(currentTheme); // Create dashboard panels
-            setAppLanguageAndThemeUI(currentAppLanguage, currentTheme); // Set texts and styles
-            initializeDashboardDefaultTexts(); // Set default values for dashboard items
+            generatePanelsForTheme(currentTheme); 
+            setAppLanguageAndThemeUI(currentAppLanguage, currentTheme); 
+            initializeDashboardDefaultTexts(); 
 
-            // Restore dynamic dashboard values and game state indicators
-            updateDashboard(lastKnownDashboardUpdates, false); // false = no highlight on resume
-            handleGameStateIndicators(lastKnownGameStateIndicators, true); // true = it's an initial boot for these indicators
+            updateDashboard(lastKnownDashboardUpdates, false); 
+            handleGameStateIndicators(lastKnownGameStateIndicators, true); 
 
-            initializeCollapsiblePanelBoxes(currentTheme); // Setup panel interactivity
+            initializeCollapsiblePanelBoxes(currentTheme); 
 
-            // Configure UI for resumed game (action input visible)
             if (nameInputSection) nameInputSection.style.display = 'none';
             if (actionInputSection) actionInputSection.style.display = 'flex';
             if (playerActionInput && document.body.contains(playerActionInput)) {
                 playerActionInput.focus();
             }
 
-            addMessageToLog(getUIText('system_session_resumed', { PLAYER_ID: playerIdentifier, THEME_NAME: getUIText(ALL_THEMES_CONFIG[currentTheme].name_key) }), 'system');
+            addMessageToLog(getUIText('system_session_resumed', { PLAYER_ID: playerIdentifier, THEME_NAME: getUIText(ALL_THEMES_CONFIG[currentTheme].name_key, {}, currentTheme) }), 'system');
             if (systemStatusIndicator) {
                 systemStatusIndicator.textContent = getUIText('system_status_online_short');
                 systemStatusIndicator.className = 'status-indicator status-ok';
             }
-            isInitialGameLoad = false; // Game is being resumed
+            isInitialGameLoad = false; 
         } else {
-            // No game to resume, or resume failed: switch to landing page
             switchToLandingView();
         }
 
-        updateTopbarThemeIcons(); // Update top bar icons based on loaded lists
-        if (playerActionInput) autoGrowTextarea(playerActionInput); // Initial size adjustment for action input
+        updateTopbarThemeIcons(); 
+        if (playerActionInput) autoGrowTextarea(playerActionInput); 
     }
 
     // Event Listeners for global controls
     if (applicationLogoElement) applicationLogoElement.addEventListener('click', switchToLandingView);
     if (languageToggleButton) languageToggleButton.addEventListener('click', toggleAppLanguage);
-    if (newGameButton) newGameButton.addEventListener('click', startNewGameSession);
-    if (modelToggleButton) modelToggleButton.addEventListener('click', toggleModelType);
-
-    // Event Listeners for game start controls
-    if (startGameButton) startGameButton.addEventListener('click', startGameAfterIdentifier);
-    if (playerIdentifierInputEl) {
-        playerIdentifierInputEl.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') startGameAfterIdentifier();
+    
+    if (newGameButton) {
+        newGameButton.addEventListener('click', () => { // Use a non-async wrapper
+            startNewGameSession().catch(err => {
+                 console.error("Error during New Game operation:", err);
+                 // Optionally show a user-friendly error modal here if the promise rejects unexpectedly
+                 // showCustomModal({ type: 'alert', titleKey: 'alert_title_error', messageKey: 'error_generic_operation_failed' });
+            });
         });
     }
 
-    // Event Listeners for player action input
-    if (sendActionButton) sendActionButton.addEventListener('click', sendPlayerAction);
-    if (playerActionInput) {
-        playerActionInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) { // Enter to send, Shift+Enter for newline
-                e.preventDefault(); // Prevent default newline on Enter
-                sendPlayerAction();
+    if (modelToggleButton) modelToggleButton.addEventListener('click', toggleModelType);
+
+    // Event Listeners for game start controls
+    if (startGameButton) {
+        startGameButton.addEventListener('click', () => { // Use a non-async wrapper
+            startGameAfterIdentifier().catch(err => {
+                console.error("Error during startGameAfterIdentifier (button click):", err);
+            });
+        });
+    }
+    if (playerIdentifierInputEl) {
+        playerIdentifierInputEl.addEventListener('keypress', (e) => { // Keypress listener
+            if (e.key === 'Enter') {
+                // Call the async function and handle potential errors
+                startGameAfterIdentifier().catch(err => {
+                    console.error("Error during startGameAfterIdentifier (Enter key):", err);
+                });
             }
         });
-        playerActionInput.addEventListener('input', () => autoGrowTextarea(playerActionInput)); // Auto-resize on input
+    }
+
+    // Event Listeners for player action input (sendPlayerAction is also async)
+    if (sendActionButton) {
+        sendActionButton.addEventListener('click', () => { // Use a non-async wrapper
+            sendPlayerAction().catch(err => {
+                console.error("Error during sendPlayerAction (button click):", err);
+            });
+        });
+    }
+    if (playerActionInput) {
+        playerActionInput.addEventListener('keypress', (e) => { // Keypress listener
+            if (e.key === 'Enter' && !e.shiftKey) { 
+                e.preventDefault(); 
+                // Call the async function and handle potential errors
+                sendPlayerAction().catch(err => {
+                    console.error("Error during sendPlayerAction (Enter key):", err);
+                });
+            }
+        });
+        playerActionInput.addEventListener('input', () => autoGrowTextarea(playerActionInput)); 
     }
 
     // Event listener for story log scroll (to manage auto-scroll behavior)
     if (storyLogViewport) {
         storyLogViewport.addEventListener('scroll', () => {
-            // If scrolled up significantly from the bottom, user has manually scrolled
             if (storyLogViewport.scrollHeight - storyLogViewport.clientHeight > storyLogViewport.scrollTop + AUTOSCROLL_THRESHOLD) {
                 userHasManuallyScrolledLog = true;
             }
@@ -2330,5 +2493,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize the application
-    initializeApp();
-});
+    initializeApp(); // This should be the last call within the DOMContentLoaded listener
+}); // This is the closing curly brace and parenthesis for the main DOMContentLoaded listener

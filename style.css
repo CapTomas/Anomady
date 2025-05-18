@@ -399,8 +399,77 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 #like-theme-button.ui-button.icon-button.liketheme-button.disabled {
 background-color: var(--color-bg-content-view)
 }
-.ui-button.icon-button {
-	background-color: transparent!important;
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease;
+}
+.modal-box {
+	background-color: var(--color-bg-content-view);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg, 20px);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-box {
+    transform: scale(1);
+}
+.modal-title {
+    margin-top: 0;
+    margin-bottom: var(--spacing-md, 15px);
+    font-size: 1.4em;
+	color: var(--color-text-primary);
+}
+.modal-message {
+    margin-bottom: var(--spacing-lg, 20px);
+    font-size: 1em;
+    line-height: 1.6;
+	color: var(--color-text-primary);
+}
+.modal-message p {
+    margin-bottom: var(--spacing-sm, 10px);
+}
+.modal-message p:last-child {
+    margin-bottom: 0;
+}
+.modal-input-container {
+    margin-bottom: var(--spacing-md, 15px);
+}
+.modal-input {
+    width: calc(100% - 2 * var(--spacing-sm, 10px));
+    padding: var(--spacing-sm, 10px);
+    border: 1px solid var(--color-border, #444);
+    background-color: var(--color-background-input, #1e1e2f);
+    color: var(--color-text-input, #e0e0e0);
+    border-radius: var(--border-radius-sm, 4px);
+    font-size: 1em;
+}
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md, 15px);
+}
+.modal-actions .ui-button {
+    min-width: 100px;
 }
 .meter-bar-container {
 	width: 100%;
@@ -667,6 +736,9 @@ background-color: var(--color-bg-content-view)
     color: var(--color-text-disabled, #888);
     cursor: not-allowed;
     opacity: 0.6
+}
+.ui-button.icon-button {
+	background-color: transparent!important;
 }
 #player-input-control-panel .ui-button.primary {
 	background-color: var(--color-bg-button-primary);

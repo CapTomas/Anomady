@@ -41,6 +41,7 @@ const globalTextData = {
             "placeholder_command": "Enter action...",
             "button_access_systems": "Begin",
             "button_execute_command": "Execute",
+            "coming_soon_button": "Coming Soon",
 
             // Confirmations & Alerts
             "confirm_new_game_generic": "Start new game in {THEME_NAME}? Progress in this theme will be lost.",
@@ -105,6 +106,7 @@ const globalTextData = {
             "placeholder_command": "Zadejte akci...",
             "button_access_systems": "Spustit",
             "button_execute_command": "Provést",
+            "coming_soon_button": "Již Brzy",
 
             // Confirmations & Alerts
             "confirm_new_game_generic": "Začít novou hru v {THEME_NAME}? Postup v tomto tématu bude ztracen.",

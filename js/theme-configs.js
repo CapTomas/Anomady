@@ -7,7 +7,8 @@ const ALL_THEMES_CONFIG = {
         inspiration_key: 'theme_inspiration_scifi', // NEW
         tone_key: 'theme_tone_scifi',             // NEW
         concept_key: 'theme_concept_scifi',         // NEW
-        dashboard_config_ref: 'scifi' // Reference to dashboard layout configuration
+        dashboard_config_ref: 'scifi', // Reference to dashboard layout configuration
+        playable: true // Indicates if the theme is playable
     },
     fantasy: {
         id: 'fantasy',
@@ -17,7 +18,8 @@ const ALL_THEMES_CONFIG = {
         inspiration_key: 'theme_inspiration_fantasy',
         tone_key: 'theme_tone_fantasy',
         concept_key: 'theme_concept_fantasy',
-        dashboard_config_ref: 'fantasy'
+        dashboard_config_ref: 'fantasy',
+        playable: true
     },
     cosmic_misrule: {
         id: 'cosmic_misrule',
@@ -27,7 +29,8 @@ const ALL_THEMES_CONFIG = {
         inspiration_key: 'theme_inspiration_cosmic_misrule',
         tone_key: 'theme_tone_cosmic_misrule',
         concept_key: 'theme_concept_cosmic_misrule',
-        dashboard_config_ref: 'cosmic_misrule'
+        dashboard_config_ref: 'cosmic_misrule',
+        playable: false
     }
     // Add more themes here
 };

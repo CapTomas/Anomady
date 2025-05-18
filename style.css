@@ -364,7 +364,7 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 }
 #landing-theme-actions {
 	display: flex;
-	gap: var(--spacing-md);
+    justify-content: space-between; /* This is the key property */
 	align-items: center;
 	margin-top: var(--spacing-lg)
 }
@@ -392,6 +392,15 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 }
 .like-theme-button.liked img.like-icon {
 	filter: drop-shadow(0 0 3px var(--color-accent-teal))
+}
+.like-theme-button.disabled .like-icon {
+    background-color: var(--color-bg-content-view)
+}
+#like-theme-button.ui-button.icon-button.liketheme-button.disabled {
+background-color: var(--color-bg-content-view)
+}
+.ui-button.icon-button {
+	background-color: transparent!important;
 }
 .meter-bar-container {
 	width: 100%;
@@ -653,6 +662,12 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	color: var(--color-text-primary);
 	background-color: rgba(255, 255, 255, 0.05)
 }
+.ui-button.disabled {
+    background-color: var(--color-background-muted, #555);
+    color: var(--color-text-disabled, #888);
+    cursor: not-allowed;
+    opacity: 0.6
+}
 #player-input-control-panel .ui-button.primary {
 	background-color: var(--color-bg-button-primary);
 	color: var(--color-text-on-primary-button);
@@ -690,7 +705,7 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	color: var(--color-text-primary)
 }
 .ui-button:disabled,.ui-button:disabled:hover,.ui-button:disabled:active {
-	background-color: var(--color-text-muted) !important;
+	background-color: var(--color-text-muted);
 	color: var(--color-bg-input-field) !important;
 	cursor:not-allowed;
 	transform: none !important;

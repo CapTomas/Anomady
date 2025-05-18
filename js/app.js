@@ -2113,30 +2113,57 @@ document.addEventListener('DOMContentLoaded', () => {
      * Renders the "Choose this theme" and "Like" buttons on the landing page for a selected theme.
      * @param {string} themeId - The ID of the currently selected theme.
      */
+    /**
+     * Renders the "Choose this theme" and "Like" buttons on the landing page for a selected theme.
+     * @param {string} themeId - The ID of the currently selected theme.
+     */
     function renderLandingPageActionButtons(themeId) {
         if (!landingThemeActions) return;
         landingThemeActions.innerHTML = ''; // Clear previous buttons
 
-        // "Choose this theme" button
+        const themeConfig = ALL_THEMES_CONFIG[themeId];
+        if (!themeConfig) return; // Should not happen if themeId is valid
+
+        // "Choose this theme" or "Coming Soon" button
         const chooseButton = document.createElement('button');
         chooseButton.id = 'choose-theme-button';
-        chooseButton.classList.add('ui-button', 'primary');
-        chooseButton.textContent = getUIText('landing_choose_theme_button');
-        chooseButton.addEventListener('click', () => handleChooseThisThemeClick(themeId));
+        chooseButton.classList.add('ui-button'); // Base class
+
+        if (themeConfig.playable) {
+            chooseButton.classList.add('primary');
+            chooseButton.textContent = getUIText('landing_choose_theme_button');
+            chooseButton.addEventListener('click', () => handleChooseThisThemeClick(themeId));
+            chooseButton.disabled = false;
+        } else {
+            chooseButton.classList.add('disabled'); // Visually indicate disabled
+            chooseButton.textContent = getUIText('coming_soon_button');
+            chooseButton.disabled = true; // Make it unclickable
+        }
 
         // "Like/Unlike" button
         const likeButton = document.createElement('button');
         likeButton.id = 'like-theme-button';
         likeButton.classList.add('ui-button', 'icon-button', 'like-theme-button');
-        const isCurrentlyLiked = isThemeLiked(themeId);
-        const likeTextKey = isCurrentlyLiked ? 'aria_label_unlike_theme' : 'aria_label_like_theme';
-        const likeText = getUIText(likeTextKey);
-        likeButton.innerHTML = `<img src="${isCurrentlyLiked ? 'images/app/icon_heart_filled.svg' : 'images/app/icon_heart_empty.svg'}" alt="${likeText}" class="like-icon">`;
-        likeButton.setAttribute('aria-label', likeText);
-        likeButton.title = likeText; // Tooltip
-        if (isCurrentlyLiked) likeButton.classList.add('liked'); // Style if liked
+        
+        if (themeConfig.playable) {
+            const isCurrentlyLiked = isThemeLiked(themeId);
+            const likeTextKey = isCurrentlyLiked ? 'aria_label_unlike_theme' : 'aria_label_like_theme';
+            const likeText = getUIText(likeTextKey);
+            likeButton.innerHTML = `<img src="${isCurrentlyLiked ? 'images/app/icon_heart_filled.svg' : 'images/app/icon_heart_empty.svg'}" alt="${likeText}" class="like-icon">`;
+            likeButton.setAttribute('aria-label', likeText);
+            likeButton.title = likeText; // Tooltip
+            if (isCurrentlyLiked) likeButton.classList.add('liked');
+            likeButton.addEventListener('click', () => handleLikeThemeClick(themeId, likeButton));
+            likeButton.disabled = false;
+        } else {
+            // For unplayable themes, show a disabled-like heart icon and make it unclickable
+            likeButton.innerHTML = `<img src="images/app/icon_heart_disabled.svg" alt="${getUIText('aria_label_like_theme')}" class="like-icon">`; // Assuming you have/create a disabled heart icon
+            likeButton.setAttribute('aria-label', getUIText('aria_label_like_theme')); // Or a specific "feature not available" aria label
+            likeButton.title = getUIText('coming_soon_button'); // Tooltip indicates coming soon
+            likeButton.classList.add('disabled'); // Add disabled class for styling
+            likeButton.disabled = true;
+        }
 
-        likeButton.addEventListener('click', () => handleLikeThemeClick(themeId, likeButton)); // Pass button for direct update
 
         landingThemeActions.appendChild(chooseButton);
         landingThemeActions.appendChild(likeButton);

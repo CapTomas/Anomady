@@ -634,14 +634,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Briefly highlights a UI element to indicate an update.
-     * @param {HTMLElement} element - The DOM element (or its child) to highlight.
+     * If the element is a container (.info-item or .info-item-meter),
+     * it attempts to highlight its main value display child (.value or .value-overlay).
+     * If the element is already a value display child, it highlights itself.
+     * @param {HTMLElement} element - The DOM element to highlight or the container of the value to highlight.
      */
     function highlightElementUpdate(element) {
         if (!element) return;
-        const target = element.closest('.info-item, .info-item-meter'); // Find the parent container to highlight
-        if (target) {
-            target.classList.add('value-updated');
-            setTimeout(() => target.classList.remove('value-updated'), UPDATE_HIGHLIGHT_DURATION);
+
+        let textValueElement = null;
+
+        if (element.classList.contains('value') || element.classList.contains('value-overlay')) {
+            textValueElement = element;
+        }
+        else if (element.classList.contains('info-item') || element.classList.contains('info-item-meter')) {
+            textValueElement = element.querySelector('.value, .value-overlay');
+        }
+
+        if (textValueElement) {
+            textValueElement.classList.add('value-updated');
+            setTimeout(() => {
+                if (document.body.contains(textValueElement)) {
+                     textValueElement.classList.remove('value-updated');
+                }
+            }, UPDATE_HIGHLIGHT_DURATION);
         }
     }
 

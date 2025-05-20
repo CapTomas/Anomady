@@ -282,7 +282,7 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	flex-direction: column;
 	justify-content: flex-start;
 	gap: var(--spacing-lg);
-	overflow-y: hidden;
+	overflow-y: auto;
 	height: 100%
 }
 #landing-theme-description-container,#landing-theme-details-container {
@@ -818,10 +818,10 @@ background-color: var(--color-bg-content-view)
 }
 @keyframes flash-value-update-bg {
 	0%, 15% {
-		background-color: var(--highlight-bg-value-update) 
+		color: var(--color-accent-teal) 
 }
 	100% {
-		background-color: transparent 
+		color: var(--color-text-primary)
 }
 }
 .info-item.value-updated::after,.info-item-meter.value-updated::after {

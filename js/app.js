@@ -9,17 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const UPDATE_HIGHLIGHT_DURATION = 5000; // Duration for UI update highlights (ms)
 
     // localStorage keys for persisting application state and preferences
-    const CURRENT_THEME_STORAGE_KEY = 'anomaliaCurrentTheme';
-    const GAME_STATE_STORAGE_KEY_PREFIX = 'anomaliaGameState_'; // Prefix for theme-specific game states
-    const MODEL_PREFERENCE_STORAGE_KEY = 'anomaliaModelPreference';
+    const CURRENT_THEME_STORAGE_KEY = 'anomadyCurrentTheme';
+    const GAME_STATE_STORAGE_KEY_PREFIX = 'anomadyGameState_'; // Prefix for theme-specific game states
+    const MODEL_PREFERENCE_STORAGE_KEY = 'anomadyModelPreference';
     const LANGUAGE_PREFERENCE_STORAGE_KEY = 'preferredAppLanguage';
     const NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY = 'preferredNarrativeLanguage';
-    const PLAYING_THEMES_STORAGE_KEY = 'anomaliaPlayingThemes'; // Themes currently being played or recently played
-    const LIKED_THEMES_STORAGE_KEY = 'anomaliaLikedThemes'; // Themes liked by the user
-    const LANDING_SELECTED_GRID_THEME_KEY = 'anomaliaLandingSelectedGridTheme'; // Theme selected on landing page grid
+    const PLAYING_THEMES_STORAGE_KEY = 'anomadyPlayingThemes'; // Themes currently being played or recently played
+    const LIKED_THEMES_STORAGE_KEY = 'anomadyLikedThemes'; // Themes liked by the user
+    const LANDING_SELECTED_GRID_THEME_KEY = 'anomadyLandingSelectedGridTheme'; // Theme selected on landing page grid
 
     // AI Model identifiers
-    const PAID_MODEL_NAME = "gemini-1.5-flash-latest"; // Identifier for the preferred/paid model
+    const PAID_MODEL_NAME = "gemini-2.5-flash-preview-04-17"; // Identifier for the preferred/paid model
     const FREE_MODEL_NAME = "gemini-1.5-flash-latest"; // Identifier for the standard/free model (currently same as paid)
     let currentModelName = localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME;
 
@@ -28,9 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentAppLanguage = localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE; // Current UI language
     let currentNarrativeLanguage = localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) || currentAppLanguage; // Current language for AI narrative
     let gamePrompts = {}; // Stores loaded prompt texts, keyed by theme and prompt name
-    let currentPromptType = 'initial'; // Type of system prompt to use (e.g., 'initial', 'default', 'combat')
+    let currentPromptType = 'initial'; // Type of system prompt to use (e.g., 'initial', 'default', 'combat_engaged')
     let gameHistory = []; // Array of conversation turns with the AI
-    let playerIdentifier = ''; // User's chosen name or callsign in the game
+    let playerIdentifier = ''; // User's chosen name or identifier in the game
     let isInitialGameLoad = true; // Flag indicating if this is the first load of a game session
     let lastKnownDashboardUpdates = {}; // Cache of the last AI-provided dashboard values
     let lastKnownGameStateIndicators = {}; // Cache of the last AI-provided game state flags
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const suggestedActionsWrapper = document.getElementById('suggested-actions-wrapper'); // Container for AI-suggested actions
     const playerInputControlPanel = document.getElementById('player-input-control-panel'); // Panel containing input fields
     const nameInputSection = document.getElementById('name-input-section'); // Section for player identifier input
-    const playerIdentifierInputEl = document.getElementById('player-identifier-input'); // Input field for player's name/callsign
+    const playerIdentifierInputEl = document.getElementById('player-identifier-input'); // Input field for player's name/identifier
     const startGameButton = document.getElementById('start-game-button'); // Button to initiate the game after entering identifier
     const actionInputSection = document.getElementById('action-input-section'); // Section for player action input
     const playerActionInput = document.getElementById('player-action-input'); // Textarea for player's game actions
@@ -94,14 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Story log auto-scroll control
     let userHasManuallyScrolledLog = false; // Flag to manage auto-scrolling behavior
     const AUTOSCROLL_THRESHOLD = 40; // Pixel threshold to re-enable auto-scroll
-
-    /**
-     * Retrieves localized UI text based on a key, current language, and theme context.
-     * @param {string} key - The i18n key for the text.
-     * @param {object} replacements - Optional placeholder replacements (e.g., { "NAME": "John" }).
-     * @param {string|null} explicitThemeContext - Optional theme ID to force UI text from a specific theme.
-     * @returns {string} The localized text or the key itself if not found.
-     */
     function getUIText(key, replacements = {}, explicitThemeContext = null) {
         let text;
         const onLandingPage = document.body.classList.contains('landing-page-active');
@@ -234,21 +226,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!savedStateString) return false; // No saved state found
 
             const savedState = JSON.parse(savedStateString);
-            // Basic validation of saved state
             if (!savedState.playerIdentifier || !savedState.gameHistory || savedState.gameHistory.length === 0) {
-                clearGameStateInternal(themeIdToLoad); // Clear invalid state
+                clearGameStateInternal(themeIdToLoad); 
                 return false;
             }
 
-            // Apply loaded state
             playerIdentifier = savedState.playerIdentifier;
             gameHistory = savedState.gameHistory;
             lastKnownDashboardUpdates = savedState.lastDashboardUpdates || {};
             lastKnownGameStateIndicators = savedState.lastGameStateIndicators || {};
-            currentPromptType = savedState.currentPromptType || 'default';
+            currentPromptType = savedState.currentPromptType || 'default'; // Default to 'default' if resuming
             currentNarrativeLanguage = savedState.currentNarrativeLanguage || currentAppLanguage;
 
-            // Reconstruct story log
             if (storyLog) storyLog.innerHTML = '';
             gameHistory.forEach(turn => {
                 if (turn.role === 'user') {
@@ -264,28 +253,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Restore UI elements
-            updateDashboard(lastKnownDashboardUpdates, false); // false to not highlight on load
+            updateDashboard(lastKnownDashboardUpdates, false);
             handleGameStateIndicators(lastKnownGameStateIndicators, false);
 
-            // Update player identifier on dashboard
             const themeConfig = ALL_THEMES_CONFIG[themeIdToLoad];
             if (themeConfig) {
                 const dashboardConfig = THEME_DASHBOARD_CONFIGS[themeConfig.dashboard_config_ref];
-                const playerIdentifierConfigKey = themeIdToLoad === 'scifi' ? 'callsign' : 'character_name';
-                const playerIdentifierConfig = findItemConfigById(dashboardConfig, playerIdentifierConfigKey);
-                if (playerIdentifierConfig) {
-                    const el = document.getElementById(`info-${playerIdentifierConfig.id}`);
-                    if (el) el.textContent = playerIdentifier;
+                // Use the 'id' from the config which is 'name' for scifi, 'character_name' for fantasy
+                const playerIdentifierConfigKey = (dashboardConfig.left_panel || [])
+                    .flatMap(p => p.items)
+                    .find(item => item.id === 'name' || item.id === 'character_name')?.id;
+
+                if (playerIdentifierConfigKey) {
+                    const playerIdentifierConfig = findItemConfigById(dashboardConfig, playerIdentifierConfigKey);
+                    if (playerIdentifierConfig) {
+                        const el = document.getElementById(`info-${playerIdentifierConfig.id}`);
+                        if (el) el.textContent = playerIdentifier;
+                    }
                 }
             }
 
-            isInitialGameLoad = false; // Game is being resumed, not a fresh start
+            isInitialGameLoad = false; 
             return true;
         } catch (e) {
             console.error(`Error loading game state for ${themeIdToLoad}:`, e);
-            clearGameStateInternal(themeIdToLoad); // Clear corrupted state
-            localStorage.removeItem(gameStateKey); // Remove corrupted item from storage
+            clearGameStateInternal(themeIdToLoad); 
+            localStorage.removeItem(gameStateKey); 
             return false;
         }
     }
@@ -322,22 +315,32 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string} themeId - The ID of the theme.
      * @returns {Promise<string>} A promise that resolves to the prompt text or an error message.
      */
-    async function fetchPrompt(promptName, themeId) {
+    async function fetchPrompt(promptName, themeId, isCritical = false) { // Added isCritical parameter
         const themePrompts = PROMPT_URLS_BY_THEME[themeId];
         if (!themePrompts || !themePrompts[promptName]) {
-            console.error(`Prompt "${promptName}" for theme "${themeId}" not found in configuration.`);
-            return `Error: Prompt "${promptName}" for theme "${themeId}" not found.`;
+            const errorMsg = `Error: Prompt URL for "${promptName}" in theme "${themeId}" not found in configuration.`;
+            console.error(errorMsg);
+            // Return error string that loadAllPromptsForTheme can check
+            return isCritical ? `CRITICAL_ERROR: ${errorMsg}` : `NON_CRITICAL_ERROR: ${errorMsg}`;
         }
         try {
             const response = await fetch(themePrompts[promptName]);
             if (!response.ok) {
+                // For 404 errors on non-critical prompts, we don't want to throw and stop everything.
+                // We'll return a specific string that loadAllPromptsForTheme can interpret.
+                if (response.status === 404 && !isCritical) {
+                    console.warn(`Optional prompt file not found (404): ${themeId}/${promptName} at ${themePrompts[promptName]}. Will fallback if needed.`);
+                    return `FILE_NOT_FOUND_NON_CRITICAL: ${themeId}/${promptName}`;
+                }
                 throw new Error(`HTTP error ${response.status} for ${themeId}/${promptName}: ${response.statusText}`);
             }
             return await response.text();
         } catch (error) {
             console.error(`Error fetching prompt ${themeId}/${promptName}:`, error);
-            addMessageToLog(getUIText('error_load_prompt_file', { THEME: themeId, PROMPT_NAME: promptName }), 'system');
-            return `Error: Prompt "${themeId}/${promptName}" load failed. ${error.message}`;
+            const errorPrefix = isCritical ? "CRITICAL_ERROR:" : "NON_CRITICAL_ERROR:";
+            // addMessageToLog is not always appropriate here as it might be called before UI is fully ready for logs
+            // Consider a more robust logging or error handling if this becomes an issue during initial load.
+            return `${errorPrefix} Prompt "${themeId}/${promptName}" load failed. ${error.message}`;
         }
     }
 
@@ -353,30 +356,48 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
 
-        if (!gamePrompts[themeId]) gamePrompts[themeId] = {}; // Initialize if not present
+        if (!gamePrompts[themeId]) gamePrompts[themeId] = {};
 
         const promptNames = Object.keys(PROMPT_URLS_BY_THEME[themeId]);
-        const loadingPromises = promptNames.map(name =>
-            fetchPrompt(name, themeId).then(text => gamePrompts[themeId][name] = text)
-        );
+        const loadingPromises = promptNames.map(name => {
+            // Define which prompts are critical
+            const isCritical = (name === 'master_initial' || name === 'master_default');
+            return fetchPrompt(name, themeId, isCritical).then(text => {
+                // Only store successfully fetched texts or non-critical errors that indicate absence
+                if (!text.startsWith("CRITICAL_ERROR:")) {
+                    gamePrompts[themeId][name] = text; // Store text, or "FILE_NOT_FOUND_NON_CRITICAL:..."
+                } else {
+                    // For critical errors, store the error to be caught below
+                    gamePrompts[themeId][name] = text;
+                }
+            });
+        });
 
         try {
             await Promise.all(loadingPromises);
-            // Check if any prompt failed to load (will start with "Error:")
+
+            // Check if any CRITICAL prompt failed to load
             for (const name of promptNames) {
-                if (gamePrompts[themeId][name]?.startsWith("Error:")) {
-                    throw new Error(`Prompt load failure: ${themeId}/${name}. Check console for details.`);
+                const isCriticalPrompt = (name === 'master_initial' || name === 'master_default');
+                if (isCriticalPrompt && gamePrompts[themeId][name]?.startsWith("CRITICAL_ERROR:")) {
+                    throw new Error(`Critical prompt load failure: ${gamePrompts[themeId][name]}. Theme "${themeId}" cannot be loaded.`);
                 }
+                // Non-critical errors (like FILE_NOT_FOUND_NON_CRITICAL) are tolerated and logged by fetchPrompt.
+                // The gamePrompts[themeId][name] will hold the "FILE_NOT_FOUND_NON_CRITICAL:..." string.
+                // getSystemPrompt will then know this specific prompt is missing and use its fallback logic.
             }
+            console.log(`Successfully processed prompts for theme: ${themeId}`);
             return true;
         } catch (error) {
-            console.error(`Critical error loading one or more prompts for ${themeId}:`, error);
+            console.error(`Error during prompt loading for ${themeId}:`, error);
+            // This catch block now primarily handles critical prompt failures.
             if (systemStatusIndicator) {
                 systemStatusIndicator.textContent = getUIText('status_error');
                 systemStatusIndicator.className = 'status-indicator status-danger';
             }
-            // Disable game start if prompts fail
             [startGameButton, playerIdentifierInputEl].forEach(el => { if (el) el.disabled = true; });
+            // Add a message to the log about the critical failure
+            addMessageToLog(getUIText('error_load_prompts_critical', { THEME: themeId }), 'system-error');
             return false;
         }
     }
@@ -384,65 +405,212 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Constructs the system prompt for the AI based on current game state, theme, and player.
      * @param {string} currentPlayerIdentifierParam - The player's identifier.
-     * @param {string} promptTypeToUse - The type of prompt needed ('initial', 'default', 'combat').
+     * @param {string} promptTypeToUse - The type of prompt needed ('initial', 'default', 'combat_engaged', etc.).
      * @returns {string} The fully constructed system prompt (JSON string) or an error JSON.
      */
     const getSystemPrompt = (currentPlayerIdentifierParam, promptTypeToUse) => {
-        if (!currentTheme) {
-            return `{"narrative": "SYSTEM ERROR: No active theme for prompt generation.", "dashboard_updates": {}, "suggested_actions": [], "game_state_indicators": {}}`;
+        if (!currentTheme || !ALL_THEMES_CONFIG[currentTheme] || !THEME_DASHBOARD_CONFIGS[ALL_THEMES_CONFIG[currentTheme].dashboard_config_ref]) {
+            return `{"narrative": "SYSTEM ERROR: Active theme or its configuration is missing for prompt generation.", "dashboard_updates": {}, "suggested_actions": [], "game_state_indicators": {}}`;
         }
 
-        const narrativeLangInstruction = NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[currentTheme]?.[currentNarrativeLanguage] || NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[DEFAULT_THEME_ID]?.[DEFAULT_LANGUAGE];
-        let basePromptText = gamePrompts[currentTheme]?.[promptTypeToUse] || gamePrompts[currentTheme]?.default;
+        const themeConfig = ALL_THEMES_CONFIG[currentTheme];
+        const dashboardLayoutConfig = THEME_DASHBOARD_CONFIGS[themeConfig.dashboard_config_ref];
 
-        if (!basePromptText || basePromptText.startsWith("Error:")) {
-            return `{"narrative": "SYSTEM ERROR: Prompt data missing or failed to load for ${currentTheme}/${promptTypeToUse}.", "dashboard_updates": {}, "suggested_actions": ["Check panel.", "Change theme."], "game_state_indicators": {"activity_status": "Error", "combat_engaged": false, "comms_channel_active": false}}`;
+        // --- Determine which base prompt text to use ---
+        let basePromptKey = promptTypeToUse; // e.g., "initial", "default", "combat_engaged"
+        let basePromptText = gamePrompts[currentTheme]?.[basePromptKey];
+
+        // Helper function to check if a prompt text is valid (not an error/not found marker)
+        const isValidPromptText = (text) => text && 
+                                            !text.startsWith("FILE_NOT_FOUND_NON_CRITICAL:") &&
+                                            !text.startsWith("NON_CRITICAL_ERROR:") &&
+                                            !text.startsWith("CRITICAL_ERROR:") &&
+                                            !text.startsWith("Error:");
+
+
+        // 1. Try the specific promptTypeToUse for the current theme
+        if (!isValidPromptText(basePromptText)) {
+            // 2. If specific not valid, and it's not 'initial' or 'default' already, try current theme's 'default'
+            if (promptTypeToUse !== 'initial' && promptTypeToUse !== 'default') {
+                basePromptKey = 'default'; // Fallback to "default" for specific triggers like "combat_engaged" if their own file is missing
+                basePromptText = gamePrompts[currentTheme]?.[basePromptKey];
+            }
         }
 
-        // Replace common placeholders
-        basePromptText = basePromptText.replace(/\$\{narrativeLanguageInstruction\}/g, narrativeLangInstruction);
-        basePromptText = basePromptText.replace(/\$\{currentCallsignForPrompt\}/g, currentPlayerIdentifierParam || getUIText('unknown'));
-        basePromptText = basePromptText.replace(/\$\{currentPlayerIdentifier\}/g, currentPlayerIdentifierParam || getUIText('unknown'));
-        basePromptText = basePromptText.replace(/\$\{currentNarrativeLanguage\.toUpperCase\(\)\}/g, currentNarrativeLanguage.toUpperCase());
+        // 3. If current theme's 'initial' or 'default' (or their alias) is not valid, try current theme's 'master_initial' or 'master_default'
+        if (!isValidPromptText(basePromptText)) {
+            if (promptTypeToUse === 'initial' || basePromptKey === 'initial') { 
+                basePromptKey = 'master_initial';
+            } else { // For 'default' or any other trigger that fell through
+                basePromptKey = 'master_default';
+            }
+            basePromptText = gamePrompts[currentTheme]?.[basePromptKey];
+        }
+        
+        // 4. Final fallback: If even current theme's master prompts are not valid, try the DEFAULT_THEME_ID's master prompts
+        if (!isValidPromptText(basePromptText)) {
+            console.warn(`Prompt "${promptTypeToUse}" (and potential fallbacks like "${basePromptKey}") not found or invalid for theme "${currentTheme}". Attempting default theme fallback.`);
+            const ultimateFallbackKey = (promptTypeToUse === 'initial' || basePromptKey === 'master_initial' || basePromptKey === 'initial') 
+                                        ? 'master_initial' 
+                                        : 'master_default';
+            basePromptText = gamePrompts[DEFAULT_THEME_ID]?.[ultimateFallbackKey];
+            
+            if (isValidPromptText(basePromptText)) {
+                 console.warn(`Used default theme's "${ultimateFallbackKey}" prompt for current theme "${currentTheme}".`);
+                 basePromptKey = ultimateFallbackKey; // Update basePromptKey to reflect the actual prompt used
+            } else {
+                console.error(`CRITICAL PROMPT FAILURE: Neither "${promptTypeToUse}" nor any fallback (including default theme's "${ultimateFallbackKey}") could be loaded for theme "${currentTheme}". Prompt content: ${basePromptText}`);
+                return `{"narrative": "SYSTEM ERROR: Core prompt files are critically missing or invalid. Cannot generate AI instructions.", "dashboard_updates": {}, "suggested_actions": ["Restart Game", "Contact Support"], "game_state_indicators": {"activity_status": "Error", "combat_engaged": false, "comms_channel_active": false}}`;
+            }
+        }
 
-        // Special handling for initial prompt (e.g., inject random start scenarios, names)
-        if (promptTypeToUse === 'initial' && gamePrompts[currentTheme]) {
-            // Inject starting ideas
-            if (gamePrompts[currentTheme].starts) {
+        if (!isValidPromptText(basePromptText)) {
+             console.error(`Failed to load a critical prompt template: ${basePromptKey} for theme ${currentTheme}. Content was: ${basePromptText}`);
+             return `{"narrative": "SYSTEM ERROR: Prompt template ${basePromptKey} missing or failed to load for ${currentTheme}.", "dashboard_updates": {}, "suggested_actions": ["Check panel.", "Change theme."], "game_state_indicators": {"activity_status": "Error", "combat_engaged": false, "comms_channel_active": false}}`;
+        }
+
+        // --- Dynamic Content Generation ---
+        // 1. Dashboard Description
+        let generatedDashboardDescription = "";
+        const dashboardItems = [...(dashboardLayoutConfig.left_panel || []).flatMap(p => p.items), ...(dashboardLayoutConfig.right_panel || []).flatMap(p => p.items)];
+        dashboardItems.forEach(item => {
+            let description = `// "${item.id}": "string (${item.short_description || 'No description available.'}`;
+            if (item.must_translate) {
+                description += ` This value MUST be in ${currentNarrativeLanguage.toUpperCase()}.`;
+            } else {
+                description += ` This value does NOT require translation from English.`;
+            }
+            if (item.type === 'meter' && item.status_text_id) {
+                 description += ` Associated status text field is '${item.status_text_id}'.`;
+            }
+            if (item.default_value_key) {
+                description += ` Default UI text key: '${item.default_value_key}'.`;
+            } else if (item.default_value !== undefined) {
+                description += ` Default value: '${item.default_value}'.`;
+            }
+            description += `)",\n`;
+            generatedDashboardDescription += description;
+        });
+        if (generatedDashboardDescription.endsWith(",\n")) {
+            generatedDashboardDescription = generatedDashboardDescription.slice(0, -2);
+        }
+        
+        // 2. Game State Indicators Description
+        let generatedGameStateIndicators = "";
+        if (dashboardLayoutConfig.game_state_indicators && Array.isArray(dashboardLayoutConfig.game_state_indicators)) {
+            dashboardLayoutConfig.game_state_indicators.forEach(indicator => {
+                let description = `"${indicator.id}": "boolean (${indicator.short_description || 'No description.'}`;
+                if (indicator.default_value_key) {
+                     description += ` Default UI text key for conceptual status: '${indicator.default_value_key}'.`;
+                } else if (indicator.default_value !== undefined) { 
+                     description += ` Default value: ${indicator.default_value}.`;
+                }
+                description += `)",\n`;
+                generatedGameStateIndicators += description;
+            });
+            if (!generatedGameStateIndicators.includes('"activity_status"')) { 
+                generatedGameStateIndicators += `"activity_status": "string (MUST match dashboard_updates.directive_status if provided. If not, it reflects the ongoing primary activity described in the narrative, IN THE NARRATIVE LANGUAGE. E.g., if narrative describes fighting, this should be the NARRATIVE LANGUAGE equivalent of 'Fighting'.)",\n`;
+            }
+            if (generatedGameStateIndicators.endsWith(",\n")) {
+                generatedGameStateIndicators = generatedGameStateIndicators.slice(0, -2);
+            }
+        } else {
+            generatedGameStateIndicators = `"activity_status": "string (MUST match dashboard_updates.directive_status if provided. If not, it reflects the ongoing primary activity described in the narrative, IN THE NARRATIVE LANGUAGE.)",\n`;
+            generatedGameStateIndicators += `"combat_engaged": "boolean (Set to true IF combat begins THIS turn. Otherwise, maintain previous state unless explicitly changing based on narrative events like escape or victory.)",\n`;
+            generatedGameStateIndicators += `"comms_channel_active": "boolean (Set to true if a direct communication channel is now active as a result of this turn's events, false if it closed, or maintain previous state if unchanged.)"`;
+        }
+
+        // --- Fetch theme-specific instructions for this prompt type ---
+        const instructionKeyNamePart = basePromptKey; // Corrected: basePromptKey is already the stem like "master_initial" or "combat_engaged"
+        let themeSpecificInstructions = ""; 
+        if (instructionKeyNamePart) {
+            const themeInstructionTextKey = `theme_instructions_${instructionKeyNamePart}_${currentTheme}`;
+            const fetchedInstruction = getUIText(themeInstructionTextKey, {}, currentTheme);
+            if (fetchedInstruction !== themeInstructionTextKey && fetchedInstruction.trim() !== "") {
+                themeSpecificInstructions = fetchedInstruction;
+            } else {
+                // console.log(`No specific instruction found for key: ${themeInstructionTextKey}, using empty string.`);
+                themeSpecificInstructions = "No specific instructions provided for this context."; // Default if no specific instruction is found or key itself is returned
+            }
+        }
+
+
+        // --- Placeholder Replacements ---
+        const narrativeLangInstruction = NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[currentTheme]?.[currentNarrativeLanguage] ||
+                                     NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[DEFAULT_THEME_ID]?.[currentNarrativeLanguage] ||
+                                     NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[DEFAULT_THEME_ID]?.[DEFAULT_LANGUAGE] ||
+                                     `The narrative must be in ${currentNarrativeLanguage.toUpperCase()}.`; 
+
+        let processedPromptText = basePromptText; 
+
+        processedPromptText = processedPromptText.replace(/\$\{narrativeLanguageInstruction\}/g, narrativeLangInstruction);
+        processedPromptText = processedPromptText.replace(/\$\{currentNameForPrompt\}/g, currentPlayerIdentifierParam || getUIText('unknown'));
+        processedPromptText = processedPromptText.replace(/\$\{currentPlayerIdentifier\}/g, currentPlayerIdentifierParam || getUIText('unknown'));
+        processedPromptText = processedPromptText.replace(/\$\{currentNarrativeLanguage\.toUpperCase\(\)\}/g, currentNarrativeLanguage.toUpperCase());
+
+        processedPromptText = processedPromptText.replace(/\$\{theme_name\}/g, getUIText(themeConfig.name_key, {}, currentTheme));
+        processedPromptText = processedPromptText.replace(/\$\{theme_lore\}/g, getUIText(themeConfig.lore_key, {}, currentTheme));
+        processedPromptText = processedPromptText.replace(/\$\{theme_category\}/g, getUIText(themeConfig.category_key || `theme_category_${currentTheme}`, {}, currentTheme));
+        processedPromptText = processedPromptText.replace(/\$\{theme_style\}/g, getUIText(themeConfig.style_key || `theme_style_${currentTheme}`, {}, currentTheme));
+        processedPromptText = processedPromptText.replace(/\$\{theme_inspiration\}/g, getUIText(themeConfig.inspiration_key, {}, currentTheme));
+        processedPromptText = processedPromptText.replace(/\$\{theme_concept\}/g, getUIText(themeConfig.concept_key, {}, currentTheme));
+        
+        processedPromptText = processedPromptText.replace(/\$\{theme_specific_instructions\}/g, themeSpecificInstructions); 
+        
+        processedPromptText = processedPromptText.replace(/\$\{generated_dashboard_description\}/g, generatedDashboardDescription);
+        processedPromptText = processedPromptText.replace(/\$\{generated_game_state_indicators\}/g, generatedGameStateIndicators);
+
+        if (promptTypeToUse === 'initial' || basePromptKey === 'master_initial') {
+            if (gamePrompts[currentTheme]?.starts) {
                 const allStarts = gamePrompts[currentTheme].starts.split('\n').map(s => s.trim()).filter(s => s.length > 0);
                 const selectedStarts = allStarts.length > 0 ? [...allStarts].sort(() => 0.5 - Math.random()).slice(0, 3) : [];
                 ['startIdea1', 'startIdea2', 'startIdea3'].forEach((placeholder, i) => {
-                    basePromptText = basePromptText.replace(new RegExp(`\\$\\{${placeholder}\\}`, 'g'), selectedStarts[i] || `Generic ${currentTheme} scenario ${i + 1}`);
+                    processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${placeholder}\\}`, 'g'), selectedStarts[i] || `Generic ${currentTheme} scenario ${i + 1}`);
                 });
             }
 
-            // Inject suggested asset/entity names based on theme and language
             let assetNamesContent = null;
-            const assetKey = currentTheme === 'scifi' ? `asset_names_${currentNarrativeLanguage}` : `entity_names_${currentNarrativeLanguage}`;
-            const fallbackAssetKey = currentTheme === 'scifi' ? 'asset_names_en' : 'entity_names_en';
+            const assetKey = `asset_names_${currentNarrativeLanguage}`; 
+            const entityKey = `entity_names_${currentNarrativeLanguage}`; 
+            const fallbackAssetKey = 'asset_names_en';
+            const fallbackEntityKey = 'entity_names_en';
 
-            assetNamesContent = gamePrompts[currentTheme][assetKey] || gamePrompts[currentTheme][fallbackAssetKey];
-
+            if (themeConfig.naming_convention === 'entity' && gamePrompts[currentTheme]?.[entityKey] && isValidPromptText(gamePrompts[currentTheme][entityKey])) {
+                assetNamesContent = gamePrompts[currentTheme][entityKey];
+            } else if (themeConfig.naming_convention === 'asset' && gamePrompts[currentTheme]?.[assetKey] && isValidPromptText(gamePrompts[currentTheme][assetKey])) {
+                 assetNamesContent = gamePrompts[currentTheme][assetKey];
+            } else { 
+                if (gamePrompts[currentTheme]?.[assetKey] && isValidPromptText(gamePrompts[currentTheme][assetKey])) assetNamesContent = gamePrompts[currentTheme][assetKey];
+                else if (gamePrompts[currentTheme]?.[entityKey] && isValidPromptText(gamePrompts[currentTheme][entityKey])) assetNamesContent = gamePrompts[currentTheme][entityKey];
+                else if (gamePrompts[currentTheme]?.[fallbackAssetKey] && isValidPromptText(gamePrompts[currentTheme][fallbackAssetKey])) assetNamesContent = gamePrompts[currentTheme][fallbackAssetKey];
+                else if (gamePrompts[currentTheme]?.[fallbackEntityKey] && isValidPromptText(gamePrompts[currentTheme][fallbackEntityKey])) assetNamesContent = gamePrompts[currentTheme][fallbackEntityKey];
+            }
+            
             if (assetNamesContent) {
                 const allAssets = assetNamesContent.split('\n').map(n => n.trim()).filter(n => n.length > 0);
                 const selectedAssets = allAssets.length > 0 ? [...allAssets].sort(() => 0.5 - Math.random()).slice(0, 3) : [];
-                // Handles both generic names and scifi-specific ship names placeholders
-                ['suggestedName1', 'suggestedName2', 'suggestedName3', 'suggestedShipName1', 'suggestedShipName2', 'suggestedShipName3'].forEach((ph, iMod) => {
-                    const i = iMod % 3; // Use modulo for asset selection to cycle through selectedAssets
-                    basePromptText = basePromptText.replace(new RegExp(`\\$\\{${ph}\\}`, 'g'), selectedAssets[i] || `Default${ph.includes('Ship') ? 'Asset' : ''}Name${i + 1}`);
+                ['suggestedName1', 'suggestedName2', 'suggestedName3', 
+                 'suggestedItemName1', 'suggestedItemName2', 'suggestedItemName3', 
+                 'suggestedLocationName1', 'suggestedLocationName2', 'suggestedLocationName3'].forEach((ph, iMod) => {
+                    const i = iMod % 3;
+                    processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${ph}\\}`, 'g'), selectedAssets[i] || `Invented${ph.replace('suggested','').replace(/Name\d/,'Name')}${i + 1}`);
                 });
+                 if (themeConfig.naming_convention === 'asset' || currentTheme === 'scifi') { 
+                    ['suggestedShipName1', 'suggestedShipName2', 'suggestedShipName3'].forEach((ph, iMod) => {
+                       const i = iMod % 3;
+                       processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${ph}\\}`, 'g'), selectedAssets[i] || `DefaultAssetName${i + 1}`);
+                    });
+                }
             } else {
-                // Fallback if no asset name files are found
-                ['suggestedName1', 'suggestedName2', 'suggestedName3'].forEach((ph, i) => basePromptText = basePromptText.replace(new RegExp(`\\$\\{${ph}\\}`, 'g'), `InventedName${i + 1}`));
-                ['suggestedShipName1', 'suggestedShipName2', 'suggestedShipName3'].forEach((ph, i) => basePromptText = basePromptText.replace(new RegExp(`\\$\\{${ph}\\}`, 'g'), `InventedAssetName${i + 1}`));
+                 ['suggestedName1', 'suggestedName2', 'suggestedName3', 'suggestedShipName1', 'suggestedShipName2', 'suggestedShipName3',
+                  'suggestedItemName1', 'suggestedItemName2', 'suggestedItemName3', 
+                  'suggestedLocationName1', 'suggestedLocationName2', 'suggestedLocationName3'].forEach((ph, i) => {
+                     processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${ph}\\}`, 'g'), `InventedPlaceholder${i + 1}`);
+                 });
             }
         }
-
-        // Language-specific dynamic text replacement
-        const onlineOfflineText = currentNarrativeLanguage.toUpperCase() === 'EN' ? "'Online' or 'Offline'" : `'${getUIText('online')}' or '${getUIText('offline')}'`;
-        basePromptText = basePromptText.replace(/\$\{currentNarrativeLanguage\.toUpperCase\(\) === 'EN' \? "'Online' or 'Offline'" : "'Připojeno' or 'Odpojeno'"\}/g, onlineOfflineText);
-
-        return basePromptText;
+        
+        return processedPromptText;
     };
 
     /**
@@ -731,7 +899,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const themeCfg = THEME_DASHBOARD_CONFIGS[currentThemeFullConfig.dashboard_config_ref];
         if (!themeCfg) return;
 
-        // Create a map of all item configurations for quick lookup
         const allItems = [...(themeCfg.left_panel || []).flatMap(b => b.items), ...(themeCfg.right_panel || []).flatMap(b => b.items)];
         const itemConfigsMap = new Map(allItems.map(i => [i.id, i]));
 
@@ -741,14 +908,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 let itemCfg = itemConfigsMap.get(key);
                 let actualUpdateOccurred = false;
 
-                // Handle theme-specific aliases (e.g., callsign vs character_name)
-                if (!itemCfg && key === 'callsign' && currentTheme === 'fantasy') {
-                    itemCfg = itemConfigsMap.get('character_name');
-                    if (itemCfg) playerIdentifier = String(value); // Update playerIdentifier if it's this item
-                } else if (key === 'callsign' || key === 'character_name') {
-                    playerIdentifier = String(value); // Update global playerIdentifier
+                // Handle player identifier update specifically
+                if (key === 'name' || key === 'character_name') {
+                    // Ensure we're updating the correct item ID based on current theme config
+                    const playerIdentifierItemId = (themeCfg.left_panel || []).flatMap(p => p.items)
+                        .find(i => i.id === 'name' || i.id === 'character_name')?.id;
+                    if (key === playerIdentifierItemId) {
+                        itemCfg = itemConfigsMap.get(playerIdentifierItemId);
+                        playerIdentifier = String(value); // Update global playerIdentifier
+                    } else if (!itemCfg) { // If key is 'name' but theme uses 'character_name' or vice-versa, find the correct config
+                         itemCfg = itemConfigsMap.get(playerIdentifierItemId);
+                         if (itemCfg) playerIdentifier = String(value);
+                    }
                 }
-                if (!itemCfg) continue; // Skip if no config found for this key
+                
+                if (!itemCfg) continue; 
 
                 const valueElement = document.getElementById(`info-${itemCfg.id}`);
                 const meterBarElement = document.getElementById(`meter-${itemCfg.id}`);
@@ -763,22 +937,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (itemCfg.type === 'status_text') {
                     if (valueElement) {
                         const newStatusText = String(value);
-                        let statusClass = 'status-info'; // Default class
+                        let statusClass = 'status-info'; 
                         const lowerValue = newStatusText.toLowerCase();
-                        // Special styling for alert levels
-                        if (itemCfg.id === 'alertLevel' || itemCfg.id === 'alert_level') {
+                        
+                        if (itemCfg.id === 'alertLevel' || itemCfg.id === 'alert_level') { // alert_level for fantasy
                             if (lowerValue.includes(getUIText('alert_level_danger_val', {}, currentTheme).toLowerCase())) statusClass = 'status-danger';
                             else if (lowerValue.includes(getUIText('alert_level_wary_val', {}, currentTheme).toLowerCase()) || lowerValue.includes(getUIText('alert_level_yellow_val', {}, currentTheme).toLowerCase())) statusClass = 'status-warning';
                             else if (lowerValue.includes(getUIText('alert_level_calm_val', {}, currentTheme).toLowerCase()) || lowerValue.includes(getUIText('alert_level_green_val', {}, currentTheme).toLowerCase())) statusClass = 'status-ok';
                         }
                         if (valueElement.textContent !== newStatusText || !valueElement.className.includes(statusClass)) {
                             valueElement.textContent = newStatusText;
-                            valueElement.className = `value ${statusClass}`; // Apply new class
+                            valueElement.className = `value ${statusClass}`; 
                             if (highlightChanges) highlightElementUpdate(valueElement);
                             actualUpdateOccurred = true;
                         }
                     }
-                } else { // Plain text update
+                } else { 
                     if (valueElement) {
                         const suffix = itemCfg.suffix || '';
                         const newValueText = `${value}${suffix}`;
@@ -790,19 +964,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // If an update occurred and the item is in a collapsible panel, expand the panel
                 if (actualUpdateOccurred) {
-                    const parentPanelConfig = getParentPanelConfig(key, themeCfg);
+                    const parentPanelConfig = getParentPanelConfig(itemCfg.id, themeCfg); // Use itemCfg.id
                     if (parentPanelConfig && parentPanelConfig.type === 'collapsible') {
                         const panelElement = document.getElementById(parentPanelConfig.id);
                         if (panelElement && !panelElement.classList.contains('is-expanded')) {
-                            animatePanelBox(parentPanelConfig.id, true, false); // Expand, don't manage visibility (already visible)
+                            animatePanelBox(parentPanelConfig.id, true, false); 
                         }
                     }
                 }
             }
         }
-        // Merge new updates into the last known state
         lastKnownDashboardUpdates = { ...lastKnownDashboardUpdates, ...updatesFromAI };
     }
 
@@ -822,7 +994,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 boxCfg.items.forEach(itemCfg => {
                     const valueEl = document.getElementById(`info-${itemCfg.id}`);
                     const meterBarEl = document.getElementById(`meter-${itemCfg.id}`);
-                    // Get default value from config or i18n key
                     const defaultValue = itemCfg.default_value !== undefined ? String(itemCfg.default_value) : getUIText(itemCfg.default_value_key);
 
                     if (itemCfg.type === 'meter') {
@@ -831,7 +1002,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             setMeter(meterBarEl, valueEl, defaultValue, itemCfg.meter_type, {
                                 highlight: false,
                                 newStatusText: defaultStatus,
-                                initialPlaceholder: `${defaultStatus}: ${defaultValue}%` // Used by setMeter if value is null
+                                initialPlaceholder: `${defaultStatus}: ${defaultValue}%`
                             });
                         }
                     } else if (itemCfg.type === 'status_text') {
@@ -841,15 +1012,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             valueEl.textContent = displayDefault;
                             let statusClass = 'status-info';
                             const lowerValue = statusValueDefault.toLowerCase();
-                            // Apply alert level classes based on default status
-                            if (itemCfg.id === 'alertLevel' || itemCfg.id === 'alert_level') {
+                            if (itemCfg.id === 'alertLevel' || itemCfg.id === 'alert_level') { // alert_level for fantasy
                                 if (lowerValue.includes(getUIText('alert_level_danger_val', {}, currentTheme).toLowerCase())) statusClass = 'status-danger';
                                 else if (lowerValue.includes(getUIText('alert_level_wary_val', {}, currentTheme).toLowerCase()) || lowerValue.includes(getUIText('alert_level_yellow_val', {}, currentTheme).toLowerCase())) statusClass = 'status-warning';
                                 else if (lowerValue.includes(getUIText('alert_level_calm_val', {}, currentTheme).toLowerCase()) || lowerValue.includes(getUIText('alert_level_green_val', {}, currentTheme).toLowerCase())) statusClass = 'status-ok';
                             }
                             valueEl.className = `value ${statusClass}`;
                         }
-                    } else { // Plain text
+                    } else { 
                         if (valueEl) {
                             const suffix = itemCfg.suffix || '';
                             valueEl.textContent = `${defaultValue}${suffix}`;
@@ -859,12 +1029,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Set player identifier specifically
-        const idKey = currentTheme === 'scifi' ? 'callsign' : 'character_name';
-        const idCfg = findItemConfigById(themeCfg, idKey);
-        if (idCfg) {
-            const el = document.getElementById(`info-${idCfg.id}`);
-            if (el) el.textContent = playerIdentifier || getUIText(idCfg.default_value_key);
+        // Set player identifier specifically using its configured ID ('name' or 'character_name')
+        const playerIdentifierItemId = (themeCfg.left_panel || []).flatMap(p => p.items)
+            .find(item => item.id === 'name' || item.id === 'character_name')?.id;
+        
+        if (playerIdentifierItemId) {
+            const idCfg = findItemConfigById(themeCfg, playerIdentifierItemId);
+            if (idCfg) {
+                const el = document.getElementById(`info-${idCfg.id}`);
+                if (el) el.textContent = playerIdentifier || getUIText(idCfg.default_value_key);
+            }
         }
     }
 
@@ -1300,34 +1474,30 @@ document.addEventListener('DOMContentLoaded', () => {
     function setAppLanguageAndThemeUI(lang, themeIdForUIContextIfGameActive) {
         currentAppLanguage = lang;
         localStorage.setItem(LANGUAGE_PREFERENCE_STORAGE_KEY, lang);
-        if (document.documentElement) document.documentElement.lang = lang; // Set lang attribute on <html>
+        if (document.documentElement) document.documentElement.lang = lang; 
 
         const onLandingPage = document.body.classList.contains('landing-page-active');
 
-        // Update body classes for global styling (theme, landing page state)
-        document.body.className = ''; // Clear existing classes
+        document.body.className = ''; 
         if (onLandingPage) {
             document.body.classList.add('landing-page-active');
-            document.body.classList.add(`theme-landing`); // Generic landing theme
-        } else if (currentTheme) { // currentTheme is the globally active game theme
+            document.body.classList.add(`theme-landing`); 
+        } else if (currentTheme) { 
             document.body.classList.add(`theme-${currentTheme}`);
         } else {
-            document.body.classList.add(`theme-${DEFAULT_THEME_ID}`); // Fallback
+            document.body.classList.add(`theme-${DEFAULT_THEME_ID}`); 
         }
 
-        // Update language toggle button text and ARIA
         if (languageToggleButton) {
             const otherLangKeyForButtonText = currentAppLanguage === 'en' ?
-                (globalTextData.landing?.cs?.toggle_language || "Česky") : // Corrected to globalTextData
-                (globalTextData.landing?.en?.toggle_language || "English"); // Corrected to globalTextData
+                (globalTextData.landing?.cs?.toggle_language || "Česky") : 
+                (globalTextData.landing?.en?.toggle_language || "English"); 
             languageToggleButton.textContent = otherLangKeyForButtonText;
-            // Assuming 'aria_label_toggle_language' is in globalTextData.global as 'toggle_language_aria'
             const ariaToggleKey = `toggle_language_aria`; 
             languageToggleButton.setAttribute('aria-label', getUIText(ariaToggleKey));
             languageToggleButton.title = getUIText(ariaToggleKey);
         }
 
-        // Update other global buttons
         if (newGameButton) {
             newGameButton.textContent = getUIText('button_new_game');
             newGameButton.title = getUIText('aria_label_new_game');
@@ -1335,11 +1505,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (modelToggleButton) modelToggleButton.title = getUIText('aria_label_toggle_model_generic'); 
 
-        // Update status indicators
         if (systemStatusIndicator) systemStatusIndicator.textContent = getUIText(systemStatusIndicator.dataset.langKey || 'system_status_online_short');
         if (gmSpecificActivityIndicator) gmSpecificActivityIndicator.textContent = getUIText(gmSpecificActivityIndicator.dataset.langKey || 'system_processing_short');
 
-        // Update dashboard panel titles and item labels if in game view
         if (!onLandingPage && currentTheme) {
             const currentThemeFullCfg = ALL_THEMES_CONFIG[currentTheme];
             if (currentThemeFullCfg) {
@@ -1368,8 +1536,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Update input placeholders and button texts
-        if (playerIdentifierInputEl) playerIdentifierInputEl.placeholder = getUIText('placeholder_callsign_login');
+        if (playerIdentifierInputEl) playerIdentifierInputEl.placeholder = getUIText('placeholder_name_login'); // Updated key
         if (startGameButton) startGameButton.textContent = getUIText('button_access_systems');
         if (playerActionInput) playerActionInput.placeholder = getUIText('placeholder_command');
         if (sendActionButton) sendActionButton.textContent = getUIText('button_execute_command');
@@ -1377,11 +1544,9 @@ document.addEventListener('DOMContentLoaded', () => {
         updateModelToggleButtonText(); 
         updateTopbarThemeIcons(); 
 
-        // Update landing page panel content if on landing page
         if (onLandingPage && currentLandingGridSelection) {
             updateLandingPagePanels(currentLandingGridSelection, false); 
         } else if (onLandingPage) { 
-            // The following line was landingThemeLoreText.textContent, should be .value for textarea
             if(landingThemeLoreText) landingThemeLoreText.value = getUIText('landing_select_theme_prompt_lore'); 
             if(landingThemeInfoContent) landingThemeInfoContent.innerHTML = `<p>${getUIText('landing_select_theme_prompt_details')}</p>`;
             const descTitle = landingThemeDescriptionContainer.querySelector('.panel-box-title');
@@ -1414,7 +1579,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Handles game state indicators from the AI, like showing/hiding conditional panels.
+     * Handles game state indicators from the AI, like showing/hiding conditional panels
+     * and potentially switching to specialized prompts (e.g., combat_engaged).
      * @param {object} indicators - Object with indicator keys and boolean values (e.g., { "combat_engaged": true }).
      * @param {boolean} isInitialBoot - True if this is part of the initial game/session load.
      */
@@ -1437,22 +1603,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isShowing = boxEl.style.display !== 'none' && parseFloat(boxEl.style.opacity || '0') > 0;
 
                 if (shouldShow && !isShowing) {
-                    const delay = isInitialBoot && boxCfg.boot_delay ? boxCfg.boot_delay : 0; // Apply boot delay on initial load
-                    setTimeout(() => animatePanelBox(boxCfg.id, true, true), delay); // Expand and make visible
+                    const delay = isInitialBoot && boxCfg.boot_delay ? boxCfg.boot_delay : 0;
+                    setTimeout(() => animatePanelBox(boxCfg.id, true, true), delay);
                 } else if (!shouldShow && isShowing) {
-                    animatePanelBox(boxCfg.id, false, true); // Collapse and hide
+                    animatePanelBox(boxCfg.id, false, true);
                 }
             }
         });
 
-        // Update current prompt type based on combat indicator
-        if (indicators.combat_engaged === true && currentPromptType !== 'combat') {
-            currentPromptType = 'combat';
-        } else if (indicators.combat_engaged === false && currentPromptType === 'combat') {
-            currentPromptType = 'default';
+        // Update currentPromptType based on active indicators defined in themeDashCfg.game_state_indicators
+        let newPromptType = 'default'; // Default state if no specific indicator-driven prompt is active
+        let specificPromptFoundForActiveIndicator = false;
+
+        if (themeDashCfg.game_state_indicators && Array.isArray(themeDashCfg.game_state_indicators)) {
+            // Sort indicators by a potential 'priority' field if you need to define precedence,
+            // otherwise, it will take the first one it finds that is true and has a prompt.
+            // For now, we'll just iterate in defined order.
+            for (const indicatorConfig of themeDashCfg.game_state_indicators) {
+                const indicatorId = indicatorConfig.id;
+
+                // Check if this indicator is true in the AI's response
+                if (indicators[indicatorId] === true) {
+                    // Check if a specific prompt file exists and is loaded for this indicatorId
+                    if (PROMPT_URLS_BY_THEME[currentTheme]?.[indicatorId] &&
+                        gamePrompts[currentTheme]?.[indicatorId] &&
+                        !gamePrompts[currentTheme][indicatorId].startsWith("Error:")) {
+                        
+                        newPromptType = indicatorId;
+                        specificPromptFoundForActiveIndicator = true;
+                        break; // Found an active indicator with a specific prompt, use it.
+                    }
+                }
+            }
+        }
+
+        // If no specific prompt was found for any *active* indicator,
+        // but we were previously in a specific state (e.g., combat_engaged was true, now it's false),
+        // we should revert to 'default'. The 'newPromptType' is already 'default' in this case.
+
+        if (currentPromptType !== newPromptType) {
+            currentPromptType = newPromptType;
+            console.log(`Switched to prompt type: ${currentPromptType}`);
+            // If switching *away* from 'initial' (e.g., after the first turn),
+            // ensure isInitialGameLoad is false. This is usually handled in callGeminiAPI,
+            // but good to be mindful of state transitions.
+            if (currentPromptType !== 'initial' && isInitialGameLoad) {
+                // isInitialGameLoad = false; // This might be too aggressive here,
+                                           // callGeminiAPI is a better place for this flag.
+            }
         }
     }
 
+    /**
+     * Calls the Gemini API with the current game history and system prompt.
+     * @param {object[]} currentTurnHistory - The history of conversation turns for this API call.
+     * @returns {Promise<string|null>} The narrative text from AI, or null on failure.
+     */
+// Located in app.js, around line 1212 in the previous version provided
     /**
      * Calls the Gemini API with the current game history and system prompt.
      * @param {object[]} currentTurnHistory - The history of conversation turns for this API call.
@@ -1477,14 +1684,26 @@ document.addEventListener('DOMContentLoaded', () => {
             (currentTurnHistory.length === 1 && gameHistory[0].role === 'user' && gameHistory[0].parts[0].text.includes("ready to start the game"))) ?
             'initial' : currentPromptType;
 
-        const systemPrompt = getSystemPrompt(playerIdentifier, activePromptType);
-        // Handle errors from prompt generation (e.g., missing prompt files)
-        if (systemPrompt.startsWith('{"narrative": "SYSTEM ERROR:')) {
+        const systemPromptText = getSystemPrompt(playerIdentifier, activePromptType); // Renamed to systemPromptText for clarity
+
+        // --- CONSOLE LOG FOR DEBUGGING THE SYSTEM PROMPT ---
+        console.log("----- BEGIN SYSTEM PROMPT -----");
+        console.log(`Using prompt type: ${activePromptType} (resolved to base key used by getSystemPrompt)`);
+        console.log(systemPromptText);
+        console.log("----- END SYSTEM PROMPT -----");
+        // --- END CONSOLE LOG ---
+
+        // Handle errors from prompt generation (e.g., missing prompt files or invalid JSON structure)
+        if (systemPromptText.startsWith('{"narrative": "SYSTEM ERROR:')) {
             try {
-                const errorResponse = JSON.parse(systemPrompt);
+                const errorResponse = JSON.parse(systemPromptText);
                 addMessageToLog(errorResponse.narrative, 'system');
                 if (errorResponse.suggested_actions) displaySuggestedActions(errorResponse.suggested_actions);
-            } catch (e) { /* If parsing error JSON fails, do nothing specific */ }
+            } catch (e) { 
+                // If parsing the error JSON itself fails, log the raw error string.
+                addMessageToLog(systemPromptText, 'system-error');
+                console.error("Failed to parse system error JSON from getSystemPrompt:", e, systemPromptText);
+            }
             setGMActivity(false);
             return null;
         }
@@ -1496,7 +1715,7 @@ document.addEventListener('DOMContentLoaded', () => {
             maxOutputTokens: 8192,
             responseMimeType: "application/json" // Expect JSON response
         };
-        const safetySettings = [ // Configure safety settings to be less restrictive
+        const safetySettings = [ 
             { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
             { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
             { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
@@ -1506,7 +1725,7 @@ document.addEventListener('DOMContentLoaded', () => {
             contents: currentTurnHistory,
             generationConfig: generationConfig,
             safetySettings: safetySettings,
-            systemInstruction: { parts: [{ text: systemPrompt }] }
+            systemInstruction: { parts: [{ text: systemPromptText }] } // Use systemPromptText here
         };
 
         try {
@@ -1527,7 +1746,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 let jsonStringFromAI = responseData.candidates[0].content.parts[0].text;
                 try {
                     const parsedAIResponse = JSON.parse(jsonStringFromAI);
-                    // Validate structure of AI's JSON response
                     if (typeof parsedAIResponse.narrative !== 'string' ||
                         typeof parsedAIResponse.dashboard_updates !== 'object' ||
                         !Array.isArray(parsedAIResponse.suggested_actions) ||
@@ -1535,26 +1753,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         throw new Error("Invalid JSON structure from AI. Missing required fields.");
                     }
 
-                    // Add AI response to game history (as stringified JSON for faithful storage)
                     gameHistory.push({ role: "model", parts: [{ text: JSON.stringify(parsedAIResponse) }] });
 
-                    // Update UI based on AI response
                     updateDashboard(parsedAIResponse.dashboard_updates);
                     displaySuggestedActions(parsedAIResponse.suggested_actions);
                     handleGameStateIndicators(parsedAIResponse.game_state_indicators, isInitialGameLoad);
 
-                    if (isInitialGameLoad) isInitialGameLoad = false; // No longer initial load after first successful AI call
-                    saveGameState(); // Persist game state
+                    if (isInitialGameLoad) isInitialGameLoad = false; 
+                    saveGameState(); 
 
-                    if (systemStatusIndicator) { // Update system status to online
+                    if (systemStatusIndicator) { 
                         systemStatusIndicator.textContent = getUIText('system_status_online_short');
                         systemStatusIndicator.className = 'status-indicator status-ok';
                     }
-                    return parsedAIResponse.narrative; // Return only the narrative part for display
+                    return parsedAIResponse.narrative; 
                 } catch (e) {
                     throw new Error(`Invalid JSON received from AI: ${e.message}. Raw string (first 500 chars): ${jsonStringFromAI.substring(0, 500)}...`);
                 }
-            } else if (responseData.promptFeedback?.blockReason) { // Handle content blocking by API
+            } else if (responseData.promptFeedback?.blockReason) { 
                 const blockDetails = responseData.promptFeedback.safetyRatings?.map(r => `${r.category}: ${r.probability}`).join(', ') || "No details provided.";
                 throw new Error(`Content blocked by API: ${responseData.promptFeedback.blockReason}. Safety Ratings: ${blockDetails}`);
             } else {
@@ -1563,20 +1779,20 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Gemini API call failed:", error);
             addMessageToLog(getUIText('error_api_call_failed', { ERROR_MSG: error.message }), 'system');
-            if (systemStatusIndicator) { // Update status to error
+            if (systemStatusIndicator) { 
                 systemStatusIndicator.textContent = getUIText('status_error');
                 systemStatusIndicator.className = 'status-indicator status-danger';
             }
             return null;
         } finally {
-            setGMActivity(false); // Indicate processing finished
+            setGMActivity(false); 
         }
     }
 
     /**
      * Starts the game session after the player enters their identifier.
      */
-    async function startGameAfterIdentifier() { // Make async
+    async function startGameAfterIdentifier() { 
         const enteredIdentifier = playerIdentifierInputEl ? playerIdentifierInputEl.value.trim() : "";
         if (!enteredIdentifier) {
             await showCustomModal({ 
@@ -1608,8 +1824,19 @@ document.addEventListener('DOMContentLoaded', () => {
             playerActionInput.focus();
         }
 
-        const idKey = currentTheme === 'scifi' ? 'callsign' : 'character_name';
-        updateDashboard({ [idKey]: playerIdentifier }, false); 
+        // Determine the correct dashboard key for player identifier based on current theme
+        const themeConfig = ALL_THEMES_CONFIG[currentTheme];
+        let idKeyForDashboard = 'name'; // Default or common key
+        if (themeConfig) {
+            const dashboardConfig = THEME_DASHBOARD_CONFIGS[themeConfig.dashboard_config_ref];
+            const foundIdItem = (dashboardConfig?.left_panel || [])
+                .flatMap(p => p.items)
+                .find(item => item.id === 'name' || item.id === 'character_name');
+            if (foundIdItem) {
+                idKeyForDashboard = foundIdItem.id;
+            }
+        }
+        updateDashboard({ [idKeyForDashboard]: playerIdentifier }, false); 
 
         addMessageToLog(getUIText('connecting', { PLAYER_ID: playerIdentifier }), 'system');
 
@@ -1809,9 +2036,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function changeThemeAndStart(newThemeId, forceNewGame = false) {
         const oldThemeId = currentTheme;
 
-        // If trying to switch to the same theme without forcing new game, just ensure game view is active
         if (oldThemeId === newThemeId && !forceNewGame) {
-            if (storyLogViewport && storyLogViewport.style.display === 'none') { // If game view not active
+            if (storyLogViewport && storyLogViewport.style.display === 'none') { 
                 switchToGameView(newThemeId);
                 if (playerActionInput && actionInputSection && actionInputSection.style.display !== 'none') {
                     playerActionInput.focus();
@@ -1820,80 +2046,72 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Update current theme context
         currentTheme = newThemeId;
         localStorage.setItem(CURRENT_THEME_STORAGE_KEY, currentTheme);
-        addPlayingTheme(currentTheme); // Mark as actively playing
+        addPlayingTheme(currentTheme); 
 
-        // Clear or prepare game state
-        clearGameStateInternal(currentTheme); // Clear in-memory state for the new theme
+        clearGameStateInternal(currentTheme); 
         if (forceNewGame) {
-            localStorage.removeItem(GAME_STATE_STORAGE_KEY_PREFIX + currentTheme); // Remove saved state if forcing new
+            localStorage.removeItem(GAME_STATE_STORAGE_KEY_PREFIX + currentTheme); 
         }
 
-        switchToGameView(currentTheme); // Transition UI to game layout
+        switchToGameView(currentTheme); 
 
-        // Set up theme-specific UI
         generatePanelsForTheme(currentTheme);
-        setAppLanguageAndThemeUI(currentAppLanguage, currentTheme); // Update texts for new theme context
+        setAppLanguageAndThemeUI(currentAppLanguage, currentTheme); 
         initializeDashboardDefaultTexts();
         initializeCollapsiblePanelBoxes(currentTheme);
 
-        // Load prompts for the new theme
         const promptsLoadedSuccessfully = await loadAllPromptsForTheme(currentTheme);
         if (!promptsLoadedSuccessfully) {
             addMessageToLog(getUIText('error_load_prompts_critical', { THEME: currentTheme }), 'system-error');
             if (startGameButton) startGameButton.disabled = true;
-            switchToLandingView(); // Fallback to landing if prompts fail
+            switchToLandingView(); 
             return;
         }
         if (startGameButton) startGameButton.disabled = false;
 
-        updateTopbarThemeIcons(); // Reflect theme change in top bar
+        updateTopbarThemeIcons(); 
 
-        // Attempt to load saved game state if not forcing new
         if (!forceNewGame && loadGameState(currentTheme)) {
-            isInitialGameLoad = false; // Resuming a game
+            isInitialGameLoad = false; 
 
-            // UI setup for resumed game
             if (nameInputSection) nameInputSection.style.display = 'none';
             if (actionInputSection) actionInputSection.style.display = 'flex';
             if (playerActionInput) playerActionInput.focus();
 
             addMessageToLog(getUIText('system_session_resumed', { PLAYER_ID: playerIdentifier, THEME_NAME: getUIText(ALL_THEMES_CONFIG[currentTheme].name_key, {}, currentTheme) }), 'system');
-            if (systemStatusIndicator) { // Set status to online
+            if (systemStatusIndicator) { 
                 systemStatusIndicator.textContent = getUIText('system_status_online_short');
                 systemStatusIndicator.className = 'status-indicator status-ok';
             }
-        } else { // Starting fresh (or load failed)
+        } else { 
             isInitialGameLoad = true;
             currentPromptType = 'initial';
-            if (storyLog) storyLog.innerHTML = ''; // Clear story log
+            if (storyLog) storyLog.innerHTML = ''; 
             clearSuggestedActions();
 
-            // UI setup for new game (identifier input)
             if (nameInputSection) nameInputSection.style.display = 'flex';
             if (actionInputSection) actionInputSection.style.display = 'none';
             if (playerIdentifierInputEl) {
                 playerIdentifierInputEl.value = '';
-                playerIdentifierInputEl.placeholder = getUIText('placeholder_callsign_login'); // This getUIText is theme-independent or uses currentTheme implicitly
+                playerIdentifierInputEl.placeholder = getUIText('placeholder_name_login'); // Updated placeholder key
                 playerIdentifierInputEl.focus();
             }
 
-            if (systemStatusIndicator) { // Set status to standby
+            if (systemStatusIndicator) { 
                 systemStatusIndicator.textContent = getUIText('standby');
                 systemStatusIndicator.className = 'status-indicator status-warning';
             }
-            if (oldThemeId !== newThemeId) { // Log theme change if it occurred
+            if (oldThemeId !== newThemeId) { 
                 addMessageToLog(getUIText('system_theme_set_generic', { THEME_NAME: getUIText(ALL_THEMES_CONFIG[newThemeId].name_key, {}, newThemeId) }), 'system');
             }
-            // Log new game initiation (themeName for message already fetched by startNewGameSession or implicitly here)
             if (forceNewGame) { 
                 addMessageToLog(getUIText('system_new_game_initiated', { THEME_NAME: getUIText(ALL_THEMES_CONFIG[currentTheme].name_key, {}, currentTheme) }), 'system');
             }
         }
 
-        if (startGameButton) startGameButton.textContent = getUIText('button_access_systems'); // Also theme-independent or uses currentTheme
+        if (startGameButton) startGameButton.textContent = getUIText('button_access_systems');
     }
 
     /**

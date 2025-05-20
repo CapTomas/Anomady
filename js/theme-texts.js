@@ -1,59 +1,78 @@
+// Located in: theme-texts.js
+
 // --- UI Text Data (Localization) ---
 const themeTextData = {
     scifi: {
         en: {
             "theme_name": "Sci-Fi",
             "theme_name_scifi": "Stellar Anomaly",
+            "theme_category_scifi": "space opera", 
+            "theme_style_scifi": "exploration and mystery", 
             "theme_lore_scifi": "In the year 2247, humanity has scattered across the stars. You are a captain on the fringes of known space, where strange signals and ancient mysteries await. Every jump could be your last, or your greatest discovery.",
             "theme_inspiration_scifi": "Classic space operas (Star Trek, The Expanse) & hard sci-fi novels.",
             "theme_tone_scifi": "Exploratory, mysterious, with moments of high tension and philosophical questions.",
             "theme_concept_scifi": "Humanity's relentless drive to explore confronting vast, ancient cosmic entities and moral ambiguities at the final frontier.",
             "theme_icon_alt_text_default_scifi": "Stellar Anomaly Scenario",
+            "theme_instructions_master_initial_scifi": "For this initial turn, create a highly engaging and active starting situation for the player. Avoid passive observation. Invent unique names for ships, locations, and non-player characters. Ensure all initial dashboard fields are populated with creative and contextually relevant information.",
+            "theme_instructions_master_default_scifi": "For standard turns, remember that player quests are meaningful and should progress logically or be explicitly abandoned/failed. Quest rewards must be appropriate for the task. Game state variables must persist unless explicitly changed by the narrative. Ensure any changes to the dashboard are directly justified by the current turn's events.",
+            // Example for a trigger-specific prompt, if you had one like 'combat_engaged.txt' and wanted specific instructions for it
+            // "theme_instructions_combat_engaged_scifi": "When combat is engaged, describe the enemy vividly and provide clear tactical options or challenges. Update enemy intel on the dashboard.",
             
-            // Sci-Fi Specific Dashboard Labels & Defaults
-            "title_captain_status": "Captain's Log", "label_player_callsign": "Callsign:", "label_player_credits": "Credits:", "label_player_reputation": "Reputation:", "label_player_affiliation": "Affiliation:",
+            "title_captain_status": "Captain's Log", "label_player_name": "Designation:", "label_player_credits": "Credits:", "label_player_reputation": "Reputation:", "label_player_affiliation": "Affiliation:",
             "title_ship_status": "Ship Diagnostics", "label_ship_name": "Registry:", "label_ship_type": "Class:", "label_ship_integrity": "Integrity:", "label_ship_shields": "Shields:", "label_ship_fuel": "Fuel:", "label_ship_cargo": "Cargo:", "label_ship_speed": "Speed:",
-            "title_comms_channel": "Comms Channel", "label_comms_status": "Channel:",
+            "title_comms_channel": "Comms Channel", "label_comms_status": "Channel:", "label_comms_channel_active": "Comms Link:",
             "title_active_directive": "Directive", "label_directive_details": "Objective:", "label_directive_reward": "Reward:", "label_directive_status": "Status:", "label_alert_level": "Alert:",
             "title_navigation_data": "NavData", "label_current_location": "Location:", "label_system_faction": "Faction:", "label_environment": "Env.:", "label_sensor_conditions": "Sensors:", "label_stardate": "Stardate:",
             "title_enemy_intel": "Enemy Intel", "label_enemy_ship_type": "Target Type:", "label_enemy_shields": "Target Shields:", "label_enemy_hull": "Target Hull:",
-            "cargo_empty_scu": "Empty / 0 SCU", "comms_inactive": "Inactive", "objective_none": "No active objective.", "status_idle": "Idle",
+            "cargo_empty_scu": "Empty / 0 SCU", "comms_inactive": "Inactive / Offline", "objective_none": "No active objective.", "status_idle": "Idle",
             "alert_level_green": "Condition Green", "alert_level_yellow": "Condition Yellow", "alert_level_red": "Condition Red", "alert_level_info": "Status Nominal",
             "alert_level_green_val": "Green", "alert_level_yellow_val": "Yellow", "alert_level_red_val": "Red", "alert_level_info_val": "Nominal",
-            "confirm_new_game_theme_scifi": "Start new Sci-Fi adventure? Current Sci-Fi progress will be lost."
+            "confirm_new_game_theme_scifi": "Start new Stellar Anomaly adventure? Current progress will be lost.",
+            "label_combat_engaged": "Combat Status:", 
+            "label_rare_loot_finded": "Loot Discovery:" 
         },
         cs: { 
             "theme_name": "Sci-Fi",
             "theme_name_scifi": "Hvězdná Anomálie", 
+            "theme_category_scifi": "space opera", 
+            "theme_style_scifi": "průzkum a tajemno", 
             "theme_lore_scifi": "V roce 2247 se lidstvo rozprchlo mezi hvězdy. Jste kapitán na okraji známého vesmíru, kde čekají podivné signály a prastaré záhady. Každý skok může být váš poslední, nebo váš největší objev.",
             "theme_inspiration_scifi": "Klasické space opery (Star Trek, Expanze) a hard sci-fi romány.",
             "theme_tone_scifi": "Průzkumný, tajemný, s momenty vysokého napětí a filozofickými otázkami.",
             "theme_concept_scifi": "Nezastavitelná touha lidstva po objevování čelí obrovským, prastarým kosmickým entitám a morálním nejednoznačnostem na poslední hranici.",
             "theme_icon_alt_text_default_scifi": "Scénář Hvězdná Anomálie",
+            "theme_instructions_master_initial_scifi": "Pro tento úvodní tah vytvořte pro hráče velmi poutavou a aktivní výchozí situaci. Vyhněte se pasivnímu pozorování. Vymyslete jedinečná jména pro lodě, lokace a nehráčské postavy. Zajistěte, aby všechna počáteční pole na informačním panelu byla vyplněna kreativními a kontextově relevantními informacemi.",
+            "theme_instructions_master_default_scifi": "Pro standardní tahy pamatujte, že hráčské úkoly jsou smysluplné a měly by logicky postupovat nebo být explicitně opuštěny/selhány. Odměny za úkoly musí odpovídat úkolu. Proměnné stavu hry musí přetrvávat, pokud nejsou explicitně změněny příběhem. Ujistěte se, že jakékoli změny na informačním panelu jsou přímo odůvodněny událostmi aktuálního tahu.",
+            // "theme_instructions_combat_engaged_scifi": "Když dojde k boji, živě popište nepřítele a poskytněte jasné taktické možnosti nebo výzvy. Aktualizujte informace o nepříteli na informačním panelu.",
 
-            "title_captain_status": "Kapitánský Záznam", "label_player_callsign": "Volací Znak:", "label_player_credits": "Kredity:", "label_player_reputation": "Reputace:", "label_player_affiliation": "Příslušnost:",
+            "title_captain_status": "Kapitánský Záznam", "label_player_name": "Označení:", "label_player_credits": "Kredity:", "label_player_reputation": "Reputace:", "label_player_affiliation": "Příslušnost:",
             "title_ship_status": "Diagnostika Lodi", "label_ship_name": "Registrace:", "label_ship_type": "Třída:", "label_ship_integrity": "Integrita:", "label_ship_shields": "Štíty:", "label_ship_fuel": "Palivo:", "label_ship_cargo": "Náklad:", "label_ship_speed": "Rychlost:",
-            "title_comms_channel": "Kom. Kanál", "label_comms_status": "Kanál:",
+            "title_comms_channel": "Kom. Kanál", "label_comms_status": "Kanál:", "label_comms_channel_active": "Kom. Spojení:",
             "title_active_directive": "Direktiva", "label_directive_details": "Úkol:", "label_directive_reward": "Odměna:", "label_directive_status": "Stav:", "label_alert_level": "Výstraha:",
             "title_navigation_data": "NavData", "label_current_location": "Pozice:", "label_system_faction": "Frakce:", "label_environment": "Prostředí:", "label_sensor_conditions": "Senzory:", "label_stardate": "Hvězdné datum:",
             "title_enemy_intel": "Nepřítel Info", "label_enemy_ship_type": "Typ Cíle:", "label_enemy_shields": "Štíty Cíle:", "label_enemy_hull": "Trup Cíle:",
-            "cargo_empty_scu": "Prázdný / 0 SCU", "comms_inactive": "Neaktivní", "objective_none": "Žádný aktivní úkol.", "status_idle": "Nečinný",
+            "cargo_empty_scu": "Prázdný / 0 SCU", "comms_inactive": "Neaktivní / Offline", "objective_none": "Žádný aktivní úkol.", "status_idle": "Nečinný",
             "alert_level_green": "Stav Zelený", "alert_level_yellow": "Stav Žlutý", "alert_level_red": "Stav Červený", "alert_level_info": "Stav Nominální",
             "alert_level_green_val": "Zelená", "alert_level_yellow_val": "Žlutá", "alert_level_red_val": "Červená", "alert_level_info_val": "Nominální",
-            "confirm_new_game_theme_scifi": "Začít nové Sci-Fi dobrodružství? Aktuální Sci-Fi postup bude ztracen."
+            "confirm_new_game_theme_scifi": "Začít nové dobrodružství Hvězdná Anomálie? Aktuální postup bude ztracen.",
+            "label_combat_engaged": "Bojový Stav:", 
+            "label_rare_loot_finded": "Nález Kořisti:" 
         }
     },
     fantasy: {
         en: { 
             "theme_name": "Fantasy",
-            "theme_name_fantasy": "Whispers of Eldoria", 
+            "theme_name_fantasy": "Whispers of Eldoria",
+            "theme_category_fantasy": "epic fantasy", 
+            "theme_style_fantasy": "heroic adventure and ancient magic", 
             "theme_lore_fantasy": "The ancient kingdom of Eldoria is shrouded in mist and fading magic. Prophecies speak of a hero who will rise to challenge the encroaching darkness. Your journey begins in a humble village, unaware of the destiny that awaits.",
             "theme_inspiration_fantasy": "High fantasy epics (Lord of the Rings, The Witcher) and ancient mythologies.",
             "theme_tone_fantasy": "Heroic, perilous, with a sense of ancient mystery and moral choices.",
             "theme_concept_fantasy": "A reluctant hero's journey to fulfill a world-shaping prophecy against a backdrop of crumbling empires and resurgent dark powers.",
             "theme_icon_alt_text_default_fantasy": "Whispers of Eldoria Adventure",
+            "theme_instructions_master_initial_fantasy": "Begin with a vivid description of the character's immediate, humble surroundings, hinting at the wider world and the encroaching darkness. The initial quest should be personal but tied to a larger unfolding mystery. Populate dashboard with fitting fantasy archetypes and values.",
+            "theme_instructions_master_default_fantasy": "Emphasize moral choices and the consequences of actions. Magic should feel mysterious and powerful. Descriptions of locations should evoke ancient history. Ensure quest progression feels epic and rewarding.",
             
-            // Fantasy Specific Dashboard Labels & Defaults
             "title_character_overview": "Character", "label_character_name": "Name:", "label_character_class": "Class:", "label_character_level": "Level:", "label_gold": "Gold:",
             "title_character_vitals": "Vitals", "label_hp": "Health:", "label_mana": "Mana:", "label_stamina": "Stamina:", "label_equipped_weapon": "Weapon:", "label_equipped_armor": "Armor:",
             "title_quest_log": "Quest Log", "label_current_quest": "Current Quest:", "label_quest_reward": "Reward:", "label_quest_status": "Status:", "label_alert_level_fantasy": "Awareness:",
@@ -61,16 +80,23 @@ const themeTextData = {
             "objective_none": "No active quest.", "status_idle": "Resting",
             "alert_level_calm": "Calm", "alert_level_wary": "Wary", "alert_level_danger": "Danger!", "alert_level_info": "Situation Normal",
             "alert_level_calm_val": "Calm", "alert_level_wary_val": "Wary", "alert_level_danger_val": "Danger", "alert_level_info_val": "Normal",
-            "confirm_new_game_theme_fantasy": "Start new Fantasy adventure? Current Fantasy progress will be lost."
+            "confirm_new_game_theme_fantasy": "Start new Whispers of Eldoria adventure? Current progress will be lost.",
+            "label_combat_engaged": "Combat Status:", 
+            "label_magic_detected": "Magic Detected:", 
+            "label_rare_loot_finded": "Loot Discovery:" 
         },
         cs: { 
             "theme_name": "Fantasy",
             "theme_name_fantasy": "Šepoty Eldorie", 
+            "theme_category_fantasy": "epická fantasy", 
+            "theme_style_fantasy": "hrdinské dobrodružství a prastará magie", 
             "theme_lore_fantasy": "Starobylé království Eldoria je zahaleno mlhou a slábnoucí magií. Proroctví hovoří o hrdinovi, který povstane, aby vyzval blížící se temnotu. Vaše cesta začíná v poklidné vesnici, aniž byste tušili osud, který na vás čeká.",
             "theme_inspiration_fantasy": "Epická high fantasy (Pán prstenů, Zaklínač) a starověké mytologie.",
             "theme_tone_fantasy": "Hrdinský, nebezpečný, s pocitem starodávného tajemství a morálních voleb.",
             "theme_concept_fantasy": "Cesta zdráhajícího se hrdiny k naplnění proroctví, které změní svět, na pozadí rozpadajících se říší a znovu ožívajících temných sil.",
             "theme_icon_alt_text_default_fantasy": "Dobrodružství Šepoty Eldorie",
+            "theme_instructions_master_initial_fantasy": "Začněte živým popisem bezprostředního, skromného okolí postavy, naznačujícím širší svět a blížící se temnotu. Počáteční úkol by měl být osobní, ale spojený s větším odhalujícím se tajemstvím. Naplňte informační panel odpovídajícími fantasy archetypy a hodnotami.",
+            "theme_instructions_master_default_fantasy": "Zdůrazněte morální volby a důsledky činů. Magie by měla působit tajemně a mocně. Popisy lokací by měly evokovat starodávnou historii. Zajistěte, aby postup v úkolech působil epicky a odměňujícím způsobem.",
 
             "title_character_overview": "Postava", "label_character_name": "Jméno:", "label_character_class": "Třída:", "label_character_level": "Úroveň:", "label_gold": "Zlaťáky:",
             "title_character_vitals": "Životní síly", "label_hp": "Zdraví:", "label_mana": "Mana:", "label_stamina": "Výdrž:", "label_equipped_weapon": "Zbraň:", "label_equipped_armor": "Zbroj:",
@@ -79,32 +105,60 @@ const themeTextData = {
             "objective_none": "Žádný aktivní úkol.", "status_idle": "Odpočívám",
             "alert_level_calm": "Klid", "alert_level_wary": "Ostražitý", "alert_level_danger": "Nebezpečí!", "alert_level_info": "Situace Normální",
             "alert_level_calm_val": "Klid", "alert_level_wary_val": "Ostražitý", "alert_level_danger_val": "Nebezpečí", "alert_level_info_val": "Normální",
-            "confirm_new_game_theme_fantasy": "Začít nové Fantasy dobrodružství? Aktuální Fantasy postup bude ztracen."
+            "confirm_new_game_theme_fantasy": "Začít nové dobrodružství Šepoty Eldorie? Aktuální postup bude ztracen.",
+            "label_combat_engaged": "Bojový Stav:", 
+            "label_magic_detected": "Magie Detekována:", 
+            "label_rare_loot_finded": "Nález Kořisti:" 
         }
     },
     cosmic_misrule: { 
         en: { 
             "theme_name": "Cosmic Misrule",
             "theme_name_cosmic_misrule": "Cosmic Misrule",
+            "theme_category_cosmic_misrule": "absurdist satire", 
+            "theme_style_cosmic_misrule": "bureaucratic cosmic horror (lite)", 
             "theme_lore_cosmic_misrule": "Reality is run by the most incompetent bureaucracy in the universe.\n\nLong ago, a memo titled “Form 00-A: Reality Exists” was accidentally approved by an infinite office orbiting a black hole made of unresolved paperwork. Since then, the universe has been held together by misfiled documents, contradictory policies, and obsolete cosmic protocols.\n\nStars burn due to outdated budget sheets. Gravity exists because of a typo. Death was privatized. Whole planets vanish because someone marked them “draft.”\n\nDeities, clerks, and sentient spreadsheets now fight over metaphysical zoning laws, while somewhere—on the Highest Floor—something keeps stamping approvals.\n\nNo one remembers why.",
             "theme_inspiration_cosmic_misrule": "Hitchhiker's Guide to the Galaxy × Discworld × Brazil (film)",
             "theme_tone_cosmic_misrule": "Absurdist cosmic satire, bureaucratic humor, existential dread (lightly seasoned).",
             "theme_concept_cosmic_misrule": "Navigate a universe governed by chaotic, often nonsensical, bureaucratic rules where filing the right (or wrong) form can alter reality itself.",
             "theme_icon_alt_text_default_cosmic_misrule": "Cosmic Misrule Scenario",
-            "confirm_new_game_theme_cosmic_misrule": "Initiate Cosmic Misrule Protocol? Previous bureaucratic entanglements will be... archived."
-            // Add cosmic_misrule specific dashboard labels and defaults if/when it has a unique dashboard
-            // Example: "title_paperwork_status": "Bureaucratic Overview", "label_form_count": "Pending Forms:"
+            "theme_instructions_master_initial_cosmic_misrule": "The player should immediately be thrust into a nonsensical bureaucratic situation. The initial objective (mandate) must be suitably absurd and seemingly pointless, yet presented with utmost seriousness by any NPCs. All dashboard items MUST reflect the bureaucratic and chaotic nature of this theme (e.g. 'Pending Forms: 427').",
+            "theme_instructions_master_default_cosmic_misrule": "Maintain the satirical and absurdist tone. NPCs should speak in bureaucratic jargon. Seemingly simple tasks should be complicated by arbitrary rules and forms. Paradoxes and reality shifts are common. Player choices might lead to hilariously unexpected (and often unhelpful) outcomes.",
+            "confirm_new_game_theme_cosmic_misrule": "Initiate Cosmic Misrule Protocol? Previous bureaucratic entanglements will be... archived.",
+            
+            "title_bureaucratic_status": "Bureaucratic Standing", "label_player_name": "Operative ID:", "label_clearance_level": "Clearance:", "label_pending_forms": "Pending Forms:", "label_department_affiliation": "Department:",
+            "title_reality_integrity": "Reality Check", "label_local_reality_status": "Local Coherence:", "label_absurdity_index": "Absurdity Index:", "label_stapler_supply": "Stapler Supply:",
+            "title_current_mandate": "Current Mandate", "label_mandate_objective": "Objective:", "label_mandate_reward": "Compensation:", "label_mandate_status": "Status:", "label_alert_level_cosmic": "Threat Level:",
+            "title_target_entity": "Audit Target", "label_entity_name": "Entity Name:", "label_entity_compliance": "Compliance:",
+            "level_0_unclassified": "Level 0 (Unclassified)", "dept_unassigned": "Dept. of Unassigned Tasks", "reality_stable_ish": "Mostly Stable-ish", "staples_critically_low": "Critically Low!", "mandate_awaiting_assignment": "Awaiting Assignment (Form 3B Pending)", "reward_extra_staple": "One (1) Slightly Used Staple", "status_pending_triplicate": "Pending (Triplicate Required)",
+            "alert_level_beige": "Condition Beige", "alert_level_mauve": "Condition Mauve", "alert_level_plaid": "Condition Plaid",
+            "alert_level_beige_val": "Beige", "alert_level_mauve_val": "Mauve", "alert_level_plaid_val": "Plaid",
+            "label_audit_in_progress": "Audit Active:", 
+            "label_paradox_event_imminent": "Paradox Warning:" 
         },  
         cs: { 
             "theme_name": "Cosmic Misrule",
             "theme_name_cosmic_misrule": "Kosmický zmatek",
+            "theme_category_cosmic_misrule": "absurdní satira", 
+            "theme_style_cosmic_misrule": "byrokratický kosmický horor (lehký)", 
             "theme_lore_cosmic_misrule": "Realitu řídí ta nejneschopnější byrokracie ve vesmíru. Kdysi dávno byla směrnice s názvem „Formulář 00-A: Realita existuje“ omylem schválena nekonečnou kanceláří obíhající černou díru tvořenou nevyřízenými dokumenty. Od té doby drží vesmír pohromadě špatně zařazené dokumenty, protichůdné směrnice a zastaralé kosmické protokoly. Hvězdy hoří kvůli zastaralým rozpočtovým tabulkám. Gravitace existuje kvůli překlepu. Smrt byla zprivatizována. Celé planety mizí, protože je někdo označil jako „koncept“. Božstva, úředníci a vnímající tabulkové procesory se nyní přou o metafyzické územní zákony, zatímco někde – na Nejvyšším patře – něco neustále razítkuje schválení. Nikdo si nepamatuje proč.",
             "theme_inspiration_cosmic_misrule": "Stopařův průvodce Galaxií × Zeměplocha × Brazil (film)",
             "theme_tone_cosmic_misrule": "Absurdní kosmická satira, byrokratický humor, existenciální tíseň (lehce kořeněná).",
             "theme_concept_cosmic_misrule": "Proplouvejte vesmírem řízeným chaotickými, často nesmyslnými byrokratickými pravidly, kde podání správného (nebo špatného) formuláře může změnit samotnou realitu.",
             "theme_icon_alt_text_default_cosmic_misrule": "Scénář Kosmický zmatek",
-            "confirm_new_game_theme_cosmic_misrule": "Zahájit Protokol Kosmického Zmatku? Předchozí byrokratické propletence budou... archivovány."
-            // Přidejte specifické popisky a výchozí hodnoty pro panel cosmic_misrule, pokud/až bude mít unikátní panel
+            "theme_instructions_master_initial_cosmic_misrule": "Hráč by měl být okamžitě vržen do nesmyslné byrokratické situace. Počáteční cíl (mandát) musí být patřičně absurdní a zdánlivě nesmyslný, avšak jakýmikoli NPC prezentován s nejvyšší vážností. Všechny položky na informačním panelu MUSÍ odrážet byrokratickou a chaotickou povahu tohoto tématu (např. 'Čekající formuláře: 427').",
+            "theme_instructions_master_default_cosmic_misrule": "Udržujte satirický a absurdní tón. NPC by měly mluvit byrokratickým žargonem. Zdánlivě jednoduché úkoly by měly být komplikovány svévolnými pravidly a formuláři. Paradoxy a posuny reality jsou běžné. Hráčovy volby mohou vést k legračně neočekávaným (a často neužitečným) výsledkům.",
+            "confirm_new_game_theme_cosmic_misrule": "Zahájit Protokol Kosmického Zmatku? Předchozí byrokratické propletence budou... archivovány.",
+            
+            "title_bureaucratic_status": "Byrokratický Status", "label_player_name": "ID Operativce:", "label_clearance_level": "Prověření:", "label_pending_forms": "Čekající Formuláře:", "label_department_affiliation": "Oddělení:",
+            "title_reality_integrity": "Kontrola Reality", "label_local_reality_status": "Místní Koherence:", "label_absurdity_index": "Index Absurdity:", "label_stapler_supply": "Zásoba Sešívaček:",
+            "title_current_mandate": "Aktuální Mandát", "label_mandate_objective": "Cíl:", "label_mandate_reward": "Kompenzace:", "label_mandate_status": "Stav:", "label_alert_level_cosmic": "Úroveň Ohrožení:",
+            "title_target_entity": "Cíl Auditu", "label_entity_name": "Název Entity:", "label_entity_compliance": "Soulad:",
+            "level_0_unclassified": "Úroveň 0 (Neutajeno)", "dept_unassigned": "Odd. Nepřiřazených Úkolů", "reality_stable_ish": "Víceméně Stabilní-ish", "staples_critically_low": "Kriticky Nízká!", "mandate_awaiting_assignment": "Čeká na Přiřazení (Formulář 3B Čeká)", "reward_extra_staple": "Jedna (1) Lehce Použitá Sponka", "status_pending_triplicate": "Čeká na Schválení (Vyžadován Trojopis)",
+            "alert_level_beige": "Stav Béžový", "alert_level_mauve": "Stav Fialkový", "alert_level_plaid": "Stav Kostkovaný",
+            "alert_level_beige_val": "Béžová", "alert_level_mauve_val": "Fialková", "alert_level_plaid_val": "Kostkovaná",
+            "label_audit_in_progress": "Audit Probíhá:", 
+            "label_paradox_event_imminent": "Varování Před Paradoxem:" 
         }
     }
 };

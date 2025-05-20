@@ -654,7 +654,6 @@ background-color: var(--color-bg-content-view)
 	flex-wrap: wrap;
 	gap: var(--spacing-sm);
 	flex-shrink: 0;
-	max-height: 100px;
 	overflow-y: auto
 }
 #player-input-control-panel {
@@ -708,7 +707,6 @@ background-color: var(--color-bg-content-view)
 	font-weight: var(--font-weight-medium);
 	cursor: pointer;
 	transition: background-color var(--transition-fast), transform var(--transition-fast), color var(--transition-fast);
-	white-space: nowrap;
 	background-color: var(--color-bg-element-hover);
 	color: var(--color-text-secondary);
 	border: 1px solid transparent

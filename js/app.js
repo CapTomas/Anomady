@@ -416,10 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const themeConfig = ALL_THEMES_CONFIG[currentTheme];
         const dashboardLayoutConfig = THEME_DASHBOARD_CONFIGS[themeConfig.dashboard_config_ref];
 
-        // --- Determine which base prompt text to use ---
-        let basePromptKey = promptTypeToUse; // e.g., "initial", "default", "combat_engaged"
-        let basePromptText = gamePrompts[currentTheme]?.[basePromptKey];
-
         // Helper function to check if a prompt text is valid (not an error/not found marker)
         const isValidPromptText = (text) => text && 
                                             !text.startsWith("FILE_NOT_FOUND_NON_CRITICAL:") &&
@@ -427,6 +423,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                             !text.startsWith("CRITICAL_ERROR:") &&
                                             !text.startsWith("Error:");
 
+        // --- Determine which base prompt text to use ---
+        let basePromptKey = promptTypeToUse; // e.g., "initial", "default", "combat_engaged"
+        let basePromptText = gamePrompts[currentTheme]?.[basePromptKey];
 
         // 1. Try the specific promptTypeToUse for the current theme
         if (!isValidPromptText(basePromptText)) {
@@ -520,17 +519,48 @@ document.addEventListener('DOMContentLoaded', () => {
             generatedGameStateIndicators += `"comms_channel_active": "boolean (Set to true if a direct communication channel is now active as a result of this turn's events, false if it closed, or maintain previous state if unchanged.)"`;
         }
 
-        // --- Fetch theme-specific instructions for this prompt type ---
-        const instructionKeyNamePart = basePromptKey; // Corrected: basePromptKey is already the stem like "master_initial" or "combat_engaged"
+        // --- Fetch and process theme-specific instructions for this prompt type ---
+        const instructionKeyNamePart = basePromptKey; 
         let themeSpecificInstructions = ""; 
         if (instructionKeyNamePart) {
             const themeInstructionTextKey = `theme_instructions_${instructionKeyNamePart}_${currentTheme}`;
-            const fetchedInstruction = getUIText(themeInstructionTextKey, {}, currentTheme);
+            const fetchedInstruction = getUIText(themeInstructionTextKey, {}, currentTheme); // getUIText handles fallbacks internally
+            
             if (fetchedInstruction !== themeInstructionTextKey && fetchedInstruction.trim() !== "") {
                 themeSpecificInstructions = fetchedInstruction;
             } else {
-                // console.log(`No specific instruction found for key: ${themeInstructionTextKey}, using empty string.`);
-                themeSpecificInstructions = "No specific instructions provided for this context."; // Default if no specific instruction is found or key itself is returned
+                themeSpecificInstructions = "No specific instructions provided for this context.";
+            }
+
+            // Process {{HELPER_RANDOM_LINE:helper_key}} placeholders
+            const helperPlaceholderRegex = /{{HELPER_RANDOM_LINE:([a-zA-Z0-9_]+)}}/g;
+            let match;
+            while ((match = helperPlaceholderRegex.exec(themeSpecificInstructions)) !== null) {
+                const fullPlaceholder = match[0]; // e.g., "{{HELPER_RANDOM_LINE:asset_names}}"
+                const helperKey = match[1]; // e.g., "asset_names"
+
+                let helperFileContent = null;
+                const langSpecificHelperKey = `${helperKey}_${currentNarrativeLanguage}`;
+                const fallbackHelperKey = `${helperKey}_en`; // Default to English
+
+                if (gamePrompts[currentTheme] && isValidPromptText(gamePrompts[currentTheme][langSpecificHelperKey])) {
+                    helperFileContent = gamePrompts[currentTheme][langSpecificHelperKey];
+                } else if (gamePrompts[currentTheme] && isValidPromptText(gamePrompts[currentTheme][fallbackHelperKey])) {
+                    helperFileContent = gamePrompts[currentTheme][fallbackHelperKey];
+                }
+
+                let replacementText = `(dynamic value for ${helperKey} not found)`;
+                if (helperFileContent) {
+                    const lines = helperFileContent.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+                    if (lines.length > 0) {
+                        replacementText = lines[Math.floor(Math.random() * lines.length)];
+                    } else {
+                        replacementText = `(no valid lines in ${helperKey} helper file)`;
+                    }
+                }
+                themeSpecificInstructions = themeSpecificInstructions.replace(fullPlaceholder, replacementText);
+                // Reset regex lastIndex to allow finding overlapping or subsequent matches if replace changes string length
+                helperPlaceholderRegex.lastIndex = 0; 
             }
         }
 
@@ -552,6 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
         processedPromptText = processedPromptText.replace(/\$\{theme_lore\}/g, getUIText(themeConfig.lore_key, {}, currentTheme));
         processedPromptText = processedPromptText.replace(/\$\{theme_category\}/g, getUIText(themeConfig.category_key || `theme_category_${currentTheme}`, {}, currentTheme));
         processedPromptText = processedPromptText.replace(/\$\{theme_style\}/g, getUIText(themeConfig.style_key || `theme_style_${currentTheme}`, {}, currentTheme));
+        processedPromptText = processedPromptText.replace(/\$\{theme_tone\}/g, getUIText(themeConfig.tone_key, {}, currentTheme)); // Added this line
         processedPromptText = processedPromptText.replace(/\$\{theme_inspiration\}/g, getUIText(themeConfig.inspiration_key, {}, currentTheme));
         processedPromptText = processedPromptText.replace(/\$\{theme_concept\}/g, getUIText(themeConfig.concept_key, {}, currentTheme));
         
@@ -561,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
         processedPromptText = processedPromptText.replace(/\$\{generated_game_state_indicators\}/g, generatedGameStateIndicators);
 
         if (promptTypeToUse === 'initial' || basePromptKey === 'master_initial') {
-            if (gamePrompts[currentTheme]?.starts) {
+            if (gamePrompts[currentTheme]?.starts && isValidPromptText(gamePrompts[currentTheme].starts)) {
                 const allStarts = gamePrompts[currentTheme].starts.split('\n').map(s => s.trim()).filter(s => s.length > 0);
                 const selectedStarts = allStarts.length > 0 ? [...allStarts].sort(() => 0.5 - Math.random()).slice(0, 3) : [];
                 ['startIdea1', 'startIdea2', 'startIdea3'].forEach((placeholder, i) => {

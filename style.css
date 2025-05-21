@@ -176,7 +176,7 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	display: block;
 	width: 40px;
 	height: 40px;
-	padding: 4px;
+	padding: 6px;
 	margin-right: var(--spacing-md);
 	background-color: #e3e3e3;
 	border-radius: var(--radius-sm);

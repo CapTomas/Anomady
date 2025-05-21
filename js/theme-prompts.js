@@ -40,11 +40,6 @@ const PROMPT_URLS_BY_THEME = {
 
         // Helper files
         starts: 'prompts/cosmic_misrule/helpers/starts.txt'
-    },
-
-    [DEFAULT_THEME_ID]: {
-        master_initial: 'prompts/master/master_initial.txt',
-        master_default: 'prompts/master/master_default.txt',
     }
 };
 

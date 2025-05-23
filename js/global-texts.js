@@ -81,7 +81,7 @@ const globalTextData = {
             "system_lang_set_en": "System: UI & Narrative set to ENGLISH.",
             "system_lang_set_cs": "System: UI & Narrative set to CZECH.",
             "system_session_resumed": "Welcome back, {PLAYER_ID}! Session resumed for {THEME_NAME}.",
-            "system_theme_set_generic": "System: {THEME_NAME} scenario activated. Stand by...",
+            "system_theme_set_generic": "System: {THEME_NAME} scenario activated.",
             "system_new_game_initiated": "System: New {THEME_NAME} game sequence initiated."
         },
         cs: {
@@ -164,7 +164,7 @@ const globalTextData = {
             "system_lang_set_en": "Systém: UI a Příběh nastaveny na ANGLIČTINU.",
             "system_lang_set_cs": "Systém: UI a Příběh nastaveny na ČEŠTINU.",
             "system_session_resumed": "Vítejte zpět, {PLAYER_ID}! Relace obnovena pro {THEME_NAME}.",
-            "system_theme_set_generic": "Systém: Scénář {THEME_NAME} aktivován. Vyčkejte...",
+            "system_theme_set_generic": "Systém: Scénář {THEME_NAME} aktivován.",
             "system_new_game_initiated": "Systém: Zahájena sekvence nové hry ({THEME_NAME})."
         }
     },

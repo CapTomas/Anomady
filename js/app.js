@@ -3367,20 +3367,30 @@ function addPlayingTheme(themeId) {
       const button = document.createElement("button");
       button.classList.add("theme-grid-icon");
       button.dataset.theme = themeConfig.id;
-      const themeDisplayNameOnGrid = getUIText(
+
+      // Get the full theme name for title and img alt fallback
+      const themeFullName = getUIText(
         themeConfig.name_key,
         {},
         themeConfig.id
       );
-      button.title = themeDisplayNameOnGrid;
+      button.title = themeFullName; // Tooltip shows the full name
+
       const img = document.createElement("img");
       img.src = themeConfig.icon; // Path from config.json
       const altTextKey = `theme_icon_alt_text_default_${themeConfig.id}`;
-      img.alt =
-        getUIText(altTextKey, {}, themeConfig.id) || themeDisplayNameOnGrid;
+      img.alt = getUIText(altTextKey, {}, themeConfig.id) || themeFullName; // Fallback to full name
+
       const nameSpan = document.createElement("span");
       nameSpan.classList.add("theme-grid-icon-name");
-      nameSpan.textContent = themeDisplayNameOnGrid;
+      // Get the short theme name for display on the grid icon itself
+      const themeShortName = getUIText(
+        themeConfig.name_short_key || themeConfig.name_key, // Use short_key, fallback to name_key
+        {},
+        themeConfig.id
+      );
+      nameSpan.textContent = themeShortName; // Visible text is short name
+
       button.appendChild(img);
       button.appendChild(nameSpan);
       button.addEventListener("click", () =>

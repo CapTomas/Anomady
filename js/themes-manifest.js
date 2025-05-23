@@ -15,4 +15,9 @@ const THEMES_MANIFEST = [
         path: "themes/celestial_custodians/",
         playable: true,
     },
+    {
+        id: "echo_sleuths",
+        path: "themes/echo_sleuths/",
+        playable: true,
+    },
 ];

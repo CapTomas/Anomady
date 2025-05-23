@@ -1,0 +1,14 @@
+{
+  "PROMPT_URLS": {
+    "master_initial": "themes/master/prompts/master_initial.txt",
+    "master_default": "themes/master/prompts/master_default.txt",
+    "psychic_disturbance_active": "themes/echo_sleuths/prompts/psychic_disturbance_active.txt",
+    "reality_flux_active": "themes/echo_sleuths/prompts/reality_flux_active.txt",
+    "conceptual_conflict_active": "themes/echo_sleuths/prompts/conceptual_conflict_active.txt",
+    "starts": "themes/echo_sleuths/prompts/helpers/starts.txt"
+  },
+  "NARRATIVE_LANG_PROMPT_PARTS": {
+    "en": "This narrative must be written in rich, evocative English, embodying the style of surreal detective noir. Dialogue should be sharp, introspective, and often laced with philosophical or existential undertones, reflecting characters navigating a fluid, dreamlike reality. Emphasize the bizarre nature of Reverie, the internal struggles of the Sleuth, and the unsettling ambiguity of truth in a city made of thought.",
+    "cs": "Tento příběh musí být napsán bohatou, evokativní češtinou, ztělesňující styl surrealistické detektivky noir. Dialogy by měly být ostré, introspektivní a často protkané filozofickými či existenciálními podtóny, odrážející postavy pohybující se v tekuté, snové realitě. Zdůrazněte bizarní povahu Reverie, vnitřní boje detektiva a znepokojivou nejednoznačnost pravdy ve městě stvořeném z myšlenek."
+  }
+}

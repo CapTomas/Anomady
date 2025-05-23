@@ -171,6 +171,60 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
+   * Checks if an element is scrolled out of the visible area of its scrollable container.
+   * @param {HTMLElement} element - The element to check.
+   * @param {HTMLElement} scrollContainer - The scrollable container.
+   * @returns {boolean} True if the element is out of view, false otherwise.
+   */
+  function isElementScrolledOutOfView(element, scrollContainer) {
+    if (!element || !scrollContainer) return false;
+
+    const elemRect = element.getBoundingClientRect();
+    const containerRect = scrollContainer.getBoundingClientRect();
+
+    // Check if the element is vertically outside the scrollContainer's viewport
+    // Adding/subtracting 1px tolerance for potential subpixel rendering issues
+    const isAboveViewport = elemRect.bottom < containerRect.top + 1;
+    const isBelowViewport = elemRect.top > containerRect.bottom - 1;
+
+    return isAboveViewport || isBelowViewport;
+  }
+
+  /**
+   * Updates the glow effect on panel sidebars if they have off-screen updates.
+   * Call this after dashboard updates or when panel visibility/scroll might change.
+   */
+  function updatePanelGlows() {
+    [leftPanel, rightPanel].forEach(panelSidebar => {
+      if (!panelSidebar || document.body.classList.contains('landing-page-active')) {
+        if (panelSidebar) panelSidebar.classList.remove('panel-has-updates-below');
+        return;
+      }
+
+      let hasOffscreenUpdatesInExpandedPanels = false;
+      // Query for .info-item or .info-item-meter that has the .has-recent-update class
+      const recentlyUpdatedItems = panelSidebar.querySelectorAll('.has-recent-update');
+
+      for (const itemContainer of recentlyUpdatedItems) {
+        // Check if the item's parent .panel-box is expanded
+        const panelBox = itemContainer.closest('.panel-box');
+        if (panelBox && panelBox.classList.contains('is-expanded')) {
+          if (isElementScrolledOutOfView(itemContainer, panelSidebar)) {
+            hasOffscreenUpdatesInExpandedPanels = true;
+            break;
+          }
+        }
+      }
+
+      if (hasOffscreenUpdatesInExpandedPanels) {
+        panelSidebar.classList.add('panel-has-updates-below');
+      } else {
+        panelSidebar.classList.remove('panel-has-updates-below');
+      }
+    });
+  }
+
+  /**
    * Sets the application's current log level and saves it to localStorage.
    * @param {string} newLevel - The new log level ('debug', 'info', 'error').
    */
@@ -1181,22 +1235,31 @@ document.addEventListener("DOMContentLoaded", () => {
    * If the element is a container (.info-item or .info-item-meter),
    * it attempts to highlight its main value display child (.value or .value-overlay).
    * If the element is already a value display child, it highlights itself.
-   * @param {HTMLElement} element - The DOM element to highlight or the container of the value to highlight.
+   * Adds 'has-recent-update' class to the container for persistent indication.
+   * @param {HTMLElement} element - The DOM element to highlight (expected to be .info-item or .info-item-meter container).
    */
   function highlightElementUpdate(element) {
     if (!element) return;
+
     let textValueElement = null;
     if (
       element.classList.contains("value") ||
       element.classList.contains("value-overlay")
     ) {
+      // This case should ideally not be hit if we always pass the container
       textValueElement = element;
+      const container = element.closest('.info-item, .info-item-meter');
+      if (container) container.classList.add('has-recent-update');
+
     } else if (
       element.classList.contains("info-item") ||
       element.classList.contains("info-item-meter")
     ) {
       textValueElement = element.querySelector(".value, .value-overlay");
+      // Add persistent indicator to the container element itself
+      element.classList.add('has-recent-update');
     }
+
     if (textValueElement) {
       textValueElement.classList.add("value-updated");
       setTimeout(() => {
@@ -1342,6 +1405,14 @@ document.addEventListener("DOMContentLoaded", () => {
           updatedOccurred = true;
         }
       }
+      // If updatedOccurred is true here, and highlight is true, we'd need to add has-recent-update
+      // to textEl's container. This case is less common.
+      if (updatedOccurred && highlight) {
+        const container = textEl ? textEl.closest('.info-item, .info-item-meter') : null;
+        if (container) {
+            highlightElementUpdate(container); // This will add has-recent-update
+        }
+      }
       return updatedOccurred;
     }
 
@@ -1372,6 +1443,11 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           if (oldClasses.length > 0) updatedOccurred = true;
           oldClasses.forEach((c) => barEl.classList.remove(c));
+          // If updatedOccurred is true here, and highlight is true, add has-recent-update
+          if (updatedOccurred && highlight) {
+             const container = textEl.closest('.info-item, .info-item-meter') || barEl.closest('.info-item, .info-item-meter');
+             if (container) highlightElementUpdate(container);
+          }
           return updatedOccurred;
         }
         finalPct =
@@ -1499,11 +1575,13 @@ document.addEventListener("DOMContentLoaded", () => {
       barEl.classList.add("meter-bar");
     }
 
-    if (highlight && updatedOccurred) {
+    if (updatedOccurred && highlight) { // Check highlight flag from opts
       const containerToHighlight = textEl
         ? textEl.closest(".info-item, .info-item-meter")
         : barEl.closest(".info-item, .info-item-meter");
-      if (containerToHighlight) highlightElementUpdate(containerToHighlight);
+      if (containerToHighlight) {
+        highlightElementUpdate(containerToHighlight); // This will add .has-recent-update
+      }
     }
     return updatedOccurred;
   };
@@ -1584,25 +1662,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const valueElement = document.getElementById(`info-${itemCfg.id}`);
         const meterBarElement = document.getElementById(`meter-${itemCfg.id}`);
+        const itemContainer = valueElement
+          ? valueElement.closest(".info-item, .info-item-meter")
+          : meterBarElement
+          ? meterBarElement.closest(".info-item, .info-item-meter")
+          : null;
+
 
         if (itemCfg.type === "meter") {
           if (valueElement || meterBarElement) {
+            // setMeter now handles calling highlightElementUpdate if highlightChanges is true
+            // and an update occurred, which in turn adds .has-recent-update.
             actualUpdateOccurred = setMeter(
               meterBarElement,
               valueElement,
               String(value),
               itemCfg.meter_type,
               {
-                highlight: highlightChanges,
+                highlight: highlightChanges, // Pass this along
                 newStatusText: itemCfg.status_text_id
                   ? updatesFromAI[itemCfg.status_text_id]
                   : undefined,
               }
             );
           }
-        } else if (itemCfg.type === "status_level") { // New type handling
+        } else if (itemCfg.type === "status_level") {
           if (valueElement && itemCfg.level_mappings) {
-            const aiValueStr = String(value); // AI returns integer, convert to string for map key
+            const aiValueStr = String(value);
             const levelConfig = itemCfg.level_mappings[aiValueStr];
 
             if (levelConfig) {
@@ -1619,7 +1705,7 @@ document.addEventListener("DOMContentLoaded", () => {
               ) {
                 valueElement.textContent = newDisplayText;
                 valueElement.className = `value ${newCssClass}`;
-                if (highlightChanges) highlightElementUpdate(valueElement);
+                if (itemContainer && highlightChanges) highlightElementUpdate(itemContainer);
                 actualUpdateOccurred = true;
               }
             } else {
@@ -1627,25 +1713,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 LOG_LEVEL_WARNING,
                 `No level mapping found for AI value "${aiValueStr}" for item "${itemCfg.id}". Using default.`
               );
-              // Fallback or default display if AI value is unexpected
               const defaultLevelConfig = itemCfg.level_mappings[String(itemCfg.default_ai_value || 1)] || { display_text_key: "unknown", css_class: "status-info" };
               const fallbackDisplayText = getUIText(defaultLevelConfig.display_text_key, {}, currentTheme);
               if (valueElement.textContent !== fallbackDisplayText || !valueElement.className.includes(defaultLevelConfig.css_class)) {
                 valueElement.textContent = fallbackDisplayText;
                 valueElement.className = `value ${defaultLevelConfig.css_class}`;
-                if (highlightChanges) highlightElementUpdate(valueElement);
+                if (itemContainer && highlightChanges) highlightElementUpdate(itemContainer);
                 actualUpdateOccurred = true;
               }
             }
           }
-        } else if (itemCfg.type === "status_text") { // Old status_text, for non-level items
+        } else if (itemCfg.type === "status_text") {
           if (valueElement) {
             const newStatusText = String(value);
-            // Keep existing logic for other status_text types if any,
-            // or simplify if `status_level` handles all dynamic-colored statuses.
-            // For now, assuming generic status_text does not have complex color logic by default.
-            let statusClass = "status-info"; // Default for generic status_text
-            if (itemCfg.default_css_class) { // A theme could specify a default class
+            let statusClass = "status-info";
+            if (itemCfg.default_css_class) {
                  statusClass = itemCfg.default_css_class;
             }
 
@@ -1655,17 +1737,17 @@ document.addEventListener("DOMContentLoaded", () => {
             ) {
               valueElement.textContent = newStatusText;
               valueElement.className = `value ${statusClass}`;
-              if (highlightChanges) highlightElementUpdate(valueElement);
+              if (itemContainer && highlightChanges) highlightElementUpdate(itemContainer);
               actualUpdateOccurred = true;
             }
           }
-        } else { // Handles "text", "number_text", "text_long"
+        } else {
           if (valueElement) {
             const suffix = itemCfg.suffix || "";
             const newValueText = `${value}${suffix}`;
             if (valueElement.textContent !== newValueText) {
               valueElement.textContent = newValueText;
-              if (highlightChanges) highlightElementUpdate(valueElement);
+              if (itemContainer && highlightChanges) highlightElementUpdate(itemContainer);
               actualUpdateOccurred = true;
             }
           }
@@ -1685,6 +1767,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
+
+    // After all updates are processed, if any highlights occurred, update panel glows
+    if (highlightChanges) {
+      updatePanelGlows();
+    }
+
     lastKnownDashboardUpdates = {
       ...lastKnownDashboardUpdates,
       ...updatesFromAI,
@@ -1863,6 +1951,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const content = box.querySelector(".panel-box-content");
     if (!header || !content) return;
 
+    const wasExpanded = box.classList.contains("is-expanded");
+
     if (shouldExpand) {
       if (box.style.display === "none" && manageVisibility) {
         box.style.opacity = "0";
@@ -1876,6 +1966,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (manageVisibility) box.style.opacity = "1";
         header.setAttribute("aria-expanded", "true");
         content.setAttribute("aria-hidden", "false");
+        if (!isRestoringState && wasExpanded !== shouldExpand) {
+          updatePanelGlows();
+        }
       });
     } else {
       box.classList.remove("is-expanded");
@@ -1893,10 +1986,13 @@ document.addEventListener("DOMContentLoaded", () => {
           if (event.target === content || event.target === box) {
             if (!box.classList.contains("is-expanded")) {
               box.style.display = "none";
-              content.style.display = "";
+              content.style.display = ""; // Reset style for future expansions
             }
             content.removeEventListener("transitionend", onHideTransitionEnd);
             box.removeEventListener("transitionend", onHideTransitionEnd);
+            if (!isRestoringState && wasExpanded !== shouldExpand) {
+              updatePanelGlows();
+            }
           }
         };
         content.addEventListener("transitionend", onHideTransitionEnd);
@@ -1909,8 +2005,14 @@ document.addEventListener("DOMContentLoaded", () => {
           ) {
             box.style.display = "none";
             content.style.display = "";
+             if (!isRestoringState && wasExpanded !== shouldExpand) {
+                updatePanelGlows();
+            }
           }
         }, transitionDuration + 100);
+      } else if (!isRestoringState && wasExpanded !== shouldExpand) {
+         // For non-managed visibility, update glows immediately after state change
+         updatePanelGlows();
       }
     }
     if (!isRestoringState) {
@@ -2744,6 +2846,7 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           if (isInitialGameLoad) isInitialGameLoad = false;
           saveGameState();
+          updatePanelGlows(); // Update glows after processing AI response and saving
           if (systemStatusIndicator) {
             systemStatusIndicator.textContent = getUIText(
               "system_status_online_short"
@@ -2872,6 +2975,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (playerActionInput) playerActionInput.focus();
       return;
     }
+
+    // Clear previous update indicators before sending new action
+    document.querySelectorAll('.has-recent-update').forEach(el => el.classList.remove('has-recent-update'));
+    updatePanelGlows(); // This will remove glows as .has-recent-update classes are gone
+
     addMessageToLog(actionText, "player");
     if (playerActionInput) {
       playerActionInput.value = "";
@@ -2880,7 +2988,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     clearSuggestedActions();
     gameHistory.push({ role: "user", parts: [{ text: actionText }] });
-    const narrative = await callGeminiAPI(gameHistory);
+    const narrative = await callGeminiAPI(gameHistory); // callGeminiAPI will call updatePanelGlows on success
     if (narrative) {
       addMessageToLog(narrative, "gm");
     }
@@ -3148,6 +3256,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       initializeCollapsiblePanelBoxes(currentTheme);
       displaySuggestedActions(currentSuggestedActions); // Display them now
+      updatePanelGlows(); // Check glows after loading game state and panels
 
       if (nameInputSection) nameInputSection.style.display = "none";
       if (actionInputSection) actionInputSection.style.display = "flex";
@@ -3178,6 +3287,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       initializeCollapsiblePanelBoxes(currentTheme);
       displaySuggestedActions(currentSuggestedActions); // Clears display
+      updatePanelGlows(); // Check glows after setting up for new game
 
       if (storyLog) storyLog.innerHTML = "";
       if (nameInputSection) nameInputSection.style.display = "flex";
@@ -3353,6 +3463,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     updateTopbarThemeIcons();
     setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID);
+    // Ensure panel glows are cleared when switching to landing view
+    if (leftPanel) leftPanel.classList.remove('panel-has-updates-below');
+    if (rightPanel) rightPanel.classList.remove('panel-has-updates-below');
   }
 
   /**
@@ -3935,6 +4048,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       initializeCollapsiblePanelBoxes(currentTheme);
       displaySuggestedActions(currentSuggestedActions); // Display them now
+      updatePanelGlows(); // Check for glows after restoring and initializing panels
 
       if (nameInputSection) nameInputSection.style.display = "none";
       if (actionInputSection) actionInputSection.style.display = "flex";
@@ -3961,10 +4075,19 @@ document.addEventListener("DOMContentLoaded", () => {
       isInitialGameLoad = false;
     } else {
       currentSuggestedActions = [];
-      switchToLandingView();
+      switchToLandingView(); // This already clears glows and calls updatePanelGlows via setAppLanguage
+      updatePanelGlows(); // Explicit call in case switchToLandingView's effects are not sufficient
     }
     updateTopbarThemeIcons();
     if (playerActionInput) autoGrowTextarea(playerActionInput);
+
+    // Add scroll listeners to side panels for dynamic glow updates
+    [leftPanel, rightPanel].forEach(panelSidebar => {
+      if(panelSidebar) {
+          panelSidebar.addEventListener('scroll', updatePanelGlows, { passive: true });
+      }
+    });
+
     log(LOG_LEVEL_INFO, "Application initialization complete.");
   }
 

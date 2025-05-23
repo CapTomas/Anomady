@@ -846,6 +846,29 @@ background-color: var(--color-bg-content-view)
 	pointer-events: none;
 	z-index: -1
 }
+
+.info-item.has-recent-update > .label::before,
+.info-item-meter.has-recent-update > .label::before {
+  content: '●'; /* Unicode Black Circle */
+  color: var(--color-accent-teal);
+  font-size: 0.7em; /* Smaller than text */
+  margin-right: 5px;
+  display: inline-block; /* Allows transform */
+  vertical-align: middle;
+  animation: pulseDot 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
 ::-webkit-scrollbar {
 	width: 6px;
 	height: 6px

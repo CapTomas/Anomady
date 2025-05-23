@@ -197,7 +197,7 @@ const globalTextData = {
             // Generic Landing Page UI
             "landing_theme_description_title": "Dějiny světa",
             "landing_theme_info_title": "Přehled Scénáře",
-            "landing_select_theme_prompt_lore": "Vyberte scénář z mřížky pro zobrazení jeho pozadí.",
+            "landing_select_theme_prompt_lore": "Vyberte scénář pro zobrazení jeho dějin.",
             "landing_select_theme_prompt_details": "Vyberte scénář pro zobrazení jeho parametrů a cílů.",
             "landing_theme_name_label": "Název",
             "landing_theme_inspiration_label": "Inspirace",

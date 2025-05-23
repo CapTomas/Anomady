@@ -10,4 +10,9 @@ const THEMES_MANIFEST = [
         path: "themes/grim_warden/",
         playable: true,
     },
+    {
+        id: "celestial_custodians",
+        path: "themes/celestial_custodians/",
+        playable: true,
+    },
 ];

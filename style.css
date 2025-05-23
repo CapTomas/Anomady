@@ -51,8 +51,9 @@
 	--color-meter-stamina: var(--color-accent-violet);
 	--color-meter-fuel: var(--color-accent-violet);
 	--color-status-ok-text: var(--color-accent-teal);
-	--color-status-warning-text: var(--color-accent-amber);
-	--color-status-danger-text: #ef4444;
+	--color-status-warning-text: var(--color-meter-medium);
+	--color-status-danger-text: #e6843f;
+	--color-status-critical-text: #dd2222;
 	--color-status-info-text: var(--color-text-accent-interactive);
 	--color-status-offline-text: var(--color-text-muted);
 	--shadow-focus-ring: 0 0 0 2px var(--color-text-accent-interactive);
@@ -812,6 +813,9 @@ background-color: var(--color-bg-content-view)
 }
 .status-danger {
 	color: var(--color-status-danger-text) !important
+}
+.status-critical {
+	color: var(--color-status-critical-text) !important
 }
 .status-info {
 	color: var(--color-status-info-text) !important

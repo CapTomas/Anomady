@@ -66,6 +66,10 @@ const globalTextData = {
             "alert_api_key_required":"Gemini API Key is required. Please refresh and provide a key.",
             "prompt_enter_api_key": "Welcome! Please enter your Google Gemini API Key:",
             "error_critical_no_api_key":"CRITICAL: Gemini API Key not provided. Application cannot connect to AI.",
+            "alert_level_1_display_default": "Condition Nominal",
+            "alert_level_2_display_default": "Condition Elevated",
+            "alert_level_3_display_default": "Condition High",
+            "alert_level_4_display_default": "Condition Critical",
 
             // Model Toggle
             "label_toggle_model": "AI Model",
@@ -149,6 +153,10 @@ const globalTextData = {
             "alert_api_key_required":"Je vyžadován Gemini API klíč. Obnovte stránku a zadejte klíč.",
             "prompt_enter_api_key": "Vítejte! Zadejte prosím svůj Google Gemini API klíč:",
             "error_critical_no_api_key":"KRITICKÉ: Gemini API klíč nebyl zadán. Aplikace se nemůže připojit k AI.",
+            "alert_level_1_display_default": "Stav Nominální",
+            "alert_level_2_display_default": "Stav Zvýšený",
+            "alert_level_3_display_default": "Stav Vysoký",
+            "alert_level_4_display_default": "Stav Kritický",
 
             // Model Toggle
             "label_toggle_model": "AI Model",

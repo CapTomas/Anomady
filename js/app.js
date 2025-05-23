@@ -1600,90 +1600,55 @@ document.addEventListener("DOMContentLoaded", () => {
               }
             );
           }
-        } else if (itemCfg.type === "status_text") {
+        } else if (itemCfg.type === "status_level") { // New type handling
+          if (valueElement && itemCfg.level_mappings) {
+            const aiValueStr = String(value); // AI returns integer, convert to string for map key
+            const levelConfig = itemCfg.level_mappings[aiValueStr];
+
+            if (levelConfig) {
+              const newDisplayText = getUIText(
+                levelConfig.display_text_key,
+                {},
+                currentTheme
+              );
+              const newCssClass = levelConfig.css_class || "status-info";
+
+              if (
+                valueElement.textContent !== newDisplayText ||
+                !valueElement.className.includes(newCssClass)
+              ) {
+                valueElement.textContent = newDisplayText;
+                valueElement.className = `value ${newCssClass}`;
+                if (highlightChanges) highlightElementUpdate(valueElement);
+                actualUpdateOccurred = true;
+              }
+            } else {
+              log(
+                LOG_LEVEL_WARNING,
+                `No level mapping found for AI value "${aiValueStr}" for item "${itemCfg.id}". Using default.`
+              );
+              // Fallback or default display if AI value is unexpected
+              const defaultLevelConfig = itemCfg.level_mappings[String(itemCfg.default_ai_value || 1)] || { display_text_key: "unknown", css_class: "status-info" };
+              const fallbackDisplayText = getUIText(defaultLevelConfig.display_text_key, {}, currentTheme);
+              if (valueElement.textContent !== fallbackDisplayText || !valueElement.className.includes(defaultLevelConfig.css_class)) {
+                valueElement.textContent = fallbackDisplayText;
+                valueElement.className = `value ${defaultLevelConfig.css_class}`;
+                if (highlightChanges) highlightElementUpdate(valueElement);
+                actualUpdateOccurred = true;
+              }
+            }
+          }
+        } else if (itemCfg.type === "status_text") { // Old status_text, for non-level items
           if (valueElement) {
             const newStatusText = String(value);
-            let statusClass = "status-info";
-            const lowerValue = newStatusText.toLowerCase();
-
-            if (itemCfg.id === "alertLevel" || itemCfg.id === "alert_level") {
-              if (
-                lowerValue.includes(
-                  getUIText(
-                    "alert_level_danger_val",
-                    {},
-                    currentTheme
-                  ).toLowerCase()
-                )
-              )
-                statusClass = "status-danger";
-              else if (
-                lowerValue.includes(
-                  getUIText(
-                    "alert_level_wary_val",
-                    {},
-                    currentTheme
-                  ).toLowerCase()
-                ) ||
-                lowerValue.includes(
-                  getUIText(
-                    "alert_level_yellow_val",
-                    {},
-                    currentTheme
-                  ).toLowerCase()
-                )
-              )
-                statusClass = "status-warning";
-              else if (
-                lowerValue.includes(
-                  getUIText(
-                    "alert_level_calm_val",
-                    {},
-                    currentTheme
-                  ).toLowerCase()
-                ) ||
-                lowerValue.includes(
-                  getUIText(
-                    "alert_level_green_val",
-                    {},
-                    currentTheme
-                  ).toLowerCase()
-                )
-              )
-                statusClass = "status-ok";
-            } else if (itemCfg.id === "threat_level") {
-              // For grim_warden
-              if (
-                lowerValue.includes(
-                  getUIText(
-                    "threat_level_danger_val",
-                    {},
-                    currentTheme
-                  ).toLowerCase()
-                )
-              )
-                statusClass = "status-danger";
-              else if (
-                lowerValue.includes(
-                  getUIText(
-                    "threat_level_wary_val",
-                    {},
-                    currentTheme
-                  ).toLowerCase()
-                )
-              )
-                statusClass = "status-warning";
-              else if (
-                lowerValue.includes(
-                  getUIText(
-                    "threat_level_calm_val",
-                    {},
-                    currentTheme
-                  ).toLowerCase()
-                )
-              )
-                statusClass = "status-ok";
+            // Keep existing logic for other status_text types if any,
+            // or simplify if `status_level` handles all dynamic-colored statuses.
+            // For now, assuming generic status_text does not have complex color logic by default.
+            let statusClass = "status-info"; // Default for generic status_text
+            if (itemCfg.default_css_class) { // A theme could specify a default class
+                 statusClass = itemCfg.default_css_class;
             }
+
             if (
               valueElement.textContent !== newStatusText ||
               !valueElement.className.includes(statusClass)
@@ -1694,7 +1659,7 @@ document.addEventListener("DOMContentLoaded", () => {
               actualUpdateOccurred = true;
             }
           }
-        } else {
+        } else { // Handles "text", "number_text", "text_long"
           if (valueElement) {
             const suffix = itemCfg.suffix || "";
             const newValueText = `${value}${suffix}`;
@@ -1748,119 +1713,59 @@ document.addEventListener("DOMContentLoaded", () => {
         boxCfg.items.forEach((itemCfg) => {
           const valueEl = document.getElementById(`info-${itemCfg.id}`);
           const meterBarEl = document.getElementById(`meter-${itemCfg.id}`);
-          const defaultValue =
-            itemCfg.default_value !== undefined
+
+          let defaultValueText = itemCfg.default_value !== undefined
               ? String(itemCfg.default_value)
-              : getUIText(itemCfg.default_value_key, {}, currentTheme);
+              : (itemCfg.default_value_key ? getUIText(itemCfg.default_value_key, {}, currentTheme) : getUIText("unknown"));
+
 
           if (itemCfg.type === "meter") {
             if (valueEl || meterBarEl) {
               const defaultStatus = itemCfg.default_status_key
                 ? getUIText(itemCfg.default_status_key, {}, currentTheme)
                 : getUIText("offline");
-              setMeter(meterBarEl, valueEl, defaultValue, itemCfg.meter_type, {
+              setMeter(meterBarEl, valueEl, defaultValueText, itemCfg.meter_type, {
                 highlight: false,
                 newStatusText: defaultStatus,
-                initialPlaceholder: `${defaultStatus}: ${defaultValue}%`,
+                initialPlaceholder: `${defaultStatus}: ${defaultValueText}%`,
               });
             }
-          } else if (itemCfg.type === "status_text") {
-            if (valueEl) {
-              const displayDefault = getUIText(
-                itemCfg.default_value_key,
-                {},
-                currentTheme
-              );
-              const statusValueDefault = itemCfg.default_status_key
-                ? getUIText(itemCfg.default_status_key, {}, currentTheme)
-                : displayDefault;
-              valueEl.textContent = displayDefault;
-              let statusClass = "status-info";
-              const lowerValue = statusValueDefault.toLowerCase();
-              if (itemCfg.id === "alertLevel" || itemCfg.id === "alert_level") {
-                if (
-                  lowerValue.includes(
-                    getUIText(
-                      "alert_level_danger_val",
-                      {},
-                      currentTheme
-                    ).toLowerCase()
-                  )
-                )
-                  statusClass = "status-danger";
-                else if (
-                  lowerValue.includes(
-                    getUIText(
-                      "alert_level_wary_val",
-                      {},
-                      currentTheme
-                    ).toLowerCase()
-                  ) ||
-                  lowerValue.includes(
-                    getUIText(
-                      "alert_level_yellow_val",
-                      {},
-                      currentTheme
-                    ).toLowerCase()
-                  )
-                )
-                  statusClass = "status-warning";
-                else if (
-                  lowerValue.includes(
-                    getUIText(
-                      "alert_level_calm_val",
-                      {},
-                      currentTheme
-                    ).toLowerCase()
-                  ) ||
-                  lowerValue.includes(
-                    getUIText(
-                      "alert_level_green_val",
-                      {},
-                      currentTheme
-                    ).toLowerCase()
-                  )
-                )
-                  statusClass = "status-ok";
-              } else if (itemCfg.id === "threat_level") {
-                // For grim_warden
-                if (
-                  lowerValue.includes(
-                    getUIText(
-                      "threat_level_danger_val",
-                      {},
-                      currentTheme
-                    ).toLowerCase()
-                  )
-                )
-                  statusClass = "status-danger";
-                else if (
-                  lowerValue.includes(
-                    getUIText(
-                      "threat_level_wary_val",
-                      {},
-                      currentTheme
-                    ).toLowerCase()
-                  )
-                )
-                  statusClass = "status-warning";
-                else if (
-                  lowerValue.includes(
-                    getUIText(
-                      "threat_level_calm_val",
-                      {},
-                      currentTheme
-                    ).toLowerCase()
-                  )
-                )
-                  statusClass = "status-ok";
+          } else if (itemCfg.type === "status_level") { // New type handling
+            if (valueEl && itemCfg.level_mappings && itemCfg.default_ai_value !== undefined) {
+              const defaultAiValueStr = String(itemCfg.default_ai_value);
+              const levelConfig = itemCfg.level_mappings[defaultAiValueStr] || itemCfg.level_mappings["1"]; // Fallback to level 1
+
+              if (levelConfig) {
+                const displayDefaultText = getUIText(
+                  levelConfig.display_text_key,
+                  {},
+                  currentTheme
+                );
+                const cssClassDefault = levelConfig.css_class || "status-info";
+                valueEl.textContent = displayDefaultText;
+                valueEl.className = `value ${cssClassDefault}`;
+              } else {
+                valueEl.textContent = getUIText("unknown");
+                valueEl.className = "value status-info";
               }
+            } else if (valueEl) {
+                 valueEl.textContent = getUIText("unknown");
+                 valueEl.className = "value status-info";
+            }
+          } else if (itemCfg.type === "status_text") { // Old status_text
+            if (valueEl) {
+              // Keep existing or simplify if all dynamic status texts are now 'status_level'
+              const displayDefault = itemCfg.default_value_key
+                ? getUIText(itemCfg.default_value_key, {}, currentTheme)
+                : getUIText("unknown");
+              valueEl.textContent = displayDefault;
+              let statusClass = itemCfg.default_css_class || "status-info";
               valueEl.className = `value ${statusClass}`;
             }
-          } else {
+          } else { // Handles "text", "number_text", "text_long"
             if (valueEl) {
               const suffix = itemCfg.suffix || "";
-              valueEl.textContent = `${defaultValue}${suffix}`;
+              valueEl.textContent = `${defaultValueText}${suffix}`;
             }
           }
         });
@@ -1878,7 +1783,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (el)
           el.textContent =
             playerIdentifier ||
-            getUIText(idCfg.default_value_key, {}, currentTheme);
+            getUIText(idCfg.default_value_key, {}, currentTheme) || getUIText("unknown");
       }
     }
   }
@@ -3444,7 +3349,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (systemStatusIndicator) {
       systemStatusIndicator.textContent = getUIText("standby");
-      systemStatusIndicator.className = "status-indicator status-warning";
+      systemStatusIndicator.className = "status-indicator status-ok";
     }
     updateTopbarThemeIcons();
     setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID);

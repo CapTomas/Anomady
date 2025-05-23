@@ -165,11 +165,16 @@
           {
             "id": "threat_level",
             "label_key": "label_threat_level_grim_warden",
-            "type": "status_text",
-            "default_value_key": "threat_level_calm",
-            "default_status_key": "threat_level_calm_val",
+            "type": "status_level",
+            "default_ai_value": 1,
+            "level_mappings": {
+              "1": { "display_text_key": "threat_level_1_display", "css_class": "status-ok" },
+              "2": { "display_text_key": "threat_level_2_display", "css_class": "status-warning" },
+              "3": { "display_text_key": "threat_level_3_display", "css_class": "status-danger" },
+              "4": { "display_text_key": "threat_level_4_display", "css_class": "status-critical" }
+            },
             "must_translate": false,
-            "short_description": "MUST be one 'of': 'Calm', 'Wary', 'Danger'. Represents immediate environmental threat. (e.g. 'UI': 'Conditions Calm', AI 'Value': 'Calm')."
+            "short_description": "MUST be an integer: 1 (calm), 2 (wary), 3 (danger), 4 (extreme threat). Represents immediate environmental threat."
           }
         ]
       },

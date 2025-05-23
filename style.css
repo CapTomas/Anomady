@@ -1007,7 +1007,6 @@ body.landing-page-active #landing-theme-description-container,body.landing-page-
 	flex-direction: column;
 	flex-grow: 1;
 	min-height: 0;
-	overflow: auto
 }
 body.landing-page-active #landing-theme-description-container > .panel-box,body.landing-page-active #landing-theme-details-container > .panel-box {
 	flex-grow: 1;
@@ -1016,17 +1015,17 @@ body.landing-page-active #landing-theme-description-container > .panel-box,body.
 	min-height: 0
 }
 body.landing-page-active #landing-theme-description-container > .panel-box.is-expanded > .panel-box-content,body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content {
-	flex-grow: 1;
-	max-height: none;
+	flex-grow: 1;    /* Distribute available space to this item */
+	min-height: 0;   /* Critical: Allows this item to shrink smaller than its content */
+	height: 0;       /* Sets flex-basis to 0, ensuring flex-grow calculates size from this baseline */
+	overflow-y: auto;/* Enable scrollbar if content exceeds the calculated height */
+
+	max-height: none; /* Correctly overrides general .panel-box-content max-height */
 	opacity: 1;
-	overflow-y: hidden;
-	min-height: 0;
-	display: flex;
-	flex-direction: column;
 	padding-top: var(--spacing-xs);
 	padding-bottom: var(--spacing-lg);
 	padding-left: var(--spacing-lg);
-	padding-right: var(--spacing-lg)
+	padding-right: var(--spacing-lg);
 }
 body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content > #landing-theme-info-content {
 	flex-grow: 1;

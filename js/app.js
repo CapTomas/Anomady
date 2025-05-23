@@ -18,6 +18,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const PLAYING_THEMES_STORAGE_KEY = "anomadyPlayingThemes"; // Themes currently being played or recently played
   const LIKED_THEMES_STORAGE_KEY = "anomadyLikedThemes"; // Themes liked by the user
   const LANDING_SELECTED_GRID_THEME_KEY = "anomadyLandingSelectedGridTheme"; // Theme selected on landing page grid
+  const LOG_LEVEL_STORAGE_KEY = "anomadyLogLevel";
+
+  // Logging Configuration
+  const LOG_LEVEL_DEBUG = "debug";
+  const LOG_LEVEL_INFO = "info";
+  const LOG_LEVEL_ERROR = "error";
+  const LOG_LEVELS = [LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_ERROR]; // Order matters: from most verbose to least
+  let currentLogLevel =
+    localStorage.getItem(LOG_LEVEL_STORAGE_KEY) || LOG_LEVEL_INFO;
 
   // AI Model identifiers
   const PAID_MODEL_NAME = "gemini-2.5-flash-preview-04-17"; // Identifier for the preferred/paid model
@@ -137,6 +146,52 @@ document.addEventListener("DOMContentLoaded", () => {
   const AUTOSCROLL_THRESHOLD = 40; // Pixel threshold to re-enable auto-scroll
 
   /**
+   * Logs a message to the console if the current log level allows it.
+   * @param {string} level - The log level of the message ('debug', 'info', 'error').
+   * @param {...any} messages - The messages to log.
+   */
+  function log(level, ...messages) {
+    const levelIndex = LOG_LEVELS.indexOf(level);
+    const currentLevelIndex = LOG_LEVELS.indexOf(currentLogLevel);
+
+    if (levelIndex === -1) {
+      // Fallback for unknown levels
+      console.error(`[Anomady/UNKNOWN_LOG_LEVEL: ${level}]`, ...messages);
+      return;
+    }
+
+    if (levelIndex >= currentLevelIndex) {
+      const prefix = `[Anomady/${level.toUpperCase()}]`;
+      if (level === LOG_LEVEL_ERROR) {
+        console.error(prefix, ...messages);
+      } else {
+        console.log(prefix, ...messages);
+      }
+    }
+  }
+
+  /**
+   * Sets the application's current log level and saves it to localStorage.
+   * @param {string} newLevel - The new log level ('debug', 'info', 'error').
+   */
+  function setLogLevel(newLevel) {
+    if (LOG_LEVELS.includes(newLevel)) {
+      currentLogLevel = newLevel;
+      localStorage.setItem(LOG_LEVEL_STORAGE_KEY, newLevel);
+      log(LOG_LEVEL_INFO, `Log level set to ${newLevel.toUpperCase()}`);
+    } else {
+      log(
+        LOG_LEVEL_ERROR,
+        `Invalid log level: ${newLevel}. Valid levels are: ${LOG_LEVELS.join(
+          ", "
+        )}`
+      );
+    }
+  }
+  // Expose setLogLevel to window for easy debugging via console
+  window.setAnomadyLogLevel = setLogLevel;
+
+  /**
    * Fetches and parses a JSON file.
    * @param {string} filePath - Path to the JSON file.
    * @returns {Promise<object>} Parsed JSON object.
@@ -151,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       return await response.json();
     } catch (error) {
-      console.error(`Error fetching JSON ${filePath}:`, error);
+      log(LOG_LEVEL_ERROR, `Error fetching JSON ${filePath}:`, error);
       throw error; // Re-throw to be handled by caller
     }
   }
@@ -167,10 +222,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const configData = await fetchJSON(configFilePath);
       ALL_THEMES_CONFIG[themeId] = configData;
     } catch (error) {
-      console.error(
+      log(
+        LOG_LEVEL_ERROR,
         `Failed to load config for theme ${themeId} from ${configFilePath}`
       );
-      // Error handled by caller (ensureThemeDataLoaded)
     }
   }
 
@@ -185,7 +240,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const texts = await fetchJSON(textsFilePath);
       themeTextData[themeId] = texts;
     } catch (error) {
-      console.error(
+      log(
+        LOG_LEVEL_ERROR,
         `Failed to load texts for theme ${themeId} from ${textsFilePath}`
       );
     }
@@ -204,7 +260,8 @@ document.addEventListener("DOMContentLoaded", () => {
       NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[themeId] =
         promptsConfig.NARRATIVE_LANG_PROMPT_PARTS || {};
     } catch (error) {
-      console.error(
+      log(
+        LOG_LEVEL_ERROR,
         `Failed to load prompts config for theme ${themeId} from ${promptsConfigFilePath}`
       );
     }
@@ -218,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function ensureThemeDataLoaded(themeId) {
     const themeManifestEntry = THEMES_MANIFEST.find((t) => t.id === themeId);
     if (!themeManifestEntry) {
-      console.error(`Theme ${themeId} not found in THEMES_MANIFEST.`);
+      log(LOG_LEVEL_ERROR, `Theme ${themeId} not found in THEMES_MANIFEST.`);
       return false;
     }
     const themePath = themeManifestEntry.path;
@@ -230,7 +287,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!ALL_THEMES_CONFIG[themeId]) success = false;
       }
       if (success && !themeTextData[themeId]) {
-        // Only load if config loaded
         await loadThemeTexts(themeId, themePath);
         if (!themeTextData[themeId]) success = false;
       }
@@ -243,8 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!PROMPT_URLS_BY_THEME[themeId]) success = false;
       }
     } catch (error) {
-      // Catch errors from fetchJSON re-throws
-      console.error(`Error ensuring data for theme ${themeId}:`, error);
+      log(LOG_LEVEL_ERROR, `Error ensuring data for theme ${themeId}:`, error);
       success = false;
     }
     return success;
@@ -319,11 +374,9 @@ document.addEventListener("DOMContentLoaded", () => {
    * @returns {boolean} True if API key is successfully set, false otherwise.
    */
   async function setupApiKey() {
-    // Make function async
     GEMINI_API_KEY = localStorage.getItem("userGeminiApiKey");
     if (!GEMINI_API_KEY) {
       const apiKeyInput = await showCustomModal({
-        // await the promise
         type: "prompt",
         titleKey: "prompt_enter_api_key_title",
         messageKey: "prompt_enter_api_key",
@@ -352,7 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const statusErrorMsg = getUIText("status_error");
 
       addMessageToLog(errorMsg, "system");
-      console.error(errorMsg);
+      log(LOG_LEVEL_ERROR, errorMsg);
       if (systemStatusIndicator) {
         systemStatusIndicator.textContent = statusErrorMsg;
         systemStatusIndicator.className = "status-indicator status-danger";
@@ -376,7 +429,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Saves the current game state (history, dashboard, etc.) to localStorage for the active theme.
    */
   function saveGameState() {
-    if (!playerIdentifier || !currentTheme) return; // Do not save if essential info is missing
+    if (!playerIdentifier || !currentTheme) return;
 
     const gameStateKey = GAME_STATE_STORAGE_KEY_PREFIX + currentTheme;
     const gameState = {
@@ -392,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       localStorage.setItem(gameStateKey, JSON.stringify(gameState));
     } catch (e) {
-      console.error("Error saving game state:", e);
+      log(LOG_LEVEL_ERROR, "Error saving game state:", e);
       addMessageToLog(getUIText("error_saving_progress"), "system-error");
     }
   }
@@ -402,90 +455,87 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {string} themeIdToLoad - The ID of the theme whose state needs to be loaded.
    * @returns {boolean} True if state was successfully loaded and applied, false otherwise.
    */
-function loadGameState(themeIdToLoad) {
-  const gameStateKey = GAME_STATE_STORAGE_KEY_PREFIX + themeIdToLoad;
-  try {
-    const savedStateString = localStorage.getItem(gameStateKey);
-    if (!savedStateString) return false; // No saved state found
+  function loadGameState(themeIdToLoad) {
+    const gameStateKey = GAME_STATE_STORAGE_KEY_PREFIX + themeIdToLoad;
+    try {
+      const savedStateString = localStorage.getItem(gameStateKey);
+      if (!savedStateString) return false; // No saved state found
 
-    const savedState = JSON.parse(savedStateString);
-    if (
-      !savedState.playerIdentifier ||
-      !savedState.gameHistory ||
-      savedState.gameHistory.length === 0
-    ) {
-      clearGameStateInternal(themeIdToLoad); // Clear potentially corrupt state
+      const savedState = JSON.parse(savedStateString);
+      if (
+        !savedState.playerIdentifier ||
+        !savedState.gameHistory ||
+        savedState.gameHistory.length === 0
+      ) {
+        clearGameStateInternal(themeIdToLoad); // Clear potentially corrupt state
+        return false;
+      }
+
+      playerIdentifier = savedState.playerIdentifier;
+      gameHistory = savedState.gameHistory;
+      lastKnownDashboardUpdates = savedState.lastDashboardUpdates || {};
+      lastKnownGameStateIndicators = savedState.lastGameStateIndicators || {};
+      currentPromptType = savedState.currentPromptType || "default";
+      currentNarrativeLanguage =
+        savedState.currentNarrativeLanguage || currentAppLanguage;
+      currentSuggestedActions = savedState.lastSuggestedActions || [];
+      currentPanelStates = savedState.panelStates || {};
+
+      if (storyLog) storyLog.innerHTML = "";
+      gameHistory.forEach((turn) => {
+        if (turn.role === "user") {
+          addMessageToLog(turn.parts[0].text, "player");
+        } else if (turn.role === "model") {
+          try {
+            const modelResponse = JSON.parse(turn.parts[0].text);
+            addMessageToLog(modelResponse.narrative, "gm");
+          } catch (e) {
+            log(
+              LOG_LEVEL_ERROR,
+              "Error parsing model response from history:",
+              e,
+              turn.parts[0].text
+            );
+            addMessageToLog(getUIText("error_reconstruct_story"), "system");
+          }
+        }
+      });
+
+      updateDashboard(lastKnownDashboardUpdates, false);
+      handleGameStateIndicators(lastKnownGameStateIndicators, false);
+
+      const themeConfig = ALL_THEMES_CONFIG[themeIdToLoad];
+      if (themeConfig && themeConfig.dashboard_config) {
+        const dashboardConfig = themeConfig.dashboard_config;
+        const playerIdentifierConfigKey = (dashboardConfig.left_panel || [])
+          .flatMap((p) => p.items)
+          .find(
+            (item) => item.id === "name" || item.id === "character_name"
+          )?.id;
+
+        if (playerIdentifierConfigKey) {
+          const playerIdentifierConfig = findItemConfigById(
+            dashboardConfig,
+            playerIdentifierConfigKey
+          );
+          if (playerIdentifierConfig) {
+            const el = document.getElementById(
+              `info-${playerIdentifierConfig.id}`
+            );
+            if (el) el.textContent = playerIdentifier;
+          }
+        }
+      }
+
+      isInitialGameLoad = false;
+      return true;
+    } catch (e) {
+      log(LOG_LEVEL_ERROR, `Error loading game state for ${themeIdToLoad}:`, e);
+      clearGameStateInternal(themeIdToLoad);
+      localStorage.removeItem(gameStateKey);
       return false;
     }
-
-    playerIdentifier = savedState.playerIdentifier;
-    gameHistory = savedState.gameHistory;
-    lastKnownDashboardUpdates = savedState.lastDashboardUpdates || {};
-    lastKnownGameStateIndicators = savedState.lastGameStateIndicators || {};
-    currentPromptType = savedState.currentPromptType || "default";
-    currentNarrativeLanguage =
-      savedState.currentNarrativeLanguage || currentAppLanguage;
-    currentSuggestedActions = savedState.lastSuggestedActions || []; // Load suggested actions
-    currentPanelStates = savedState.panelStates || {}; // Load panel states
-
-    if (storyLog) storyLog.innerHTML = "";
-    gameHistory.forEach((turn) => {
-      if (turn.role === "user") {
-        addMessageToLog(turn.parts[0].text, "player");
-      } else if (turn.role === "model") {
-        try {
-          const modelResponse = JSON.parse(turn.parts[0].text);
-          addMessageToLog(modelResponse.narrative, "gm");
-          // Suggested actions from history are not re-applied here, only the last set.
-        } catch (e) {
-          console.error(
-            "Error parsing model response from history:",
-            e,
-            turn.parts[0].text
-          );
-          addMessageToLog(getUIText("error_reconstruct_story"), "system");
-        }
-      }
-    });
-
-    updateDashboard(lastKnownDashboardUpdates, false);
-    handleGameStateIndicators(lastKnownGameStateIndicators, false); // Pass false as it's not initial boot of THIS session turn
-
-    // The display of suggested actions will be handled by the calling function
-    // (initializeApp or changeThemeAndStart) after the UI is fully visible.
-
-    const themeConfig = ALL_THEMES_CONFIG[themeIdToLoad];
-    if (themeConfig && themeConfig.dashboard_config) {
-      const dashboardConfig = themeConfig.dashboard_config;
-      const playerIdentifierConfigKey = (dashboardConfig.left_panel || [])
-        .flatMap((p) => p.items)
-        .find(
-          (item) => item.id === "name" || item.id === "character_name"
-        )?.id;
-
-      if (playerIdentifierConfigKey) {
-        const playerIdentifierConfig = findItemConfigById(
-          dashboardConfig,
-          playerIdentifierConfigKey
-        );
-        if (playerIdentifierConfig) {
-          const el = document.getElementById(
-            `info-${playerIdentifierConfig.id}`
-          );
-          if (el) el.textContent = playerIdentifier;
-        }
-      }
-    }
-
-    isInitialGameLoad = false;
-    return true;
-  } catch (e) {
-    console.error(`Error loading game state for ${themeIdToLoad}:`, e);
-    clearGameStateInternal(themeIdToLoad); // Clear potentially corrupt state in memory
-    localStorage.removeItem(gameStateKey); // Remove corrupt state from storage
-    return false;
   }
-}
 
   /**
    * Clears in-memory game state variables, typically for the current theme.
@@ -493,7 +543,6 @@ function loadGameState(themeIdToLoad) {
    */
   function clearGameStateInternal(themeIdToClear) {
     if (themeIdToClear === currentTheme) {
-      // Only clear if it's the active theme
       gameHistory = [];
       playerIdentifier = "";
       currentPromptType = "initial";
@@ -503,7 +552,7 @@ function loadGameState(themeIdToLoad) {
       currentSuggestedActions = [];
       currentPanelStates = {};
       if (storyLog) storyLog.innerHTML = "";
-      clearSuggestedActions(); // This clears the DOM
+      clearSuggestedActions();
     }
   }
 
@@ -513,23 +562,23 @@ function loadGameState(themeIdToLoad) {
    */
   function clearGameState(themeIdToClear) {
     localStorage.removeItem(GAME_STATE_STORAGE_KEY_PREFIX + themeIdToClear);
-    clearGameStateInternal(themeIdToClear); // Also clear in-memory state if it's the current theme
+    clearGameStateInternal(themeIdToClear);
   }
 
   /**
    * Fetches a specific prompt text file for a given theme.
    * @param {string} promptName - The name of the prompt (e.g., 'initial', 'combat').
    * @param {string} themeId - The ID of the theme.
+   * @param {boolean} isCritical - Whether the prompt is critical for the game to function.
    * @returns {Promise<string>} A promise that resolves to the prompt text or an error message.
    */
   async function fetchPrompt(promptName, themeId, isCritical = false) {
-    // Added isCritical parameter
     if (
       !PROMPT_URLS_BY_THEME[themeId] ||
       !PROMPT_URLS_BY_THEME[themeId][promptName]
     ) {
       const errorMsg = `Error: Prompt URL for "${promptName}" in theme "${themeId}" not found in configuration.`;
-      console.error(errorMsg);
+      log(LOG_LEVEL_ERROR, errorMsg);
       return isCritical
         ? `CRITICAL_ERROR: ${errorMsg}`
         : `NON_CRITICAL_ERROR: ${errorMsg}`;
@@ -539,7 +588,8 @@ function loadGameState(themeIdToLoad) {
       const response = await fetch(promptUrl);
       if (!response.ok) {
         if (response.status === 404 && !isCritical) {
-          console.warn(
+          log(
+            LOG_LEVEL_INFO,
             `Optional prompt file not found (404): ${themeId}/${promptName} at ${promptUrl}. Will fallback if needed.`
           );
           return `FILE_NOT_FOUND_NON_CRITICAL: ${themeId}/${promptName}`;
@@ -550,7 +600,8 @@ function loadGameState(themeIdToLoad) {
       }
       return await response.text();
     } catch (error) {
-      console.error(
+      log(
+        LOG_LEVEL_ERROR,
         `Error fetching prompt ${themeId}/${promptName} from ${promptUrl}:`,
         error
       );
@@ -567,9 +618,8 @@ function loadGameState(themeIdToLoad) {
    * @returns {Promise<boolean>} True if all prompts loaded successfully, false otherwise.
    */
   async function loadAllPromptsForTheme(themeId) {
-    const themeConfig = ALL_THEMES_CONFIG[themeId]; // This is now loaded dynamically
+    const themeConfig = ALL_THEMES_CONFIG[themeId];
     if (!themeConfig || !PROMPT_URLS_BY_THEME[themeId]) {
-      // PROMPT_URLS_BY_THEME also loaded dynamically
       addMessageToLog(
         getUIText("error_no_prompts_for_theme", { THEME: themeId }),
         "system"
@@ -586,7 +636,7 @@ function loadGameState(themeIdToLoad) {
         if (!text.startsWith("CRITICAL_ERROR:")) {
           gamePrompts[themeId][name] = text;
         } else {
-          gamePrompts[themeId][name] = text;
+          gamePrompts[themeId][name] = text; // Store error placeholder
         }
       });
     });
@@ -605,10 +655,17 @@ function loadGameState(themeIdToLoad) {
           );
         }
       }
-      console.log(`Successfully processed prompts for theme: ${themeId}`);
+      log(
+        LOG_LEVEL_INFO,
+        `Successfully processed prompts for theme: ${themeId}`
+      );
       return true;
     } catch (error) {
-      console.error(`Error during prompt loading for ${themeId}:`, error);
+      log(
+        LOG_LEVEL_ERROR,
+        `Error during prompt loading for ${themeId}:`,
+        error
+      );
       if (systemStatusIndicator) {
         systemStatusIndicator.textContent = getUIText("status_error");
         systemStatusIndicator.className = "status-indicator status-danger";
@@ -664,7 +721,8 @@ function loadGameState(themeIdToLoad) {
     }
 
     if (!isValidPromptText(basePromptText)) {
-      console.warn(
+      log(
+        LOG_LEVEL_INFO,
         `Prompt "${promptTypeToUse}" (and potential fallbacks like "${basePromptKey}") not found or invalid for theme "${currentTheme}". Attempting default theme fallback.`
       );
       const ultimateFallbackKey =
@@ -674,14 +732,12 @@ function loadGameState(themeIdToLoad) {
           ? "master_initial"
           : "master_default";
 
-      // Ensure default theme prompts are loaded if not already
       if (
         !gamePrompts[DEFAULT_THEME_ID] ||
         !gamePrompts[DEFAULT_THEME_ID][ultimateFallbackKey]
       ) {
-        // This case should ideally be handled by pre-loading default theme prompts
-        // in initializeApp or ensureThemeDataLoaded. For safety, log an error.
-        console.error(
+        log(
+          LOG_LEVEL_ERROR,
           `CRITICAL FALLBACK FAILURE: Default theme (${DEFAULT_THEME_ID}) prompts not available for ${ultimateFallbackKey}.`
         );
         return `{"narrative": "SYSTEM ERROR: Core prompt files for default theme are critically missing. Cannot generate AI instructions.", "dashboard_updates": {}, "suggested_actions": ["Restart Game", "Contact Support"], "game_state_indicators": {"activity_status": "Error", "combat_engaged": false, "comms_channel_active": false}}`;
@@ -689,12 +745,14 @@ function loadGameState(themeIdToLoad) {
       basePromptText = gamePrompts[DEFAULT_THEME_ID]?.[ultimateFallbackKey];
 
       if (isValidPromptText(basePromptText)) {
-        console.warn(
+        log(
+          LOG_LEVEL_INFO,
           `Used default theme's "${ultimateFallbackKey}" prompt for current theme "${currentTheme}".`
         );
         basePromptKey = ultimateFallbackKey;
       } else {
-        console.error(
+        log(
+          LOG_LEVEL_ERROR,
           `CRITICAL PROMPT FAILURE: Neither "${promptTypeToUse}" nor any fallback (including default theme's "${ultimateFallbackKey}") could be loaded for theme "${currentTheme}". Prompt content: ${basePromptText}`
         );
         return `{"narrative": "SYSTEM ERROR: Core prompt files are critically missing or invalid. Cannot generate AI instructions.", "dashboard_updates": {}, "suggested_actions": ["Restart Game", "Contact Support"], "game_state_indicators": {"activity_status": "Error", "combat_engaged": false, "comms_channel_active": false}}`;
@@ -702,7 +760,8 @@ function loadGameState(themeIdToLoad) {
     }
 
     if (!isValidPromptText(basePromptText)) {
-      console.error(
+      log(
+        LOG_LEVEL_ERROR,
         `Failed to load a critical prompt template: ${basePromptKey} for theme ${currentTheme}. Content was: ${basePromptText}`
       );
       return `{"narrative": "SYSTEM ERROR: Prompt template ${basePromptKey} missing or failed to load for ${currentTheme}.", "dashboard_updates": {}, "suggested_actions": ["Check panel.", "Change theme."], "game_state_indicators": {"activity_status": "Error", "combat_engaged": false, "comms_channel_active": false}}`;
@@ -758,7 +817,6 @@ function loadGameState(themeIdToLoad) {
         generatedGameStateIndicators += description;
       });
       if (!generatedGameStateIndicators.includes('"activity_status"')) {
-        // Ensure activity_status is always described for AI
         const activityStatusDesc =
           themeConfig.id === "grim_warden" &&
           dashboardItems.find((item) => item.id === "activity_status")
@@ -830,19 +888,19 @@ function loadGameState(themeIdToLoad) {
         ) {
           helperFileContent = gamePrompts[currentTheme][fallbackHelperKey];
         } else if (
+          // Fallback to default theme's helper
           gamePrompts[DEFAULT_THEME_ID] &&
           isValidPromptText(
             gamePrompts[DEFAULT_THEME_ID][langSpecificHelperKey]
           )
         ) {
-          // Fallback to default theme's helper
           helperFileContent =
             gamePrompts[DEFAULT_THEME_ID][langSpecificHelperKey];
         } else if (
+          // Fallback to default theme's English helper
           gamePrompts[DEFAULT_THEME_ID] &&
           isValidPromptText(gamePrompts[DEFAULT_THEME_ID][fallbackHelperKey])
         ) {
-          // Fallback to default theme's English helper
           helperFileContent = gamePrompts[DEFAULT_THEME_ID][fallbackHelperKey];
         }
 
@@ -875,7 +933,7 @@ function loadGameState(themeIdToLoad) {
       ] ||
       NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[DEFAULT_THEME_ID]?.[
         DEFAULT_LANGUAGE
-      ] || // Assuming DEFAULT_LANGUAGE is cs or en
+      ] ||
       `The narrative must be in ${currentNarrativeLanguage.toUpperCase()}.`;
 
     let processedPromptText = basePromptText;
@@ -1049,7 +1107,6 @@ function loadGameState(themeIdToLoad) {
           themeConfig.naming_convention === "asset" ||
           currentTheme === "scifi"
         ) {
-          // Keep scifi ship name logic
           [
             "suggestedShipName1",
             "suggestedShipName2",
@@ -1098,9 +1155,10 @@ function loadGameState(themeIdToLoad) {
         ? "inline-flex"
         : "none";
     if (systemStatusIndicator)
+      // Hide system status during GM activity
       systemStatusIndicator.style.display = isProcessing
         ? "none"
-        : "inline-flex"; // Hide system status during GM activity
+        : "inline-flex";
 
     if (playerActionInput) playerActionInput.disabled = isProcessing;
     if (sendActionButton) sendActionButton.disabled = isProcessing;
@@ -1156,7 +1214,10 @@ function loadGameState(themeIdToLoad) {
    */
   function addMessageToLog(text, sender) {
     if (!storyLog) {
-      console.log(`Message (${sender}): ${text} (storyLog element not found)`);
+      log(
+        LOG_LEVEL_DEBUG,
+        `Message (${sender}): ${text} (storyLog element not found)`
+      );
       return;
     }
     if (
@@ -1216,32 +1277,31 @@ function loadGameState(themeIdToLoad) {
       suggestedActionsWrapper.style.display === "none"
     ) {
       currentSuggestedActions =
-        actions && Array.isArray(actions) ? actions.slice(0, 3) : []; // Still store even if not visible
+        actions && Array.isArray(actions) ? actions.slice(0, 3) : [];
       return;
     }
 
-    suggestedActionsWrapper.innerHTML = ""; // Clear previous suggestions
-    currentSuggestedActions = []; // Reset before populating
+    suggestedActionsWrapper.innerHTML = "";
+    currentSuggestedActions = [];
 
     if (actions && Array.isArray(actions) && actions.length > 0) {
       actions.slice(0, 3).forEach((actionTxt) => {
-        // Display up to 3 suggestions
         if (typeof actionTxt === "string" && actionTxt.trim() !== "") {
           const btn = document.createElement("button");
           btn.classList.add("ui-button");
           btn.textContent = actionTxt;
           btn.addEventListener("click", () => {
             if (playerActionInput) {
-              playerActionInput.value = actionTxt; // Populate input field
+              playerActionInput.value = actionTxt;
               playerActionInput.focus();
               playerActionInput.dispatchEvent(
                 new Event("input", { bubbles: true })
-              ); // Trigger auto-grow
+              );
               autoGrowTextarea(playerActionInput);
             }
           });
           suggestedActionsWrapper.appendChild(btn);
-          currentSuggestedActions.push(actionTxt); // Store the displayed action
+          currentSuggestedActions.push(actionTxt);
         }
       });
     }
@@ -1486,7 +1546,8 @@ function loadGameState(themeIdToLoad) {
 
     const currentThemeFullConfig = ALL_THEMES_CONFIG[currentTheme];
     if (!currentThemeFullConfig || !currentThemeFullConfig.dashboard_config) {
-      console.error(
+      log(
+        LOG_LEVEL_ERROR,
         "Dashboard configuration missing for current theme:",
         currentTheme
       );
@@ -1672,7 +1733,8 @@ function loadGameState(themeIdToLoad) {
     if (!currentTheme) return;
     const currentThemeFullConfig = ALL_THEMES_CONFIG[currentTheme];
     if (!currentThemeFullConfig || !currentThemeFullConfig.dashboard_config) {
-      console.error(
+      log(
+        LOG_LEVEL_ERROR,
         "Dashboard configuration missing for current theme for default texts:",
         currentTheme
       );
@@ -1881,7 +1943,8 @@ function loadGameState(themeIdToLoad) {
    * Animates the expansion or collapse of a panel box.
    * @param {string} boxId - The ID of the panel box element.
    * @param {boolean} shouldExpand - True to expand, false to collapse.
-   * @param {boolean} manageVisibility - True if the panel's display property should be managed (for initially hidden panels).
+   * @param {boolean} manageVisibility - True if the panel's display property should be managed.
+   * @param {boolean} isRestoringState - True if this call is part of restoring a saved panel state.
    */
   function animatePanelBox(
     boxId,
@@ -1895,55 +1958,45 @@ function loadGameState(themeIdToLoad) {
     const content = box.querySelector(".panel-box-content");
     if (!header || !content) return;
 
-    // const isCurrentlyExpanded = box.classList.contains('is-expanded'); // Not strictly needed here
-
     if (shouldExpand) {
-      // If managing visibility and box is hidden, make it visible before animation
       if (box.style.display === "none" && manageVisibility) {
-        box.style.opacity = "0"; // Start transparent for fade-in
+        box.style.opacity = "0";
         box.style.display = "flex";
       } else if (box.style.display === "none") {
-        // Just make it visible if not managing opacity
         box.style.display = "flex";
       }
 
-      // Use requestAnimationFrame to ensure style changes are applied before transition starts
       requestAnimationFrame(() => {
         box.classList.add("is-expanded");
-        if (manageVisibility) box.style.opacity = "1"; // Fade in
+        if (manageVisibility) box.style.opacity = "1";
         header.setAttribute("aria-expanded", "true");
         content.setAttribute("aria-hidden", "false");
       });
     } else {
-      // Collapse
       box.classList.remove("is-expanded");
       header.setAttribute("aria-expanded", "false");
       content.setAttribute("aria-hidden", "true");
 
       if (manageVisibility) {
-        box.style.opacity = "0"; // Start fade-out
-        // Get transition duration from CSS to hide element after transition
+        box.style.opacity = "0";
         const transitionDuration =
           parseFloat(
             getComputedStyle(content).transitionDuration.replace("s", "")
           ) * 1000 || 300;
 
         const onHideTransitionEnd = (event) => {
-          // Ensure we're reacting to the correct element's transition
           if (event.target === content || event.target === box) {
             if (!box.classList.contains("is-expanded")) {
-              // Double-check it's still meant to be hidden
               box.style.display = "none";
-              content.style.display = ""; // Reset content display (might be set by CSS)
+              content.style.display = "";
             }
             content.removeEventListener("transitionend", onHideTransitionEnd);
             box.removeEventListener("transitionend", onHideTransitionEnd);
           }
         };
         content.addEventListener("transitionend", onHideTransitionEnd);
-        box.addEventListener("transitionend", onHideTransitionEnd); // Listen on box too as opacity might transition on it
+        box.addEventListener("transitionend", onHideTransitionEnd);
 
-        // Fallback timeout in case transitionend doesn't fire
         setTimeout(() => {
           if (
             !box.classList.contains("is-expanded") &&
@@ -1952,128 +2005,129 @@ function loadGameState(themeIdToLoad) {
             box.style.display = "none";
             content.style.display = "";
           }
-        }, transitionDuration + 100); // Add a small buffer
-      } else {
-        // If not managing visibility, panel just collapses but remains in layout
+        }, transitionDuration + 100);
       }
     }
-    // Update panel state if not restoring from saved state
     if (!isRestoringState) {
       currentPanelStates[boxId] = shouldExpand;
-      // No need to call saveGameState() here, it will be called at appropriate times (e.g., after AI turn)
     }
   }
 
-/**
- * Initializes collapsible panel boxes for a given theme, setting up click/keyboard listeners.
- * Panel states are restored from `currentPanelStates` if available, otherwise defaults are used.
- * @param {string} themeIdForPanels - The ID of the theme whose panels are being initialized.
- */
-function initializeCollapsiblePanelBoxes(themeIdForPanels) {
-  const themeFullConfig = ALL_THEMES_CONFIG[themeIdForPanels];
-  if (!themeFullConfig || !themeFullConfig.dashboard_config) {
-    console.error(
-      "Dashboard configuration missing for theme for panel boxes:",
-      themeIdForPanels
-    );
-    return;
-  }
-  const themeCfg = themeFullConfig.dashboard_config;
-
-  const allPanelConfigs = [
-    ...(themeCfg.left_panel || []),
-    ...(themeCfg.right_panel || []),
-  ];
-
-  // Check if panel states might have been loaded (i.e., currentPanelStates has entries)
-  const hasLoadedPanelStates = Object.keys(currentPanelStates).length > 0;
-
-  allPanelConfigs.forEach((boxCfg) => {
-    const boxElement = document.getElementById(boxCfg.id);
-    if (!boxElement) return;
-
-    // Ensure header element exists and re-attach listeners to a fresh clone
-    // to prevent multiple bindings if this function were ever called >1 time on same elements.
-    let headerElement = boxElement.querySelector(".panel-box-header");
-    if (!headerElement) return;
-
-    const newHeaderElement = headerElement.cloneNode(true);
-    headerElement.parentNode.replaceChild(newHeaderElement, headerElement);
-    headerElement = newHeaderElement; // Work with the clone
-
-    if (
-      boxCfg.type === "collapsible" ||
-      boxCfg.type === "hidden_until_active"
-    ) {
-      headerElement.addEventListener("click", () => {
-        if (
-          boxElement.style.display !== "none" || // Allow click if visible
-          boxCfg.type === "collapsible" // Collapsible always clickable
-        ) {
-          animatePanelBox(
-            boxCfg.id,
-            !boxElement.classList.contains("is-expanded"),
-            boxCfg.type === "hidden_until_active",
-            false // User interaction, not restoring from saved state definition
-          );
-        }
-      });
-      headerElement.setAttribute("tabindex", "0");
-      headerElement.addEventListener("keydown", (e) => {
-        if (
-          (e.key === "Enter" || e.key === " ") &&
-          (boxElement.style.display !== "none" ||
-            boxCfg.type === "collapsible")
-        ) {
-          e.preventDefault();
-          animatePanelBox(
-            boxCfg.id,
-            !boxElement.classList.contains("is-expanded"),
-            boxCfg.type === "hidden_until_active",
-            false // User interaction
-          );
-        }
-      });
-    }
-
-    let initialExpandState;
-    let isRestoringThisPanelState = false;
-
-    if (hasLoadedPanelStates && currentPanelStates[boxCfg.id] !== undefined) {
-      // A saved state exists for this panel
-      initialExpandState = currentPanelStates[boxCfg.id];
-      isRestoringThisPanelState = true;
-    } else {
-      // No saved state for this panel, or no saved states at all (new game)
-      // Use theme config default.
-      isRestoringThisPanelState = false;
-      if (boxCfg.type === "hidden_until_active") {
-        initialExpandState = false; // Default for hidden_until_active is collapsed
-      } else {
-        initialExpandState = boxCfg.initial_expanded || false; // Default for collapsible
-      }
-    }
-
-    if (boxCfg.type === "static") {
-      // Static panels are always expanded and not part of savable currentPanelStates
-      boxElement.style.display = "flex"; // Ensure visible
-      boxElement.style.opacity = "1";
-      animatePanelBox(boxCfg.id, true, false, false); // isRestoringState = false as it's not from currentPanelStates
-    } else if (boxCfg.type === "hidden_until_active") {
-      // initialExpandState is from currentPanelStates if restoring, otherwise false.
-      // animatePanelBox handles display:none/flex and opacity via manageVisibility=true.
-      animatePanelBox(boxCfg.id, initialExpandState, true, isRestoringThisPanelState);
-    } else { // Collapsible
-      boxElement.style.display = "flex"; // Ensure visible if not managed by animatePanelBox's manageVisibility
-      boxElement.style.opacity = "1";
-      const delay = boxCfg.boot_delay || 0;
-      setTimeout(
-        () => animatePanelBox(boxCfg.id, initialExpandState, false, isRestoringThisPanelState),
-        delay
+  /**
+   * Initializes collapsible panel boxes for a given theme, setting up click/keyboard listeners.
+   * Panel states are restored from `currentPanelStates` if available, otherwise defaults are used.
+   * @param {string} themeIdForPanels - The ID of the theme whose panels are being initialized.
+   */
+  function initializeCollapsiblePanelBoxes(themeIdForPanels) {
+    const themeFullConfig = ALL_THEMES_CONFIG[themeIdForPanels];
+    if (!themeFullConfig || !themeFullConfig.dashboard_config) {
+      log(
+        LOG_LEVEL_ERROR,
+        "Dashboard configuration missing for theme for panel boxes:",
+        themeIdForPanels
       );
+      return;
     }
-  });
-}
+    const themeCfg = themeFullConfig.dashboard_config;
+
+    const allPanelConfigs = [
+      ...(themeCfg.left_panel || []),
+      ...(themeCfg.right_panel || []),
+    ];
+
+    const hasLoadedPanelStates = Object.keys(currentPanelStates).length > 0;
+
+    allPanelConfigs.forEach((boxCfg) => {
+      const boxElement = document.getElementById(boxCfg.id);
+      if (!boxElement) return;
+
+      let headerElement = boxElement.querySelector(".panel-box-header");
+      if (!headerElement) return;
+
+      const newHeaderElement = headerElement.cloneNode(true);
+      headerElement.parentNode.replaceChild(newHeaderElement, headerElement);
+      headerElement = newHeaderElement;
+
+      if (
+        boxCfg.type === "collapsible" ||
+        boxCfg.type === "hidden_until_active"
+      ) {
+        headerElement.addEventListener("click", () => {
+          if (
+            // Allow click if visible
+            boxElement.style.display !== "none" ||
+            boxCfg.type === "collapsible" // Collapsible always clickable
+          ) {
+            animatePanelBox(
+              boxCfg.id,
+              !boxElement.classList.contains("is-expanded"),
+              boxCfg.type === "hidden_until_active",
+              false // User interaction, not restoring from saved state
+            );
+          }
+        });
+        headerElement.setAttribute("tabindex", "0");
+        headerElement.addEventListener("keydown", (e) => {
+          if (
+            (e.key === "Enter" || e.key === " ") &&
+            (boxElement.style.display !== "none" ||
+              boxCfg.type === "collapsible")
+          ) {
+            e.preventDefault();
+            animatePanelBox(
+              boxCfg.id,
+              !boxElement.classList.contains("is-expanded"),
+              boxCfg.type === "hidden_until_active",
+              false // User interaction
+            );
+          }
+        });
+      }
+
+      let initialExpandState;
+      let isRestoringThisPanelState = false;
+
+      if (hasLoadedPanelStates && currentPanelStates[boxCfg.id] !== undefined) {
+        initialExpandState = currentPanelStates[boxCfg.id];
+        isRestoringThisPanelState = true;
+      } else {
+        isRestoringThisPanelState = false;
+        if (boxCfg.type === "hidden_until_active") {
+          initialExpandState = false;
+        } else {
+          initialExpandState = boxCfg.initial_expanded || false;
+        }
+      }
+
+      if (boxCfg.type === "static") {
+        boxElement.style.display = "flex";
+        boxElement.style.opacity = "1";
+        animatePanelBox(boxCfg.id, true, false, false);
+      } else if (boxCfg.type === "hidden_until_active") {
+        animatePanelBox(
+          boxCfg.id,
+          initialExpandState,
+          true,
+          isRestoringThisPanelState
+        );
+      } else {
+        // Collapsible
+        boxElement.style.display = "flex";
+        boxElement.style.opacity = "1";
+        const delay = boxCfg.boot_delay || 0;
+        setTimeout(
+          () =>
+            animatePanelBox(
+              boxCfg.id,
+              initialExpandState,
+              false,
+              isRestoringThisPanelState
+            ),
+          delay
+        );
+      }
+    });
+  }
 
   /**
    * Updates the text and ARIA attributes of the AI model toggle button.
@@ -2129,16 +2183,17 @@ function initializeCollapsiblePanelBoxes(themeIdForPanels) {
   }
 
   /**
-   * Adds a theme to the 'playing' list (moves to front if already present).
+   * Adds a theme to the 'playing' list.
    * @param {string} themeId - The ID of the theme to add.
    */
-function addPlayingTheme(themeId) {
-  if (!isThemePlaying(themeId)) { // Only add if not already present
-    playingThemes.push(themeId);   // Add to the end to maintain order of addition
-    saveThemeListsToStorage();
-    updateTopbarThemeIcons(); // Update UI after any change
+  function addPlayingTheme(themeId) {
+    if (!isThemePlaying(themeId)) {
+      // Only add if not already present
+      playingThemes.push(themeId); // Add to the end to maintain order of addition
+      saveThemeListsToStorage();
+      updateTopbarThemeIcons();
+    }
   }
-}
 
   /**
    * Adds a theme to the 'liked' list.
@@ -2305,6 +2360,7 @@ function addPlayingTheme(themeId) {
     });
     likedThemes.forEach((themeId) => {
       if (ALL_THEMES_CONFIG[themeId] && !isThemePlaying(themeId)) {
+        // Ensure theme config is loaded
         const icon = createThemeTopbarIcon(themeId, "liked");
         if (icon) {
           icon.dataset.type = "liked";
@@ -2325,7 +2381,6 @@ function addPlayingTheme(themeId) {
    * @param {string} themeId - The ID of the clicked theme.
    */
   async function handleTopbarThemeIconClick(themeId) {
-    // Make async for changeThemeAndStart
     const themeIsCurrentlyActiveInView = currentTheme === themeId;
     if (isThemePlaying(themeId)) {
       if (!themeIsCurrentlyActiveInView) {
@@ -2439,7 +2494,7 @@ function addPlayingTheme(themeId) {
       }
       initializeDashboardDefaultTexts();
     } else if (onLandingPage) {
-      renderThemeGrid(); // Re-render grid to update theme names if language changed
+      renderThemeGrid();
       if (currentLandingGridSelection && themeGridContainer) {
         const selectedBtn = themeGridContainer.querySelector(
           `.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`
@@ -2503,7 +2558,7 @@ function addPlayingTheme(themeId) {
     ) {
       addMessageToLog(getUIText(langChangeMsgKey), "system");
     } else {
-      console.log(getUIText(langChangeMsgKey));
+      log(LOG_LEVEL_INFO, getUIText(langChangeMsgKey));
     }
     if (currentTheme) saveGameState();
   }
@@ -2518,7 +2573,8 @@ function addPlayingTheme(themeId) {
     if (!indicators || !currentTheme) return;
     const currentThemeFullCfg = ALL_THEMES_CONFIG[currentTheme];
     if (!currentThemeFullCfg || !currentThemeFullCfg.dashboard_config) {
-      console.error(
+      log(
+        LOG_LEVEL_ERROR,
         "Dashboard configuration missing for theme for game state indicators:",
         currentTheme
       );
@@ -2553,7 +2609,7 @@ function addPlayingTheme(themeId) {
     });
 
     let newPromptType = "default";
-    let specificPromptFoundForActiveIndicator = false;
+    let highestPriorityFound = -1; // Start with a value lower than any possible priority
 
     if (
       themeDashCfg.game_state_indicators &&
@@ -2561,15 +2617,23 @@ function addPlayingTheme(themeId) {
     ) {
       for (const indicatorConfig of themeDashCfg.game_state_indicators) {
         const indicatorId = indicatorConfig.id;
+
         if (indicators[indicatorId] === true) {
-          if (
+          // Check if a valid prompt exists for this indicator
+          const promptText = gamePrompts[currentTheme]?.[indicatorId];
+          const isValidPromptForIndicator =
             PROMPT_URLS_BY_THEME[currentTheme]?.[indicatorId] &&
-            gamePrompts[currentTheme]?.[indicatorId] &&
-            !gamePrompts[currentTheme][indicatorId].startsWith("Error:")
-          ) {
-            newPromptType = indicatorId;
-            specificPromptFoundForActiveIndicator = true;
-            break;
+            promptText &&
+            !promptText.startsWith("Error:") &&
+            !promptText.startsWith("CRITICAL_ERROR:") &&
+            !promptText.startsWith("FILE_NOT_FOUND_NON_CRITICAL:");
+
+          if (isValidPromptForIndicator) {
+            const priority = indicatorConfig.priority || 0; // Default to 0 if not specified
+            if (priority > highestPriorityFound) {
+              highestPriorityFound = priority;
+              newPromptType = indicatorId;
+            }
           }
         }
       }
@@ -2577,7 +2641,12 @@ function addPlayingTheme(themeId) {
 
     if (currentPromptType !== newPromptType) {
       currentPromptType = newPromptType;
-      console.log(`Switched to prompt type: ${currentPromptType}`);
+      log(
+        LOG_LEVEL_INFO,
+        `Switched to prompt type: ${currentPromptType} (Priority: ${
+          highestPriorityFound > -1 ? highestPriorityFound : "default"
+        })`
+      );
     }
   }
 
@@ -2613,10 +2682,10 @@ function addPlayingTheme(themeId) {
       activePromptType
     );
 
-    console.log("----- BEGIN SYSTEM PROMPT -----");
-    console.log(`Using prompt type: ${activePromptType}`);
-    console.log(systemPromptText);
-    console.log("----- END SYSTEM PROMPT -----");
+    log(LOG_LEVEL_DEBUG, "----- BEGIN SYSTEM PROMPT -----");
+    log(LOG_LEVEL_DEBUG, `Using prompt type: ${activePromptType}`);
+    log(LOG_LEVEL_DEBUG, "System Prompt Text:", systemPromptText);
+    log(LOG_LEVEL_DEBUG, "----- END SYSTEM PROMPT -----");
 
     if (systemPromptText.startsWith('{"narrative": "SYSTEM ERROR:')) {
       try {
@@ -2626,7 +2695,8 @@ function addPlayingTheme(themeId) {
           displaySuggestedActions(errorResponse.suggested_actions);
       } catch (e) {
         addMessageToLog(systemPromptText, "system-error");
-        console.error(
+        log(
+          LOG_LEVEL_ERROR,
           "Failed to parse system error JSON from getSystemPrompt:",
           e,
           systemPromptText
@@ -2680,20 +2750,86 @@ function addPlayingTheme(themeId) {
       ) {
         let jsonStringFromAI = responseData.candidates[0].content.parts[0].text;
         try {
-          const parsedAIResponse = JSON.parse(jsonStringFromAI);
+          let parsedAIResponse;
+          try {
+            parsedAIResponse = JSON.parse(jsonStringFromAI);
+          } catch (parseError) {
+            // Log the full raw response when initial parsing fails
+            log(
+              LOG_LEVEL_ERROR,
+              "Initial JSON.parse failed. Raw AI response:",
+              jsonStringFromAI
+            );
+
+            let extractedJsonString = null;
+            // Attempt to extract content between the first '{' and last '}'
+            const firstBrace = jsonStringFromAI.indexOf("{");
+            const lastBrace = jsonStringFromAI.lastIndexOf("}");
+
+            if (firstBrace !== -1 && lastBrace > firstBrace) {
+              extractedJsonString = jsonStringFromAI.substring(
+                firstBrace,
+                lastBrace + 1
+              );
+            } else {
+              // Fallback for cases where primary structure might be an array
+              const firstBracket = jsonStringFromAI.indexOf("[");
+              const lastBracket = jsonStringFromAI.lastIndexOf("]");
+              if (firstBracket !== -1 && lastBracket > firstBracket) {
+                extractedJsonString = jsonStringFromAI.substring(
+                  firstBracket,
+                  lastBracket + 1
+                );
+              }
+            }
+
+            if (extractedJsonString) {
+              try {
+                parsedAIResponse = JSON.parse(extractedJsonString);
+                log(
+                  LOG_LEVEL_INFO,
+                  "Successfully parsed extracted JSON content after initial failure."
+                );
+              } catch (nestedParseError) {
+                log(
+                  LOG_LEVEL_ERROR,
+                  "Failed to parse extracted JSON content. Extracted part:",
+                  extractedJsonString
+                );
+                throw new Error(
+                  `Invalid JSON structure after attempting cleanup. Original parse error: ${parseError.message}. Cleanup parse error: ${nestedParseError.message}. See full raw response in previous log.`
+                );
+              }
+            } else {
+              // If no suitable JSON structure could be extracted, re-throw the original error
+              throw parseError;
+            }
+          }
+
+          // Validate the structure of the (potentially cleaned) parsed response
           if (
+            !parsedAIResponse ||
             typeof parsedAIResponse.narrative !== "string" ||
             typeof parsedAIResponse.dashboard_updates !== "object" ||
             !Array.isArray(parsedAIResponse.suggested_actions) ||
             typeof parsedAIResponse.game_state_indicators !== "object"
           ) {
+            // Log the full response if structure is invalid even after successful parse/cleanup
+            log(
+              LOG_LEVEL_ERROR,
+              "Parsed JSON has invalid structure or is null/undefined. Full AI response (if not logged above in case of initial parse failure):",
+              jsonStringFromAI,
+              "Parsed object:",
+              parsedAIResponse
+            );
             throw new Error(
-              "Invalid JSON structure from AI. Missing required fields."
+              "Invalid JSON structure from AI or cleanup failed. Missing required fields or response is null."
             );
           }
+
           gameHistory.push({
             role: "model",
-            parts: [{ text: JSON.stringify(parsedAIResponse) }],
+            parts: [{ text: JSON.stringify(parsedAIResponse) }], // Store the cleaned, validated JSON
           });
           updateDashboard(parsedAIResponse.dashboard_updates);
           displaySuggestedActions(parsedAIResponse.suggested_actions);
@@ -2711,13 +2847,12 @@ function addPlayingTheme(themeId) {
           }
           return parsedAIResponse.narrative;
         } catch (e) {
+          // Catches errors from JSON.parse, cleanup attempts, or structure validation
+          // The detailed error message (e.message) will be more specific now.
+          // The full raw AI response should have been logged by one of the inner catch blocks if parsing failed.
+          // This re-throws the error to be caught by the outer API call catch block.
           throw new Error(
-            `Invalid JSON received from AI: ${
-              e.message
-            }. Raw string (first 500 chars): ${jsonStringFromAI.substring(
-              0,
-              500
-            )}...`
+            `Error processing AI response: ${e.message}. Check console for full AI output if parsing/validation failed.`
           );
         }
       } else if (responseData.promptFeedback?.blockReason) {
@@ -2732,7 +2867,7 @@ function addPlayingTheme(themeId) {
         throw new Error("No valid candidate or text found in AI response.");
       }
     } catch (error) {
-      console.error("Gemini API call failed:", error);
+      log(LOG_LEVEL_ERROR, "Gemini API call failed:", error);
       addMessageToLog(
         getUIText("error_api_call_failed", { ERROR_MSG: error.message }),
         "system"
@@ -2864,7 +2999,7 @@ function addPlayingTheme(themeId) {
       await showCustomModal({
         type: "alert",
         titleKey: "alert_title_error",
-        messageKey: "alert_select_theme_first", // Or a more specific "theme data missing"
+        messageKey: "alert_select_theme_first",
       });
       return;
     }
@@ -2921,7 +3056,10 @@ function addPlayingTheme(themeId) {
         themeFullConfig &&
         !themeFullConfig.dashboard_config
       ) {
-        console.error(`Dashboard config not found for theme: ${themeId}`);
+        log(
+          LOG_LEVEL_ERROR,
+          `Dashboard config not found for theme: ${themeId}`
+        );
         leftPanel.innerHTML = `<p>${getUIText(
           "error_dashboard_config_missing"
         )}</p>`;
@@ -2956,7 +3094,7 @@ function addPlayingTheme(themeId) {
         header.classList.add("panel-box-header");
         const title = document.createElement("h3");
         title.classList.add("panel-box-title");
-        title.textContent = getUIText(panelConfig.title_key, {}, themeId); // Use themeId for context
+        title.textContent = getUIText(panelConfig.title_key, {}, themeId);
         header.appendChild(title);
         panelBox.appendChild(header);
         const content = document.createElement("div");
@@ -2985,7 +3123,7 @@ function addPlayingTheme(themeId) {
           }
           const label = document.createElement("span");
           label.classList.add("label");
-          label.textContent = getUIText(item.label_key, {}, themeId); // Use themeId for context
+          label.textContent = getUIText(item.label_key, {}, themeId);
           itemContainer.appendChild(label);
           if (item.type === "meter") {
             const meterContainer = document.createElement("div");
@@ -3047,14 +3185,14 @@ function addPlayingTheme(themeId) {
         !themeTextData[DEFAULT_THEME_ID] ||
         !PROMPT_URLS_BY_THEME[DEFAULT_THEME_ID])
     ) {
-      await ensureThemeDataLoaded(DEFAULT_THEME_ID); // Ensure default theme's full data is loaded for fallbacks
+      await ensureThemeDataLoaded(DEFAULT_THEME_ID);
     }
 
     const themeWasAlreadyPlaying = isThemePlaying(newThemeId);
 
     if (oldThemeId === newThemeId && !forceNewGame) {
       if (storyLogViewport && storyLogViewport.style.display === "none") {
-        switchToGameView(newThemeId); // Makes suggestedActionsWrapper visible
+        switchToGameView(newThemeId);
         displaySuggestedActions(currentSuggestedActions); // Display them now
         if (
           playerActionInput &&
@@ -3065,31 +3203,24 @@ function addPlayingTheme(themeId) {
           playerActionInput.focus();
         }
       }
-      // If already current theme and in game view, and not forcing new game, do nothing further.
-      // Order in playingThemes is not affected here.
       return;
     }
 
     currentTheme = newThemeId;
     localStorage.setItem(CURRENT_THEME_STORAGE_KEY, currentTheme);
 
-    // Add to playingThemes list only if it's a new game action for this theme,
-    // or if it wasn't in the playing list before this specific action.
-    // addPlayingTheme itself now handles adding to the end only if not present.
     if (forceNewGame || !themeWasAlreadyPlaying) {
-        addPlayingTheme(newThemeId);
+      addPlayingTheme(newThemeId);
     }
-    // If !forceNewGame && themeWasAlreadyPlaying, we are just switching view to an existing session,
-    // so no need to call addPlayingTheme as its order is already established.
 
-    clearGameStateInternal(currentTheme); // Clears currentPanelStates & currentSuggestedActions in memory
+    clearGameStateInternal(currentTheme);
     if (forceNewGame) {
       localStorage.removeItem(GAME_STATE_STORAGE_KEY_PREFIX + currentTheme);
     }
 
-    switchToGameView(currentTheme); // Makes suggestedActionsWrapper visible
+    switchToGameView(currentTheme);
     generatePanelsForTheme(currentTheme);
-    setAppLanguageAndThemeUI(currentAppLanguage, currentTheme); // This calls initializeDashboardDefaultTexts
+    setAppLanguageAndThemeUI(currentAppLanguage, currentTheme);
 
     const promptsLoadedSuccessfully = await loadAllPromptsForTheme(
       currentTheme
@@ -3104,13 +3235,14 @@ function addPlayingTheme(themeId) {
       return;
     }
     if (startGameButton) startGameButton.disabled = false;
-    updateTopbarThemeIcons(); // Called after potential addPlayingTheme
+    updateTopbarThemeIcons();
 
-    if (!forceNewGame && loadGameState(currentTheme)) { // loadGameState populates currentSuggestedActions
+    if (!forceNewGame && loadGameState(currentTheme)) {
+      // Populates currentSuggestedActions
       isInitialGameLoad = false;
 
       initializeCollapsiblePanelBoxes(currentTheme);
-      displaySuggestedActions(currentSuggestedActions); // Display them now that wrapper is visible
+      displaySuggestedActions(currentSuggestedActions); // Display them now
 
       if (nameInputSection) nameInputSection.style.display = "none";
       if (actionInputSection) actionInputSection.style.display = "flex";
@@ -3137,10 +3269,10 @@ function addPlayingTheme(themeId) {
       isInitialGameLoad = true;
       currentPromptType = "initial";
       currentPanelStates = {};
-      currentSuggestedActions = []; // Ensure it's empty for new game or failed load
+      currentSuggestedActions = []; // Ensure it's empty
 
       initializeCollapsiblePanelBoxes(currentTheme);
-      displaySuggestedActions(currentSuggestedActions); // Clears the display
+      displaySuggestedActions(currentSuggestedActions); // Clears display
 
       if (storyLog) storyLog.innerHTML = "";
       if (nameInputSection) nameInputSection.style.display = "flex";
@@ -3187,7 +3319,10 @@ function addPlayingTheme(themeId) {
    */
   function initializeSpecificPanelHeader(panelContainerElement) {
     if (!panelContainerElement) {
-      console.error(`Panel container element not found for click listener.`);
+      log(
+        LOG_LEVEL_ERROR,
+        `Panel container element not found for click listener.`
+      );
       return;
     }
     const box = panelContainerElement.querySelector(".panel-box");
@@ -3296,7 +3431,7 @@ function addPlayingTheme(themeId) {
     currentLandingGridSelection = localStorage.getItem(
       LANDING_SELECTED_GRID_THEME_KEY
     );
-    renderThemeGrid(); // Requires ALL_THEMES_CONFIG to be populated
+    renderThemeGrid();
     if (
       currentLandingGridSelection &&
       ALL_THEMES_CONFIG[currentLandingGridSelection]
@@ -3353,12 +3488,12 @@ function addPlayingTheme(themeId) {
   function renderThemeGrid() {
     if (!themeGridContainer) return;
     themeGridContainer.innerHTML = "";
-    // Iterate over THEMES_MANIFEST to find available themes
     THEMES_MANIFEST.forEach((themeMeta) => {
       const themeConfig = ALL_THEMES_CONFIG[themeMeta.id];
       if (!themeConfig || !themeTextData[themeMeta.id]) {
         // Ensure config and texts are loaded
-        console.warn(
+        log(
+          LOG_LEVEL_INFO,
           `Theme config or text data for ${themeMeta.id} not loaded. Skipping grid item.`
         );
         return;
@@ -3368,8 +3503,8 @@ function addPlayingTheme(themeId) {
       button.classList.add("theme-grid-icon");
       button.dataset.theme = themeConfig.id;
 
-      // Get the full theme name for title and img alt fallback
       const themeFullName = getUIText(
+        // Get the full theme name for title and img alt fallback
         themeConfig.name_key,
         {},
         themeConfig.id
@@ -3379,17 +3514,17 @@ function addPlayingTheme(themeId) {
       const img = document.createElement("img");
       img.src = themeConfig.icon; // Path from config.json
       const altTextKey = `theme_icon_alt_text_default_${themeConfig.id}`;
-      img.alt = getUIText(altTextKey, {}, themeConfig.id) || themeFullName; // Fallback to full name
+      img.alt = getUIText(altTextKey, {}, themeConfig.id) || themeFullName;
 
       const nameSpan = document.createElement("span");
       nameSpan.classList.add("theme-grid-icon-name");
-      // Get the short theme name for display on the grid icon itself
       const themeShortName = getUIText(
-        themeConfig.name_short_key || themeConfig.name_key, // Use short_key, fallback to name_key
+        // Get the short theme name for display
+        themeConfig.name_short_key || themeConfig.name_key,
         {},
         themeConfig.id
       );
-      nameSpan.textContent = themeShortName; // Visible text is short name
+      nameSpan.textContent = themeShortName;
 
       button.appendChild(img);
       button.appendChild(nameSpan);
@@ -3433,7 +3568,6 @@ function addPlayingTheme(themeId) {
     )
       return;
 
-    // Update panel titles (they are generic, but good to ensure they are set)
     const descPanelContainer = document.getElementById(
       "landing-theme-description-container"
     );
@@ -3441,7 +3575,7 @@ function addPlayingTheme(themeId) {
       ? descPanelContainer.querySelector(".panel-box-title")
       : null;
     if (descTitle)
-      descTitle.textContent = getUIText("landing_theme_description_title"); // Generic title
+      descTitle.textContent = getUIText("landing_theme_description_title");
 
     const detailsPanelContainer = document.getElementById(
       "landing-theme-details-container"
@@ -3450,10 +3584,10 @@ function addPlayingTheme(themeId) {
       ? detailsPanelContainer.querySelector(".panel-box-title")
       : null;
     if (detailsTitle)
-      detailsTitle.textContent = getUIText("landing_theme_info_title"); // Generic title
+      detailsTitle.textContent = getUIText("landing_theme_info_title");
 
-    // Set lore text, using themeId for context
     landingThemeLoreText.textContent = getUIText(
+      // Use themeId for context
       themeConfig.lore_key,
       {},
       themeId
@@ -3466,14 +3600,13 @@ function addPlayingTheme(themeId) {
         animatePanelBox(lorePanelBox.id, true, false);
     }
 
-    // Use name_long_key for the briefing panel, fallback to name_key
     const themeDisplayNameInBriefing = getUIText(
+      // Use name_long_key for briefing
       themeConfig.name_long_key || themeConfig.name_key,
       {},
       themeId
     );
 
-    // Set name, inspiration, tone, and concept text using themeId for context
     landingThemeInfoContent.innerHTML = `
             <p><strong>${getUIText(
               "landing_theme_name_label"
@@ -3483,26 +3616,26 @@ function addPlayingTheme(themeId) {
             )}:</strong> <span id="landing-selected-theme-inspiration">${getUIText(
       themeConfig.inspiration_key,
       {},
-      themeId
+      themeId // Use themeId for context
     )}</span></p>
             <p><strong>${getUIText(
               "landing_theme_tone_label"
             )}:</strong> <span id="landing-selected-theme-tone">${getUIText(
       themeConfig.tone_key,
       {},
-      themeId
+      themeId // Use themeId for context
     )}</span></p>
             <p><strong>${getUIText(
               "landing_theme_concept_label"
             )}:</strong> <span id="landing-selected-theme-concept">${getUIText(
       themeConfig.concept_key,
       {},
-      themeId
+      themeId // Use themeId for context
     )}</span></p>
         `;
 
     renderLandingPageActionButtons(themeId); // Create "Choose" and "Like" buttons
-    if (landingThemeActions) landingThemeActions.style.display = "flex"; // Show action buttons
+    if (landingThemeActions) landingThemeActions.style.display = "flex";
 
     if (animate) {
       // Optionally animate details panel expansion
@@ -3521,12 +3654,14 @@ function addPlayingTheme(themeId) {
     if (!landingThemeActions) return;
     landingThemeActions.innerHTML = "";
     const themeConfig = ALL_THEMES_CONFIG[themeId];
-    if (!themeConfig) return;
+    const themeManifestEntry = THEMES_MANIFEST.find(t => t.id === themeId);
+
+    if (!themeConfig || !themeManifestEntry) return;
 
     const chooseButton = document.createElement("button");
     chooseButton.id = "choose-theme-button";
     chooseButton.classList.add("ui-button");
-    if (themeConfig.playable) {
+    if (themeManifestEntry.playable) {
       chooseButton.classList.add("primary");
       chooseButton.textContent = getUIText("landing_choose_theme_button");
       chooseButton.addEventListener("click", () =>
@@ -3542,7 +3677,7 @@ function addPlayingTheme(themeId) {
     const likeButton = document.createElement("button");
     likeButton.id = "like-theme-button";
     likeButton.classList.add("ui-button", "icon-button", "like-theme-button");
-    if (themeConfig.playable) {
+    if (themeManifestEntry.playable) {
       const isCurrentlyLiked = isThemeLiked(themeId);
       const likeTextKey = isCurrentlyLiked
         ? "aria_label_unlike_theme"
@@ -3578,7 +3713,6 @@ function addPlayingTheme(themeId) {
    * @param {string} themeId - The ID of the theme chosen.
    */
   async function handleChooseThisThemeClick(themeId) {
-    // Made async
     await changeThemeAndStart(themeId, false);
   }
 
@@ -3635,14 +3769,13 @@ function addPlayingTheme(themeId) {
         !customModalMessage ||
         !customModalActions
       ) {
-        console.error("Custom modal elements not found!");
+        log(LOG_LEVEL_ERROR, "Custom modal elements not found!");
         currentModalResolve(
           type === "prompt" ? null : type === "confirm" ? false : null
         );
         return;
       }
 
-      // Use explicitThemeContext for modal text if provided
       const modalThemeContext = explicitThemeContext || currentTheme;
 
       customModalTitle.textContent = getUIText(
@@ -3666,8 +3799,12 @@ function addPlayingTheme(themeId) {
             : "";
           setTimeout(() => customModalInput.focus(), 50);
         } else {
-          console.error("Modal input elements not found for prompt type.");
-          customModalInputContainer.style.display = "none";
+          log(
+            LOG_LEVEL_ERROR,
+            "Modal input elements not found for prompt type."
+          );
+          if (customModalInputContainer)
+            customModalInputContainer.style.display = "none";
         }
       } else {
         if (customModalInputContainer)
@@ -3685,7 +3822,7 @@ function addPlayingTheme(themeId) {
         modalThemeContext
       );
       confirmBtn.addEventListener("click", () => {
-        if (type === "prompt") {
+        if (type === "prompt" && customModalInput) {
           currentModalResolve(customModalInput.value);
         } else if (type === "confirm") {
           currentModalResolve(true);
@@ -3719,11 +3856,13 @@ function addPlayingTheme(themeId) {
    * and determines whether to show landing page or resume a game.
    */
   async function initializeApp() {
+    log(LOG_LEVEL_INFO, "Application initialization started.");
     if (
       typeof THEMES_MANIFEST === "undefined" ||
       THEMES_MANIFEST.length === 0
     ) {
-      console.error(
+      log(
+        LOG_LEVEL_ERROR,
         "CRITICAL: THEMES_MANIFEST is not loaded or is empty. Application cannot proceed."
       );
       if (customModalOverlay && customModalTitle && customModalMessage) {
@@ -3777,7 +3916,7 @@ function addPlayingTheme(themeId) {
     try {
       await Promise.all(themeLoadPromises);
     } catch (error) {
-      console.error("Error loading initial theme data:", error);
+      log(LOG_LEVEL_ERROR, "Error loading initial theme data:", error);
       await showCustomModal({
         type: "alert",
         titleKey: "alert_title_error",
@@ -3809,7 +3948,8 @@ function addPlayingTheme(themeId) {
       ) {
         switchToLandingView();
       } else {
-        console.error(
+        log(
+          LOG_LEVEL_ERROR,
           "Cannot switch to landing view, critical theme data (incl. default) missing."
         );
         if (systemStatusIndicator) {
@@ -3833,17 +3973,19 @@ function addPlayingTheme(themeId) {
 
       const resumeDataLoaded = await ensureThemeDataLoaded(currentTheme);
       if (!resumeDataLoaded) {
-        console.error(
+        log(
+          LOG_LEVEL_ERROR,
           `Failed to load necessary data for resuming theme ${currentTheme}.`
         );
         removePlayingTheme(currentTheme, false);
         clearGameState(currentTheme);
         currentTheme = null;
         localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
-        currentSuggestedActions = []; // Ensure reset
+        currentSuggestedActions = [];
       } else {
         if (await loadAllPromptsForTheme(currentTheme)) {
-          if (loadGameState(currentTheme)) { // Populates currentSuggestedActions
+          if (loadGameState(currentTheme)) {
+            // Populates currentSuggestedActions
             gameToResume = currentTheme;
             successfullyLoadedStateForResume = true;
           } else {
@@ -3854,7 +3996,7 @@ function addPlayingTheme(themeId) {
             playerIdentifier = tempPlayerId;
             gameHistory = tempGameHistory;
             currentPanelStates = {};
-            currentSuggestedActions = []; // Ensure reset
+            currentSuggestedActions = [];
           }
         } else {
           addMessageToLog(
@@ -3868,19 +4010,18 @@ function addPlayingTheme(themeId) {
           playerIdentifier = tempPlayerId;
           gameHistory = tempGameHistory;
           currentPanelStates = {};
-          currentSuggestedActions = []; // Ensure reset
+          currentSuggestedActions = [];
         }
       }
     } else if (currentTheme) {
       currentTheme = null;
       localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
       currentPanelStates = {};
-      currentSuggestedActions = []; // Ensure reset
+      currentSuggestedActions = [];
     }
 
-
     if (gameToResume && successfullyLoadedStateForResume) {
-      switchToGameView(currentTheme); // Makes suggestedActionsWrapper visible
+      switchToGameView(currentTheme);
       generatePanelsForTheme(currentTheme);
       setAppLanguageAndThemeUI(currentAppLanguage, currentTheme);
 
@@ -3914,11 +4055,12 @@ function addPlayingTheme(themeId) {
       }
       isInitialGameLoad = false;
     } else {
-      currentSuggestedActions = []; // Ensure reset for landing view
-      switchToLandingView(); // Will eventually call displaySuggestedActions([])
+      currentSuggestedActions = [];
+      switchToLandingView();
     }
     updateTopbarThemeIcons();
     if (playerActionInput) autoGrowTextarea(playerActionInput);
+    log(LOG_LEVEL_INFO, "Application initialization complete.");
   }
 
   // Event Listeners
@@ -3929,7 +4071,7 @@ function addPlayingTheme(themeId) {
   if (newGameButton) {
     newGameButton.addEventListener("click", () => {
       startNewGameSession().catch((err) => {
-        console.error("Error during New Game operation:", err);
+        log(LOG_LEVEL_ERROR, "Error during New Game operation:", err);
       });
     });
   }
@@ -3938,7 +4080,8 @@ function addPlayingTheme(themeId) {
   if (startGameButton) {
     startGameButton.addEventListener("click", () => {
       startGameAfterIdentifier().catch((err) => {
-        console.error(
+        log(
+          LOG_LEVEL_ERROR,
           "Error during startGameAfterIdentifier (button click):",
           err
         );
@@ -3949,7 +4092,8 @@ function addPlayingTheme(themeId) {
     playerIdentifierInputEl.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
         startGameAfterIdentifier().catch((err) => {
-          console.error(
+          log(
+            LOG_LEVEL_ERROR,
             "Error during startGameAfterIdentifier (Enter key):",
             err
           );
@@ -3960,7 +4104,11 @@ function addPlayingTheme(themeId) {
   if (sendActionButton) {
     sendActionButton.addEventListener("click", () => {
       sendPlayerAction().catch((err) => {
-        console.error("Error during sendPlayerAction (button click):", err);
+        log(
+          LOG_LEVEL_ERROR,
+          "Error during sendPlayerAction (button click):",
+          err
+        );
       });
     });
   }
@@ -3969,7 +4117,11 @@ function addPlayingTheme(themeId) {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         sendPlayerAction().catch((err) => {
-          console.error("Error during sendPlayerAction (Enter key):", err);
+          log(
+            LOG_LEVEL_ERROR,
+            "Error during sendPlayerAction (Enter key):",
+            err
+          );
         });
       }
     });

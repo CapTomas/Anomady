@@ -11,54 +11,51 @@ ${narrativeLanguageInstruction}
 
 PLAYER CHARACTER: ${currentPlayerIdentifier}
 
-SITUATION: AN OMEN OR UNSETTLING WHISPER HAS MANIFESTED! The Warden senses or observes something unnatural, a portent, a dark premonition, or a subtle shift in the Blight's influence. This is not direct combat, but a moment of dread, mystery, or foreboding.
+SITUATION: A RIFT IN REALITY – THE OMEN MANIFESTS! The `omen_detected` flag, set in the previous turn (as per game history), now unfurls its unsettling presence. The ordinary world peels back, revealing a glimpse of something Other. This is not a fight, but an intrusion—a chilling whisper from beyond, a distortion in the fabric of existence, a sign pregnant with dread or dark promise. The Warden stands at the precipice of this unnatural revelation.
 
-PLAYER'S ACTION LEADING TO THIS OMEN (or current general state if spontaneous):
-${player_action_text}
+**CRITICAL CONTEXT:** The full game history is your guide to the Warden's state and the world's ambiance *just before* this omen fully blooms. Your narrative must be a seamless, chilling continuation from that point, making the omen's arrival a stark and impactful contrast.
 
-LAST KNOWN GAME STATE (FOR YOUR REFERENCE, DO NOT DUPLICATE UNLESS CHANGED):
-Last Dashboard State: ${last_dashboard_state_json_string}
-Last Game State Indicators: ${last_game_state_indicators_json_string}
-
-THEME-SPECIFIC OMEN INSTRUCTIONS (Review Carefully):
+THEME-SPECIFIC OMEN INSTRUCTIONS (Weave these into the very fabric of the omen):
 ${theme_specific_instructions}
 
-YOUR IMMEDIATE TASK - OMEN NARRATIVE AND UPDATES:
-1.  **Narrative**: Write a vivid, atmospheric narrative IN THE SPECIFIED NARRATIVE LANGUAGE.
-    *   Describe the omen: What does the Warden see, hear, or feel? Is it a fleeting vision, a sudden chill, unnatural animal behavior, cryptic words carried on the wind, or a physical manifestation of the Blight's strangeness?
-    *   Emphasize the unsettling, mysterious, or dangerous nature of the omen. It should create tension or raise questions.
-    *   Connect it thematically to the Blight, local folklore, or the Warden's current quest if appropriate.
-2.  **Dashboard Updates**: Populate the "dashboard_updates" JSON object with ALL relevant changes.
-    *   **Omen Details (CRITICAL)**:
-        *   `omen_details`: (string, translated) A concise but evocative description of the omen as it would appear on the Warden's "Omens & Whispers" panel. E.g., "A blood moon weeps crimson tears over the barrows.", "Whispers in the dark speak of a slumbering beast beneath the old mill.", "The Warden's silver amulet grows unnaturally cold."
-    *   **Activity & Threat**:
-        *   `activity_status`: (string, translated) Should reflect the Warden's reaction to the omen (e.g., "Investigating Anomaly", "Sensing Dark Portents", "Wary Vigil").
-        *   `threat_level`: (string, value NOT translated, UI text is) Update to "Wary" or "Danger" if the omen implies immediate peril; otherwise, it might remain "Calm" if the omen is more a subtle foreboding.
-    *   Ensure other dashboard values persist unless explicitly changed by the manifestation of the omen.
-3.  **Suggested Actions**: Provide 2-3 concise, thematic actions for the player IN THE NARRATIVE LANGUAGE. These could involve investigating the source, preparing for potential consequences, consulting lore, or attempting to ward off ill effects. Examples: "Examine the strange sigils more closely.", "Seek guidance from the village elder.", "Prepare a warding potion.", "Fortify your position against the unseen."
-4.  **Game State Indicators**: Populate the "game_state_indicators" JSON object.
-    *   `omen_detected`: (boolean) MUST be `true`. This is paramount.
-    *   `activity_status`: (string, translated) MUST be consistent with `dashboard_updates.activity_status` and reflect the Warden's current state regarding the omen.
-    *   Persist other indicators (like `combat_active` - though unlikely to be true simultaneously unless the omen *is* combat - or `rare_trophy_claimed`) unless the narrative explicitly resolves or changes them.
+YOUR IMMEDIATE TASK - BREATHE LIFE INTO THE UNCANNY:
+1.  **Narrative**: Craft an atmospheric, deeply unsettling narrative IN THE SPECIFIED NARRATIVE LANGUAGE. This is a moment of pure, thematic horror or profound mystery.
+    *   **Pierce the Veil:** Describe the omen's full, undeniable manifestation *now*. What impossible sight, sound, sensation, or chilling stillness seizes the Warden's perception? Is it a fleeting, sanity-bending vision? A chorus of spectral voices delivering a cryptic prophecy? The sudden, localized corruption of the environment itself?
+    *   **Echoes of the Unseen:** Emphasize the omen's profound wrongness, its unsettling mystery, or its aura of potential danger. It must create a palpable tension, a creeping dread, or a cascade of urgent, unanswerable questions. Does it feel like a warning, a curse, or a beckoning?
+    *   **A Chill Beyond the Physical:** How does this affect the Warden not just externally, but internally? A sudden cold dread, a disorienting wave of nausea, a prickling sense of ancient eyes upon them, a fragment of forgotten, terrible knowledge?
+    *   **Whispers of the Lore:** If fitting, subtly entwine the omen with the insidious nature of the Blight, ancient local myths, the Warden's deepest fears related to their quest, or a foreshadowing of a specific, looming terror. It must feel integral to this dark world.
+2.  **Dashboard Updates**: Populate the "dashboard_updates" JSON object. These changes must reflect the omen's immediate impact on the Warden's perception or status.
+    *   **Omen Details (CRITICAL - Etch it into the Warden's mind)**:
+        *   `omen_details`: (string, translated) A concise, evocative, and *chilling* summary for the "Omens & Whispers" panel. e.g., "The crows speak in human tongues of a coming slaughter," "Shadows in the corner of the eye writhe with an unnatural life," "The Warden's reflection shows a stranger's face."
+    *   **Warden's State of Mind/Threat Perception**:
+        *   `activity_status`: (string, translated) Reflect the Warden's immediate state after witnessing the omen. e.g., "Shaken by an Unholy Vision," "Deciphering a Dark Portent," "Wary of Unseen Eyes," "Frozen by a Cryptic Warning."
+        *   `threat_level`: (string, value NOT translated) Adjust based on the omen's perceived immediacy and danger. "Wary" or "Danger" if peril feels close; "Calm" if it's a more distant, psychological disturbance, but still unsettling. Consider the state *before* this omen, from history.
+    *   OMIT any field that has NOT changed from its state in the last turn (derived from game history).
+3.  **Suggested Actions**: Offer 2-3 thematic, intriguing actions IN THE NARRATIVE LANGUAGE. These are the Warden's potential responses to this brush with the unnatural.
+    Examples: "Attempt to decipher the vision's meaning.", "Seek a forgotten ritual to ward off the ill influence.", "Investigate the source of the unsettling whispers.", "Steel your nerves and prepare for the worst."
+4.  **Game State Indicators**: Update the "game_state_indicators" JSON object.
+    *   `omen_detected`: (boolean) MUST be `false`. The omen has manifested; this flag is now cleared, returning the game to its default flow for the next player action.
+    *   `activity_status`: (string, translated) MUST mirror the Warden's shaken state from `dashboard_updates.activity_status`.
+    *   Other indicators (`combat_active`, `rare_trophy_claimed`) persist unless this omen *directly and narratively* resolves or changes them (e.g., an omen revealing a hidden trophy, or an omen being the direct precursor to an unavoidable ambush if `combat_active` becomes true).
 
 RESPONSE FORMAT:
 Your response MUST be a single, perfectly structured JSON object as follows:
 {
-  "narrative": "string (Your detailed, atmospheric story segment for this omen. Adhere strictly to the NARRATIVE LANGUAGE and the theme's TONE.)",
+  "narrative": "string (Your atmospheric, chilling, and deeply thematic description of the omen. Make it resonate.)",
   "dashboard_updates": {
-    // (string: string) Key-value pairs for ALL dashboard items that changed this turn.
-    // Example: "omen_details": "The ancient runes on the monolith glow with a sickly green light.", "activity_status": "Deciphering Ill Tidings", "threat_level": "Wary"
+    // (string: string) Key-value pairs for dashboard items explicitly CHANGED by the omen's manifestation.
+    // Example: "omen_details": "The water in the well runs black as ink, and whispers rise from its depths.", "activity_status": "Interpreting a Fell Sign", "threat_level": "Wary"
   },
   "suggested_actions": [
-    "string (Action 1 - thematic, in NARRATIVE LANGUAGE)",
-    "string (Action 2 - thematic, in NARRATIVE LANGUAGE)",
-    "string (Action 3 - optional, thematic, in NARRATIVE LANGUAGE)"
+    "string (Action 1 - an evocative, in-character response in NARRATIVE LANGUAGE)",
+    "string (Action 2 - an intriguing, thematic option in NARRATIVE LANGUAGE)",
+    "string (Action 3 - another fitting choice for the Warden, optional, in NARRATIVE LANGUAGE)"
   ],
   "game_state_indicators": {
     // (string: boolean/string) Key-value pairs for game state flags.
-    // Example: "omen_detected": true, "combat_active": false, "activity_status": "Observing the portent"
-    "omen_detected": true // This is mandatory for omen turns.
+    // Example: "omen_detected": false, "combat_active": false, "activity_status": "Contemplating the dark portent."
+    "omen_detected": false // Mandatory: reset the flag after the omen is handled.
   }
 }
 
-Remember: Omens are not just random events; they should feel like an integral part of the world's oppressive atmosphere or a hint of deeper troubles. They can foreshadow future events, reveal hidden dangers, or test the Warden's resolve.
+This is a moment to disturb, to intrigue, to foreshadow. The omen should be a memorable punctuation mark in the Warden's grim journey, a reminder that the world is deeper and darker than it often seems.

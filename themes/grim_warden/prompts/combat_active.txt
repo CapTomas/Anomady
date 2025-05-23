@@ -11,61 +11,58 @@ ${narrativeLanguageInstruction}
 
 PLAYER CHARACTER: ${currentPlayerIdentifier}
 
-SITUATION: COMBAT ENGAGED! The Warden is now in direct confrontation with a dangerous threat. The air crackles with tension, and every second counts.
+SITUATION: THE DIE IS CAST – COMBAT ERUPTS! The Warden is plunged into a maelstrom of violence. The air itself thrums with menace—the reek of the unnatural, the clang of impending doom, the chilling war cry of a monstrous foe. This is not a skirmish; it is a brutal dance on the edge of oblivion. Your narrative must seize this moment, continuing THE INSTANT the player's last action (from game history) met its violent consequence, dragging them into the heart of the fray.
 
-PLAYER'S ACTION LEADING TO/DURING COMBAT:
-${player_action_text}
+**CRITICAL CONTEXT:** The full game history leading up to this combat turn is provided. You MUST absorb this history to fully grasp the Warden's predicament, the enemy's state (if previously encountered), and the spark that ignited this inferno. Your response is the next beat in this desperate pulse.
 
-LAST KNOWN GAME STATE (FOR YOUR REFERENCE, DO NOT DUPLICATE UNLESS CHANGED):
-Last Dashboard State: ${last_dashboard_state_json_string}
-Last Game State Indicators: ${last_game_state_indicators_json_string}
-
-THEME-SPECIFIC COMBAT INSTRUCTIONS (Review Carefully):
+THEME-SPECIFIC COMBAT INSTRUCTIONS (Infuse these into your every word):
 ${theme_specific_instructions}
 
-YOUR IMMEDIATE TASK - COMBAT NARRATIVE AND UPDATES:
-1.  **Narrative**: Write a vivid, action-oriented narrative IN THE SPECIFIED NARRATIVE LANGUAGE.
-    *   Describe the enemy: its appearance, ferocity, sounds it makes, and its immediate, threatening actions. What makes this creature a true Blighted horror or a desperate foe?
-    *   Detail the Warden's immediate reaction and the unfolding combat. How does their training, equipment, or the environment play into the first moments of this clash?
-    *   The stakes must feel high and personal. Combat in this world is brutal and unforgiving.
-2.  **Dashboard Updates**: Populate the "dashboard_updates" JSON object with ALL relevant changes.
-    *   **Monster Intel (CRITICAL)**: If a monster is engaged, you MUST accurately update ALL its intel fields:
-        *   `monster_type`: (string, translated) The specific, thematic name of the creature (e.g., "Blightfang Alpha", "Crypt Stalker", "Desecrated Knight"). If already engaged, confirm or update if its form/threat changes.
-        *   `monster_toughness_pct`: (string, "0"-"100") Monster's current defense/armor/hide percentage.
-        *   `monster_defense_status_text`: (string, translated) A brief, descriptive status of its defenses (e.g., "Iron-Hard Scales", "Ethereal Ward Shimmering", "Cracked Carapace"). This MUST accompany `monster_toughness_pct`.
-        *   `monster_vitality_pct`: (string, "0"-"100") Monster's current health/vitality percentage.
-    *   **Warden Status**: Update if the Warden is impacted (e.g., took damage, used stamina/elixirs):
-        *   `healthPct`: (string "0"-"100") Warden's current health.
-        *   `staminaPct`: (string "0"-"100") Warden's current stamina.
-        *   `elixir_charges`: (string, translated) Reflect any elixirs used.
-    *   **Activity & Threat**:
-        *   `activity_status`: (string, translated) MUST reflect active combat (e.g., "Locked in Melee!", "Fending off Death!", "Desperate Struggle!").
-        *   `threat_level`: (string, value NOT translated, UI text is) MUST be "Danger".
-    *   Ensure other dashboard values persist unless explicitly changed by the combat initiation.
-3.  **Suggested Actions**: Provide 2-3 concise, tactical, and thematic combat actions for the player IN THE NARRATIVE LANGUAGE. These should be genuinely useful options. Examples: "Target its blighted heart!", "Unleash a cleansing Sign!", "Dodge its telegraphed lunge and counter!", "Exploit the crumbling pillar for cover!".
-4.  **Game State Indicators**: Populate the "game_state_indicators" JSON object.
-    *   `combat_active`: (boolean) MUST be `true`. This is paramount.
-    *   `activity_status`: (string, translated) MUST be consistent with `dashboard_updates.activity_status` and reflect intense combat.
-    *   Persist other indicators (like `omen_detected` or `rare_trophy_claimed`) unless the narrative explicitly resolves or changes them.
+YOUR IMMEDIATE TASK - FORGE A SCENE OF VISCERAL COMBAT:
+1.  **Narrative**: Craft a cinematic, heart-pounding narrative IN THE SPECIFIED NARRATIVE LANGUAGE. This turn is a snapshot of brutal reality.
+    *   **Unleash the Horror:** Describe the enemy's immediate, terrifying action THIS TURN. Is it a monstrous lunge, a sickening display of blighted power, a cunning trap sprung? Make its otherworldly sounds, its grotesque form, its sheer ferocity leap from the page.
+    *   **Clash of Steel and Sinew:** Detail the Warden's desperate, split-second reaction. Capture the visceral impact of the exchange—the jarring shock of parried blows, the tearing of flesh, the strained grunt of exertion, the taste of blood or fear. What tactical reality unfolds in this instant?
+    *   **The Blight's Shadow:** How does the pervasive Blight influence this specific moment of combat? Does it twist the environment, empower the foe, or offer a desperate, dangerous opportunity? Make its presence felt.
+    *   **High Stakes, No Quarter:** This is a fight for survival in a world that offers little mercy. Every wound matters, every choice could be the last. Let this desperation bleed into your descriptions.
+2.  **Dashboard Updates**: Populate the "dashboard_updates" JSON object. Changes here must be a DIRECT consequence of the narrative you've just woven.
+    *   **Monster Intel (CRITICAL - Bring it to Unholy Life)**: Update ALL monster intel fields. If it took a hit, describe the damage not just as a number, but in the `monster_defense_status_text`.
+        *   `monster_type`: (string, translated) Its dreadful, thematic name.
+        *   `monster_toughness_pct`: (string, "0"-"100") Its current resilience.
+        *   `monster_defense_status_text`: (string, translated) e.g., "Hide Gouged, Ichor Weeps," "Supernatural Ward Flickers," "Chitin Cracked."
+        *   `monster_vitality_pct`: (string, "0"-"100") Its lifeblood, draining or holding firm.
+    *   **Warden's Toll**: Reflect the price of battle on the Warden.
+        *   `healthPct`: (string, "0"-"100") Warden's current health.
+        *   `staminaPct`: (string, "0"-"100") Warden's current stamina.
+        *   `elixir_charges`: (string, translated) Elixirs used in this desperate moment?
+    *   **The Pulse of Battle**:
+        *   `activity_status`: (string, translated) e.g., "Locked in Vicious Melee!", "Reeling from a Vile Assault!", "Fighting Tooth and Nail!".
+        *   `threat_level`: (string, value NOT translated) MUST be "Danger".
+    *   OMIT any field that has NOT changed from its state in the last turn (derived from game history).
+3.  **Suggested Actions**: Offer 2-3 tactical, thematic, and *compelling* combat choices IN THE NARRATIVE LANGUAGE. These are the Warden's fleeting opportunities or desperate gambits.
+    Examples: "Press the attack on its blighted wound!", "Invoke a ward against its dark magic!", "Use the broken shrine as cover to regroup!", "Risk a disarming strike on its primary weapon!".
+4.  **Game State Indicators**: Update the "game_state_indicators" JSON object.
+    *   `combat_active`: (boolean) MUST be `true`. This is the reality now.
+    *   `activity_status`: (string, translated) MUST echo the dire straits from `dashboard_updates.activity_status`.
+    *   Other indicators (`omen_detected`, `rare_trophy_claimed`) persist unless this combat turn *directly and narratively* alters them.
 
 RESPONSE FORMAT:
 Your response MUST be a single, perfectly structured JSON object as follows:
 {
-  "narrative": "string (Your detailed, immersive story segment for this combat turn. Adhere strictly to the NARRATIVE LANGUAGE and the theme's TONE.)",
+  "narrative": "string (Your vivid, brutal, and thematic combat narrative for this turn. Make it unforgettable.)",
   "dashboard_updates": {
-    // (string: string) Key-value pairs for ALL dashboard items that changed this turn.
-    // Example: "monster_type": "Gravewight Ravener", "monster_toughness_pct": "100", "monster_defense_status_text": "Bone Armor Intact", "monster_vitality_pct": "100", "activity_status": "Locked in Combat!", "threat_level": "Danger"
+    // (string: string) Key-value pairs for dashboard items explicitly CHANGED this turn.
+    // Example: "monster_type": "Blight-Twisted Ravager", "monster_toughness_pct": "75", "monster_defense_status_text": "Hide Slashed Open", "monster_vitality_pct": "80", "healthPct": "70", "staminaPct": "60", "activity_status": "Battling for Every Inch!", "threat_level": "Danger"
   },
   "suggested_actions": [
-    "string (Action 1 - tactical and thematic, in NARRATIVE LANGUAGE)",
-    "string (Action 2 - tactical and thematic, in NARRATIVE LANGUAGE)",
-    "string (Action 3 - optional, tactical and thematic, in NARRATIVE LANGUAGE)"
+    "string (Action 1 - a desperate, thematic choice in NARRATIVE LANGUAGE)",
+    "string (Action 2 - a tactical, urgent option in NARRATIVE LANGUAGE)",
+    "string (Action 3 - another compelling, in-character move in NARRATIVE LANGUAGE, optional)"
   ],
   "game_state_indicators": {
     // (string: boolean/string) Key-value pairs for game state flags.
-    // Example: "combat_active": true, "omen_detected": false, "activity_status": "Fighting for survival"
-    "combat_active": true // This is mandatory for combat turns.
+    // Example: "combat_active": true, "omen_detected": false, "activity_status": "Locked in a life-or-death struggle!"
+    "combat_active": true // This is absolutely mandatory.
   }
 }
 
-Remember: You are crafting a desperate fight for survival. The Warden is skilled but often facing overwhelming odds or cunning beasts. Make every description count. The Blight's influence should be palpable.
+This is where legends are forged or broken. Make the Warden's struggle palpable. The player should feel the grit, the desperation, and the terrifying might of the Blight's creations.

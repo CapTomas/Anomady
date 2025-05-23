@@ -4,16 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Anomalia</title>
+    <title>Anomady</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="icon" type="image/png" href="images/app/platform_favicon.png">
 </head>
 
-<body> 
+<body>
     <div id="app-root">
         <header id="application-header">
             <div class="top-bar-left">
-                <img id="application-logo" src="images/platform_logo.svg" alt="Application Logo">
+                <img id="application-logo" src="images/app/platform_logo.svg" alt="Application Logo">
                 <div id="theme-selector">
                     <div id="playing-themes-container">
                     </div>
@@ -42,13 +42,14 @@
         <div id="main-layout">
             <aside id="left-panel" class="panel-sidebar">
                 <div id="landing-theme-description-container" style="display: none;">
-                    <div class="panel-box"> 
+                    <div class="panel-box">
                         <div class="panel-box-header">
                             <h3 class="panel-box-title" data-lang-key="landing_theme_description_title">World Lore</h3>
                         </div>
                         <div class="panel-box-content">
-                            <p id="landing-theme-lore-text" data-lang-key="landing_select_theme_prompt_lore">Select a theme from the center to see its description.</p>
-                             
+                            <p id="landing-theme-lore-text" data-lang-key="landing_select_theme_prompt_lore">Select a
+                                theme from the center to see its description.</p>
+
                         </div>
                     </div>
                 </div>
@@ -56,20 +57,20 @@
             <main id="center-column">
                 <div id="theme-grid-container">
                 </div>
-                <div id="story-log-viewport" style="display: none;"> 
+                <div id="story-log-viewport" style="display: none;">
                     <div id="story-log">
                     </div>
                 </div>
-                <div id="suggested-actions-wrapper" style="display: none;"> 
+                <div id="suggested-actions-wrapper" style="display: none;">
                 </div>
-                <div id="player-input-control-panel" style="display: none;"> 
-                    <div id="name-input-section" class="input-group" style="display:none;"> 
+                <div id="player-input-control-panel" style="display: none;">
+                    <div id="name-input-section" class="input-group" style="display:none;">
                         <input type="text" id="player-identifier-input"
-                            data-lang-key-placeholder="placeholder_callsign_login" placeholder="Enter your name...">
+                            data-lang-key-placeholder="placeholder_name_login" placeholder="Enter your name...">
                         <button id="start-game-button" class="ui-button primary"
                             data-lang-key="button_access_systems">Begin</button>
                     </div>
-                    <div id="action-input-section" class="input-group" style="display:none;"> 
+                    <div id="action-input-section" class="input-group" style="display:none;">
                         <textarea id="player-action-input" data-lang-key-placeholder="placeholder_command"
                             placeholder="Enter command or response..." rows="1"></textarea>
                         <button id="send-action-button" class="ui-button primary"
@@ -79,13 +80,14 @@
             </main>
             <aside id="right-panel" class="panel-sidebar">
                 <div id="landing-theme-details-container" style="display: none;">
-                     <div class="panel-box"> 
+                    <div class="panel-box">
                         <div class="panel-box-header">
                             <h3 class="panel-box-title" data-lang-key="landing_theme_info_title">Theme Details</h3>
                         </div>
                         <div class="panel-box-content">
                             <div id="landing-theme-info-content">
-                                <p data-lang-key="landing_select_theme_prompt_details">Select a theme from the center to see its details.</p>
+                                <p data-lang-key="landing_select_theme_prompt_details">Select a theme from the center to
+                                    see its details.</p>
                             </div>
                             <div id="landing-theme-actions" style="display: none; margin-top: var(--spacing-md);">
                             </div>
@@ -95,11 +97,22 @@
             </aside>
         </div>
         <footer id="application-footer">
-            <p>© 2025 Anomalia. Created by Tomas Cap </p>
+            <p>© 2025 Anomady v0.3. Worlds written as you walk them. </p>
         </footer>
+        <div id="custom-modal-overlay" class="modal-overlay">
+            <div id="custom-modal" class="modal-box">
+                <h3 id="custom-modal-title" class="modal-title">Modal Title</h3>
+                <div id="custom-modal-message" class="modal-message">Modal message goes here.</div>
+                <div id="custom-modal-input-container" style="display: none;">
+                    <input type="text" id="custom-modal-input" class="modal-input" placeholder="">
+                </div>
+                <div id="custom-modal-actions" class="modal-actions">
+                </div>
+            </div>
+        </div>
     </div>
-    <script src="js/ui-text-data.js"></script>
-    <script src="js/theme-dashboard-configs.js"></script>
+    <script src="js/global-texts.js"></script>
+    <script src="js/themes-manifest.js"></script>
     <script src="js/app.js"></script>
 </body>
 

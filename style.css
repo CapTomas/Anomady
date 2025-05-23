@@ -51,8 +51,9 @@
 	--color-meter-stamina: var(--color-accent-violet);
 	--color-meter-fuel: var(--color-accent-violet);
 	--color-status-ok-text: var(--color-accent-teal);
-	--color-status-warning-text: var(--color-accent-amber);
-	--color-status-danger-text: #ef4444;
+	--color-status-warning-text: var(--color-meter-medium);
+	--color-status-danger-text: #e6843f;
+	--color-status-critical-text: #dd2222;
 	--color-status-info-text: var(--color-text-accent-interactive);
 	--color-status-offline-text: var(--color-text-muted);
 	--shadow-focus-ring: 0 0 0 2px var(--color-text-accent-interactive);
@@ -163,10 +164,10 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 }
 @keyframes subtlePulse {
 	0%, 100% {
-		opacity: 0.75 
+		opacity: 0.75
 }
 	50% {
-		opacity: 1 
+		opacity: 1
 }
 }
 #gm-activity-indicator[style*="inline-flex"] {
@@ -176,7 +177,7 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	display: block;
 	width: 40px;
 	height: 40px;
-	padding: 4px;
+	padding: 6px;
 	margin-right: var(--spacing-md);
 	background-color: #e3e3e3;
 	border-radius: var(--radius-sm);
@@ -282,7 +283,7 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	flex-direction: column;
 	justify-content: flex-start;
 	gap: var(--spacing-lg);
-	overflow-y: hidden;
+	overflow-y: auto;
 	height: 100%
 }
 #landing-theme-description-container,#landing-theme-details-container {
@@ -364,9 +365,12 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 }
 #landing-theme-actions {
 	display: flex;
-	gap: var(--spacing-md);
+    justify-content: space-between; /* This is the key property */
 	align-items: center;
 	margin-top: var(--spacing-lg)
+}
+#landing-theme-lore-text {
+    white-space: pre-line
 }
 #landing-theme-info-content {
 	display: flex;
@@ -377,7 +381,13 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	margin-bottom: 0
 }
 #landing-theme-actions .ui-button.primary {
-	flex-grow: 1
+    flex-grow: 1;
+    background-color: var(--color-text-secondary);
+    color: var(--arc-background-gradient-color1);
+}
+#landing-theme-actions .ui-button.primary:hover {
+		background-color: var(--color-text-primary);
+		color: var(--arc-background-gradient-color1);
 }
 .like-theme-button img.like-icon {
 	width: calc(var(--font-size-lg) * 1.2);
@@ -389,6 +399,84 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 }
 .like-theme-button.liked img.like-icon {
 	filter: drop-shadow(0 0 3px var(--color-accent-teal))
+}
+.like-theme-button.disabled .like-icon {
+    background-color: var(--color-bg-content-view)
+}
+#like-theme-button.ui-button.icon-button.liketheme-button.disabled {
+background-color: var(--color-bg-content-view)
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease;
+}
+.modal-box {
+	background-color: var(--color-bg-content-view);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg, 20px);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-box {
+    transform: scale(1);
+}
+.modal-title {
+    margin-top: 0;
+    margin-bottom: var(--spacing-md, 15px);
+    font-size: 1.4em;
+	color: var(--color-text-primary);
+}
+.modal-message {
+    margin-bottom: var(--spacing-lg, 20px);
+    font-size: 1em;
+    line-height: 1.6;
+	color: var(--color-text-primary);
+}
+.modal-message p {
+    margin-bottom: var(--spacing-sm, 10px);
+}
+.modal-message p:last-child {
+    margin-bottom: 0;
+}
+.modal-input-container {
+    margin-bottom: var(--spacing-md, 15px);
+}
+.modal-input {
+    width: calc(100% - 2 * var(--spacing-sm, 10px));
+    padding: var(--spacing-sm, 10px);
+    border: 1px solid var(--color-border, #444);
+    background-color: var(--color-background-input, #1e1e2f);
+    color: var(--color-text-input, #e0e0e0);
+    border-radius: var(--border-radius-sm, 4px);
+    font-size: 1em;
+}
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md, 15px);
+}
+.modal-actions .ui-button {
+    min-width: 100px;
 }
 .meter-bar-container {
 	width: 100%;
@@ -406,31 +494,31 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	transition: width 0.4s ease-out, background-color 0.4s ease
 }
 .meter-bar.meter-critical {
-	background-color: var(--color-meter-critical) 
+	background-color: var(--color-meter-critical)
 }
 .meter-bar.meter-low {
-	background-color: var(--color-meter-low) 
+	background-color: var(--color-meter-low)
 }
 .meter-bar.meter-medium {
-	background-color: var(--color-meter-medium) 
+	background-color: var(--color-meter-medium)
 }
 .meter-bar.meter-full {
-	background-color: var(--color-meter-full) 
+	background-color: var(--color-meter-full)
 }
 .meter-bar.meter-offline {
-	background-color: var(--color-meter-offline-bg) 
+	background-color: var(--color-meter-offline-bg)
 }
 .meter-bar.meter-ok-fuel.meter-full {
-	background-color: var(--color-meter-fuel) 
+	background-color: var(--color-meter-fuel)
 }
 .meter-bar.meter-ok-mana.meter-full {
-	background-color: var(--color-meter-mana) 
+	background-color: var(--color-meter-mana)
 }
 .meter-bar.meter-ok-stamina.meter-full {
-	background-color: var(--color-meter-stamina) 
+	background-color: var(--color-meter-stamina)
 }
 .meter-bar.meter-ok-shield.meter-full {
-	background-color: var(--color-meter-shield) 
+	background-color: var(--color-meter-shield)
 }
 #info-ship-shields.value-overlay,#info-ship-integrity.value-overlay,#info-ship-fuel.value-overlay,#info-enemy-shields-status.value-overlay,#info-enemy-hull-integrity.value-overlay {
 	font-size: var(--font-size-xs);
@@ -489,15 +577,16 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	display: block;
 	margin-bottom: var(--spacing-sm);
 	transition: transform var(--transition-fast);
-	flex-shrink: 0
+	flex-shrink: 0;
+	opacity: 0.6;
 }
 .theme-grid-icon .theme-grid-icon-name {
 	font-size: var(--font-size-sm);
 	color: var(--color-text-secondary);
 	font-weight: var(--font-weight-semibold);
-	overflow: hidden;
-	text-overflow: ellipsis;
-	line-height: var(--line-height-tight)
+	white-space: pre-line;
+	line-height: var(--line-height-tight);
+	display: block;
 }
 .theme-grid-icon:hover {
 	background-color: var(--color-bg-theme-grid-icon-hover);
@@ -513,6 +602,9 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 }
 .theme-grid-icon.active .theme-grid-icon-name {
 	color: var(--color-text-primary)
+}
+.theme-grid-icon.active img {
+	opacity: 1
 }
 #story-log-viewport {
 	flex-grow: 1;
@@ -569,7 +661,6 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	flex-wrap: wrap;
 	gap: var(--spacing-sm);
 	flex-shrink: 0;
-	max-height: 100px;
 	overflow-y: auto
 }
 #player-input-control-panel {
@@ -623,7 +714,6 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	font-weight: var(--font-weight-medium);
 	cursor: pointer;
 	transition: background-color var(--transition-fast), transform var(--transition-fast), color var(--transition-fast);
-	white-space: nowrap;
 	background-color: var(--color-bg-element-hover);
 	color: var(--color-text-secondary);
 	border: 1px solid transparent
@@ -645,6 +735,15 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 .ui-button.icon-button:hover {
 	color: var(--color-text-primary);
 	background-color: rgba(255, 255, 255, 0.05)
+}
+.ui-button.disabled {
+    background-color: var(--color-background-muted, #555);
+    color: var(--color-text-disabled, #888);
+    cursor: not-allowed;
+    opacity: 0.6
+}
+.ui-button.icon-button {
+	background-color: transparent!important;
 }
 #player-input-control-panel .ui-button.primary {
 	background-color: var(--color-bg-button-primary);
@@ -683,7 +782,7 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	color: var(--color-text-primary)
 }
 .ui-button:disabled,.ui-button:disabled:hover,.ui-button:disabled:active {
-	background-color: var(--color-text-muted) !important;
+	background-color: var(--color-text-muted);
 	color: var(--color-bg-input-field) !important;
 	cursor:not-allowed;
 	transform: none !important;
@@ -701,35 +800,38 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	flex-shrink: 0
 }
 .status-ok {
-	color: var(--color-status-ok-text) !important 
+	color: var(--color-status-ok-text) !important
 }
 .status-ok-integrity {
-	color: var(--color-accent-green) !important 
+	color: var(--color-accent-green) !important
 }
 .status-ok-fuel {
-	color: var(--color-accent-amber) !important 
+	color: var(--color-accent-amber) !important
 }
 .status-warning {
-	color: var(--color-status-warning-text) !important 
+	color: var(--color-status-warning-text) !important
 }
 .status-danger {
-	color: var(--color-status-danger-text) !important 
+	color: var(--color-status-danger-text) !important
+}
+.status-critical {
+	color: var(--color-status-critical-text) !important
 }
 .status-info {
-	color: var(--color-status-info-text) !important 
+	color: var(--color-status-info-text) !important
 }
 .status-offline {
-	color: var(--color-status-offline-text) !important 
+	color: var(--color-status-offline-text) !important
 }
 .value-updated {
 	animation: flash-value-update-bg var(--UPDATE_HIGHLIGHT_DURATION) ease-out forwards
 }
 @keyframes flash-value-update-bg {
 	0%, 15% {
-		background-color: var(--highlight-bg-value-update) 
+		color: var(--color-accent-teal)
 }
 	100% {
-		background-color: transparent 
+		color: var(--color-text-primary)
 }
 }
 .info-item.value-updated::after,.info-item-meter.value-updated::after {
@@ -748,9 +850,6 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	width: 6px;
 	height: 6px
 }
-::-webkit-scrollbar-track {
-	background: rgba(0, 0, 0, 0.05)
-}
 ::-webkit-scrollbar-thumb {
 	background-color: var(--color-text-muted);
 	border-radius: var(--radius-full)
@@ -760,7 +859,7 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 }
 * {
 	scrollbar-width: thin;
-	scrollbar-color: var(--color-text-muted) rgba(0, 0, 0, 0.05)
+	scrollbar-color: var(--color-text-muted) rgba(0, 0, 0, 0)
 }
 @media (max-width: 1100px) {
 	:root {
@@ -899,14 +998,15 @@ body.landing-page-active #theme-grid-container {
 	display: grid !important
 }
 body.landing-page-active .panel-sidebar {
-	overflow-y: hidden
+    overflow-y: hidden;
+    background-color: var(--color-bg-content-view);
+    border-radius: var(--radius-md)
 }
 body.landing-page-active #landing-theme-description-container,body.landing-page-active #landing-theme-details-container {
 	display: flex !important;
 	flex-direction: column;
 	flex-grow: 1;
 	min-height: 0;
-	overflow: hidden
 }
 body.landing-page-active #landing-theme-description-container > .panel-box,body.landing-page-active #landing-theme-details-container > .panel-box {
 	flex-grow: 1;
@@ -916,16 +1016,16 @@ body.landing-page-active #landing-theme-description-container > .panel-box,body.
 }
 body.landing-page-active #landing-theme-description-container > .panel-box.is-expanded > .panel-box-content,body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content {
 	flex-grow: 1;
+	min-height: 0;
+	height: 0;
+	overflow-y: auto;
+	flex-direction: column;
 	max-height: none;
 	opacity: 1;
-	overflow-y: hidden;
-	min-height: 0;
-	display: flex;
-	flex-direction: column;
 	padding-top: var(--spacing-xs);
 	padding-bottom: var(--spacing-lg);
 	padding-left: var(--spacing-lg);
-	padding-right: var(--spacing-lg)
+	padding-right: var(--spacing-lg);
 }
 body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content > #landing-theme-info-content {
 	flex-grow: 1;

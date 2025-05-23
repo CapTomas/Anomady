@@ -163,10 +163,10 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 }
 @keyframes subtlePulse {
 	0%, 100% {
-		opacity: 0.75 
+		opacity: 0.75
 }
 	50% {
-		opacity: 1 
+		opacity: 1
 }
 }
 #gm-activity-indicator[style*="inline-flex"] {
@@ -368,7 +368,7 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	align-items: center;
 	margin-top: var(--spacing-lg)
 }
-#landing-theme-lore-text { 
+#landing-theme-lore-text {
     white-space: pre-line
 }
 #landing-theme-info-content {
@@ -487,31 +487,31 @@ background-color: var(--color-bg-content-view)
 	transition: width 0.4s ease-out, background-color 0.4s ease
 }
 .meter-bar.meter-critical {
-	background-color: var(--color-meter-critical) 
+	background-color: var(--color-meter-critical)
 }
 .meter-bar.meter-low {
-	background-color: var(--color-meter-low) 
+	background-color: var(--color-meter-low)
 }
 .meter-bar.meter-medium {
-	background-color: var(--color-meter-medium) 
+	background-color: var(--color-meter-medium)
 }
 .meter-bar.meter-full {
-	background-color: var(--color-meter-full) 
+	background-color: var(--color-meter-full)
 }
 .meter-bar.meter-offline {
-	background-color: var(--color-meter-offline-bg) 
+	background-color: var(--color-meter-offline-bg)
 }
 .meter-bar.meter-ok-fuel.meter-full {
-	background-color: var(--color-meter-fuel) 
+	background-color: var(--color-meter-fuel)
 }
 .meter-bar.meter-ok-mana.meter-full {
-	background-color: var(--color-meter-mana) 
+	background-color: var(--color-meter-mana)
 }
 .meter-bar.meter-ok-stamina.meter-full {
-	background-color: var(--color-meter-stamina) 
+	background-color: var(--color-meter-stamina)
 }
 .meter-bar.meter-ok-shield.meter-full {
-	background-color: var(--color-meter-shield) 
+	background-color: var(--color-meter-shield)
 }
 #info-ship-shields.value-overlay,#info-ship-integrity.value-overlay,#info-ship-fuel.value-overlay,#info-enemy-shields-status.value-overlay,#info-enemy-hull-integrity.value-overlay {
 	font-size: var(--font-size-xs);
@@ -793,32 +793,32 @@ background-color: var(--color-bg-content-view)
 	flex-shrink: 0
 }
 .status-ok {
-	color: var(--color-status-ok-text) !important 
+	color: var(--color-status-ok-text) !important
 }
 .status-ok-integrity {
-	color: var(--color-accent-green) !important 
+	color: var(--color-accent-green) !important
 }
 .status-ok-fuel {
-	color: var(--color-accent-amber) !important 
+	color: var(--color-accent-amber) !important
 }
 .status-warning {
-	color: var(--color-status-warning-text) !important 
+	color: var(--color-status-warning-text) !important
 }
 .status-danger {
-	color: var(--color-status-danger-text) !important 
+	color: var(--color-status-danger-text) !important
 }
 .status-info {
-	color: var(--color-status-info-text) !important 
+	color: var(--color-status-info-text) !important
 }
 .status-offline {
-	color: var(--color-status-offline-text) !important 
+	color: var(--color-status-offline-text) !important
 }
 .value-updated {
 	animation: flash-value-update-bg var(--UPDATE_HIGHLIGHT_DURATION) ease-out forwards
 }
 @keyframes flash-value-update-bg {
 	0%, 15% {
-		color: var(--color-accent-teal) 
+		color: var(--color-accent-teal)
 }
 	100% {
 		color: var(--color-text-primary)
@@ -998,7 +998,7 @@ body.landing-page-active #landing-theme-description-container,body.landing-page-
 	flex-direction: column;
 	flex-grow: 1;
 	min-height: 0;
-	overflow: hidden
+	overflow: auto
 }
 body.landing-page-active #landing-theme-description-container > .panel-box,body.landing-page-active #landing-theme-details-container > .panel-box {
 	flex-grow: 1;

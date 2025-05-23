@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             text = themeTextData[currentTheme]?.[lang]?.[key] ||
                    themeTextData[currentTheme]?.en?.[key]; // Fallback to English for current theme
         }
-        
+
         // 4. If still not found, try the globalTextData.global section
         if (!text && globalTextData.global) {
             text = globalTextData.global[lang]?.[key] ||
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
              text = themeTextData[themeForUI]?.[lang]?.[key] ||
                     themeTextData[themeForUI]?.en?.[key];
         }
-        
+
         text = text || key; // Use key as ultimate fallback if no translation found
 
         // Apply replacements
@@ -149,33 +149,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!GEMINI_API_KEY) {
             const apiKeyInput = await showCustomModal({ // await the promise
                 type: 'prompt',
-                titleKey: 'prompt_enter_api_key_title', 
+                titleKey: 'prompt_enter_api_key_title',
                 messageKey: 'prompt_enter_api_key',
                 confirmTextKey: 'modal_confirm_button',
                 cancelTextKey: 'modal_cancel_button',
-                inputPlaceholderKey: 'placeholder_api_key_input' 
+                inputPlaceholderKey: 'placeholder_api_key_input'
             });
 
             if (apiKeyInput && apiKeyInput.trim() !== "") {
                 GEMINI_API_KEY = apiKeyInput.trim();
                 localStorage.setItem('userGeminiApiKey', GEMINI_API_KEY);
-            } else if (apiKeyInput !== null) { 
-                GEMINI_API_KEY = ""; 
-                await showCustomModal({ 
+            } else if (apiKeyInput !== null) {
+                GEMINI_API_KEY = "";
+                await showCustomModal({
                     type: 'alert',
-                    titleKey: 'alert_title_error', 
+                    titleKey: 'alert_title_error',
                     messageKey: 'alert_api_key_required'
                 });
-            } else { 
-                 GEMINI_API_KEY = ""; 
+            } else {
+                 GEMINI_API_KEY = "";
             }
         }
 
         if (!GEMINI_API_KEY) {
-            const errorMsg = getUIText('error_critical_no_api_key'); 
-            const statusErrorMsg = getUIText('status_error'); 
-            
-            addMessageToLog(errorMsg, 'system'); 
+            const errorMsg = getUIText('error_critical_no_api_key');
+            const statusErrorMsg = getUIText('status_error');
+
+            addMessageToLog(errorMsg, 'system');
             console.error(errorMsg);
             if (systemStatusIndicator) {
                 systemStatusIndicator.textContent = statusErrorMsg;
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const savedState = JSON.parse(savedStateString);
             if (!savedState.playerIdentifier || !savedState.gameHistory || savedState.gameHistory.length === 0) {
-                clearGameStateInternal(themeIdToLoad); 
+                clearGameStateInternal(themeIdToLoad);
                 return false;
             }
 
@@ -273,12 +273,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            isInitialGameLoad = false; 
+            isInitialGameLoad = false;
             return true;
         } catch (e) {
             console.error(`Error loading game state for ${themeIdToLoad}:`, e);
-            clearGameStateInternal(themeIdToLoad); 
-            localStorage.removeItem(gameStateKey); 
+            clearGameStateInternal(themeIdToLoad);
+            localStorage.removeItem(gameStateKey);
             return false;
         }
     }
@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dashboardLayoutConfig = THEME_DASHBOARD_CONFIGS[themeConfig.dashboard_config_ref];
 
         // Helper function to check if a prompt text is valid (not an error/not found marker)
-        const isValidPromptText = (text) => text && 
+        const isValidPromptText = (text) => text &&
                                             !text.startsWith("FILE_NOT_FOUND_NON_CRITICAL:") &&
                                             !text.startsWith("NON_CRITICAL_ERROR:") &&
                                             !text.startsWith("CRITICAL_ERROR:") &&
@@ -438,22 +438,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. If current theme's 'initial' or 'default' (or their alias) is not valid, try current theme's 'master_initial' or 'master_default'
         if (!isValidPromptText(basePromptText)) {
-            if (promptTypeToUse === 'initial' || basePromptKey === 'initial') { 
+            if (promptTypeToUse === 'initial' || basePromptKey === 'initial') {
                 basePromptKey = 'master_initial';
             } else { // For 'default' or any other trigger that fell through
                 basePromptKey = 'master_default';
             }
             basePromptText = gamePrompts[currentTheme]?.[basePromptKey];
         }
-        
+
         // 4. Final fallback: If even current theme's master prompts are not valid, try the DEFAULT_THEME_ID's master prompts
         if (!isValidPromptText(basePromptText)) {
             console.warn(`Prompt "${promptTypeToUse}" (and potential fallbacks like "${basePromptKey}") not found or invalid for theme "${currentTheme}". Attempting default theme fallback.`);
-            const ultimateFallbackKey = (promptTypeToUse === 'initial' || basePromptKey === 'master_initial' || basePromptKey === 'initial') 
-                                        ? 'master_initial' 
+            const ultimateFallbackKey = (promptTypeToUse === 'initial' || basePromptKey === 'master_initial' || basePromptKey === 'initial')
+                                        ? 'master_initial'
                                         : 'master_default';
             basePromptText = gamePrompts[DEFAULT_THEME_ID]?.[ultimateFallbackKey];
-            
+
             if (isValidPromptText(basePromptText)) {
                  console.warn(`Used default theme's "${ultimateFallbackKey}" prompt for current theme "${currentTheme}".`);
                  basePromptKey = ultimateFallbackKey; // Update basePromptKey to reflect the actual prompt used
@@ -493,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (generatedDashboardDescription.endsWith(",\n")) {
             generatedDashboardDescription = generatedDashboardDescription.slice(0, -2);
         }
-        
+
         // 2. Game State Indicators Description
         let generatedGameStateIndicators = "";
         if (dashboardLayoutConfig.game_state_indicators && Array.isArray(dashboardLayoutConfig.game_state_indicators)) {
@@ -501,13 +501,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 let description = `"${indicator.id}": "boolean (${indicator.short_description || 'No description.'}`;
                 if (indicator.default_value_key) {
                      description += ` Default UI text key for conceptual status: '${indicator.default_value_key}'.`;
-                } else if (indicator.default_value !== undefined) { 
+                } else if (indicator.default_value !== undefined) {
                      description += ` Default value: ${indicator.default_value}.`;
                 }
                 description += `)",\n`;
                 generatedGameStateIndicators += description;
             });
-            if (!generatedGameStateIndicators.includes('"activity_status"')) { 
+            if (!generatedGameStateIndicators.includes('"activity_status"')) {
                 generatedGameStateIndicators += `"activity_status": "string (MUST match dashboard_updates.directive_status if provided. If not, it reflects the ongoing primary activity described in the narrative, IN THE NARRATIVE LANGUAGE. E.g., if narrative describes fighting, this should be the NARRATIVE LANGUAGE equivalent of 'Fighting'.)",\n`;
             }
             if (generatedGameStateIndicators.endsWith(",\n")) {
@@ -520,12 +520,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // --- Fetch and process theme-specific instructions for this prompt type ---
-        const instructionKeyNamePart = basePromptKey; 
-        let themeSpecificInstructions = ""; 
+        const instructionKeyNamePart = basePromptKey;
+        let themeSpecificInstructions = "";
         if (instructionKeyNamePart) {
             const themeInstructionTextKey = `theme_instructions_${instructionKeyNamePart}_${currentTheme}`;
             const fetchedInstruction = getUIText(themeInstructionTextKey, {}, currentTheme); // getUIText handles fallbacks internally
-            
+
             if (fetchedInstruction !== themeInstructionTextKey && fetchedInstruction.trim() !== "") {
                 themeSpecificInstructions = fetchedInstruction;
             } else {
@@ -560,7 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 themeSpecificInstructions = themeSpecificInstructions.replace(fullPlaceholder, replacementText);
                 // Reset regex lastIndex to allow finding overlapping or subsequent matches if replace changes string length
-                helperPlaceholderRegex.lastIndex = 0; 
+                helperPlaceholderRegex.lastIndex = 0;
             }
         }
 
@@ -569,9 +569,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const narrativeLangInstruction = NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[currentTheme]?.[currentNarrativeLanguage] ||
                                      NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[DEFAULT_THEME_ID]?.[currentNarrativeLanguage] ||
                                      NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[DEFAULT_THEME_ID]?.[DEFAULT_LANGUAGE] ||
-                                     `The narrative must be in ${currentNarrativeLanguage.toUpperCase()}.`; 
+                                     `The narrative must be in ${currentNarrativeLanguage.toUpperCase()}.`;
 
-        let processedPromptText = basePromptText; 
+        let processedPromptText = basePromptText;
 
         processedPromptText = processedPromptText.replace(/\$\{narrativeLanguageInstruction\}/g, narrativeLangInstruction);
         processedPromptText = processedPromptText.replace(/\$\{currentNameForPrompt\}/g, currentPlayerIdentifierParam || getUIText('unknown'));
@@ -585,9 +585,9 @@ document.addEventListener('DOMContentLoaded', () => {
         processedPromptText = processedPromptText.replace(/\$\{theme_tone\}/g, getUIText(themeConfig.tone_key, {}, currentTheme)); // Added this line
         processedPromptText = processedPromptText.replace(/\$\{theme_inspiration\}/g, getUIText(themeConfig.inspiration_key, {}, currentTheme));
         processedPromptText = processedPromptText.replace(/\$\{theme_concept\}/g, getUIText(themeConfig.concept_key, {}, currentTheme));
-        
-        processedPromptText = processedPromptText.replace(/\$\{theme_specific_instructions\}/g, themeSpecificInstructions); 
-        
+
+        processedPromptText = processedPromptText.replace(/\$\{theme_specific_instructions\}/g, themeSpecificInstructions);
+
         processedPromptText = processedPromptText.replace(/\$\{generated_dashboard_description\}/g, generatedDashboardDescription);
         processedPromptText = processedPromptText.replace(/\$\{generated_game_state_indicators\}/g, generatedGameStateIndicators);
 
@@ -601,8 +601,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             let assetNamesContent = null;
-            const assetKey = `asset_names_${currentNarrativeLanguage}`; 
-            const entityKey = `entity_names_${currentNarrativeLanguage}`; 
+            const assetKey = `asset_names_${currentNarrativeLanguage}`;
+            const entityKey = `entity_names_${currentNarrativeLanguage}`;
             const fallbackAssetKey = 'asset_names_en';
             const fallbackEntityKey = 'entity_names_en';
 
@@ -610,23 +610,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 assetNamesContent = gamePrompts[currentTheme][entityKey];
             } else if (themeConfig.naming_convention === 'asset' && gamePrompts[currentTheme]?.[assetKey] && isValidPromptText(gamePrompts[currentTheme][assetKey])) {
                  assetNamesContent = gamePrompts[currentTheme][assetKey];
-            } else { 
+            } else {
                 if (gamePrompts[currentTheme]?.[assetKey] && isValidPromptText(gamePrompts[currentTheme][assetKey])) assetNamesContent = gamePrompts[currentTheme][assetKey];
                 else if (gamePrompts[currentTheme]?.[entityKey] && isValidPromptText(gamePrompts[currentTheme][entityKey])) assetNamesContent = gamePrompts[currentTheme][entityKey];
                 else if (gamePrompts[currentTheme]?.[fallbackAssetKey] && isValidPromptText(gamePrompts[currentTheme][fallbackAssetKey])) assetNamesContent = gamePrompts[currentTheme][fallbackAssetKey];
                 else if (gamePrompts[currentTheme]?.[fallbackEntityKey] && isValidPromptText(gamePrompts[currentTheme][fallbackEntityKey])) assetNamesContent = gamePrompts[currentTheme][fallbackEntityKey];
             }
-            
+
             if (assetNamesContent) {
                 const allAssets = assetNamesContent.split('\n').map(n => n.trim()).filter(n => n.length > 0);
                 const selectedAssets = allAssets.length > 0 ? [...allAssets].sort(() => 0.5 - Math.random()).slice(0, 3) : [];
-                ['suggestedName1', 'suggestedName2', 'suggestedName3', 
-                 'suggestedItemName1', 'suggestedItemName2', 'suggestedItemName3', 
+                ['suggestedName1', 'suggestedName2', 'suggestedName3',
+                 'suggestedItemName1', 'suggestedItemName2', 'suggestedItemName3',
                  'suggestedLocationName1', 'suggestedLocationName2', 'suggestedLocationName3'].forEach((ph, iMod) => {
                     const i = iMod % 3;
                     processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${ph}\\}`, 'g'), selectedAssets[i] || `Invented${ph.replace('suggested','').replace(/Name\d/,'Name')}${i + 1}`);
                 });
-                 if (themeConfig.naming_convention === 'asset' || currentTheme === 'scifi') { 
+                 if (themeConfig.naming_convention === 'asset' || currentTheme === 'scifi') {
                     ['suggestedShipName1', 'suggestedShipName2', 'suggestedShipName3'].forEach((ph, iMod) => {
                        const i = iMod % 3;
                        processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${ph}\\}`, 'g'), selectedAssets[i] || `DefaultAssetName${i + 1}`);
@@ -634,13 +634,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else {
                  ['suggestedName1', 'suggestedName2', 'suggestedName3', 'suggestedShipName1', 'suggestedShipName2', 'suggestedShipName3',
-                  'suggestedItemName1', 'suggestedItemName2', 'suggestedItemName3', 
+                  'suggestedItemName1', 'suggestedItemName2', 'suggestedItemName3',
                   'suggestedLocationName1', 'suggestedLocationName2', 'suggestedLocationName3'].forEach((ph, i) => {
                      processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${ph}\\}`, 'g'), `InventedPlaceholder${i + 1}`);
                  });
             }
         }
-        
+
         return processedPromptText;
     };
 
@@ -968,8 +968,8 @@ document.addEventListener('DOMContentLoaded', () => {
                          if (itemCfg) playerIdentifier = String(value);
                     }
                 }
-                
-                if (!itemCfg) continue; 
+
+                if (!itemCfg) continue;
 
                 const valueElement = document.getElementById(`info-${itemCfg.id}`);
                 const meterBarElement = document.getElementById(`meter-${itemCfg.id}`);
@@ -984,9 +984,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (itemCfg.type === 'status_text') {
                     if (valueElement) {
                         const newStatusText = String(value);
-                        let statusClass = 'status-info'; 
+                        let statusClass = 'status-info';
                         const lowerValue = newStatusText.toLowerCase();
-                        
+
                         if (itemCfg.id === 'alertLevel' || itemCfg.id === 'alert_level') { // alert_level for fantasy
                             if (lowerValue.includes(getUIText('alert_level_danger_val', {}, currentTheme).toLowerCase())) statusClass = 'status-danger';
                             else if (lowerValue.includes(getUIText('alert_level_wary_val', {}, currentTheme).toLowerCase()) || lowerValue.includes(getUIText('alert_level_yellow_val', {}, currentTheme).toLowerCase())) statusClass = 'status-warning';
@@ -994,12 +994,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         if (valueElement.textContent !== newStatusText || !valueElement.className.includes(statusClass)) {
                             valueElement.textContent = newStatusText;
-                            valueElement.className = `value ${statusClass}`; 
+                            valueElement.className = `value ${statusClass}`;
                             if (highlightChanges) highlightElementUpdate(valueElement);
                             actualUpdateOccurred = true;
                         }
                     }
-                } else { 
+                } else {
                     if (valueElement) {
                         const suffix = itemCfg.suffix || '';
                         const newValueText = `${value}${suffix}`;
@@ -1016,7 +1016,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (parentPanelConfig && parentPanelConfig.type === 'collapsible') {
                         const panelElement = document.getElementById(parentPanelConfig.id);
                         if (panelElement && !panelElement.classList.contains('is-expanded')) {
-                            animatePanelBox(parentPanelConfig.id, true, false); 
+                            animatePanelBox(parentPanelConfig.id, true, false);
                         }
                     }
                 }
@@ -1066,7 +1066,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                             valueEl.className = `value ${statusClass}`;
                         }
-                    } else { 
+                    } else {
                         if (valueEl) {
                             const suffix = itemCfg.suffix || '';
                             valueEl.textContent = `${defaultValue}${suffix}`;
@@ -1079,7 +1079,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set player identifier specifically using its configured ID ('name' or 'character_name')
         const playerIdentifierItemId = (themeCfg.left_panel || []).flatMap(p => p.items)
             .find(item => item.id === 'name' || item.id === 'character_name')?.id;
-        
+
         if (playerIdentifierItemId) {
             const idCfg = findItemConfigById(themeCfg, playerIdentifierItemId);
             if (idCfg) {
@@ -1521,26 +1521,26 @@ document.addEventListener('DOMContentLoaded', () => {
     function setAppLanguageAndThemeUI(lang, themeIdForUIContextIfGameActive) {
         currentAppLanguage = lang;
         localStorage.setItem(LANGUAGE_PREFERENCE_STORAGE_KEY, lang);
-        if (document.documentElement) document.documentElement.lang = lang; 
+        if (document.documentElement) document.documentElement.lang = lang;
 
         const onLandingPage = document.body.classList.contains('landing-page-active');
 
-        document.body.className = ''; 
+        document.body.className = '';
         if (onLandingPage) {
             document.body.classList.add('landing-page-active');
-            document.body.classList.add(`theme-landing`); 
-        } else if (currentTheme) { 
+            document.body.classList.add(`theme-landing`);
+        } else if (currentTheme) {
             document.body.classList.add(`theme-${currentTheme}`);
         } else {
-            document.body.classList.add(`theme-${DEFAULT_THEME_ID}`); 
+            document.body.classList.add(`theme-${DEFAULT_THEME_ID}`);
         }
 
         if (languageToggleButton) {
             const otherLangKeyForButtonText = currentAppLanguage === 'en' ?
-                (globalTextData.landing?.cs?.toggle_language || "Česky") : 
-                (globalTextData.landing?.en?.toggle_language || "English"); 
+                (globalTextData.landing?.cs?.toggle_language || "Česky") :
+                (globalTextData.landing?.en?.toggle_language || "English");
             languageToggleButton.textContent = otherLangKeyForButtonText;
-            const ariaToggleKey = `toggle_language_aria`; 
+            const ariaToggleKey = `toggle_language_aria`;
             languageToggleButton.setAttribute('aria-label', getUIText(ariaToggleKey));
             languageToggleButton.title = getUIText(ariaToggleKey);
         }
@@ -1550,7 +1550,7 @@ document.addEventListener('DOMContentLoaded', () => {
             newGameButton.title = getUIText('aria_label_new_game');
             newGameButton.setAttribute('aria-label', getUIText('aria_label_new_game'));
         }
-        if (modelToggleButton) modelToggleButton.title = getUIText('aria_label_toggle_model_generic'); 
+        if (modelToggleButton) modelToggleButton.title = getUIText('aria_label_toggle_model_generic');
 
         if (systemStatusIndicator) systemStatusIndicator.textContent = getUIText(systemStatusIndicator.dataset.langKey || 'system_status_online_short');
         if (gmSpecificActivityIndicator) gmSpecificActivityIndicator.textContent = getUIText(gmSpecificActivityIndicator.dataset.langKey || 'system_processing_short');
@@ -1574,9 +1574,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
             }
-            initializeDashboardDefaultTexts(); 
+            initializeDashboardDefaultTexts();
         } else if (onLandingPage) {
-            renderThemeGrid(); 
+            renderThemeGrid();
             if (currentLandingGridSelection && themeGridContainer) {
                 const selectedBtn = themeGridContainer.querySelector(`.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`);
                 if (selectedBtn) selectedBtn.classList.add('active');
@@ -1588,13 +1588,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (playerActionInput) playerActionInput.placeholder = getUIText('placeholder_command');
         if (sendActionButton) sendActionButton.textContent = getUIText('button_execute_command');
 
-        updateModelToggleButtonText(); 
-        updateTopbarThemeIcons(); 
+        updateModelToggleButtonText();
+        updateTopbarThemeIcons();
 
         if (onLandingPage && currentLandingGridSelection) {
-            updateLandingPagePanels(currentLandingGridSelection, false); 
-        } else if (onLandingPage) { 
-            if(landingThemeLoreText) landingThemeLoreText.value = getUIText('landing_select_theme_prompt_lore'); 
+            updateLandingPagePanels(currentLandingGridSelection, false);
+        } else if (onLandingPage) {
+            if(landingThemeLoreText) landingThemeLoreText.value = getUIText('landing_select_theme_prompt_lore');
             if(landingThemeInfoContent) landingThemeInfoContent.innerHTML = `<p>${getUIText('landing_select_theme_prompt_details')}</p>`;
             const descTitle = landingThemeDescriptionContainer.querySelector('.panel-box-title');
             if (descTitle) descTitle.textContent = getUIText('landing_theme_description_title');
@@ -1675,7 +1675,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (PROMPT_URLS_BY_THEME[currentTheme]?.[indicatorId] &&
                         gamePrompts[currentTheme]?.[indicatorId] &&
                         !gamePrompts[currentTheme][indicatorId].startsWith("Error:")) {
-                        
+
                         newPromptType = indicatorId;
                         specificPromptFoundForActiveIndicator = true;
                         break; // Found an active indicator with a specific prompt, use it.
@@ -1746,7 +1746,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const errorResponse = JSON.parse(systemPromptText);
                 addMessageToLog(errorResponse.narrative, 'system');
                 if (errorResponse.suggested_actions) displaySuggestedActions(errorResponse.suggested_actions);
-            } catch (e) { 
+            } catch (e) {
                 // If parsing the error JSON itself fails, log the raw error string.
                 addMessageToLog(systemPromptText, 'system-error');
                 console.error("Failed to parse system error JSON from getSystemPrompt:", e, systemPromptText);
@@ -1762,7 +1762,7 @@ document.addEventListener('DOMContentLoaded', () => {
             maxOutputTokens: 8192,
             responseMimeType: "application/json" // Expect JSON response
         };
-        const safetySettings = [ 
+        const safetySettings = [
             { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
             { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
             { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
@@ -1806,18 +1806,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     displaySuggestedActions(parsedAIResponse.suggested_actions);
                     handleGameStateIndicators(parsedAIResponse.game_state_indicators, isInitialGameLoad);
 
-                    if (isInitialGameLoad) isInitialGameLoad = false; 
-                    saveGameState(); 
+                    if (isInitialGameLoad) isInitialGameLoad = false;
+                    saveGameState();
 
-                    if (systemStatusIndicator) { 
+                    if (systemStatusIndicator) {
                         systemStatusIndicator.textContent = getUIText('system_status_online_short');
                         systemStatusIndicator.className = 'status-indicator status-ok';
                     }
-                    return parsedAIResponse.narrative; 
+                    return parsedAIResponse.narrative;
                 } catch (e) {
                     throw new Error(`Invalid JSON received from AI: ${e.message}. Raw string (first 500 chars): ${jsonStringFromAI.substring(0, 500)}...`);
                 }
-            } else if (responseData.promptFeedback?.blockReason) { 
+            } else if (responseData.promptFeedback?.blockReason) {
                 const blockDetails = responseData.promptFeedback.safetyRatings?.map(r => `${r.category}: ${r.probability}`).join(', ') || "No details provided.";
                 throw new Error(`Content blocked by API: ${responseData.promptFeedback.blockReason}. Safety Ratings: ${blockDetails}`);
             } else {
@@ -1826,23 +1826,23 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Gemini API call failed:", error);
             addMessageToLog(getUIText('error_api_call_failed', { ERROR_MSG: error.message }), 'system');
-            if (systemStatusIndicator) { 
+            if (systemStatusIndicator) {
                 systemStatusIndicator.textContent = getUIText('status_error');
                 systemStatusIndicator.className = 'status-indicator status-danger';
             }
             return null;
         } finally {
-            setGMActivity(false); 
+            setGMActivity(false);
         }
     }
 
     /**
      * Starts the game session after the player enters their identifier.
      */
-    async function startGameAfterIdentifier() { 
+    async function startGameAfterIdentifier() {
         const enteredIdentifier = playerIdentifierInputEl ? playerIdentifierInputEl.value.trim() : "";
         if (!enteredIdentifier) {
-            await showCustomModal({ 
+            await showCustomModal({
                 type: 'alert',
                 titleKey: 'alert_title_notice',
                 messageKey: 'alert_identifier_required'
@@ -1852,8 +1852,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         playerIdentifier = enteredIdentifier;
-        isInitialGameLoad = true; 
-        currentPromptType = 'initial'; 
+        isInitialGameLoad = true;
+        currentPromptType = 'initial';
 
         if (nameInputSection) nameInputSection.style.display = 'none';
         if (actionInputSection) actionInputSection.style.display = 'flex';
@@ -1864,9 +1864,9 @@ document.addEventListener('DOMContentLoaded', () => {
             storyLogViewport.style.transform = 'translateY(0) scale(1)';
         }
 
-        if (playerActionInput) { 
+        if (playerActionInput) {
             playerActionInput.value = '';
-            playerActionInput.dispatchEvent(new Event('input', { bubbles: true })); 
+            playerActionInput.dispatchEvent(new Event('input', { bubbles: true }));
             autoGrowTextarea(playerActionInput);
             playerActionInput.focus();
         }
@@ -1883,7 +1883,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 idKeyForDashboard = foundIdItem.id;
             }
         }
-        updateDashboard({ [idKeyForDashboard]: playerIdentifier }, false); 
+        updateDashboard({ [idKeyForDashboard]: playerIdentifier }, false);
 
         addMessageToLog(getUIText('connecting', { PLAYER_ID: playerIdentifier }), 'system');
 
@@ -1891,13 +1891,13 @@ document.addEventListener('DOMContentLoaded', () => {
             role: "user",
             parts: [{ text: `My identifier is ${playerIdentifier}. I am ready to start the game in ${currentTheme} theme.` }]
         }];
-        saveGameState(); 
+        saveGameState();
 
         clearSuggestedActions();
-        const narrative = await callGeminiAPI(gameHistory); 
+        const narrative = await callGeminiAPI(gameHistory);
 
         if (narrative) {
-            addMessageToLog(narrative, 'gm'); 
+            addMessageToLog(narrative, 'gm');
         } else {
             if (nameInputSection) nameInputSection.style.display = 'flex';
             if (actionInputSection) actionInputSection.style.display = 'none';
@@ -1939,44 +1939,44 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function startNewGameSession() { // Make function async
         if (!currentTheme && !currentLandingGridSelection) {
-            await showCustomModal({ 
+            await showCustomModal({
                 type: 'alert',
-                titleKey: 'alert_title_notice', 
+                titleKey: 'alert_title_notice',
                 messageKey: 'alert_select_theme_first'
             });
             return;
         }
         const themeToStartNewGameIn = currentTheme || currentLandingGridSelection;
         if (!themeToStartNewGameIn || !ALL_THEMES_CONFIG[themeToStartNewGameIn]) {
-             await showCustomModal({ 
+             await showCustomModal({
                 type: 'alert',
-                titleKey: 'alert_title_error', 
-                messageKey: 'alert_select_theme_first' 
+                titleKey: 'alert_title_error',
+                messageKey: 'alert_select_theme_first'
             });
             return;
         }
 
         const themeConfig = ALL_THEMES_CONFIG[themeToStartNewGameIn];
         const themeName = getUIText(themeConfig.name_key, {}, themeToStartNewGameIn);
-        
+
         const confirmKey = `confirm_new_game_theme_${themeToStartNewGameIn}`;
-        let messageToDisplayKey = (themeTextData[themeToStartNewGameIn]?.[currentAppLanguage]?.[confirmKey] || themeTextData[themeToStartNewGameIn]?.en?.[confirmKey]) 
-                                   ? confirmKey 
+        let messageToDisplayKey = (themeTextData[themeToStartNewGameIn]?.[currentAppLanguage]?.[confirmKey] || themeTextData[themeToStartNewGameIn]?.en?.[confirmKey])
+                                   ? confirmKey
                                    : 'confirm_new_game_generic';
 
-        const userConfirmed = await showCustomModal({ 
+        const userConfirmed = await showCustomModal({
             type: 'confirm',
-            titleKey: 'confirm_new_game_title', 
+            titleKey: 'confirm_new_game_title',
             messageKey: messageToDisplayKey,
             replacements: { THEME_NAME: themeName },
             confirmTextKey: 'modal_yes_button',
             cancelTextKey: 'modal_no_button',
-            explicitThemeContext: (messageToDisplayKey === confirmKey) ? themeToStartNewGameIn : null 
+            explicitThemeContext: (messageToDisplayKey === confirmKey) ? themeToStartNewGameIn : null
         });
 
         if (userConfirmed) {
             addMessageToLog(getUIText('system_new_game_initiated', { THEME_NAME: themeName }), 'system');
-            changeThemeAndStart(themeToStartNewGameIn, true); 
+            changeThemeAndStart(themeToStartNewGameIn, true);
         }
     }
 
@@ -2084,7 +2084,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const oldThemeId = currentTheme;
 
         if (oldThemeId === newThemeId && !forceNewGame) {
-            if (storyLogViewport && storyLogViewport.style.display === 'none') { 
+            if (storyLogViewport && storyLogViewport.style.display === 'none') {
                 switchToGameView(newThemeId);
                 if (playerActionInput && actionInputSection && actionInputSection.style.display !== 'none') {
                     playerActionInput.focus();
@@ -2095,17 +2095,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentTheme = newThemeId;
         localStorage.setItem(CURRENT_THEME_STORAGE_KEY, currentTheme);
-        addPlayingTheme(currentTheme); 
+        addPlayingTheme(currentTheme);
 
-        clearGameStateInternal(currentTheme); 
+        clearGameStateInternal(currentTheme);
         if (forceNewGame) {
-            localStorage.removeItem(GAME_STATE_STORAGE_KEY_PREFIX + currentTheme); 
+            localStorage.removeItem(GAME_STATE_STORAGE_KEY_PREFIX + currentTheme);
         }
 
-        switchToGameView(currentTheme); 
+        switchToGameView(currentTheme);
 
         generatePanelsForTheme(currentTheme);
-        setAppLanguageAndThemeUI(currentAppLanguage, currentTheme); 
+        setAppLanguageAndThemeUI(currentAppLanguage, currentTheme);
         initializeDashboardDefaultTexts();
         initializeCollapsiblePanelBoxes(currentTheme);
 
@@ -2113,29 +2113,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!promptsLoadedSuccessfully) {
             addMessageToLog(getUIText('error_load_prompts_critical', { THEME: currentTheme }), 'system-error');
             if (startGameButton) startGameButton.disabled = true;
-            switchToLandingView(); 
+            switchToLandingView();
             return;
         }
         if (startGameButton) startGameButton.disabled = false;
 
-        updateTopbarThemeIcons(); 
+        updateTopbarThemeIcons();
 
         if (!forceNewGame && loadGameState(currentTheme)) {
-            isInitialGameLoad = false; 
+            isInitialGameLoad = false;
 
             if (nameInputSection) nameInputSection.style.display = 'none';
             if (actionInputSection) actionInputSection.style.display = 'flex';
             if (playerActionInput) playerActionInput.focus();
 
             addMessageToLog(getUIText('system_session_resumed', { PLAYER_ID: playerIdentifier, THEME_NAME: getUIText(ALL_THEMES_CONFIG[currentTheme].name_key, {}, currentTheme) }), 'system');
-            if (systemStatusIndicator) { 
+            if (systemStatusIndicator) {
                 systemStatusIndicator.textContent = getUIText('system_status_online_short');
                 systemStatusIndicator.className = 'status-indicator status-ok';
             }
-        } else { 
+        } else {
             isInitialGameLoad = true;
             currentPromptType = 'initial';
-            if (storyLog) storyLog.innerHTML = ''; 
+            if (storyLog) storyLog.innerHTML = '';
             clearSuggestedActions();
 
             if (nameInputSection) nameInputSection.style.display = 'flex';
@@ -2146,14 +2146,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 playerIdentifierInputEl.focus();
             }
 
-            if (systemStatusIndicator) { 
+            if (systemStatusIndicator) {
                 systemStatusIndicator.textContent = getUIText('standby');
                 systemStatusIndicator.className = 'status-indicator status-warning';
             }
-            if (oldThemeId !== newThemeId) { 
+            if (oldThemeId !== newThemeId) {
                 addMessageToLog(getUIText('system_theme_set_generic', { THEME_NAME: getUIText(ALL_THEMES_CONFIG[newThemeId].name_key, {}, newThemeId) }), 'system');
             }
-            if (forceNewGame) { 
+            if (forceNewGame) {
                 addMessageToLog(getUIText('system_new_game_initiated', { THEME_NAME: getUIText(ALL_THEMES_CONFIG[currentTheme].name_key, {}, currentTheme) }), 'system');
             }
         }
@@ -2337,7 +2337,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = document.createElement('button');
             button.classList.add('theme-grid-icon');
             button.dataset.theme = theme.id; // Store theme ID for click handling
-            const themeDisplayNameOnGrid = getUIText(theme.name_key, {}, theme.id); // Localized name with theme context
+            const themeDisplayNameOnGrid = getUIText(theme.name_short_key, {}, theme.id); // Localized name with theme context
             button.title = themeDisplayNameOnGrid; // Tooltip
 
             const img = document.createElement('img');
@@ -2400,7 +2400,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Set name, inspiration, tone, and concept text using themeId for context
         landingThemeInfoContent.innerHTML = `
-            <p><strong>${getUIText('landing_theme_name_label')}:</strong> <span id="landing-selected-theme-name">${getUIText(themeConfig.name_key, {}, themeId)}</span></p>
+            <p><strong>${getUIText('landing_theme_name_label')}:</strong> <span id="landing-selected-theme-name">${getUIText(themeConfig.name_long_key, {}, themeId)}</span></p>
             <p><strong>${getUIText('landing_theme_inspiration_label')}:</strong> <span id="landing-selected-theme-inspiration">${getUIText(themeConfig.inspiration_key, {}, themeId)}</span></p>
             <p><strong>${getUIText('landing_theme_tone_label')}:</strong> <span id="landing-selected-theme-tone">${getUIText(themeConfig.tone_key, {}, themeId)}</span></p>
             <p><strong>${getUIText('landing_theme_concept_label')}:</strong> <span id="landing-selected-theme-concept">${getUIText(themeConfig.concept_key, {}, themeId)}</span></p>
@@ -2450,7 +2450,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const likeButton = document.createElement('button');
         likeButton.id = 'like-theme-button';
         likeButton.classList.add('ui-button', 'icon-button', 'like-theme-button');
-        
+
         if (themeConfig.playable) {
             const isCurrentlyLiked = isThemeLiked(themeId);
             const likeTextKey = isCurrentlyLiked ? 'aria_label_unlike_theme' : 'aria_label_like_theme';
@@ -2574,7 +2574,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let defaultConfirmKey = 'modal_ok_button';
             if (type === 'confirm') defaultConfirmKey = 'modal_yes_button';
             if (type === 'prompt') defaultConfirmKey = 'modal_confirm_button';
-            
+
             confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey);
             confirmBtn.addEventListener('click', () => {
                 if (type === 'prompt') {
@@ -2608,7 +2608,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * and determines whether to show landing page or resume a game.
      */
     async function initializeApp() { // ENSURE THIS IS ASYNC
-        loadThemeListsFromStorage(); 
+        loadThemeListsFromStorage();
 
         currentTheme = localStorage.getItem(CURRENT_THEME_STORAGE_KEY) || null;
         currentAppLanguage = localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
@@ -2619,10 +2619,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Critical: Setup API key.
         const apiKeyIsSetup = await setupApiKey(); // AWAIT THIS CALL
-        if (!apiKeyIsSetup) { 
-            switchToLandingView(); 
-            setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID); 
-            return; 
+        if (!apiKeyIsSetup) {
+            switchToLandingView();
+            setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID);
+            return;
         }
 
         let gameToResume = null;
@@ -2631,18 +2631,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentTheme && isThemePlaying(currentTheme)) {
             const tempPlayerId = playerIdentifier;
             const tempGameHistory = [...gameHistory];
-            playerIdentifier = ''; 
+            playerIdentifier = '';
             gameHistory = [];
 
-            if (await loadAllPromptsForTheme(currentTheme)) { 
-                if (loadGameState(currentTheme)) { 
+            if (await loadAllPromptsForTheme(currentTheme)) {
+                if (loadGameState(currentTheme)) {
                     gameToResume = currentTheme;
                     successfullyLoadedStateForResume = true;
                 } else {
-                    removePlayingTheme(currentTheme, false); 
+                    removePlayingTheme(currentTheme, false);
                     currentTheme = null;
                     localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
-                    playerIdentifier = tempPlayerId; 
+                    playerIdentifier = tempPlayerId;
                     gameHistory = tempGameHistory;
                 }
             } else {
@@ -2659,18 +2659,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (gameToResume && successfullyLoadedStateForResume) {
-            currentTheme = gameToResume; 
+            currentTheme = gameToResume;
 
-            switchToGameView(currentTheme); 
+            switchToGameView(currentTheme);
 
-            generatePanelsForTheme(currentTheme); 
-            setAppLanguageAndThemeUI(currentAppLanguage, currentTheme); 
-            initializeDashboardDefaultTexts(); 
+            generatePanelsForTheme(currentTheme);
+            setAppLanguageAndThemeUI(currentAppLanguage, currentTheme);
+            initializeDashboardDefaultTexts();
 
-            updateDashboard(lastKnownDashboardUpdates, false); 
-            handleGameStateIndicators(lastKnownGameStateIndicators, true); 
+            updateDashboard(lastKnownDashboardUpdates, false);
+            handleGameStateIndicators(lastKnownGameStateIndicators, true);
 
-            initializeCollapsiblePanelBoxes(currentTheme); 
+            initializeCollapsiblePanelBoxes(currentTheme);
 
             if (nameInputSection) nameInputSection.style.display = 'none';
             if (actionInputSection) actionInputSection.style.display = 'flex';
@@ -2683,19 +2683,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 systemStatusIndicator.textContent = getUIText('system_status_online_short');
                 systemStatusIndicator.className = 'status-indicator status-ok';
             }
-            isInitialGameLoad = false; 
+            isInitialGameLoad = false;
         } else {
             switchToLandingView();
         }
 
-        updateTopbarThemeIcons(); 
-        if (playerActionInput) autoGrowTextarea(playerActionInput); 
+        updateTopbarThemeIcons();
+        if (playerActionInput) autoGrowTextarea(playerActionInput);
     }
 
     // Event Listeners for global controls
     if (applicationLogoElement) applicationLogoElement.addEventListener('click', switchToLandingView);
     if (languageToggleButton) languageToggleButton.addEventListener('click', toggleAppLanguage);
-    
+
     if (newGameButton) {
         newGameButton.addEventListener('click', () => { // Use a non-async wrapper
             startNewGameSession().catch(err => {
@@ -2737,15 +2737,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (playerActionInput) {
         playerActionInput.addEventListener('keypress', (e) => { // Keypress listener
-            if (e.key === 'Enter' && !e.shiftKey) { 
-                e.preventDefault(); 
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
                 // Call the async function and handle potential errors
                 sendPlayerAction().catch(err => {
                     console.error("Error during sendPlayerAction (Enter key):", err);
                 });
             }
         });
-        playerActionInput.addEventListener('input', () => autoGrowTextarea(playerActionInput)); 
+        playerActionInput.addEventListener('input', () => autoGrowTextarea(playerActionInput));
     }
 
     // Event listener for story log scroll (to manage auto-scroll behavior)

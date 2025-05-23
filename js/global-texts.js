@@ -30,7 +30,7 @@ const globalTextData = {
             "error_load_prompts_critical": "CRITICAL: Essential game prompts for theme \"{THEME}\" failed to load. Cannot continue.",
             "error_resume_failed_prompts": "Error resuming session: Failed to load essential prompts for theme {THEME}.",
             "error_dashboard_config_missing": "Error: Dashboard configuration is missing for this theme.",
-            
+
             // Buttons & Actions
             "button_new_game": "New Game",
             "aria_label_new_game": "Start a new game",
@@ -153,7 +153,7 @@ const globalTextData = {
             "aria_label_current_model_free": "Používáte Model Zdarma. Přepnout na Placený Model.",
             "system_model_set_paid": "Systém: Přepnuto na Placený AI Model ({MODEL_NAME}).",
             "system_model_set_free": "Systém: Přepnuto na Model Zdarma ({MODEL_NAME}).",
-            
+
             // Language & System Messages
             "system_lang_set_en": "Systém: UI a Příběh nastaveny na ANGLIČTINU.",
             "system_lang_set_cs": "Systém: UI a Příběh nastaveny na ČEŠTINU.",
@@ -165,7 +165,7 @@ const globalTextData = {
     landing: {
         en: {
             // Generic Landing Page UI
-            "landing_theme_description_title": "World Profile",
+            "landing_theme_description_title": "World Lore",
             "landing_theme_info_title": "Scenario Briefing",
             "landing_select_theme_prompt_lore": "Select a scenario from the grid to view its background.",
             "landing_select_theme_prompt_details": "Select a scenario to view its parameters and objectives.",
@@ -181,11 +181,11 @@ const globalTextData = {
         },
         cs: {
             // Generic Landing Page UI
-            "landing_theme_description_title": "Profil Světa",
+            "landing_theme_description_title": "Dějiny světa",
             "landing_theme_info_title": "Přehled Scénáře",
             "landing_select_theme_prompt_lore": "Vyberte scénář z mřížky pro zobrazení jeho pozadí.",
             "landing_select_theme_prompt_details": "Vyberte scénář pro zobrazení jeho parametrů a cílů.",
-            "landing_theme_name_label": "Název",    
+            "landing_theme_name_label": "Název",
             "landing_theme_inspiration_label": "Inspirace",
             "landing_theme_tone_label": "Tón",
             "landing_theme_concept_label": "Základní Koncept",

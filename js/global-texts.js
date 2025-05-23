@@ -30,6 +30,9 @@ const globalTextData = {
             "error_load_prompts_critical": "CRITICAL: Essential game prompts for theme \"{THEME}\" failed to load. Cannot continue.",
             "error_resume_failed_prompts": "Error resuming session: Failed to load essential prompts for theme {THEME}.",
             "error_dashboard_config_missing": "Error: Dashboard configuration is missing for this theme.",
+            "error_critical_manifest_missing": "CRITICAL: Theme manifest (themes-manifest.js) is missing or empty. Application cannot start.",
+            "error_initial_theme_data_load_failed": "Error: Failed to load initial data for one or more themes. Some themes may not be available.",
+            "error_theme_data_load_failed": "Error: Failed to load required data for theme {THEME_ID}. This theme cannot be started.",
 
             // Buttons & Actions
             "button_new_game": "New Game",
@@ -110,6 +113,9 @@ const globalTextData = {
             "error_load_prompts_critical": "KRITICKÉ: Nepodařilo se načíst základní herní skripty pro téma \"{THEME}\". Nelze pokračovat.",
             "error_resume_failed_prompts": "Chyba obnovení relace: Nepodařilo se načíst základní skripty pro téma {THEME}.",
             "error_dashboard_config_missing": "Chyba: Chybí konfigurace panelu pro toto téma.",
+            "error_critical_manifest_missing": "KRITICKÉ: Manifest témat (themes-manifest.js) chybí nebo je prázdný. Aplikaci nelze spustit.",
+            "error_initial_theme_data_load_failed": "Chyba: Nepodařilo se načíst počáteční data pro jedno či více témat. Některá témata nemusí být dostupná.",
+            "error_theme_data_load_failed": "Chyba: Nepodařilo se načíst požadovaná data pro téma {THEME_ID}. Toto téma nelze spustit.",
 
             // Buttons & Actions
             "button_new_game": "Nová Hra",
@@ -177,7 +183,7 @@ const globalTextData = {
             "alert_select_theme_first": "Please select a theme scenario from the grid first.",
             "aria_label_like_theme": "Add to Favorites",
             "aria_label_unlike_theme": "Remove from Favorites",
-            "toggle_language": "Česky"
+            "toggle_language": "English"
         },
         cs: {
             // Generic Landing Page UI
@@ -193,7 +199,7 @@ const globalTextData = {
             "alert_select_theme_first": "Prosím, nejprve vyberte tématický scénář z mřížky.",
             "aria_label_like_theme": "Přidat k oblíbeným",
             "aria_label_unlike_theme": "Odebrat z oblíbených",
-            "toggle_language": "English"
+            "toggle_language": "Česky"
         }
     }
 };

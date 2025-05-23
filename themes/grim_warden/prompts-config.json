@@ -1,0 +1,13 @@
+{
+  "PROMPT_URLS": {
+    "master_initial": "themes/master/prompts/master_initial.txt",
+    "master_default": "themes/master/prompts/master_default.txt",
+    "combat_active": "themes/grim_warden/prompts/combat_active.txt",
+    "omen_detected": "themes/grim_warden/prompts/omen_detected.txt",
+    "starts": "themes/grim_warden/prompts/helpers/starts.txt"
+  },
+  "NARRATIVE_LANG_PROMPT_PARTS": {
+    "en": "This narrative must be written in rich, immersive English, evoking the style of a dark fantasy novel. Dialogue should feel authentic to hardened characters in a bleak, gritty world, potentially with slightly archaic or formal touches where appropriate for the setting. Emphasize visceral descriptions of combat, eerie environments, and the psychological toll of the Blight.",
+    "cs": "Tento příběh musí být napsán bohatou, pohlcující češtinou, evokující styl temného fantasy románu. Dialogy by měly působit autenticky pro zocelené postavy v ponurém, drsném světě, případně s lehce archaickými či formálními prvky tam, kde to odpovídá prostředí. Zdůrazněte viscerální popisy soubojů, strašidelná prostředí a psychologickou daň Zkázy."
+  }
+}

@@ -380,7 +380,13 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	margin-bottom: 0
 }
 #landing-theme-actions .ui-button.primary {
-	flex-grow: 1
+    flex-grow: 1;
+    background-color: var(--color-text-secondary);
+    color: var(--arc-background-gradient-color1);
+}
+#landing-theme-actions .ui-button.primary:hover {
+		background-color: var(--color-text-primary);
+		color: var(--arc-background-gradient-color1);
 }
 .like-theme-button img.like-icon {
 	width: calc(var(--font-size-lg) * 1.2);
@@ -577,9 +583,9 @@ background-color: var(--color-bg-content-view)
 	font-size: var(--font-size-sm);
 	color: var(--color-text-secondary);
 	font-weight: var(--font-weight-semibold);
-	overflow: hidden;
-	text-overflow: ellipsis;
-	line-height: var(--line-height-tight)
+	white-space: pre-line;
+	line-height: var(--line-height-tight);
+	display: block;
 }
 .theme-grid-icon:hover {
 	background-color: var(--color-bg-theme-grid-icon-hover);
@@ -840,9 +846,6 @@ background-color: var(--color-bg-content-view)
 	width: 6px;
 	height: 6px
 }
-::-webkit-scrollbar-track {
-	background: rgba(0, 0, 0, 0.05)
-}
 ::-webkit-scrollbar-thumb {
 	background-color: var(--color-text-muted);
 	border-radius: var(--radius-full)
@@ -852,7 +855,7 @@ background-color: var(--color-bg-content-view)
 }
 * {
 	scrollbar-width: thin;
-	scrollbar-color: var(--color-text-muted) rgba(0, 0, 0, 0.05)
+	scrollbar-color: var(--color-text-muted) rgba(0, 0, 0, 0)
 }
 @media (max-width: 1100px) {
 	:root {
@@ -991,7 +994,9 @@ body.landing-page-active #theme-grid-container {
 	display: grid !important
 }
 body.landing-page-active .panel-sidebar {
-	overflow-y: hidden
+    overflow-y: hidden;
+    background-color: var(--color-bg-content-view);
+    border-radius: var(--radius-md)
 }
 body.landing-page-active #landing-theme-description-container,body.landing-page-active #landing-theme-details-container {
 	display: flex !important;

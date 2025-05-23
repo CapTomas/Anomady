@@ -1,0 +1,292 @@
+{
+  "id": "grim_warden",
+  "name_key": "theme_name_grim_warden",
+  "name_short_key": "theme_name_short_grim_warden",
+  "name_long_key": "theme_name_long_grim_warden",
+  "icon": "themes/grim_warden/images/icon_grim_warden.svg",
+  "lore_key": "theme_lore_grim_warden",
+  "inspiration_key": "theme_inspiration_grim_warden",
+  "tone_key": "theme_tone_grim_warden",
+  "concept_key": "theme_concept_grim_warden",
+  "category_key": "theme_category_grim_warden",
+  "style_key": "theme_style_grim_warden",
+  "naming_convention": "entity",
+  "dashboard_config_ref": "grim_warden",
+
+  "playable": true,
+  "dashboard_config": {
+    "left_panel": [
+      {
+        "id": "character-status-panel-box",
+        "title_key": "title_character_status_grim_warden",
+        "type": "collapsible",
+        "initial_expanded": true,
+        "items": [
+          {
+            "id": "character_name",
+            "label_key": "label_character_name_grim_warden",
+            "type": "text",
+            "default_value_key": "unknown_warden",
+            "must_translate": false,
+            "short_description": "Player character's chosen name or title."
+          },
+          {
+            "id": "silver_pieces",
+            "label_key": "label_character_coin_grim_warden",
+            "type": "number_text",
+            "default_value_key": "pouch_light",
+            "must_translate": true,
+            "short_description": "Amount of silver currency the Warden possesses. Use descriptive terms or numbers. Unit 'Silver' is common."
+          },
+          {
+            "id": "renown",
+            "label_key": "label_character_renown_grim_warden",
+            "type": "text",
+            "default_value_key": "unknown_figure",
+            "must_translate": true,
+            "short_description": "The Warden's reputation. E.g., 'Whispered Dread', 'Grim Savior', 'Untested Novice', 'Bane of Ghouls'."
+          },
+          {
+            "id": "oath_allegiance",
+            "label_key": "label_character_oath_grim_warden",
+            "type": "text",
+            "default_value_key": "warden_initiate",
+            "must_translate": true,
+            "short_description": "Warden's standing/oath. E.g., 'Bound by the Old Code', 'Exiled Seeker', 'Last of the Silent Chapter', 'Mercenary Heart'."
+          }
+        ]
+      },
+      {
+        "id": "vitality-gear-panel-box",
+        "title_key": "title_vitality_gear_grim_warden",
+        "type": "collapsible",
+        "initial_expanded": false,
+        "boot_delay": 1000,
+        "items": [
+          {
+            "id": "healthPct",
+            "label_key": "label_character_health_grim_warden",
+            "type": "meter",
+            "meter_type": "health",
+            "default_value": "0",
+            "must_translate": false,
+            "short_description": "Character's current health 0-100 (e.g., '100', '65', '10' for near death)."
+          },
+          {
+            "id": "staminaPct",
+            "label_key": "label_character_stamina_grim_warden",
+            "type": "meter",
+            "meter_type": "stamina",
+            "default_value": "0",
+            "must_translate": false,
+            "short_description": "Character's current stamina/energy 0-100. Used for combat maneuvers, sprinting etc."
+          },
+          {
+            "id": "elixir_charges",
+            "label_key": "label_elixir_charges_grim_warden",
+            "type": "text",
+            "default_value_key": "charges_none",
+            "must_translate": true,
+            "short_description": "Number of available potent alchemical elixirs or poultices. E.g., '2 Charges', 'One Dose Left', 'Empty Vials'."
+          },
+          {
+            "id": "armor_condition",
+            "label_key": "label_armor_condition_grim_warden",
+            "type": "text",
+            "default_value_key": "armor_worn",
+            "must_translate": true,
+            "short_description": "Descriptive condition of the Warden's armor. E.g., 'Pristine Leather', 'Battle-Scarred Plate', 'Tattered Gambeson'."
+          },
+          {
+            "id": "weapon_condition",
+            "label_key": "label_weapon_condition_grim_warden",
+            "type": "text",
+            "default_value_key": "weapon_reliable",
+            "must_translate": true,
+            "short_description": "Descriptive condition of the Warden's primary weapon. E.g., 'Keen Edge', 'Chipped Axe', 'Silvered Blade (Dull)'."
+          },
+          {
+            "id": "current_burden",
+            "label_key": "label_current_burden_grim_warden",
+            "type": "text_long",
+            "default_value_key": "burden_unencumbered",
+            "must_translate": true,
+            "short_description": "Current encumbrance. E.g., 'Unencumbered', 'Lightly Laden (Herbs & Scrolls)', 'Heavily Burdened (Gryphon Head)'."
+          }
+        ]
+      },
+      {
+        "id": "omens-whispers-panel-box",
+        "title_key": "title_omens_whispers_grim_warden",
+        "type": "hidden_until_active",
+        "initial_expanded": true,
+        "indicator_key": "omen_detected",
+        "items": [
+          {
+            "id": "omen_details",
+            "label_key": "label_omen_details_grim_warden",
+            "type": "text_long",
+            "default_value_key": "omens_none_active",
+            "must_translate": true,
+            "short_description": "Details of active omens, visions, or unnatural whispers. E.g., 'A chilling premonition of a beast in the old mill', 'The wind carries faint, mournful cries from the barrow downs'."
+          }
+        ]
+      }
+    ],
+    "right_panel": [
+      {
+        "id": "current-hunt-panel-box",
+        "title_key": "title_current_hunt_grim_warden",
+        "type": "collapsible",
+        "initial_expanded": true,
+        "items": [
+          {
+            "id": "current_quest",
+            "label_key": "label_current_quest_grim_warden",
+            "type": "text_long",
+            "default_value_key": "quest_none_active",
+            "must_translate": true,
+            "short_description": "The current primary QUEST or HUNT. E.g., 'Track the Wight terrorizing Oakhaven', 'Investigate the Blighted Spring in Gloomwood'."
+          },
+          {
+            "id": "quest_reward_rumor",
+            "label_key": "label_quest_reward_grim_warden",
+            "type": "text",
+            "default_value_key": "reward_unknown",
+            "must_translate": true,
+            "short_description": "Rumored reward for the quest. E.g., 'A hefty pouch of silver', 'Ancient Warden schematics', 'The Baron's Favor'."
+          },
+          {
+            "id": "activity_status",
+            "label_key": "label_activity_status_grim_warden",
+            "type": "text",
+            "default_value_key": "status_vigilant",
+            "must_translate": true,
+            "short_description": "Warden's current primary activity. E.g., 'Tracking Prey', 'Preparing Ambush', 'Consulting Locals', 'Resting at Campfire'."
+          },
+          {
+            "id": "threat_level",
+            "label_key": "label_threat_level_grim_warden",
+            "type": "status_text",
+            "default_value_key": "threat_level_calm",
+            "default_status_key": "threat_level_calm_val",
+            "must_translate": false,
+            "short_description": "MUST be one 'of': 'Calm', 'Wary', 'Danger'. Represents immediate environmental threat. (e.g. 'UI': 'Conditions Calm', AI 'Value': 'Calm')."
+          }
+        ]
+      },
+      {
+        "id": "local-environment-panel-box",
+        "title_key": "title_local_environment_grim_warden",
+        "type": "collapsible",
+        "initial_expanded": false,
+        "boot_delay": 1000,
+        "items": [
+          {
+            "id": "current_location_desc",
+            "label_key": "label_current_location_grim_warden",
+            "type": "text_long",
+            "default_value_key": "location_unknown_wilds",
+            "must_translate": true,
+            "short_description": "Descriptive name of current location. Be evocative. E.g., 'The Gloomwood Forest', 'Ruins of Old Kingspire', 'Brackish Mire near Oakhaven'."
+          },
+          {
+            "id": "regional_control",
+            "label_key": "label_regional_control_grim_warden",
+            "type": "text",
+            "default_value_key": "control_disputed_lands",
+            "must_translate": true,
+            "short_description": "Faction controlling current region. E.g., 'Barony of Falcrest (Decaying)', 'Blightspawn Territory', 'Nomad Clans (Hostile)'."
+          },
+          {
+            "id": "ambient_conditions",
+            "label_key": "label_ambient_conditions_grim_warden",
+            "type": "text_long",
+            "default_value_key": "conditions_bleak",
+            "must_translate": true,
+            "short_description": "Immediate environment/weather. E.g., 'Overcast, chilling wind', 'Dense, unnaturally silent fog', 'Twisted, Blighted flora under a sickly moon'."
+          },
+          {
+            "id": "blight_intensity",
+            "label_key": "label_blight_intensity_grim_warden",
+            "type": "text_long",
+            "default_value_key": "blight_faint_traces",
+            "must_translate": true,
+            "short_description": "Perceived Blight intensity. E.g., 'Faint Traces', 'Moderate Corruption - Twisted Fauna', 'Overwhelming Blight - Air Thickens'."
+          },
+          {
+            "id": "current_moon_cycle",
+            "label_key": "label_moon_cycle_grim_warden",
+            "type": "text",
+            "default_value_key": "moon_cycle_unknown",
+            "must_translate": false,
+            "short_description": "Current moon phase or local time. E.g., 'Full Moon, Midnight', 'Third Bell, Waning Crescent', 'Blood Moon Rising'."
+          }
+        ]
+      },
+      {
+        "id": "monster-intel-panel-box",
+        "title_key": "title_monster_intel_grim_warden",
+        "type": "hidden_until_active",
+        "initial_expanded": true,
+        "indicator_key": "combat_active",
+        "items": [
+          {
+            "id": "monster_type",
+            "label_key": "label_monster_type_grim_warden",
+            "type": "text",
+            "default_value_key": "target_none_sighted",
+            "must_translate": true,
+            "short_description": "Type of monster engaged. MUST be original/thematic. E.g., 'Gravewight', 'Blightfang Wolf', 'Rotting Treant'. Use 'None Sighted' or similar if no target."
+          },
+          {
+            "id": "monster_toughness_pct",
+            "label_key": "label_monster_toughness_grim_warden",
+            "type": "meter",
+            "meter_type": "monster_defense",
+            "default_value": "0",
+            "status_text_id": "monster_defense_status_text",
+            "default_status_key": "defense_breached",
+            "must_translate": true,
+            "short_description": "Monster's defenses (armor/hide/magic) 0-100. Status text (e.g. 'Armor Intact', 'Weakened') as 'monster_defense_status_text'. If active, pct > 0."
+          },
+          {
+            "id": "monster_vitality_pct",
+            "label_key": "label_monster_vitality_grim_warden",
+            "type": "meter",
+            "meter_type": "monster_health",
+            "default_value": "0",
+            "must_translate": false,
+            "short_description": "Monster's remaining vitality/health 0-100. E.g., '100', '50', 'Near Death (5)'."
+          }
+        ]
+      }
+    ],
+    "game_state_indicators": [
+      {
+        "id": "omen_detected",
+        "label_key": "label_omen_detected_grim_warden",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "short_description": "Indicates if a mystical omen or significant whisper is currently active (true) or not (false)."
+      },
+      {
+        "id": "combat_active",
+        "label_key": "label_combat_active_grim_warden",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "short_description": "Indicates if the Warden is in active combat (true) or not (false). False on initial turn unless starting in combat."
+      },
+      {
+        "id": "rare_trophy_claimed",
+        "label_key": "label_rare_trophy_claimed_grim_warden",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "short_description": "Indicates if the Warden has just claimed a rare monster trophy or valuable item (true) or not (false). Typically true for one turn then false."
+      }
+    ]
+  }
+}

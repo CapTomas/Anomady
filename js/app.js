@@ -2845,56 +2845,98 @@ function animatePanelBox(
         responseData.candidates[0]?.content?.parts?.[0]?.text
       ) {
         let jsonStringFromAI = responseData.candidates[0].content.parts[0].text;
-        try {
+        try { // Outer try for parsing and validation
           let parsedAIResponse;
-          try {
+          try { // Inner try for initial parse
             parsedAIResponse = JSON.parse(jsonStringFromAI);
-          } catch (parseError) {
+          } catch (parseError) { // Catch for initial parse failure
             log(
               LOG_LEVEL_ERROR,
               "Initial JSON.parse failed. Raw AI response:",
-              jsonStringFromAI
+              jsonStringFromAI,
+              "Error:", parseError.message
             );
 
-            let extractedJsonString = null;
-            const firstBrace = jsonStringFromAI.indexOf("{");
-            const lastBrace = jsonStringFromAI.lastIndexOf("}");
+            let cleanedJsonString = null;
 
-            if (firstBrace !== -1 && lastBrace > firstBrace) {
-              extractedJsonString = jsonStringFromAI.substring(
-                firstBrace,
-                lastBrace + 1
-              );
+            // Attempt 1: Extract from markdown code block (```json ... ``` or ``` ... ```)
+            const markdownMatch = jsonStringFromAI.match(/```(?:json)?\s*([\s\S]*?)\s*```/s);
+            if (markdownMatch && markdownMatch[1]) {
+                cleanedJsonString = markdownMatch[1].trim();
+                log(LOG_LEVEL_DEBUG, "Extracted from markdown block:", cleanedJsonString);
             } else {
-              const firstBracket = jsonStringFromAI.indexOf("[");
-              const lastBracket = jsonStringFromAI.lastIndexOf("]");
-              if (firstBracket !== -1 && lastBracket > firstBracket) {
-                extractedJsonString = jsonStringFromAI.substring(
-                  firstBracket,
-                  lastBracket + 1
-                );
-              }
+                // Attempt 2: Find the first opening brace/bracket and its matching closer
+                let openChar = '';
+                let closeChar = '';
+                let startIndex = -1;
+
+                const firstBrace = jsonStringFromAI.indexOf("{");
+                const firstBracket = jsonStringFromAI.indexOf("[");
+
+                if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+                    openChar = '{';
+                    closeChar = '}';
+                    startIndex = firstBrace;
+                } else if (firstBracket !== -1) {
+                    openChar = '[';
+                    closeChar = ']';
+                    startIndex = firstBracket;
+                }
+
+                if (startIndex !== -1) {
+                    let balance = 0;
+                    let endIndex = -1;
+                    for (let i = startIndex; i < jsonStringFromAI.length; i++) {
+                        if (jsonStringFromAI[i] === openChar) {
+                            balance++;
+                        } else if (jsonStringFromAI[i] === closeChar) {
+                            balance--;
+                            if (balance === 0) {
+                                endIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    if (endIndex !== -1) {
+                        cleanedJsonString = jsonStringFromAI.substring(startIndex, endIndex + 1);
+                        log(LOG_LEVEL_DEBUG, "Extracted by balance counting:", cleanedJsonString);
+                    } else {
+                        log(LOG_LEVEL_DEBUG, "Balance counting failed to find matching end for start char:", openChar, "at index:", startIndex);
+                    }
+                } else {
+                     log(LOG_LEVEL_DEBUG, "No starting '{' or '[' found for balance counting extraction.");
+                }
             }
 
-            if (extractedJsonString) {
-              try {
-                parsedAIResponse = JSON.parse(extractedJsonString);
+            if (cleanedJsonString) {
+                try {
+                    parsedAIResponse = JSON.parse(cleanedJsonString);
+                    log(
+                      LOG_LEVEL_WARNING, // Successfully parsed CLEANED string, but original was bad
+                      "Raw AI response was malformed but successfully parsed after cleanup. Cleaned JSON used. Original parse error reason:",
+                      parseError.message // Provide context of the original error
+                    );
+                    // DEBUG log for the cleaned content if needed, but warning implies success.
+                    // log(LOG_LEVEL_DEBUG, "Cleaned JSON content that was parsed:", cleanedJsonString);
+                } catch (nestedParseError) { // Cleaned string STILL failed to parse
+                    log(
+                      LOG_LEVEL_ERROR,
+                      "Failed to parse even the cleaned JSON content. Cleaned part that failed:",
+                      cleanedJsonString,
+                      "Nested parse error:", nestedParseError.message
+                    );
+                    // Critical failure, throw a new comprehensive error.
+                    throw new Error(
+                        `Invalid JSON structure even after attempting cleanup. Original parse error: ${parseError.message}. Cleanup parse error: ${nestedParseError.message}. See full raw response and cleaned part in previous logs.`
+                    );
+                }
+            } else { // No cleaned string could be extracted
                 log(
-                  LOG_LEVEL_INFO,
-                  "Successfully parsed extracted JSON content after initial failure."
+                    LOG_LEVEL_ERROR,
+                    "Could not extract a valid JSON structure after initial parse failure. Original response was likely too malformed. Re-throwing original error."
                 );
-              } catch (nestedParseError) {
-                log(
-                  LOG_LEVEL_ERROR,
-                  "Failed to parse extracted JSON content. Extracted part:",
-                  extractedJsonString
-                );
-                throw new Error(
-                  `Invalid JSON structure after attempting cleanup. Original parse error: ${parseError.message}. Cleanup parse error: ${nestedParseError.message}. See full raw response in previous log.`
-                );
-              }
-            } else {
-              throw parseError;
+                // Re-throw original parseError as we couldn't recover.
+                throw parseError;
             }
           }
 
@@ -2936,7 +2978,8 @@ function animatePanelBox(
             systemStatusIndicator.className = "status-indicator status-ok";
           }
           return parsedAIResponse.narrative;
-        } catch (e) {
+        } catch (e) { // This catch block is for errors from the cleanup logic or the structure validation
+          log(LOG_LEVEL_ERROR, "Error processing/validating AI response object:", e.message);
           throw new Error(
             `Error processing AI response: ${e.message}. Check console for full AI output if parsing/validation failed.`
           );
@@ -2952,7 +2995,7 @@ function animatePanelBox(
       } else {
         throw new Error("No valid candidate or text found in AI response.");
       }
-    } catch (error) {
+    } catch (error) { // This is the outermost catch for network errors or errors re-thrown from above
       log(LOG_LEVEL_ERROR, "Gemini API call failed:", error);
       addMessageToLog(
         getUIText("error_api_call_failed", { ERROR_MSG: error.message }),

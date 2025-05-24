@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const DEFAULT_LANGUAGE = "cs";
   const DEFAULT_THEME_ID = "scifi";
   const UPDATE_HIGHLIGHT_DURATION = 5000; // ms
+  const SCROLL_INDICATOR_TOLERANCE = 2;
 
   // localStorage keys for persisting application state and preferences
   const CURRENT_THEME_STORAGE_KEY = "anomadyCurrentTheme";
@@ -93,6 +94,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Main layout panels
   const leftPanel = document.getElementById("left-panel");
   const rightPanel = document.getElementById("right-panel");
+  const outOfViewTrackedElements = {
+    left: { up: new Set(), down: new Set() },
+    right: { up: new Set(), down: new Set() }
+  };
+  let leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown;
 
   // Landing page specific elements
   const themeGridContainer = document.getElementById("theme-grid-container");
@@ -1173,35 +1179,45 @@ document.addEventListener("DOMContentLoaded", () => {
    * Briefly highlights a UI element container and adds a persistent update class.
    * @param {HTMLElement} element - The DOM element container to highlight.
    */
-  function highlightElementUpdate(element) {
-    if (!element) return;
+function highlightElementUpdate(element) {
+  if (!element) return;
 
-    let textValueElement = null;
-    if (
-      element.classList.contains("value") ||
-      element.classList.contains("value-overlay")
-    ) {
-      textValueElement = element;
-      const container = element.closest('.info-item, .info-item-meter');
-      if (container) container.classList.add('has-recent-update');
+  let textValueElement = null;
+  let containerForIndicatorCheck = null;
 
-    } else if (
-      element.classList.contains("info-item") ||
-      element.classList.contains("info-item-meter")
-    ) {
-      textValueElement = element.querySelector(".value, .value-overlay");
-      element.classList.add('has-recent-update');
+  if (
+    element.classList.contains("value") ||
+    element.classList.contains("value-overlay")
+  ) {
+    textValueElement = element;
+    const container = element.closest('.info-item, .info-item-meter');
+    if (container) {
+        container.classList.add('has-recent-update');
+        containerForIndicatorCheck = container;
     }
 
-    if (textValueElement) {
-      textValueElement.classList.add("value-updated");
-      setTimeout(() => {
-        if (document.body.contains(textValueElement)) {
-          textValueElement.classList.remove("value-updated");
-        }
-      }, UPDATE_HIGHLIGHT_DURATION);
-    }
+  } else if (
+    element.classList.contains("info-item") ||
+    element.classList.contains("info-item-meter")
+  ) {
+    textValueElement = element.querySelector(".value, .value-overlay");
+    element.classList.add('has-recent-update');
+    containerForIndicatorCheck = element;
   }
+
+  if (textValueElement) {
+    textValueElement.classList.add("value-updated");
+    setTimeout(() => {
+      if (document.body.contains(textValueElement)) {
+        textValueElement.classList.remove("value-updated");
+      }
+    }, UPDATE_HIGHLIGHT_DURATION);
+  }
+
+  if (containerForIndicatorCheck) {
+    checkAndTriggerScrollIndicator(containerForIndicatorCheck);
+  }
+}
 
   /**
    * Adds a message to the story log.
@@ -1836,78 +1852,261 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
+   * Updates the visibility of scroll indicators for a given panel side based on tracked elements.
+   * @param {string} panelSide - 'left' or 'right'.
+   * @param {HTMLElement} panelElement - The DOM element of the panel (leftPanel or rightPanel).
+   */
+  function updateScrollIndicatorStateForPanel(panelSide, panelElement) {
+    if (!panelElement || document.body.classList.contains("landing-page-active")) {
+        // Do not show indicators on landing page or if panelElement is missing
+        if (panelSide === 'left') {
+            if(leftPanelScrollUp) leftPanelScrollUp.style.display = 'none';
+            if(leftPanelScrollDown) leftPanelScrollDown.style.display = 'none';
+        } else {
+            if(rightPanelScrollUp) rightPanelScrollUp.style.display = 'none';
+            if(rightPanelScrollDown) rightPanelScrollDown.style.display = 'none';
+        }
+        return;
+    }
+
+    const indicators = {
+        up: panelSide === 'left' ? leftPanelScrollUp : rightPanelScrollUp,
+        down: panelSide === 'left' ? leftPanelScrollDown : rightPanelScrollDown,
+    };
+    if (!indicators.up || !indicators.down) return;
+
+    const sidebarRect = panelElement.getBoundingClientRect();
+    let needsUpIndicator = false;
+    let needsDownIndicator = false;
+
+    // Check elements tracked for being out-of-view upwards
+    const upTrackedIdsCopy = new Set(outOfViewTrackedElements[panelSide].up);
+    for (const elementId of upTrackedIdsCopy) {
+        const el = document.getElementById(elementId);
+        if (el && panelElement.contains(el)) {
+            const elRect = el.getBoundingClientRect();
+            if (elRect.top < sidebarRect.top - SCROLL_INDICATOR_TOLERANCE) {
+                needsUpIndicator = true; // This specific element still warrants 'up'
+            } else {
+                outOfViewTrackedElements[panelSide].up.delete(elementId); // No longer out of view upwards
+            }
+        } else {
+            outOfViewTrackedElements[panelSide].up.delete(elementId); // Element removed or no longer in panel
+        }
+    }
+
+    // Check elements tracked for being out-of-view downwards
+    const downTrackedIdsCopy = new Set(outOfViewTrackedElements[panelSide].down);
+    for (const elementId of downTrackedIdsCopy) {
+        const el = document.getElementById(elementId);
+        if (el && panelElement.contains(el)) {
+            const elRect = el.getBoundingClientRect();
+            if (elRect.bottom > sidebarRect.bottom + SCROLL_INDICATOR_TOLERANCE) {
+                needsDownIndicator = true; // This specific element still warrants 'down'
+            } else {
+                outOfViewTrackedElements[panelSide].down.delete(elementId); // No longer out of view downwards
+            }
+        } else {
+            outOfViewTrackedElements[panelSide].down.delete(elementId); // Element removed or no longer in panel
+        }
+    }
+
+    // Update display based on whether *any* tracked element still requires it for that direction
+    indicators.up.style.display = needsUpIndicator ? 'flex' : 'none';
+    indicators.down.style.display = needsDownIndicator ? 'flex' : 'none';
+  }
+
+  /**
+   * Checks if an element is out of view in its parent sidebar and triggers the appropriate scroll indicator.
+   * @param {HTMLElement} elementToCheck - The DOM element (e.g., an info-item container or a panel box).
+   */
+  function checkAndTriggerScrollIndicator(elementToCheck) {
+    if (!elementToCheck || !elementToCheck.id) {
+      log(LOG_LEVEL_DEBUG, "Scroll indicator check skipped: no element or element ID.", elementToCheck);
+      return;
+    }
+
+    const parentSidebar = elementToCheck.closest('.panel-sidebar');
+    if (!parentSidebar || (parentSidebar.id !== 'left-panel' && parentSidebar.id !== 'right-panel') || document.body.classList.contains("landing-page-active")) {
+      log(LOG_LEVEL_DEBUG, "Scroll indicator check skipped: no valid parent sidebar or on landing.", elementToCheck);
+      return;
+    }
+
+    // NEW: Check if the element is within an expanded panel box.
+    // The elementToCheck itself might be a panel-box, or an info-item inside one.
+    let parentPanelBox;
+    if (elementToCheck.classList.contains('panel-box')) {
+        parentPanelBox = elementToCheck;
+    } else {
+        parentPanelBox = elementToCheck.closest('.panel-box');
+    }
+
+    // If the element is not in a panel box, or its parent panel box is not expanded,
+    // do not trigger indicators for it.
+    if (!parentPanelBox || !parentPanelBox.classList.contains('is-expanded')) {
+        // If it was previously tracked, untrack it as it's no longer "visibly out of view"
+        const panelSideStr = parentSidebar.id === 'left-panel' ? 'left' : 'right';
+        let changedInTracking = false;
+        if (outOfViewTrackedElements[panelSideStr].up.has(elementToCheck.id)) {
+            outOfViewTrackedElements[panelSideStr].up.delete(elementToCheck.id);
+            changedInTracking = true;
+        }
+        if (outOfViewTrackedElements[panelSideStr].down.has(elementToCheck.id)) {
+            outOfViewTrackedElements[panelSideStr].down.delete(elementToCheck.id);
+            changedInTracking = true;
+        }
+        if (changedInTracking) {
+            updateScrollIndicatorStateForPanel(panelSideStr, parentSidebar);
+        }
+        log(LOG_LEVEL_DEBUG, "Scroll indicator check skipped: element not in an expanded panel box.", elementToCheck.id, parentPanelBox ? parentPanelBox.id : 'No parent panel box');
+        return;
+    }
+
+
+    requestAnimationFrame(() => {
+      const panelSideStr = parentSidebar.id === 'left-panel' ? 'left' : 'right';
+      const sidebarRect = parentSidebar.getBoundingClientRect();
+      const elRect = elementToCheck.getBoundingClientRect();
+
+      let changedInTracking = false;
+
+      // Is the element's top edge out of view (scrolled above the visible area)?
+      const isOutOfViewUpwards = elRect.top < sidebarRect.top - SCROLL_INDICATOR_TOLERANCE;
+      if (isOutOfViewUpwards) {
+        if (!outOfViewTrackedElements[panelSideStr].up.has(elementToCheck.id)) {
+          outOfViewTrackedElements[panelSideStr].up.add(elementToCheck.id);
+          changedInTracking = true;
+        }
+      } else { // Top edge is visible or below
+        if (outOfViewTrackedElements[panelSideStr].up.has(elementToCheck.id)) {
+          outOfViewTrackedElements[panelSideStr].up.delete(elementToCheck.id);
+          changedInTracking = true;
+        }
+      }
+
+      // Is the element's bottom edge out of view (scrolled below the visible area)?
+      const isOutOfViewDownwards = elRect.bottom > sidebarRect.bottom + SCROLL_INDICATOR_TOLERANCE;
+      if (isOutOfViewDownwards) {
+        if (!outOfViewTrackedElements[panelSideStr].down.has(elementToCheck.id)) {
+          outOfViewTrackedElements[panelSideStr].down.add(elementToCheck.id);
+          changedInTracking = true;
+        }
+      } else { // Bottom edge is visible or above
+        if (outOfViewTrackedElements[panelSideStr].down.has(elementToCheck.id)) {
+          outOfViewTrackedElements[panelSideStr].down.delete(elementToCheck.id);
+          changedInTracking = true;
+        }
+      }
+
+      if (changedInTracking) {
+        updateScrollIndicatorStateForPanel(panelSideStr, parentSidebar);
+      }
+    });
+  }
+
+  /**
    * Animates the expansion or collapse of a panel box.
    * @param {string} boxId - The ID of the panel box element.
    * @param {boolean} shouldExpand - True to expand, false to collapse.
    * @param {boolean} [manageVisibility=false] - If true, manage panel's display property.
    * @param {boolean} [isRestoringState=false] - If true, this call restores a saved state.
    */
-  function animatePanelBox(
-    boxId,
-    shouldExpand,
-    manageVisibility = false,
-    isRestoringState = false
-  ) {
-    const box = document.getElementById(boxId);
-    if (!box) return;
-    const header = box.querySelector(".panel-box-header");
-    const content = box.querySelector(".panel-box-content");
-    if (!header || !content) return;
+function animatePanelBox(
+  boxId,
+  shouldExpand,
+  manageVisibility = false,
+  isRestoringState = false
+) {
+  const box = document.getElementById(boxId);
+  if (!box) return;
+  const header = box.querySelector(".panel-box-header");
+  const content = box.querySelector(".panel-box-content");
+  if (!header || !content) return;
 
-    if (shouldExpand) {
-      if (box.style.display === "none" && manageVisibility) {
-        box.style.opacity = "0";
-        box.style.display = "flex";
-      } else if (box.style.display === "none") {
-        box.style.display = "flex";
-      }
+  if (shouldExpand) {
+    if (box.style.display === "none" && manageVisibility) {
+      box.style.opacity = "0";
+      box.style.display = "flex";
+    } else if (box.style.display === "none") {
+      box.style.display = "flex";
+    }
 
-      requestAnimationFrame(() => {
-        box.classList.add("is-expanded");
-        if (manageVisibility) box.style.opacity = "1";
-        header.setAttribute("aria-expanded", "true");
-        content.setAttribute("aria-hidden", "false");
-      });
-    } else {
-      box.classList.remove("is-expanded");
-      header.setAttribute("aria-expanded", "false");
-      content.setAttribute("aria-hidden", "true");
+    requestAnimationFrame(() => {
+      box.classList.add("is-expanded");
+      if (manageVisibility) box.style.opacity = "1";
+      header.setAttribute("aria-expanded", "true");
+      content.setAttribute("aria-hidden", "false");
 
-      if (manageVisibility) {
-        box.style.opacity = "0";
-        const transitionDuration =
-          parseFloat(
-            getComputedStyle(content).transitionDuration.replace("s", "")
-          ) * 1000 || 300;
+      // NEW: Refresh recent update dots for items within this newly expanded panel
+      // This is especially for panels that were hidden_until_active or simply collapsed
+      // and might have received updates while their content was not visually rendered.
+      if (!isRestoringState) { // Don't do this if just restoring a saved visual state
+        const infoItems = box.querySelectorAll('.info-item, .info-item-meter');
+        infoItems.forEach(itemContainer => {
+          const itemId = itemContainer.id.replace('info-item-container-', '');
+          // Check if this item *was* part of the last known AI updates
+          if (Object.prototype.hasOwnProperty.call(lastKnownDashboardUpdates, itemId)) {
+            // And if it doesn't already have the class (e.g. if updateDashboard didn't run yet for some reason, or to be safe)
+            // Or even if it does, to force a re-render of the pseudo-element.
+            // A simple remove/add can sometimes work for this.
+            const hadClass = itemContainer.classList.contains('has-recent-update');
+            if (hadClass) itemContainer.classList.remove('has-recent-update');
 
-        const onHideTransitionEnd = (event) => {
-          if (event.target === content || event.target === box) {
-            if (!box.classList.contains("is-expanded")) {
-              box.style.display = "none";
-              content.style.display = "";
+            // Add it back if it's a known update.
+            // This ensures that if `updateDashboard` set it, and it didn't render,
+            // this might help. Or if `updateDashboard` somehow missed it for a hidden item.
+            // The primary goal is to ensure the class is present *and* the browser acknowledges it now that it's visible.
+            itemContainer.classList.add('has-recent-update');
+
+            // If we are re-adding, log it for debugging.
+            if (itemContainer.classList.contains('has-recent-update')) {
+                 log(LOG_LEVEL_DEBUG, `Panel ${boxId} expanded. Ensured 'has-recent-update' on ${itemContainer.id}`);
             }
-            content.removeEventListener("transitionend", onHideTransitionEnd);
-            box.removeEventListener("transitionend", onHideTransitionEnd);
           }
-        };
-        content.addEventListener("transitionend", onHideTransitionEnd);
-        box.addEventListener("transitionend", onHideTransitionEnd);
+        });
+      }
+      checkAndTriggerScrollIndicator(box);
+    });
+  } else { // Collapsing
+    box.classList.remove("is-expanded");
+    header.setAttribute("aria-expanded", "false");
+    content.setAttribute("aria-hidden", "true");
 
-        setTimeout(() => {
-          if (
-            !box.classList.contains("is-expanded") &&
-            box.style.opacity === "0"
-          ) {
+    if (manageVisibility) {
+      box.style.opacity = "0";
+      const transitionDuration =
+        parseFloat(
+          getComputedStyle(content).transitionDuration.replace("s", "")
+        ) * 1000 || 300;
+
+      const onHideTransitionEnd = (event) => {
+        if (event.target === content || event.target === box) {
+          if (!box.classList.contains("is-expanded")) {
             box.style.display = "none";
             content.style.display = "";
           }
-        }, transitionDuration + 100);
-      }
-    }
-    if (!isRestoringState) {
-      currentPanelStates[boxId] = shouldExpand;
+          content.removeEventListener("transitionend", onHideTransitionEnd);
+          box.removeEventListener("transitionend", onHideTransitionEnd);
+        }
+      };
+      content.addEventListener("transitionend", onHideTransitionEnd);
+      box.addEventListener("transitionend", onHideTransitionEnd);
+
+      setTimeout(() => {
+        if (
+          !box.classList.contains("is-expanded") &&
+          box.style.opacity === "0"
+        ) {
+          box.style.display = "none";
+          content.style.display = "";
+        }
+      }, transitionDuration + 100);
     }
   }
+  if (!isRestoringState) {
+    currentPanelStates[boxId] = shouldExpand;
+  }
+}
 
   /**
    * Initializes collapsible panel boxes for a given theme.
@@ -2930,118 +3129,153 @@ document.addEventListener("DOMContentLoaded", () => {
    * Generates the HTML for dashboard panels based on a theme's configuration.
    * @param {string} themeId - The ID of the theme.
    */
-  function generatePanelsForTheme(themeId) {
-    const themeFullConfig = ALL_THEMES_CONFIG[themeId];
+function generatePanelsForTheme(themeId) {
+  const themeFullConfig = ALL_THEMES_CONFIG[themeId];
+  if (
+    !themeFullConfig ||
+    !themeFullConfig.dashboard_config ||
+    !leftPanel ||
+    !rightPanel
+  ) {
     if (
-      !themeFullConfig ||
-      !themeFullConfig.dashboard_config ||
-      !leftPanel ||
-      !rightPanel
+      leftPanel &&
+      rightPanel &&
+      themeFullConfig &&
+      !themeFullConfig.dashboard_config
     ) {
-      if (
-        leftPanel &&
-        rightPanel &&
-        themeFullConfig &&
-        !themeFullConfig.dashboard_config
-      ) {
-        log(
-          LOG_LEVEL_ERROR,
-          `Dashboard config not found for theme: ${themeId}`
-        );
-        leftPanel.innerHTML = `<p>${getUIText(
-          "error_dashboard_config_missing"
-        )}</p>`;
-        rightPanel.innerHTML = "";
+      log(
+        LOG_LEVEL_ERROR,
+        `Dashboard config not found for theme: ${themeId}`
+      );
+      // Clear only game-specific panels if they exist, preserving indicators
+      Array.from(leftPanel.querySelectorAll('.panel-box:not(#landing-theme-description-container .panel-box)')).forEach(el => el.remove());
+      Array.from(rightPanel.querySelectorAll('.panel-box:not(#landing-theme-details-container .panel-box)')).forEach(el => el.remove());
+
+      const errorPLeft = document.createElement('p');
+      errorPLeft.textContent = getUIText("error_dashboard_config_missing");
+      const lpScrollDown = leftPanel.querySelector('.scroll-indicator-down');
+      if (lpScrollDown) {
+          leftPanel.insertBefore(errorPLeft, lpScrollDown);
+      } else {
+          leftPanel.appendChild(errorPLeft); // Fallback
       }
-      return;
     }
-    const config = themeFullConfig.dashboard_config;
-
-    leftPanel.innerHTML = "";
-    rightPanel.innerHTML = "";
-    if (landingThemeDescriptionContainer)
-      landingThemeDescriptionContainer.style.display = "none";
-    if (landingThemeDetailsContainer)
-      landingThemeDetailsContainer.style.display = "none";
-
-    const createSidePanels = (sideContainerElement, panelConfigs) => {
-      if (!panelConfigs) return;
-      panelConfigs.forEach((panelConfig) => {
-        const panelBox = document.createElement("div");
-        panelBox.id = panelConfig.id;
-        panelBox.classList.add("panel-box");
-        panelBox.style.display = "flex";
-        panelBox.style.flexDirection = "column";
-        if (
-          panelConfig.type === "collapsible" ||
-          panelConfig.type === "hidden_until_active"
-        ) {
-          panelBox.classList.add("collapsible");
-        }
-        const header = document.createElement("div");
-        header.classList.add("panel-box-header");
-        const title = document.createElement("h3");
-        title.classList.add("panel-box-title");
-        title.textContent = getUIText(panelConfig.title_key, {}, themeId);
-        header.appendChild(title);
-        panelBox.appendChild(header);
-        const content = document.createElement("div");
-        content.classList.add("panel-box-content");
-        panelConfig.items.forEach((item) => {
-          const itemContainer = document.createElement("div");
-          itemContainer.id = `info-item-container-${item.id}`;
-          itemContainer.classList.add(
-            item.type === "meter" ? "info-item-meter" : "info-item"
-          );
-          if (
-            item.type === "text_long" ||
-            [
-              "objective",
-              "current_quest",
-              "location",
-              "environment",
-              "sensorConditions",
-              "omen_details",
-              "current_location_desc",
-              "ambient_conditions",
-              "blight_intensity",
-            ].includes(item.id)
-          ) {
-            itemContainer.classList.add("full-width");
-          }
-          const label = document.createElement("span");
-          label.classList.add("label");
-          label.textContent = getUIText(item.label_key, {}, themeId);
-          itemContainer.appendChild(label);
-          if (item.type === "meter") {
-            const meterContainer = document.createElement("div");
-            meterContainer.classList.add("meter-bar-container");
-            const meterBar = document.createElement("div");
-            meterBar.id = `meter-${item.id}`;
-            meterBar.classList.add("meter-bar");
-            meterContainer.appendChild(meterBar);
-            itemContainer.appendChild(meterContainer);
-            const valueOverlay = document.createElement("span");
-            valueOverlay.id = `info-${item.id}`;
-            valueOverlay.classList.add("value-overlay");
-            itemContainer.appendChild(valueOverlay);
-          } else {
-            const valueSpan = document.createElement("span");
-            valueSpan.id = `info-${item.id}`;
-            valueSpan.classList.add("value");
-            if (item.type === "text_long")
-              valueSpan.classList.add("objective-text");
-            itemContainer.appendChild(valueSpan);
-          }
-          content.appendChild(itemContainer);
-        });
-        panelBox.appendChild(content);
-        sideContainerElement.appendChild(panelBox);
-      });
-    };
-    createSidePanels(leftPanel, config.left_panel);
-    createSidePanels(rightPanel, config.right_panel);
+    return;
   }
+  const config = themeFullConfig.dashboard_config;
+
+  // Clear existing game panel boxes only, not the entire innerHTML,
+  // preserving scroll indicators and any fixed landing page containers (though they should be hidden).
+  [leftPanel, rightPanel].forEach(panel => {
+    if (panel) {
+      const panelBoxes = panel.querySelectorAll('.panel-box');
+      panelBoxes.forEach(box => {
+        // Check if the box is one of the specific landing page panel containers
+        const isLandingDescriptionBox = landingThemeDescriptionContainer && landingThemeDescriptionContainer.contains(box);
+        const isLandingDetailsBox = landingThemeDetailsContainer && landingThemeDetailsContainer.contains(box);
+
+        if (!isLandingDescriptionBox && !isLandingDetailsBox) {
+          box.remove();
+        }
+      });
+    }
+  });
+
+
+  if (landingThemeDescriptionContainer)
+    landingThemeDescriptionContainer.style.display = "none";
+  if (landingThemeDetailsContainer)
+    landingThemeDetailsContainer.style.display = "none";
+
+  const createSidePanels = (sideContainerElement, panelConfigs) => {
+    if (!panelConfigs || !sideContainerElement) return;
+
+    // Find the bottom scroll indicator to insert panels before it.
+    const scrollIndicatorDown = sideContainerElement.querySelector('.scroll-indicator-down');
+
+    panelConfigs.forEach((panelConfig) => {
+      const panelBox = document.createElement("div");
+      panelBox.id = panelConfig.id; // Ensure panel boxes have IDs
+      panelBox.classList.add("panel-box");
+      panelBox.style.display = "flex";
+      panelBox.style.flexDirection = "column";
+      if (
+        panelConfig.type === "collapsible" ||
+        panelConfig.type === "hidden_until_active"
+      ) {
+        panelBox.classList.add("collapsible");
+      }
+      const header = document.createElement("div");
+      header.classList.add("panel-box-header");
+      const title = document.createElement("h3");
+      title.classList.add("panel-box-title");
+      title.textContent = getUIText(panelConfig.title_key, {}, themeId);
+      header.appendChild(title);
+      panelBox.appendChild(header);
+      const content = document.createElement("div");
+      content.classList.add("panel-box-content");
+      panelConfig.items.forEach((item) => {
+        const itemContainer = document.createElement("div");
+        // Ensure info items have IDs for scroll indicator tracking
+        itemContainer.id = `info-item-container-${item.id}`;
+        itemContainer.classList.add(
+          item.type === "meter" ? "info-item-meter" : "info-item"
+        );
+        if (
+          item.type === "text_long" ||
+          [
+            "objective",
+            "current_quest",
+            "location",
+            "environment",
+            "sensorConditions",
+            "omen_details",
+            "current_location_desc",
+            "ambient_conditions",
+            "blight_intensity",
+          ].includes(item.id)
+        ) {
+          itemContainer.classList.add("full-width");
+        }
+        const label = document.createElement("span");
+        label.classList.add("label");
+        label.textContent = getUIText(item.label_key, {}, themeId);
+        itemContainer.appendChild(label);
+        if (item.type === "meter") {
+          const meterContainer = document.createElement("div");
+          meterContainer.classList.add("meter-bar-container");
+          const meterBar = document.createElement("div");
+          meterBar.id = `meter-${item.id}`;
+          meterBar.classList.add("meter-bar");
+          meterContainer.appendChild(meterBar);
+          itemContainer.appendChild(meterContainer);
+          const valueOverlay = document.createElement("span");
+          valueOverlay.id = `info-${item.id}`;
+          valueOverlay.classList.add("value-overlay");
+          itemContainer.appendChild(valueOverlay);
+        } else {
+          const valueSpan = document.createElement("span");
+          valueSpan.id = `info-${item.id}`;
+          valueSpan.classList.add("value");
+          if (item.type === "text_long")
+            valueSpan.classList.add("objective-text");
+          itemContainer.appendChild(valueSpan);
+        }
+        content.appendChild(itemContainer);
+      });
+      panelBox.appendChild(content);
+
+      // Insert the new panelBox before the bottom scroll indicator if it exists
+      if (scrollIndicatorDown) {
+        sideContainerElement.insertBefore(panelBox, scrollIndicatorDown);
+      } else {
+        sideContainerElement.appendChild(panelBox); // Fallback, though indicator should exist
+      }
+    });
+  };
+  createSidePanels(leftPanel, config.left_panel);
+  createSidePanels(rightPanel, config.right_panel);
+}
 
   /**
    * Changes the active game theme or starts a new game.
@@ -3196,6 +3430,34 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
     }
+    if (systemStatusIndicator) {
+      systemStatusIndicator.textContent = getUIText("standby");
+      systemStatusIndicator.className = "status-indicator status-warning";
+    }
+    const newThemeDisplayName = ALL_THEMES_CONFIG[newThemeId]
+      ? getUIText(ALL_THEMES_CONFIG[newThemeId].name_key, {}, newThemeId)
+      : newThemeId;
+    if (oldThemeId !== newThemeId) {
+      addMessageToLog(
+        getUIText("system_theme_set_generic", {
+          THEME_NAME: newThemeDisplayName,
+        }),
+        "system"
+      );
+    }
+    if (forceNewGame) {
+      addMessageToLog(
+        getUIText("system_new_game_initiated", {
+          THEME_NAME: newThemeDisplayName,
+        }),
+        "system"
+      );
+    }
+    // Explicitly update scroll indicators after all UI changes for new game/theme switch
+    requestAnimationFrame(() => {
+      if (leftPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('left', leftPanel);
+      if (rightPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('right', rightPanel);
+    });
     if (startGameButton)
       startGameButton.textContent = getUIText("button_access_systems");
   }
@@ -3240,108 +3502,137 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Switches the UI to the landing page view.
    */
-  function switchToLandingView() {
-    currentTheme = null;
-    localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
-    playerIdentifier = "";
-    gameHistory = [];
-    document.body.classList.add("landing-page-active");
-    document.body.classList.remove(
-      ...Array.from(document.body.classList).filter(
-        (cn) => cn.startsWith("theme-") && cn !== "theme-landing"
-      )
-    );
-    if (!document.body.classList.contains("theme-landing"))
-      document.body.classList.add("theme-landing");
-    if (storyLogViewport) storyLogViewport.style.display = "none";
-    if (suggestedActionsWrapper) suggestedActionsWrapper.style.display = "none";
-    if (playerInputControlPanel) playerInputControlPanel.style.display = "none";
-    if (nameInputSection) nameInputSection.style.display = "none";
-    if (actionInputSection) actionInputSection.style.display = "none";
-    if (leftPanel) {
-      Array.from(leftPanel.children)
-        .filter((el) => el.id !== "landing-theme-description-container")
-        .forEach((el) => el.remove());
-    }
-    if (rightPanel) {
-      Array.from(rightPanel.children)
-        .filter((el) => el.id !== "landing-theme-details-container")
-        .forEach((el) => el.remove());
-    }
-    if (themeGridContainer) themeGridContainer.style.display = "grid";
-    if (landingThemeDescriptionContainer) {
-      landingThemeDescriptionContainer.style.display = "flex";
-      if (leftPanel && !leftPanel.contains(landingThemeDescriptionContainer)) {
+function switchToLandingView() {
+  Object.keys(outOfViewTrackedElements).forEach(side => {
+      outOfViewTrackedElements[side].up.clear();
+      outOfViewTrackedElements[side].down.clear();
+  });
+  [leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown].forEach(indicator => {
+      if (indicator) indicator.style.display = 'none';
+  });
+
+  currentTheme = null;
+  localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+  playerIdentifier = "";
+  gameHistory = [];
+  document.body.classList.add("landing-page-active");
+  document.body.classList.remove(
+    ...Array.from(document.body.classList).filter(
+      (cn) => cn.startsWith("theme-") && cn !== "theme-landing"
+    )
+  );
+  if (!document.body.classList.contains("theme-landing"))
+    document.body.classList.add("theme-landing");
+  if (storyLogViewport) storyLogViewport.style.display = "none";
+  if (suggestedActionsWrapper) suggestedActionsWrapper.style.display = "none";
+  if (playerInputControlPanel) playerInputControlPanel.style.display = "none";
+  if (nameInputSection) nameInputSection.style.display = "none";
+  if (actionInputSection) actionInputSection.style.display = "none";
+  if (leftPanel) {
+    Array.from(leftPanel.children)
+      .filter((el) => el.id !== "landing-theme-description-container" && !el.classList.contains('scroll-indicator'))
+      .forEach((el) => el.remove());
+  }
+  if (rightPanel) {
+    Array.from(rightPanel.children)
+      .filter((el) => el.id !== "landing-theme-details-container" && !el.classList.contains('scroll-indicator'))
+      .forEach((el) => el.remove());
+  }
+  if (themeGridContainer) themeGridContainer.style.display = "grid";
+  if (landingThemeDescriptionContainer) {
+    landingThemeDescriptionContainer.style.display = "flex";
+    if (leftPanel && !leftPanel.contains(landingThemeDescriptionContainer)) {
+      // Insert before the bottom scroll indicator if it exists
+      const scrollIndicatorDown = leftPanel.querySelector('.scroll-indicator-down');
+      if (scrollIndicatorDown) {
+        leftPanel.insertBefore(landingThemeDescriptionContainer, scrollIndicatorDown);
+      } else {
         leftPanel.appendChild(landingThemeDescriptionContainer);
       }
     }
-    if (landingThemeDetailsContainer) {
-      landingThemeDetailsContainer.style.display = "flex";
-      if (rightPanel && !rightPanel.contains(landingThemeDetailsContainer)) {
+  }
+  if (landingThemeDetailsContainer) {
+    landingThemeDetailsContainer.style.display = "flex";
+    if (rightPanel && !rightPanel.contains(landingThemeDetailsContainer)) {
+      // Insert before the bottom scroll indicator if it exists
+      const scrollIndicatorDown = rightPanel.querySelector('.scroll-indicator-down');
+      if (scrollIndicatorDown) {
+        rightPanel.insertBefore(landingThemeDetailsContainer, scrollIndicatorDown);
+      } else {
         rightPanel.appendChild(landingThemeDetailsContainer);
       }
     }
-    if (landingThemeLoreText)
-      landingThemeLoreText.textContent = getUIText(
-        "landing_select_theme_prompt_lore"
-      );
-    if (landingThemeInfoContent)
-      landingThemeInfoContent.innerHTML = `<p>${getUIText(
-        "landing_select_theme_prompt_details"
-      )}</p>`;
-    if (landingThemeActions) {
-      landingThemeActions.style.display = "none";
-      landingThemeActions.innerHTML = "";
-    }
-    const descTitle =
-      landingThemeDescriptionContainer?.querySelector(".panel-box-title");
-    if (descTitle)
-      descTitle.textContent = getUIText("landing_theme_description_title");
-    const detailsTitle =
-      landingThemeDetailsContainer?.querySelector(".panel-box-title");
-    if (detailsTitle)
-      detailsTitle.textContent = getUIText("landing_theme_info_title");
-    const lorePanelBox =
-      landingThemeDescriptionContainer?.querySelector(".panel-box");
-    if (lorePanelBox) {
-      if (!lorePanelBox.id) lorePanelBox.id = "landing-lore-panel-box";
-      animatePanelBox(lorePanelBox.id, true, false);
-      initializeSpecificPanelHeader(landingThemeDescriptionContainer);
-    }
-    const detailsPanelBox =
-      landingThemeDetailsContainer?.querySelector(".panel-box");
-    if (detailsPanelBox) {
-      if (!detailsPanelBox.id) detailsPanelBox.id = "landing-details-panel-box";
-      animatePanelBox(detailsPanelBox.id, true, false);
-      initializeSpecificPanelHeader(landingThemeDetailsContainer);
-    }
-    currentLandingGridSelection = localStorage.getItem(
-      LANDING_SELECTED_GRID_THEME_KEY
-    );
-    renderThemeGrid();
-    if (
-      currentLandingGridSelection &&
-      ALL_THEMES_CONFIG[currentLandingGridSelection]
-    ) {
-      updateLandingPagePanels(currentLandingGridSelection, false);
-      const selectedBtn = themeGridContainer?.querySelector(
-        `.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`
-      );
-      if (selectedBtn) selectedBtn.classList.add("active");
-    }
-    if (systemStatusIndicator) {
-      systemStatusIndicator.textContent = getUIText("standby");
-      systemStatusIndicator.className = "status-indicator status-ok";
-    }
-    updateTopbarThemeIcons();
-    setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID);
   }
+  if (landingThemeLoreText)
+    landingThemeLoreText.textContent = getUIText(
+      "landing_select_theme_prompt_lore"
+    );
+  if (landingThemeInfoContent)
+    landingThemeInfoContent.innerHTML = `<p>${getUIText(
+      "landing_select_theme_prompt_details"
+    )}</p>`;
+  if (landingThemeActions) {
+    landingThemeActions.style.display = "none";
+    landingThemeActions.innerHTML = "";
+  }
+  const descTitle =
+    landingThemeDescriptionContainer?.querySelector(".panel-box-title");
+  if (descTitle)
+    descTitle.textContent = getUIText("landing_theme_description_title");
+  const detailsTitle =
+    landingThemeDetailsContainer?.querySelector(".panel-box-title");
+  if (detailsTitle)
+    detailsTitle.textContent = getUIText("landing_theme_info_title");
+  const lorePanelBox =
+    landingThemeDescriptionContainer?.querySelector(".panel-box");
+  if (lorePanelBox) {
+    if (!lorePanelBox.id) lorePanelBox.id = "landing-lore-panel-box";
+    animatePanelBox(lorePanelBox.id, true, false);
+    initializeSpecificPanelHeader(landingThemeDescriptionContainer);
+  }
+  const detailsPanelBox =
+    landingThemeDetailsContainer?.querySelector(".panel-box");
+  if (detailsPanelBox) {
+    if (!detailsPanelBox.id) detailsPanelBox.id = "landing-details-panel-box";
+    animatePanelBox(detailsPanelBox.id, true, false);
+    initializeSpecificPanelHeader(landingThemeDetailsContainer);
+  }
+  currentLandingGridSelection = localStorage.getItem(
+    LANDING_SELECTED_GRID_THEME_KEY
+  );
+  renderThemeGrid();
+  if (
+    currentLandingGridSelection &&
+    ALL_THEMES_CONFIG[currentLandingGridSelection]
+  ) {
+    updateLandingPagePanels(currentLandingGridSelection, false);
+    const selectedBtn = themeGridContainer?.querySelector(
+      `.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`
+    );
+    if (selectedBtn) selectedBtn.classList.add("active");
+  }
+  if (systemStatusIndicator) {
+    systemStatusIndicator.textContent = getUIText("standby");
+    systemStatusIndicator.className = "status-indicator status-ok";
+  }
+  updateTopbarThemeIcons();
+  setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID);
+}
 
   /**
    * Switches the UI to the main game view for a specific theme.
    * @param {string} themeId - The ID of the theme.
    */
   function switchToGameView(themeId) {
+    // Clear any active scroll indicators and tracked elements from previous view/state
+    Object.keys(outOfViewTrackedElements).forEach(side => {
+        outOfViewTrackedElements[side].up.clear();
+        outOfViewTrackedElements[side].down.clear();
+    });
+    [leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown].forEach(indicator => {
+        if (indicator) indicator.style.display = 'none';
+    });
+
     document.body.classList.remove("landing-page-active", "theme-landing");
     document.body.classList.remove(
       ...Array.from(document.body.classList).filter(
@@ -3814,6 +4105,15 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME;
     updateModelToggleButtonText();
 
+    leftPanelScrollUp = document.getElementById('left-panel-scroll-indicator-up');
+    leftPanelScrollDown = document.getElementById('left-panel-scroll-indicator-down');
+    rightPanelScrollUp = document.getElementById('right-panel-scroll-indicator-up');
+    rightPanelScrollDown = document.getElementById('right-panel-scroll-indicator-down');
+
+    [leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown].forEach(indicator => {
+        if (indicator) indicator.style.display = 'none';
+    });
+
     const apiKeyIsSetup = await setupApiKey();
     if (!apiKeyIsSetup) {
       const defaultThemeAvailableForLanding =
@@ -3932,6 +4232,10 @@ document.addEventListener("DOMContentLoaded", () => {
         systemStatusIndicator.className = "status-indicator status-ok";
       }
       isInitialGameLoad = false;
+      requestAnimationFrame(() => {
+          if (leftPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('left', leftPanel);
+          if (rightPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('right', rightPanel);
+      });
     } else {
       currentSuggestedActions = [];
       switchToLandingView();
@@ -3939,7 +4243,16 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTopbarThemeIcons();
     if (playerActionInput) autoGrowTextarea(playerActionInput);
 
-    log(LOG_LEVEL_INFO, "Application initialization complete.");
+  [leftPanel, rightPanel].forEach(panel => {
+      if (panel) {
+          panel.addEventListener('scroll', () => {
+              const panelSide = panel.id === 'left-panel' ? 'left' : 'right';
+              updateScrollIndicatorStateForPanel(panelSide, panel);
+          }, { passive: true }); // Use passive listener for performance
+      }
+  });
+
+  log(LOG_LEVEL_INFO, "Application initialization complete.");
   }
 
   if (applicationLogoElement)

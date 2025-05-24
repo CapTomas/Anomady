@@ -284,7 +284,67 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	justify-content: flex-start;
 	gap: var(--spacing-lg);
 	overflow-y: auto;
-	height: 100%
+	height: 100%;
+}
+.scroll-indicator {
+    position: sticky;
+    left: 50%;
+    width: 24px;
+    height: 12px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    pointer-events: none;
+}
+.scroll-indicator::after {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-style: solid;
+    border-color: var(--color-accent-teal);
+    border-width: 0 3px 3px 0;
+    opacity: 0.7;
+    animation: pulseChevronOpacity 1.5s infinite ease-in-out;
+}
+
+.scroll-indicator-down {
+    bottom: 5px;
+    animation-name: moveIndicatorBobbingDown;
+    animation-duration: 1.3s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+.scroll-indicator-down::after {
+    transform: rotate(45deg);
+}
+
+.scroll-indicator-up {
+    top: 5px;
+    animation-name: moveIndicatorBobbingUp;
+    animation-duration: 1.3s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+.scroll-indicator-up::after {
+    transform: rotate(-135deg);
+}
+
+@keyframes pulseChevronOpacity {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes moveIndicatorBobbingDown {
+    from { transform: translateX(-50%) translateY(0px); }
+    to   { transform: translateX(-50%) translateY(4px); }
+}
+@keyframes moveIndicatorBobbingUp {
+    from { transform: translateX(-50%) translateY(0px); }
+    to   { transform: translateX(-50%) translateY(-4px); }
 }
 #landing-theme-description-container,#landing-theme-details-container {
 	width: 100%;
@@ -852,7 +912,8 @@ background-color: var(--color-bg-content-view)
   content: '●'; /* Unicode Black Circle */
   color: var(--color-accent-teal);
   font-size: 0.7em; /* Smaller than text */
-  margin-right: 5px;
+  margin-right: 3px;
+	margin-left: -11px; /* Adjust to align with text */
   display: inline-block; /* Allows transform */
   vertical-align: middle;
   animation: pulseDot 1.5s infinite ease-in-out;

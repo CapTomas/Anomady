@@ -3745,6 +3745,19 @@ function switchToLandingView() {
     if (clickedBtn) clickedBtn.classList.add("active");
     updateLandingPagePanels(themeId, true);
   }
+/**
+   * Formats text with simple markdown-like syntax to HTML.
+   * Supports _italic_, *bold*, and ~underline~.
+   * @param {string} text - The text to format.
+   * @returns {string} HTML formatted string.
+   */
+  function formatDynamicText(text) {
+    if (typeof text !== 'string' || !text) return '';
+    return text
+      .replace(/_([^_]+)_/g, '<em>$1</em>')       // _italic_
+      .replace(/\*([^*]+)\*/g, '<strong>$1</strong>') // *bold*
+      .replace(/~([^~]+)~/g, '<u>$1</u>');          // ~underline~
+  }
 
   /**
    * Updates landing page's theme description and details panels.
@@ -3780,11 +3793,11 @@ function switchToLandingView() {
     if (detailsTitle)
       detailsTitle.textContent = getUIText("landing_theme_info_title");
 
-    landingThemeLoreText.textContent = getUIText(
+    landingThemeLoreText.innerHTML = formatDynamicText(getUIText(
       themeConfig.lore_key,
       {},
       themeId
-    );
+    ));
     if (animate) {
       const lorePanelBox =
         landingThemeDescriptionContainer.querySelector(".panel-box");
@@ -3801,28 +3814,28 @@ function switchToLandingView() {
     landingThemeInfoContent.innerHTML = `
             <p><strong>${getUIText(
               "landing_theme_name_label"
-            )}:</strong> <span id="landing-selected-theme-name">${themeDisplayNameInBriefing}</span></p>
+            )}</strong> <span id="landing-selected-theme-name">${themeDisplayNameInBriefing}</span></p>
             <p><strong>${getUIText(
               "landing_theme_inspiration_label"
-            )}:</strong> <span id="landing-selected-theme-inspiration">${getUIText(
+            )}</strong> <span id="landing-selected-theme-inspiration">${formatDynamicText(getUIText(
       themeConfig.inspiration_key,
       {},
       themeId
-    )}</span></p>
+    ))}</span></p>
             <p><strong>${getUIText(
               "landing_theme_tone_label"
-            )}:</strong> <span id="landing-selected-theme-tone">${getUIText(
+            )}</strong> <span id="landing-selected-theme-tone">${formatDynamicText(getUIText(
       themeConfig.tone_key,
       {},
       themeId
-    )}</span></p>
+    ))}</span></p>
             <p><strong>${getUIText(
               "landing_theme_concept_label"
-            )}:</strong> <span id="landing-selected-theme-concept">${getUIText(
+            )}</strong> <span id="landing-selected-theme-concept">${formatDynamicText(getUIText(
       themeConfig.concept_key,
       {},
       themeId
-    )}</span></p>
+    ))}</span></p>
         `;
 
     renderLandingPageActionButtons(themeId);

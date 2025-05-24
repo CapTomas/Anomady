@@ -442,6 +442,11 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 #landing-theme-info-content p {
 	margin-bottom: 0
 }
+#landing-theme-info-content p strong {
+	color: var(--color-text-secondary);
+	font-weight: var(--font-weight-semibold);
+	margin-right: var(--spacing-xs);
+}
 #landing-theme-actions .ui-button.primary {
     flex-grow: 1;
     background-color: var(--color-text-secondary);

@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Default application settings
   const DEFAULT_LANGUAGE = "cs";
-  const DEFAULT_THEME_ID = "scifi";
+  const DEFAULT_THEME_ID = "grim_warden";
   const UPDATE_HIGHLIGHT_DURATION = 5000; // ms
   const SCROLL_INDICATOR_TOLERANCE = 2;
 
@@ -1105,7 +1105,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         if (
           themeConfig.naming_convention === "asset" ||
-          currentTheme === "scifi"
+          currentTheme === "grim_warden"
         ) {
           [
             "suggestedShipName1",
@@ -3359,6 +3359,10 @@ function generatePanelsForTheme(themeId) {
     if (startGameButton) startGameButton.disabled = false;
     updateTopbarThemeIcons();
 
+    const newThemeDisplayName = ALL_THEMES_CONFIG[newThemeId]
+      ? getUIText(ALL_THEMES_CONFIG[newThemeId].name_key, {}, newThemeId)
+      : newThemeId;
+
     if (!forceNewGame && loadGameState(currentTheme)) {
       isInitialGameLoad = false;
 
@@ -3370,13 +3374,10 @@ function generatePanelsForTheme(themeId) {
       if (playerActionInput && document.body.contains(playerActionInput))
         playerActionInput.focus();
 
-      const themeDisplayName = ALL_THEMES_CONFIG[currentTheme]
-        ? getUIText(ALL_THEMES_CONFIG[currentTheme].name_key, {}, currentTheme)
-        : currentTheme;
       addMessageToLog(
         getUIText("system_session_resumed", {
           PLAYER_ID: playerIdentifier,
-          THEME_NAME: themeDisplayName,
+          THEME_NAME: newThemeDisplayName,
         }),
         "system"
       );
@@ -3410,9 +3411,7 @@ function generatePanelsForTheme(themeId) {
         systemStatusIndicator.textContent = getUIText("standby");
         systemStatusIndicator.className = "status-indicator status-warning";
       }
-      const newThemeDisplayName = ALL_THEMES_CONFIG[newThemeId]
-        ? getUIText(ALL_THEMES_CONFIG[newThemeId].name_key, {}, newThemeId)
-        : newThemeId;
+
       if (oldThemeId !== newThemeId) {
         addMessageToLog(
           getUIText("system_theme_set_generic", {
@@ -3430,30 +3429,6 @@ function generatePanelsForTheme(themeId) {
         );
       }
     }
-    if (systemStatusIndicator) {
-      systemStatusIndicator.textContent = getUIText("standby");
-      systemStatusIndicator.className = "status-indicator status-warning";
-    }
-    const newThemeDisplayName = ALL_THEMES_CONFIG[newThemeId]
-      ? getUIText(ALL_THEMES_CONFIG[newThemeId].name_key, {}, newThemeId)
-      : newThemeId;
-    if (oldThemeId !== newThemeId) {
-      addMessageToLog(
-        getUIText("system_theme_set_generic", {
-          THEME_NAME: newThemeDisplayName,
-        }),
-        "system"
-      );
-    }
-    if (forceNewGame) {
-      addMessageToLog(
-        getUIText("system_new_game_initiated", {
-          THEME_NAME: newThemeDisplayName,
-        }),
-        "system"
-      );
-    }
-    // Explicitly update scroll indicators after all UI changes for new game/theme switch
     requestAnimationFrame(() => {
       if (leftPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('left', leftPanel);
       if (rightPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('right', rightPanel);

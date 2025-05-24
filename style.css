@@ -85,6 +85,8 @@
 	--transition-std: 0.25s ease-out;
 	--transition-collapsible-content: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	--transition-collapsible-opacity: 0.25s ease-out 0.05s;
+	--scrollbar-fade-duration: 0.2s;
+	--scrollbar-hold-duration: 0.8s;
 	--UPDATE_HIGHLIGHT_DURATION: 5s
 }
 *,*::before,*::after {
@@ -929,17 +931,52 @@ background-color: var(--color-bg-content-view)
     transform: scale(1.2);
   }
 }
-
 ::-webkit-scrollbar {
 	width: 6px;
-	height: 6px
+	height: 6px;
 }
 ::-webkit-scrollbar-thumb {
-	background-color: var(--color-text-muted);
-	border-radius: var(--radius-full)
+    background-color: transparent;
+    border-radius: var(--radius-full);
+    transition: background-color var(--scrollbar-fade-duration) ease-out var(--scrollbar-hold-duration);
+}
+::-webkit-scrollbar-track {
+    background-color: transparent;
+    transition: background-color var(--scrollbar-fade-duration) ease-out var(--scrollbar-hold-duration);
+}
+.panel-sidebar,
+#story-log-viewport,
+body.landing-page-active #landing-theme-description-container > .panel-box.is-expanded > .panel-box-content,
+body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content > #landing-theme-info-content {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color var(--scrollbar-fade-duration) ease-out var(--scrollbar-hold-duration);
+}
+.panel-sidebar:hover::-webkit-scrollbar-thumb,
+#story-log-viewport:hover::-webkit-scrollbar-thumb,
+body.landing-page-active #landing-theme-description-container > .panel-box.is-expanded > .panel-box-content:hover::-webkit-scrollbar-thumb,
+body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content > #landing-theme-info-content:hover::-webkit-scrollbar-thumb {
+    background-color: var(--color-text-muted);
+    transition-delay: 0s;
+}
+
+.panel-sidebar:hover::-webkit-scrollbar-track,
+#story-log-viewport:hover::-webkit-scrollbar-track,
+body.landing-page-active #landing-theme-description-container > .panel-box.is-expanded > .panel-box-content:hover::-webkit-scrollbar-track,
+body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content > #landing-theme-info-content:hover::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0);
+    transition-delay: 0s;
+}
+.panel-sidebar:hover,
+#story-log-viewport:hover,
+body.landing-page-active #landing-theme-description-container > .panel-box.is-expanded > .panel-box-content:hover,
+body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content > #landing-theme-info-content:hover {
+    scrollbar-color: var(--color-text-muted) rgba(0, 0, 0, 0);
+    transition-delay: 0s;
 }
 ::-webkit-scrollbar-thumb:hover {
-	background-color: var(--color-text-secondary)
+    background-color: var(--color-text-secondary) !important;
+    transition-delay: 0s !important;
 }
 * {
 	scrollbar-width: thin;

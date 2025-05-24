@@ -15,7 +15,7 @@
   "dashboard_config": {
     "left_panel": [
       {
-        "id": "custodian-personnel-file-panel-box",
+        "id": "custodian-identity-module",
         "title_key": "title_custodian_id_celestial_custodians",
         "type": "static",
         "initial_expanded": true,
@@ -26,16 +26,16 @@
             "type": "text",
             "default_value_key": "custodian_name_default_celestial_custodians",
             "must_translate": false,
-            "short_description": "The player character's official (or self-appointed) Custodian designation."
+            "short_description": "The Custodian's official (or hilariously self-bestowed) designation. Should ideally sound vaguely professional yet hint at impending chaos."
           },
           {
             "id": "gumption_level_pct",
             "label_key": "label_gumption_level_celestial_custodians",
             "type": "meter",
             "meter_type": "stamina",
-            "default_value": "100",
+            "default_value": "0",
             "must_translate": false,
-            "short_description": "Custodian's current Gumption reserves (0-100). Powers specialized tools and witty comebacks. Replenished by strong tea or successfully not making things worse."
+            "short_description": "Custodian's current 'Gumption' (0-100). Essential for powering arcane cleaning implements, enduring baffling bureaucracy, and delivering perfectly timed sarcastic remarks. Replenished by strong tea, successfully not making things worse, or brief moments of surprising competence."
           },
           {
             "id": "union_dues_status_text",
@@ -43,16 +43,16 @@
             "type": "text",
             "default_value_key": "union_dues_pending_celestial_custodians",
             "must_translate": true,
-            "short_description": "Status of mandatory (and questionably useful) Union of Celestial Custodians Local 47 dues."
+            "short_description": "Status of mandatory (and deeply questionable) Union of Celestial Custodians Local 47 dues. Often involves passive-aggressive postcards or threats of revoking biscuit privileges."
           }
         ]
       },
       {
-        "id": "ship-maintenance-log-panel-box",
+        "id": "vessel-condition-and-cargo-manifest",
         "title_key": "title_ship_log_celestial_custodians",
         "type": "collapsible",
         "initial_expanded": true,
-        "boot_delay": 200,
+        "boot_delay": 250,
         "items": [
           {
             "id": "ship_name",
@@ -60,16 +60,16 @@
             "type": "text",
             "default_value_key": "ship_name_default_celestial_custodians",
             "must_translate": false,
-            "short_description": "Designation of the trusty (and probably rusty) Custodial vessel."
+            "short_description": "Proud (or resigned) designation of the Custodian's trusty, and likely slightly dented, vessel. Should sound like it has character and questionable repair history."
           },
           {
             "id": "ship_integrity_pct",
             "label_key": "label_ship_integrity_celestial_custodians",
             "type": "meter",
             "meter_type": "health",
-            "default_value": "100",
+            "default_value": "0",
             "must_translate": false,
-            "short_description": "Structural integrity of the vessel (0-100). Prone to dings from rogue asteroids or overly enthusiastic mopping."
+            "short_description": "Structural integrity of the vessel (0-100). Prone to unscheduled disassembly due to rogue asteroids, overly enthusiastic mopping, or experimental tea brewing."
           },
           {
             "id": "ship_fuel_supply_text",
@@ -78,7 +78,7 @@
             "default_value_key": "ship_fuel_nominal_celestial_custodians",
             "suffix_key": "ship_fuel_unit_celestial_custodians",
             "must_translate": true,
-            "short_description": "Remaining 'All-Purpose Go-Juice'. Measured descriptively (e.g., 'Full Tank', 'Running on Fumes', 'Enough for a Short Hop and a Prayer')."
+            "short_description": "Remaining 'All-Purpose Go-Juice.' Describe qualitatively (e.g., 'Sufficient for several ill-advised detours,' 'Running on fumes and optimism,' 'Enough for a short hop and a long prayer')."
           },
           {
             "id": "debris_containment_level_pct",
@@ -87,16 +87,16 @@
             "meter_type": "cargo_capacity",
             "default_value": "0",
             "must_translate": false,
-            "short_description": "Current capacity of the Debris Containment Unit (0-100). Filling up with cosmic gunk and questionable samples."
+            "short_description": "Current fill level of the Debris Containment Unit (0-100). Rapidly accumulating cosmic gunk, questionable samples, and items that are probably best not identified."
           }
         ]
       },
       {
-        "id": "tools-of-the-trade-panel-box",
+        "id": "custodial-accoutrements-and-gizmos",
         "title_key": "title_tools_trade_celestial_custodians",
         "type": "collapsible",
         "initial_expanded": false,
-        "boot_delay": 400,
+        "boot_delay": 500,
         "items": [
           {
             "id": "plasmatic_mop_status_text",
@@ -104,7 +104,7 @@
             "type": "text",
             "default_value_key": "mop_status_ready_celestial_custodians",
             "must_translate": true,
-            "short_description": "Operational status of the Plasmatic Mop Mk. IV (e.g., 'Charged & Gleaming', 'Slightly Sticky', 'Emitting Ominous Hum')."
+            "short_description": "Operational status of the legendary Plasmatic Mop Mk. IV (or possibly a less reliable earlier model). E.g., 'Charged & Gleaming,' 'Slightly Sticky After Unfortunate Sentient Jam Incident,' 'Currently Sulking.'"
           },
           {
             "id": "toolkit_condition_text",
@@ -112,7 +112,7 @@
             "type": "text_long",
             "default_value_key": "toolkit_condition_stocked_celestial_custodians",
             "must_translate": true,
-            "short_description": "Condition and contents of the Custodian's Sarcastic Multi-Tool & General Purpose Fix-It Kit."
+            "short_description": "Condition and notable contents of the Custodian's Sarcastic Multi-Tool & General Purpose Fix-It (Or Make-It-Worse) Kit. Should mention at least one utterly useless but thematically appropriate item."
           },
           {
             "id": "special_gadget_slot_text",
@@ -120,14 +120,14 @@
             "type": "text",
             "default_value_key": "gadget_slot_empty_celestial_custodians",
             "must_translate": true,
-            "short_description": "Current one-off or mission-specific gadget equipped (if any). E.g., 'Sentient Dust Bunny Lure', 'Anti-Gravity Spatula'."
+            "short_description": "Current one-off or mission-specific gadget equipped, if any. E.g., 'Sentient Dust Bunny Lure (Extra Strength),' 'Anti-Gravity Spatula (Slightly Bent),' 'Emergency Tea Cosy (For Rogue Black Holes).'"
           }
         ]
       }
     ],
     "right_panel": [
       {
-        "id": "current-assignment-docket-panel-box",
+        "id": "active-assignment-briefing",
         "title_key": "title_assignment_docket_celestial_custodians",
         "type": "static",
         "initial_expanded": true,
@@ -138,7 +138,7 @@
             "type": "text_long",
             "default_value_key": "assignment_brief_standby_celestial_custodians",
             "must_translate": true,
-            "short_description": "The primary objective of the current cosmic cleanup or strange errand."
+            "short_description": "The primary objective of the current cosmic cleanup, bewildering errand, or request to 'just make the noise stop'. Should be specific, absurd, and probably downplay any actual danger."
           },
           {
             "id": "assignment_client_location_text",
@@ -146,7 +146,7 @@
             "type": "text",
             "default_value_key": "client_location_unknown_celestial_custodians",
             "must_translate": true,
-            "short_description": "The client (if any) and/or location of the current assignment. E.g., 'The Bored Sentient Nebula, Sector Gamma-9', 'Planet Floopy-Doo Prime'."
+            "short_description": "The (often eccentric) client and/or baffling location of the current assignment. E.g., 'The Disgruntled Sentient Nebula, Quadrant of Mild Annoyance,' 'Planet Floopy-Doo Prime (Currently Experiencing Spontaneous Jazz Outbreaks).'"
           },
           {
             "id": "hazard_pay_prospects_text",
@@ -154,12 +154,12 @@
             "type": "text",
             "default_value_key": "hazard_pay_standard_celestial_custodians",
             "must_translate": true,
-            "short_description": "Likelihood and nature of any hazard pay or unusual compensation. E.g., 'Standard Rate (Cosmic Peanuts)', 'Bonus: Slightly Used Asteroid Belt', 'Payment in 'Exposure''."
+            "short_description": "Likelihood and nature of any hazard pay or unusual compensation. E.g., 'Standard Rate (Barely Covers Tea Expenses),' 'Bonus: Slightly Used Asteroid Belt (Some Assembly Required),' 'Payment in 'Valuable Life Lessons' (Non-negotiable).'"
           }
         ]
       },
       {
-        "id": "local-phenomena-scanner-panel-box",
+        "id": "local-peculiarity-monitor",
         "title_key": "title_local_phenomena_celestial_custodians",
         "type": "hidden_until_active",
         "indicator_key": "active_anomaly_scan_data_available",
@@ -172,7 +172,7 @@
             "type": "text_long",
             "default_value_key": "anomaly_report_clear_celestial_custodians",
             "must_translate": true,
-            "short_description": "Live report of any unusual local phenomena, strange lifeforms, or bizarre contaminants at the current job site. Activated when new scan data is available."
+            "short_description": "Live report of any unusual local phenomena, strange lifeforms, spatial distortions, or bizarre contaminants at the current job site. Should be factual but dripping with understatement or confusion."
           },
           {
             "id": "cosmic_weirdness_index_text",
@@ -181,22 +181,22 @@
             "default_ai_value": 1,
              "level_mappings": {
               "1": { "display_text_key": "weirdness_index_mundane_celestial_custodians", "css_class": "status-ok" },
-              "2": { "display_text_key": "weirdness_index_peculiar_celestial_custodians", "css_class": "status-caution" },
+              "2": { "display_text_key": "weirdness_index_peculiar_celestial_custodians", "css_class": "status-caution-mild" },
               "3": { "display_text_key": "weirdness_index_bizarre_celestial_custodians", "css_class": "status-warning" },
               "4": { "display_text_key": "weirdness_index_reality_bending_celestial_custodians", "css_class": "status-danger" }
             },
             "must_translate": false,
-            "short_description": "MUST be an integer 1-4. Overall measure of how strange the current situation is. 1: Surprisingly Normal, 2: Mildly Peculiar, 3: Actively Bizarre, 4: Reality is Optional."
+            "short_description": "Overall measure of situational strangeness. CRUCIAL: MUST be ONLY a numerical string: \"1\" (Surprisingly Normal), \"2\" (Mildly Peculiar), \"3\" (Actively Bizarre), or \"4\" (Reality is Optional). Client displays text. DO NOT include text, only the number."
           }
         ]
       },
       {
-        "id": "emergency-protocol-archive-panel-box",
+        "id": "emergency-contingency-directives",
         "title_key": "title_emergency_protocol_celestial_custodians",
         "type": "hidden_until_active",
         "indicator_key": "critical_system_failure_or_breach",
         "initial_expanded": true,
-        "boot_delay": 500,
+        "boot_delay": 600,
         "items": [
           {
             "id": "protocol_advice_text",
@@ -204,7 +204,7 @@
             "type": "text_long",
             "default_value_key": "protocol_advice_standard_celestial_custodians",
             "must_translate": true,
-            "short_description": "Excerpts from the 'Celestial Custodian Emergency Protocol & Dubious Advice Archive' relevant to the current crisis."
+            "short_description": "Excerpts from the 'Celestial Custodian Emergency Protocol & Terribly Dubious Advice Archive' relevant to the current (likely self-inflicted) crisis. Should be hilariously unhelpful or pedantically correct but practically impossible."
           },
           {
             "id": "last_known_similar_incident_text",
@@ -212,17 +212,17 @@
             "type": "text_long",
             "default_value_key": "similar_incident_none_celestial_custodians",
             "must_translate": true,
-            "short_description": "Records (if any) of similar past incidents and their (likely unhelpful) resolutions."
+            "short_description": "Records (if any, and if the filing system hasn't achieved sentience and hidden them) of similar past incidents and their (almost certainly unhelpful or deeply confusing) resolutions."
           }
         ]
       },
       {
-        "id": "union-hotline-panel-box",
+        "id": "union-representation-channel",
         "title_key": "title_union_hotline_celestial_custodians",
         "type": "hidden_until_active",
         "indicator_key": "union_rep_contact_critical",
         "initial_expanded": true,
-        "boot_delay": 600,
+        "boot_delay": 750,
         "items": [
           {
             "id": "union_rep_advice_text",
@@ -230,7 +230,7 @@
             "type": "text_long",
             "default_value_key": "union_advice_unavailable_celestial_custodians",
             "must_translate": true,
-            "short_description": "The (often unhelpful or confusing) advice or status update from the Union of Celestial Custodians Local 47 representative."
+            "short_description": "The (guaranteed to be unhelpful, off-topic, or fixated on obscure bylaws) advice or status update from the Union of Celestial Custodians Local 47 representative. May involve biscuits."
           },
           {
             "id": "union_grievance_status_text",
@@ -238,7 +238,7 @@
             "type": "text",
             "default_value_key": "grievance_status_none_celestial_custodians",
             "must_translate": true,
-            "short_description": "Status of any currently filed (and likely ignored) grievances with the Union."
+            "short_description": "Status of any currently filed (and likely to be ignored, misfiled, or eaten by space goats) grievances with the Union."
           }
         ]
       }
@@ -250,8 +250,8 @@
         "type": "boolean",
         "default_value": false,
         "must_translate": false,
-        "priority": 4,
-        "short_description": "True if a key piece of Custodial equipment has a major failure OR if a containment breach is occurring/imminent. Triggers Emergency Protocol panel."
+        "priority": 6,
+        "short_description": "CRITICAL: Set to 'true' if a key piece of Custodial equipment malfunctions spectacularly OR if a containment breach is actively occurring/imminent. Triggers the Emergency Contingency Directives panel."
       },
       {
         "id": "unexpected_lifeform_encountered",
@@ -259,8 +259,17 @@
         "type": "boolean",
         "default_value": false,
         "must_translate": false,
-        "priority": 3,
-        "short_description": "True if a new, strange, or potentially problematic alien lifeform (or sentient object) has just been encountered at the job site."
+        "priority": 4,
+        "short_description": "CRITICAL: Set to 'true' if a new, strange, or potentially problematic alien lifeform (or sentient object of baffling origin) has just been encountered at the job site."
+      },
+      {
+        "id": "job_scope_creep_detected",
+        "label_key": "label_indicator_scope_creep_celestial_custodians",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 5,
+        "short_description": "CRITICAL: Set to 'true' if the current assignment has unexpectedly become far more complicated, dangerous, or just plain weirder than initially described (e.g., client adds 'just one more thing... involving a miniature black hole')."
       },
       {
         "id": "active_anomaly_scan_data_available",
@@ -268,8 +277,8 @@
         "type": "boolean",
         "default_value": false,
         "must_translate": false,
-        "priority": 1,
-        "short_description": "True when new, specific data about local anomalies or phenomena is available for review in its dedicated panel. Typically set when arriving at a site or when weirdness levels change."
+        "priority": 3,
+        "short_description": "CRITICAL: Set to 'true' when new, specific data about local anomalies, peculiar energy readings, or other cosmic weirdness is available for review in its dedicated panel. Typically set when arriving at a site or when the Cosmic Weirdness Index warrants an update."
       },
       {
         "id": "union_rep_contact_critical",
@@ -278,16 +287,7 @@
         "default_value": false,
         "must_translate": false,
         "priority": 1,
-        "short_description": "True if the situation warrants contacting the Union Representative. Enables the Union Hotline panel."
-      },
-      {
-        "id": "job_scope_creep_detected",
-        "label_key": "label_indicator_scope_creep_celestial_custodians",
-        "type": "boolean",
-        "default_value": false,
-        "must_translate": false,
-        "priority": 2,
-        "short_description": "True if the current assignment has unexpectedly become far more complicated, dangerous, or just plain weirder than initially described."
+        "short_description": "CRITICAL: Set to 'true' if the situation (or player's exasperation) warrants contacting the Union Representative. Enables the Union Representation Channel panel."
       },
       {
         "id": "bizarre_solution_achieved",
@@ -295,8 +295,8 @@
         "type": "boolean",
         "default_value": false,
         "must_translate": false,
-        "priority": 1,
-        "short_description": "True for one turn after the player successfully resolves a major problem or part of their assignment using a particularly absurd, unexpected, or thematically appropriate 'Custodial' method."
+        "priority": 2,
+        "short_description": "CRITICAL: Set to 'true' for one turn after the player successfully resolves a major problem or part of their assignment using a particularly absurd, unexpected, or thematically appropriate 'Custodial' method (e.g., reasoning with a rogue AI using only interpretive dance)."
       }
     ]
   }

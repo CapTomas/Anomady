@@ -24,8 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Logging Configuration
   const LOG_LEVEL_DEBUG = "debug";
   const LOG_LEVEL_INFO = "info";
+  const LOG_LEVEL_WARNING = "warning";
   const LOG_LEVEL_ERROR = "error";
-  const LOG_LEVELS = [LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_ERROR];
+  const LOG_LEVELS = [LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARNING, LOG_LEVEL_ERROR];
   let currentLogLevel =
     localStorage.getItem(LOG_LEVEL_STORAGE_KEY) || LOG_LEVEL_INFO;
 

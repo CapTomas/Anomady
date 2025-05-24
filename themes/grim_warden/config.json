@@ -80,6 +80,20 @@
             "short_description": "Character's current vigor/resolve (0-100). Expended by strenuous actions. Should not decrease passively."
           },
           {
+            "id": "blight_exposure_level",
+            "label_key": "label_blight_exposure_grim_warden",
+            "type": "status_level",
+            "default_ai_value": 1,
+            "level_mappings": {
+              "1": { "display_text_key": "blight_exposure_level_1_display", "css_class": "status-ok" },
+              "2": { "display_text_key": "blight_exposure_level_2_display", "css_class": "status-warning" },
+              "3": { "display_text_key": "blight_exposure_level_3_display", "css_class": "status-danger" },
+              "4": { "display_text_key": "blight_exposure_level_4_display", "css_class": "status-critical" }
+            },
+            "must_translate": false,
+            "short_description": "Warden's current stage of Blight contamination. MUST BE INTEGER (1-4). 1: Dormant, 2: Nascent, 3: Festering, 4: Critical. Affects perception, resilience, or invokes Blight-induced afflictions. AI provides numerical level."
+          },
+          {
             "id": "elixir_charges",
             "label_key": "label_elixir_charges_grim_warden",
             "type": "text",
@@ -169,9 +183,9 @@
             "default_ai_value": 1,
             "level_mappings": {
               "1": { "display_text_key": "threat_level_1_display", "css_class": "status-ok" },
-              "2": { "display_text_key": "threat_level_2_display", "css_class": "status-caution" },
-              "3": { "display_text_key": "threat_level_3_display", "css_class": "status-warning" },
-              "4": { "display_text_key": "threat_level_4_display", "css_class": "status-danger" }
+              "2": { "display_text_key": "threat_level_2_display", "css_class": "status-warning" },
+              "3": { "display_text_key": "threat_level_3_display", "css_class": "status-danger" },
+              "4": { "display_text_key": "threat_level_4_display", "css_class": "status-critical" }
             },
             "must_translate": false,
             "short_description": "MUST be an integer: 1 (Unease), 2 (Wary), 3 (Danger), 4 (Extreme Peril). Represents immediate environmental or situational threat level."
@@ -218,6 +232,14 @@
             "short_description": "Perceived intensity and nature of the Blight's presence."
           },
           {
+            "id": "local_blight_phenomenon",
+            "label_key": "label_local_blight_phenomenon_grim_warden",
+            "type": "text_long",
+            "default_value_key": "phenomenon_none_apparent",
+            "must_translate": true,
+            "short_description": "Description of any specific, active Blight manifestations or environmental corruptions in the immediate area. Use 'None Apparent' if nothing specific."
+          },
+          {
             "id": "sky_and_cycle",
             "label_key": "label_moon_cycle_grim_warden",
             "type": "text",
@@ -228,47 +250,47 @@
         ]
       },
       {
-        "id": "monster-intel-panel-box",
-        "title_key": "title_monster_intel_grim_warden",
+        "id": "adversary-intel-panel-box",
+        "title_key": "title_adversary_intel_grim_warden",
         "type": "hidden_until_active",
         "initial_expanded": true,
         "indicator_key": "combat_active",
         "items": [
           {
-            "id": "monster_type",
-            "label_key": "label_monster_type_grim_warden",
+            "id": "adversary_type",
+            "label_key": "label_adversary_type_grim_warden",
             "type": "text",
-            "default_value_key": "target_no_quarry",
+            "default_value_key": "target_no_adversary",
             "must_translate": true,
-            "short_description": "Specific type of monster engaged. MUST be original and thematic. Use 'None Sighted' or similar if no target."
+            "short_description": "Specific type of adversary engaged (monster, human, etc.). MUST be original and thematic. Use 'None Sighted' or similar if no target."
           },
           {
-            "id": "monster_toughness_pct",
-            "label_key": "label_monster_toughness_grim_warden",
+            "id": "adversary_toughness_pct",
+            "label_key": "label_adversary_toughness_grim_warden",
             "type": "meter",
             "meter_type": "monster_defense",
             "default_value": "0",
-            "status_text_id": "monster_defense_status_text",
+            "status_text_id": "adversary_defense_status_text",
             "default_status_key": "defense_shattered",
             "must_translate": false,
-            "short_description": "Monster's remaining physical/magical defenses (armor/hide/wards) as a percentage 0-100. The AI MUST also update the 'monster_defense_status_text' field with a descriptive status in the narrative language."
+            "short_description": "Adversary's remaining physical/magical defenses (armor/hide/wards/skill) as a percentage 0-100. AI MUST also update 'adversary_defense_status_text'."
           },
           {
-            "id": "monster_defense_status_text",
-            "label_key": "label_monster_defense_status_grim_warden",
+            "id": "adversary_defense_status_text",
+            "label_key": "label_adversary_defense_status_grim_warden",
             "type": "text",
             "default_value_key": "defense_status_unknown",
             "must_translate": true,
-            "short_description": "Descriptive status of the monster's defenses, linked to 'monster_toughness_pct'. Provided by AI."
+            "short_description": "Descriptive status of the adversary's defenses, linked to 'adversary_toughness_pct'. Provided by AI."
           },
           {
-            "id": "monster_vitality_pct",
-            "label_key": "label_monster_vitality_grim_warden",
+            "id": "adversary_vitality_pct",
+            "label_key": "label_adversary_vitality_grim_warden",
             "type": "meter",
             "meter_type": "monster_health",
             "default_value": "0",
             "must_translate": false,
-            "short_description": "Monster's remaining vitality/health as a percentage 0-100. E.g., '100', '50 (Wounded)', 'Near Death (5)'."
+            "short_description": "Adversary's remaining vitality/health/morale as a percentage 0-100. E.g., '100', '50 (Wounded/Shaken)', 'Near Death/Breaking (5)'."
           }
         ]
       }
@@ -280,7 +302,7 @@
         "type": "boolean",
         "default_value": false,
         "must_translate": false,
-        "priority": 1,
+        "priority": 2,
         "short_description": "Indicates if a mystical omen or significant preternatural whisper is currently active (true) or not (false). These phenomena should occur rarely and be narratively justified. False on initial turn."
       },
       {
@@ -289,8 +311,17 @@
         "type": "boolean",
         "default_value": false,
         "must_translate": false,
-        "priority": 3,
+        "priority": 4,
         "short_description": "Indicates if the Warden is in active, direct combat (true) or not (false). False on initial turn unless starting in combat."
+      },
+      {
+        "id": "blight_flare_active",
+        "label_key": "label_blight_flare_active_grim_warden",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 3,
+        "short_description": "Indicates a sudden surge or manifestation of Blight corruption in the immediate vicinity or within the Warden (true) or not (false). Triggers specific narrative responses or challenges. False on initial turn."
       },
       {
         "id": "rare_trophy_claimed",
@@ -298,7 +329,7 @@
         "type": "boolean",
         "default_value": false,
         "must_translate": false,
-        "priority": 2,
+        "priority": 1,
         "short_description": "Indicates if the Warden has just claimed a rare monster trophy, valuable reagent, or unique item (true) or not (false). Typically true for one turn post-acquisition, then false."
       }
     ]

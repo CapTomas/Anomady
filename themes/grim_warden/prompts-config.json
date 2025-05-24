@@ -4,10 +4,11 @@
     "master_default": "themes/master/prompts/master_default.txt",
     "combat_active": "themes/grim_warden/prompts/combat_active.txt",
     "omen_detected": "themes/grim_warden/prompts/omen_detected.txt",
+    "blight_flare_active": "themes/grim_warden/prompts/blight_flare_active.txt",
     "starts": "themes/grim_warden/prompts/helpers/starts.txt"
   },
   "NARRATIVE_LANG_PROMPT_PARTS": {
-    "en": "This narrative must be written in rich, immersive English, evoking the style of a dark fantasy novel. Dialogue should feel authentic to hardened characters in a bleak, gritty world, potentially with slightly archaic or formal touches where appropriate for the setting. Emphasize visceral descriptions of combat, eerie environments, and the psychological toll of the Blight.",
-    "cs": "Tento příběh musí být napsán bohatou, pohlcující češtinou, evokující styl temného fantasy románu. Dialogy by měly působit autenticky pro zocelené postavy v ponurém, drsném světě, případně s lehce archaickými či formálními prvky tam, kde to odpovídá prostředí. Zdůrazněte viscerální popisy soubojů, strašidelná prostředí a psychologickou daň Zkázy."
+    "en": "The narrative must be a tapestry woven from the darkest threads of fantasy, rendered in English that is both hauntingly evocative and starkly immediate. Strive for the cinematic: paint scenes not just with sight, but with the chilling touch of dread, the coppery tang of fear, the oppressive silence of a world succumbing to ruin. Dialogue must be sharp, laconic, and weary, like words chipped from stone by characters who have seen too much; let every utterance carry the weight of unspoken sorrows or grim resolve, with archaic echoes where the lore demands. Combat should be a visceral ballet of desperation; environments, cathedrals of decay or twisted beauty; and the psychological toll of the Blight, a palpable corrosion of the soul. This is not mere storytelling; it is an invocation of a dying world. Aim for goosebumps.",
+    "cs": "Příběh musí být utkaný z nejtemnějších vláken fantasy, podaný češtinou, která je zároveň teskně evokativní a syrově bezprostřední. Usilujte o filmovost: vykreslujte scény nejen zrakem, ale i mrazivým dotekem hrůzy, kovovou pachutí strachu, tísnivým tichem světa podléhajícího zkáze. Dialogy musí být úsečné, lakonické a znavené, jako slova vytesaná z kamene postavami, jež viděly příliš mnoho; nechť každý výrok nese tíhu nevyslovených strastí či ponurého odhodlání, s archaickými ozvěnami, kde to vyžaduje podstata světa. Souboje by měly být viscerálním tancem zoufalství; prostředí katedrálami rozkladu či zvrácené krásy; a psychická daň Zkázy hmatatelnou korozí duše. Toto není pouhé vyprávění; je to invokace umírajícího světa. Cílem jsou husí kůže."
   }
 }

@@ -2,9 +2,9 @@
   "PROMPT_URLS": {
     "master_initial": "themes/master/prompts/master_initial.txt",
     "master_default": "themes/master/prompts/master_default.txt",
-    "psychic_disturbance_active": "themes/echo_sleuths/prompts/psychic_disturbance_active.txt",
-    "reality_flux_active": "themes/echo_sleuths/prompts/reality_flux_active.txt",
     "conceptual_conflict_active": "themes/echo_sleuths/prompts/conceptual_conflict_active.txt",
+    "psychic_disturbance_manifests": "themes/echo_sleuths/prompts/psychic_disturbance_manifests.txt",
+    "reality_flux_begins": "themes/echo_sleuths/prompts/reality_flux_begins.txt",
     "starts": "themes/echo_sleuths/prompts/helpers/starts.txt"
   },
   "NARRATIVE_LANG_PROMPT_PARTS": {

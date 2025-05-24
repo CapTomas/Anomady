@@ -26,7 +26,7 @@
             "type": "text",
             "default_value_key": "default_sleuth_name_echo_sleuths",
             "must_translate": false,
-            "short_description": "The player character's chosen name or peculiar moniker."
+            "short_description": "The player character's chosen name or peculiar moniker. This value is provided by the player and should not be invented or translated by the AI."
           },
           {
             "id": "license_status",
@@ -34,7 +34,7 @@
             "type": "text",
             "default_value_key": "default_license_status_echo_sleuths",
             "must_translate": true,
-            "short_description": "Sleuth's current standing with the Municipal Authority."
+            "short_description": "Sleuth's current, often precarious, standing with Reverie's Municipal Authority. This should be a thematic, descriptive phrase."
           },
           {
             "id": "cognitive_dissonance_pct",
@@ -43,15 +43,29 @@
             "meter_type": "dissonance",
             "default_value": "0",
             "must_translate": false,
-            "short_description": "Mental strain/fragmentation (0-100). Higher is worse, affecting perception or actions."
+            "short_description": "Mental strain/fragmentation (0-100%). Higher values indicate greater mental instability, potentially affecting perception, decision-making, or triggering surreal side-effects. Initial value is low."
           },
           {
-            "id": "lucidity_fragments",
-            "label_key": "label_lucidity_fragments_echo_sleuths",
+            "id": "lucidity_shards",
+            "label_key": "label_lucidity_shards_echo_sleuths",
             "type": "text",
-            "default_value_key": "default_lucidity_fragments_echo_sleuths",
+            "default_value_key": "default_lucidity_shards_echo_sleuths",
             "must_translate": true,
-            "short_description": "Available 'focus' points or moments of clarity."
+            "short_description": "Measure of the Sleuth's fleeting moments of profound clarity or focus. This should be a thematic, descriptive phrase reflecting quantity or quality. These might be spent or gained through narrative events."
+          },
+          {
+            "id": "existential_weight_level",
+            "label_key": "label_existential_weight_echo_sleuths",
+            "type": "status_level",
+            "default_ai_value": 1,
+            "level_mappings": {
+              "1": { "display_text_key": "existential_weight_level_1_echo_sleuths", "css_class": "status-ok" },
+              "2": { "display_text_key": "existential_weight_level_2_echo_sleuths", "css_class": "status-warning" },
+              "3": { "display_text_key": "existential_weight_level_3_echo_sleuths", "css_class": "status-danger" },
+              "4": { "display_text_key": "existential_weight_level_4_echo_sleuths", "css_class": "status-critical" }
+            },
+            "must_translate": false,
+            "short_description": "Integer (1-4) representing the cumulative psychic toll. Level 1 signifies a light burden, increasing to level 4 for a crushing weight. Higher levels might have narrative side-effects. AI provides the number."
           },
           {
             "id": "dominant_thought_faction_lean",
@@ -59,7 +73,7 @@
             "type": "text",
             "default_value_key": "default_dominant_thought_faction_lean_echo_sleuths",
             "must_translate": true,
-            "short_description": "Current leaning towards a major Thought-Faction in Reverie."
+            "short_description": "Current affinity or leaning towards a major Thought-Faction in Reverie. Should be a thematic, descriptive phrase."
           }
         ]
       },
@@ -71,36 +85,36 @@
         "boot_delay": 750,
         "items": [
           {
-            "id": "current_attire",
+            "id": "current_attire_description",
             "label_key": "label_current_attire_echo_sleuths",
             "type": "text_long",
             "default_value_key": "default_current_attire_echo_sleuths",
             "must_translate": true,
-            "short_description": "The Sleuth's current, likely characteristic, outfit."
+            "short_description": "The Sleuth's current, likely characteristic, and perhaps slightly unsettling, outfit or appearance."
           },
           {
-            "id": "reality_anchor_item",
+            "id": "reality_anchor_item_name",
             "label_key": "label_reality_anchor_item_echo_sleuths",
             "type": "text",
             "default_value_key": "default_reality_anchor_item_echo_sleuths",
             "must_translate": true,
-            "short_description": "A personal item helping the Sleuth stay grounded in Reverie's flux."
+            "short_description": "Name of a personal, mundane item that helps the Sleuth stay grounded amidst Reverie's flux. Its perceived state or relevance might change."
           },
           {
-            "id": "sensory_filter_charges",
-            "label_key": "label_sensory_filter_charges_echo_sleuths",
-            "type": "text",
-            "default_value_key": "default_sensory_filter_charges_echo_sleuths",
-            "must_translate": true,
-            "short_description": "Count of consumables/tools that briefly stabilize perception or reality."
-          },
-          {
-            "id": "memoria_flask_status",
+            "id": "memoria_flask_state",
             "label_key": "label_memoria_flask_status_echo_sleuths",
             "type": "text",
             "default_value_key": "default_memoria_flask_status_echo_sleuths",
             "must_translate": true,
-            "short_description": "Status of the device used to capture and examine stray memories or echoes."
+            "short_description": "Current status of the device used to capture and examine stray memories or echoes. This should be a thematic, descriptive phrase."
+          },
+          {
+            "id": "paradox_resolver_charge_count",
+            "label_key": "label_paradox_resolver_charges_echo_sleuths",
+            "type": "text",
+            "default_value_key": "default_paradox_resolver_charges_echo_sleuths",
+            "must_translate": true,
+            "short_description": "Number of available charges for a conceptual tool that helps temporarily untangle or withstand direct logical paradoxes. Should reflect quantity (e.g., a number, or descriptive term like 'Depleted')."
           }
         ]
       },
@@ -109,15 +123,15 @@
         "title_key": "title_psychic_feedback_echo_sleuths",
         "type": "hidden_until_active",
         "initial_expanded": true,
-        "indicator_key": "psychic_disturbance_active",
+        "indicator_key": "psychic_disturbance_manifests",
         "items": [
           {
-            "id": "disturbance_details",
-            "label_key": "label_disturbance_details_echo_sleuths",
+            "id": "active_disturbance_sensation",
+            "label_key": "label_disturbance_sensation_echo_sleuths",
             "type": "text_long",
-            "default_value_key": "default_disturbance_details_echo_sleuths",
+            "default_value_key": "default_disturbance_sensation_echo_sleuths",
             "must_translate": true,
-            "short_description": "Details of an active psychic disturbance affecting the Sleuth."
+            "short_description": "Evocative description of the primary sensations of an active psychic disturbance affecting the Sleuth. This panel becomes visible when 'psychic_disturbance_manifests' is true."
           }
         ]
       }
@@ -130,42 +144,50 @@
         "initial_expanded": true,
         "items": [
           {
-            "id": "case_file_id",
+            "id": "case_file_title",
             "label_key": "label_case_file_id_echo_sleuths",
             "type": "text",
             "default_value_key": "default_case_file_id_echo_sleuths",
             "must_translate": true,
-            "short_description": "Unique, thematic identifier for the current active case."
+            "short_description": "Thematic title or identifier for the current active case."
           },
           {
-            "id": "case_objective_summary",
+            "id": "case_primary_enigma",
             "label_key": "label_case_objective_summary_echo_sleuths",
             "type": "text_long",
             "default_value_key": "default_case_objective_summary_echo_sleuths",
             "must_translate": true,
-            "short_description": "A concise summary of the primary goal for the current case."
+            "short_description": "A concise summary of the core mystery or primary goal for the current case."
           },
           {
-            "id": "known_leads_status",
-            "label_key": "label_known_leads_status_echo_sleuths",
+            "id": "gathered_whispers_status",
+            "label_key": "label_gathered_whispers_echo_sleuths",
             "type": "text",
-            "default_value_key": "default_known_leads_status_echo_sleuths",
+            "default_value_key": "default_gathered_whispers_echo_sleuths",
             "must_translate": true,
-            "short_description": "Qualitative status of current leads for the case."
+            "short_description": "Qualitative status of current leads or gathered information. This should be a thematic, descriptive phrase."
           },
           {
-            "id": "municipal_pressure_level",
+            "id": "case_current_complication",
+            "label_key": "label_case_complication_echo_sleuths",
+            "type": "text",
+            "default_value_key": "default_case_complication_echo_sleuths",
+            "must_translate": true,
+            "short_description": "A brief, evocative note on the latest unexpected twist, setback, or bizarre obstacle in the current case. None if no complication is currently present."
+          },
+          {
+            "id": "municipal_pressure_level_value",
             "label_key": "label_municipal_pressure_level_echo_sleuths",
             "type": "status_level",
             "default_ai_value": 1,
             "level_mappings": {
               "1": { "display_text_key": "pressure_level_1_display_echo_sleuths", "css_class": "status-ok" },
-              "2": { "display_text_key": "pressure_level_2_display_echo_sleuths", "css_class": "status-caution" },
-              "3": { "display_text_key": "pressure_level_3_display_echo_sleuths", "css_class": "status-warning" },
-              "4": { "display_text_key": "pressure_level_4_display_echo_sleuths", "css_class": "status-danger" }
+              "2": { "display_text_key": "pressure_level_2_display_echo_sleuths", "css_class": "status-warning" },
+              "3": { "display_text_key": "pressure_level_3_display_echo_sleuths", "css_class": "status-danger" },
+              "4": { "display_text_key": "pressure_level_4_display_echo_sleuths", "css_class": "status-critical" }
             },
             "must_translate": false,
-            "short_description": "Integer: 1 (Ignored), 2 (Mild Interest), 3 (Active Scrutiny), 4 (Intervention Imminent)."
+            "short_description": "Integer (1-4) representing the level of scrutiny from Municipal Authority. Level 1 signifies indifference, increasing to level 4 for imminent intervention. AI provides the number."
           }
         ]
       },
@@ -177,44 +199,50 @@
         "boot_delay": 1200,
         "items": [
           {
-            "id": "current_district_manifestation",
+            "id": "current_district_perception",
             "label_key": "label_current_district_manifestation_echo_sleuths",
             "type": "text_long",
             "default_value_key": "default_current_district_manifestation_echo_sleuths",
             "must_translate": true,
-            "short_description": "Evocative name of the current district and its perceived 'flavor' or state."
+            "short_description": "Evocative name and perceived 'flavor' or state of the current district in Reverie."
           },
           {
-            "id": "district_thought_faction_control",
+            "id": "district_ambient_influence",
             "label_key": "label_district_thought_faction_control_echo_sleuths",
             "type": "text",
             "default_value_key": "default_district_thought_faction_control_echo_sleuths",
             "must_translate": true,
-            "short_description": "Dominant Thought-Faction or influence in the current area."
+            "short_description": "Dominant Thought-Faction, ambient emotion, or conceptual influence in the current area."
           },
           {
-            "id": "local_reality_coherence",
+            "id": "local_reality_coherence_level",
             "label_key": "label_local_reality_coherence_echo_sleuths",
-            "type": "text",
-            "default_value_key": "default_local_reality_coherence_echo_sleuths",
-            "must_translate": true,
-            "short_description": "Perceived stability of reality in the immediate vicinity."
+            "type": "status_level",
+            "default_ai_value": 1,
+            "level_mappings": {
+              "1": { "display_text_key": "reality_coherence_1_echo_sleuths", "css_class": "status-ok" },
+              "2": { "display_text_key": "reality_coherence_2_echo_sleuths", "css_class": "status-warning" },
+              "3": { "display_text_key": "reality_coherence_3_echo_sleuths", "css_class": "status-danger" },
+              "4": { "display_text_key": "reality_coherence_4_echo_sleuths", "css_class": "status-critical" }
+            },
+            "must_translate": false,
+            "short_description": "Integer (1-4) representing perceived stability of reality. Level 1 is ostensibly stable, increasing to level 4 for active warping. AI provides the number."
           },
           {
-            "id": "time_flow_perception",
+            "id": "temporal_flow_perception",
             "label_key": "label_time_flow_perception_echo_sleuths",
             "type": "text",
             "default_value_key": "default_time_flow_perception_echo_sleuths",
             "must_translate": true,
-            "short_description": "The Sleuth's subjective perception of time's passage here."
+            "short_description": "The Sleuth's subjective perception of time's passage in the current locale. This should be a thematic, descriptive phrase."
           },
-          {
-            "id": "luminous_fog_density",
-            "label_key": "label_luminous_fog_density_echo_sleuths",
+           {
+            "id": "prevailing_emotional_tenor",
+            "label_key": "label_prevailing_emotional_tenor_echo_sleuths",
             "type": "text",
-            "default_value_key": "default_luminous_fog_density_echo_sleuths",
-            "must_translate": false,
-            "short_description": "Current state of Reverie's characteristic luminous fog."
+            "default_value_key": "default_prevailing_emotional_tenor_echo_sleuths",
+            "must_translate": true,
+            "short_description": "The dominant ambient emotion or 'vibe' of the current locale. This should be a thematic, descriptive phrase."
           }
         ]
       },
@@ -223,15 +251,15 @@
         "title_key": "title_reality_flux_details_echo_sleuths",
         "type": "hidden_until_active",
         "initial_expanded": true,
-        "indicator_key": "reality_flux_detected",
+        "indicator_key": "reality_flux_begins",
         "items": [
           {
-            "id": "flux_manifestation_details",
+            "id": "flux_event_description",
             "label_key": "label_flux_manifestation_details_echo_sleuths",
             "type": "text_long",
             "default_value_key": "default_flux_manifestation_details_echo_sleuths",
             "must_translate": true,
-            "short_description": "Specifics of a major, localized reality warp currently occurring."
+            "short_description": "Specifics of a major, localized reality warp currently occurring. This panel becomes visible when 'reality_flux_begins' is true."
           }
         ]
       },
@@ -240,82 +268,108 @@
         "title_key": "title_conceptual_antagonist_intel_echo_sleuths",
         "type": "hidden_until_active",
         "initial_expanded": true,
-        "indicator_key": "conceptual_conflict_active",
+        "indicator_key": "conceptual_conflict_engaged",
         "items": [
           {
-            "id": "antagonist_concept_type",
+            "id": "antagonist_conceptual_form",
             "label_key": "label_antagonist_concept_type_echo_sleuths",
             "type": "text",
             "default_value_key": "default_antagonist_concept_type_echo_sleuths",
             "must_translate": true,
-            "short_description": "The nature of the conceptual entity the Sleuth is confronting."
+            "short_description": "The nature or perceived form of the conceptual entity the Sleuth is confronting."
           },
           {
-            "id": "antagonist_cohesion_pct",
+            "id": "antagonist_cohesion_pct_value",
             "label_key": "label_antagonist_cohesion_echo_sleuths",
             "type": "meter",
             "meter_type": "conceptual_cohesion",
             "default_value": "0",
-            "status_text_id": "antagonist_cohesion_status_text",
+            "status_text_id": "antagonist_cohesion_state_text",
             "default_status_key": "default_antagonist_cohesion_status_echo_sleuths",
             "must_translate": false,
-            "short_description": "The conceptual antagonist's current stability/integrity (0-100). AI must also update 'antagonist_cohesion_status_text'."
+            "short_description": "The conceptual antagonist's current stability/integrity (0-100%). AI must also update 'antagonist_cohesion_state_text'. Value is a number."
           },
           {
-            "id": "antagonist_cohesion_status_text",
+            "id": "antagonist_cohesion_state_text",
             "label_key": "label_antagonist_cohesion_status_echo_sleuths",
             "type": "text",
             "default_value_key": "default_antagonist_cohesion_status_unknown_echo_sleuths",
             "must_translate": true,
-            "short_description": "Descriptive status of the antagonist's cohesion, linked to 'antagonist_cohesion_pct'. Provided by AI."
+            "short_description": "Descriptive status of the antagonist's cohesion, linked to 'antagonist_cohesion_pct_value'. Provided by AI."
           },
           {
-            "id": "antagonist_manifestation_strength",
+            "id": "antagonist_perceived_strength",
             "label_key": "label_antagonist_manifestation_strength_echo_sleuths",
             "type": "text",
             "default_value_key": "default_antagonist_manifestation_strength_echo_sleuths",
             "must_translate": true,
-            "short_description": "The perceived power or influence of the conceptual antagonist."
+            "short_description": "The perceived power, influence, or threat level of the conceptual antagonist. This should be a thematic, descriptive phrase."
+          },
+          {
+            "id": "antagonist_revealed_vulnerability_text",
+            "label_key": "label_antagonist_vulnerability_hint_echo_sleuths",
+            "type": "text",
+            "default_value_key": "default_antagonist_vulnerability_hint_echo_sleuths",
+            "must_translate": true,
+            "short_description": "A hint or observation about a potential weakness or method to counter the conceptual antagonist. Value should be 'None apparent' if no vulnerability is currently identified by the AI."
           }
         ]
       }
     ],
     "game_state_indicators": [
       {
-        "id": "psychic_disturbance_active",
-        "label_key": "label_psychic_disturbance_active_echo_sleuths",
-        "type": "boolean",
-        "default_value": false,
-        "must_translate": false,
-        "priority": 1,
-        "short_description": "True if a strong, localized psychic event directly impacts the Sleuth. False on initial turn."
-      },
-      {
-        "id": "reality_flux_detected",
-        "label_key": "label_reality_flux_detected_echo_sleuths",
-        "type": "boolean",
-        "default_value": false,
-        "must_translate": false,
-        "priority": 2,
-        "short_description": "True if a significant, disorienting warp in the immediate environment is occurring. False on initial turn."
-      },
-      {
-        "id": "conceptual_conflict_active",
+        "id": "conceptual_conflict_engaged",
         "label_key": "label_conceptual_conflict_active_echo_sleuths",
         "type": "boolean",
         "default_value": false,
         "must_translate": false,
-        "priority": 3,
-        "short_description": "True if the Sleuth is in direct engagement/confrontation with a sentient idea, memory, or other conceptual entity. False on initial turn."
+        "priority": 10,
+        "short_description": "CRITICAL: Set to TRUE if the Sleuth is in direct engagement/confrontation with a sentient idea, memory, or other conceptual entity. This signifies 'combat'. Set to FALSE ONLY if this specific narrative turn RESOLVES the conflict (entity dissipates, is understood, or makes peace). Maintain TRUE if ongoing."
       },
       {
-        "id": "critical_insight_gained",
+        "id": "reality_flux_begins",
+        "label_key": "label_reality_flux_detected_echo_sleuths",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 8,
+        "short_description": "Set to TRUE for ONE turn if a significant, disorienting warp in the immediate environment *begins* to occur. The associated prompt should describe its full manifestation and then this flag MUST be set to FALSE by the AI in its response for that turn."
+      },
+      {
+        "id": "psychic_disturbance_manifests",
+        "label_key": "label_psychic_disturbance_active_echo_sleuths",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 7,
+        "short_description": "Set to TRUE for ONE turn if a strong, localized psychic event *begins* to directly impact the Sleuth. The associated prompt should describe its full manifestation and then this flag MUST be set to FALSE by the AI in its response for that turn."
+      },
+      {
+        "id": "anchor_resonance_triggered",
+        "label_key": "label_anchor_resonance_echo_sleuths",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 5,
+        "short_description": "Set to TRUE for ONE turn if the Sleuth's 'reality_anchor_item' strongly reacts to something nearby, hinting at a clue, danger, or significant conceptual instability. The associated prompt handles the event, then AI sets to FALSE."
+      },
+      {
+        "id": "critical_insight_unlocked",
         "label_key": "label_critical_insight_gained_echo_sleuths",
         "type": "boolean",
         "default_value": false,
         "must_translate": false,
-        "priority": 4,
-        "short_description": "True for one turn if the Sleuth has just uncovered a major case breakthrough or profound understanding of Reverie. Then false."
+        "priority": 3,
+        "short_description": "Set to TRUE for ONE turn if the Sleuth has just uncovered a major case breakthrough, a profound understanding of Reverie, or a significant personal revelation. The associated prompt details this, then AI sets to FALSE."
+      },
+      {
+        "id": "fleeting_opportunity_arises",
+        "label_key": "label_fleeting_opportunity_echo_sleuths",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 1,
+        "short_description": "Set to TRUE for ONE turn if a very brief, specific, and narratively interesting chance arises for the player. AI sets to FALSE after detailing."
       }
     ]
   }

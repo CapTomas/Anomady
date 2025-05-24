@@ -425,7 +425,7 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 }
 #landing-theme-actions {
 	display: flex;
-    justify-content: space-between; /* This is the key property */
+    justify-content: space-between;
 	align-items: center;
 	margin-top: var(--spacing-lg)
 }
@@ -909,12 +909,12 @@ background-color: var(--color-bg-content-view)
 
 .info-item.has-recent-update > .label::before,
 .info-item-meter.has-recent-update > .label::before {
-  content: '●'; /* Unicode Black Circle */
+  content: '●';
   color: var(--color-accent-teal);
-  font-size: 0.7em; /* Smaller than text */
+  font-size: 0.7em;
   margin-right: 3px;
-	margin-left: -11px; /* Adjust to align with text */
-  display: inline-block; /* Allows transform */
+	margin-left: -11px;
+  display: inline-block;
   vertical-align: middle;
   animation: pulseDot 1.5s infinite ease-in-out;
 }
@@ -1098,18 +1098,41 @@ body.landing-page-active #landing-theme-description-container > .panel-box,body.
 	flex-direction: column;
 	min-height: 0
 }
-body.landing-page-active #landing-theme-description-container > .panel-box.is-expanded > .panel-box-content,body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content {
+body.landing-page-active #landing-theme-description-container > .panel-box.is-expanded > .panel-box-content {
 	flex-grow: 1;
 	min-height: 0;
 	height: 0;
 	overflow-y: auto;
-	flex-direction: column;
 	max-height: none;
 	opacity: 1;
 	padding-top: var(--spacing-xs);
 	padding-bottom: var(--spacing-lg);
 	padding-left: var(--spacing-lg);
 	padding-right: var(--spacing-lg);
+}
+body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	min-height: 0;
+	height: 0;
+	overflow: hidden;
+	max-height: none;
+	opacity: 1;
+	padding-top: var(--spacing-xs);
+	padding-bottom: var(--spacing-lg);
+	padding-left: var(--spacing-lg);
+	padding-right: var(--spacing-lg);
+}
+body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content > #landing-theme-info-content {
+	flex-grow: 1;
+	overflow-y: auto;
+	min-height: 0;
+	margin-bottom: var(--spacing-md);
+}
+body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content > #landing-theme-actions {
+	flex-shrink: 0;
+	margin-top: 0;
 }
 body.landing-page-active #landing-theme-details-container > .panel-box.is-expanded > .panel-box-content > #landing-theme-info-content {
 	flex-grow: 1;

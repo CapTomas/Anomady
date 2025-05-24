@@ -4,113 +4,111 @@ document.addEventListener("DOMContentLoaded", () => {
   let GEMINI_API_KEY = "";
 
   // Default application settings
-  const DEFAULT_LANGUAGE = "cs"; // Default UI and narrative language
-  const DEFAULT_THEME_ID = "scifi"; // Default theme if none is selected
-  const UPDATE_HIGHLIGHT_DURATION = 5000; // Duration for UI update highlights (ms)
+  const DEFAULT_LANGUAGE = "cs";
+  const DEFAULT_THEME_ID = "scifi";
+  const UPDATE_HIGHLIGHT_DURATION = 5000; // ms
 
   // localStorage keys for persisting application state and preferences
   const CURRENT_THEME_STORAGE_KEY = "anomadyCurrentTheme";
-  const GAME_STATE_STORAGE_KEY_PREFIX = "anomadyGameState_"; // Prefix for theme-specific game states
+  const GAME_STATE_STORAGE_KEY_PREFIX = "anomadyGameState_";
   const MODEL_PREFERENCE_STORAGE_KEY = "anomadyModelPreference";
   const LANGUAGE_PREFERENCE_STORAGE_KEY = "preferredAppLanguage";
   const NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY =
     "preferredNarrativeLanguage";
-  const PLAYING_THEMES_STORAGE_KEY = "anomadyPlayingThemes"; // Themes currently being played or recently played
-  const LIKED_THEMES_STORAGE_KEY = "anomadyLikedThemes"; // Themes liked by the user
-  const LANDING_SELECTED_GRID_THEME_KEY = "anomadyLandingSelectedGridTheme"; // Theme selected on landing page grid
+  const PLAYING_THEMES_STORAGE_KEY = "anomadyPlayingThemes";
+  const LIKED_THEMES_STORAGE_KEY = "anomadyLikedThemes";
+  const LANDING_SELECTED_GRID_THEME_KEY = "anomadyLandingSelectedGridTheme";
   const LOG_LEVEL_STORAGE_KEY = "anomadyLogLevel";
 
   // Logging Configuration
   const LOG_LEVEL_DEBUG = "debug";
   const LOG_LEVEL_INFO = "info";
   const LOG_LEVEL_ERROR = "error";
-  const LOG_LEVELS = [LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_ERROR]; // Order matters: from most verbose to least
+  const LOG_LEVELS = [LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_ERROR];
   let currentLogLevel =
     localStorage.getItem(LOG_LEVEL_STORAGE_KEY) || LOG_LEVEL_INFO;
 
   // AI Model identifiers
-  const PAID_MODEL_NAME = "gemini-2.5-flash-preview-04-17"; // Identifier for the preferred/paid model
-  const FREE_MODEL_NAME = "gemini-1.5-flash-latest"; // Identifier for the standard/free model (currently same as paid)
+  const PAID_MODEL_NAME = "gemini-2.5-flash-preview-04-17";
+  const FREE_MODEL_NAME = "gemini-1.5-flash-latest";
   let currentModelName =
     localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME;
 
   // Core application state variables
-  let currentTheme = localStorage.getItem(CURRENT_THEME_STORAGE_KEY) || null; // Active game theme
+  let currentTheme = localStorage.getItem(CURRENT_THEME_STORAGE_KEY) || null;
   let currentAppLanguage =
-    localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE; // Current UI language
+    localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
   let currentNarrativeLanguage =
     localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) ||
-    currentAppLanguage; // Current language for AI narrative
+    currentAppLanguage;
 
   // Dynamically loaded theme data
-  let ALL_THEMES_CONFIG = {}; // Stores all theme configurations { themeId: configObject }
-  let themeTextData = {}; // Stores UI text data { themeId: { lang: { key: value } } }
-  let PROMPT_URLS_BY_THEME = {}; // Stores prompt file URLs { themeId: { promptName: url } }
-  let NARRATIVE_LANG_PROMPT_PARTS_BY_THEME = {}; // Stores narrative lang instructions { themeId: { lang: text } }
+  let ALL_THEMES_CONFIG = {};
+  let themeTextData = {};
+  let PROMPT_URLS_BY_THEME = {};
+  let NARRATIVE_LANG_PROMPT_PARTS_BY_THEME = {};
 
-  let gamePrompts = {}; // Stores loaded prompt texts, keyed by theme and prompt name
-  let currentPromptType = "initial"; // Type of system prompt to use (e.g., 'initial', 'default', 'combat_engaged')
-  let gameHistory = []; // Array of conversation turns with the AI
-  let playerIdentifier = ""; // User's chosen name or identifier in the game
-  let isInitialGameLoad = true; // Flag indicating if this is the first load of a game session
-  let lastKnownDashboardUpdates = {}; // Cache of the last AI-provided dashboard values
-  let lastKnownGameStateIndicators = {}; // Cache of the last AI-provided game state flags
-  let currentModalResolve = null; // To handle Promises for prompt/confirm
-  let currentSuggestedActions = []; // Cache of the last AI-provided suggested actions
-  let currentPanelStates = {}; // Cache of panel open/closed states { panelId: boolean
+  let gamePrompts = {};
+  let currentPromptType = "initial";
+  let gameHistory = [];
+  let playerIdentifier = "";
+  let isInitialGameLoad = true;
+  let lastKnownDashboardUpdates = {};
+  let lastKnownGameStateIndicators = {};
+  let currentModalResolve = null;
+  let currentSuggestedActions = [];
+  let currentPanelStates = {};
 
   // User's theme lists
-  let playingThemes = []; // Themes the user has active sessions for
-  let likedThemes = []; // Themes the user has marked as liked
-  let currentLandingGridSelection = null; // Theme ID selected in the landing page grid
+  let playingThemes = [];
+  let likedThemes = [];
+  let currentLandingGridSelection = null;
 
   // DOM Element References
-  const appRoot = document.getElementById("app-root"); // Main application container
-  const applicationLogoElement = document.getElementById("application-logo"); // App logo in the header
+  const appRoot = document.getElementById("app-root");
+  const applicationLogoElement = document.getElementById("application-logo");
   const playingThemesContainer = document.getElementById(
     "playing-themes-container"
-  ); // Container for playing theme icons
+  );
   const likedThemesSeparator = document.getElementById(
     "liked-themes-separator"
-  ); // Separator between playing/liked themes
+  );
   const likedThemesContainer = document.getElementById(
     "liked-themes-container"
-  ); // Container for liked theme icons
+  );
 
   // UI indicators and global controls
   const systemStatusIndicator = document.getElementById(
     "system-status-indicator"
-  ); // Displays system status (online, error, etc.)
+  );
   const gmSpecificActivityIndicator = document.getElementById(
     "gm-activity-indicator"
-  ); // Shows when AI is processing
+  );
   const languageToggleButton = document.getElementById(
     "language-toggle-button"
-  ); // Button to switch app language
-  const newGameButton = document.getElementById("new-game-button"); // Button to start a new game session
-  const modelToggleButton = document.getElementById("model-toggle-button"); // Button to switch AI model
+  );
+  const newGameButton = document.getElementById("new-game-button");
+  const modelToggleButton = document.getElementById("model-toggle-button");
 
   // Main layout panels
-  const mainLayout = document.getElementById("main-layout");
-  const leftPanel = document.getElementById("left-panel"); // Left informational panel
-  const rightPanel = document.getElementById("right-panel"); // Right informational panel
-  const centerColumn = document.getElementById("center-column"); // Center column for story and input
+  const leftPanel = document.getElementById("left-panel");
+  const rightPanel = document.getElementById("right-panel");
 
   // Landing page specific elements
-  const themeGridContainer = document.getElementById("theme-grid-container"); // Grid for theme selection
+  const themeGridContainer = document.getElementById("theme-grid-container");
   const landingThemeDescriptionContainer = document.getElementById(
     "landing-theme-description-container"
-  ); // Panel for theme lore on landing page
+  );
   const landingThemeLoreText = document.getElementById(
     "landing-theme-lore-text"
-  ); // Text area for theme lore
+  );
   const landingThemeDetailsContainer = document.getElementById(
     "landing-theme-details-container"
-  ); // Panel for theme details on landing page
+  );
   const landingThemeInfoContent = document.getElementById(
     "landing-theme-info-content"
-  ); // Content area for theme details
-  const landingThemeActions = document.getElementById("landing-theme-actions"); // Container for action buttons (choose/like theme)
+  );
+  const landingThemeActions = document.getElementById("landing-theme-actions");
 
   // Custom Modal Elements
   const customModalOverlay = document.getElementById("custom-modal-overlay");
@@ -124,26 +122,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const customModalActions = document.getElementById("custom-modal-actions");
 
   // Game view specific elements
-  const storyLog = document.getElementById("story-log"); // Container for narrative messages
-  const storyLogViewport = document.getElementById("story-log-viewport"); // Scrollable viewport for story log
+  const storyLog = document.getElementById("story-log");
+  const storyLogViewport = document.getElementById("story-log-viewport");
   const suggestedActionsWrapper = document.getElementById(
     "suggested-actions-wrapper"
-  ); // Container for AI-suggested actions
+  );
   const playerInputControlPanel = document.getElementById(
     "player-input-control-panel"
-  ); // Panel containing input fields
-  const nameInputSection = document.getElementById("name-input-section"); // Section for player identifier input
+  );
+  const nameInputSection = document.getElementById("name-input-section");
   const playerIdentifierInputEl = document.getElementById(
     "player-identifier-input"
-  ); // Input field for player's name/identifier
-  const startGameButton = document.getElementById("start-game-button"); // Button to initiate the game after entering identifier
-  const actionInputSection = document.getElementById("action-input-section"); // Section for player action input
-  const playerActionInput = document.getElementById("player-action-input"); // Textarea for player's game actions
-  const sendActionButton = document.getElementById("send-action-button"); // Button to submit player's action
+  );
+  const startGameButton = document.getElementById("start-game-button");
+  const actionInputSection = document.getElementById("action-input-section");
+  const playerActionInput = document.getElementById("player-action-input");
+  const sendActionButton = document.getElementById("send-action-button");
 
   // Story log auto-scroll control
-  let userHasManuallyScrolledLog = false; // Flag to manage auto-scrolling behavior
-  const AUTOSCROLL_THRESHOLD = 40; // Pixel threshold to re-enable auto-scroll
+  let userHasManuallyScrolledLog = false;
+  const AUTOSCROLL_THRESHOLD = 40;
 
   /**
    * Logs a message to the console if the current log level allows it.
@@ -155,7 +153,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentLevelIndex = LOG_LEVELS.indexOf(currentLogLevel);
 
     if (levelIndex === -1) {
-      // Fallback for unknown levels
       console.error(`[Anomady/UNKNOWN_LOG_LEVEL: ${level}]`, ...messages);
       return;
     }
@@ -168,60 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(prefix, ...messages);
       }
     }
-  }
-
-  /**
-   * Checks if an element is scrolled out of the visible area of its scrollable container.
-   * @param {HTMLElement} element - The element to check.
-   * @param {HTMLElement} scrollContainer - The scrollable container.
-   * @returns {boolean} True if the element is out of view, false otherwise.
-   */
-  function isElementScrolledOutOfView(element, scrollContainer) {
-    if (!element || !scrollContainer) return false;
-
-    const elemRect = element.getBoundingClientRect();
-    const containerRect = scrollContainer.getBoundingClientRect();
-
-    // Check if the element is vertically outside the scrollContainer's viewport
-    // Adding/subtracting 1px tolerance for potential subpixel rendering issues
-    const isAboveViewport = elemRect.bottom < containerRect.top + 1;
-    const isBelowViewport = elemRect.top > containerRect.bottom - 1;
-
-    return isAboveViewport || isBelowViewport;
-  }
-
-  /**
-   * Updates the glow effect on panel sidebars if they have off-screen updates.
-   * Call this after dashboard updates or when panel visibility/scroll might change.
-   */
-  function updatePanelGlows() {
-    [leftPanel, rightPanel].forEach(panelSidebar => {
-      if (!panelSidebar || document.body.classList.contains('landing-page-active')) {
-        if (panelSidebar) panelSidebar.classList.remove('panel-has-updates-below');
-        return;
-      }
-
-      let hasOffscreenUpdatesInExpandedPanels = false;
-      // Query for .info-item or .info-item-meter that has the .has-recent-update class
-      const recentlyUpdatedItems = panelSidebar.querySelectorAll('.has-recent-update');
-
-      for (const itemContainer of recentlyUpdatedItems) {
-        // Check if the item's parent .panel-box is expanded
-        const panelBox = itemContainer.closest('.panel-box');
-        if (panelBox && panelBox.classList.contains('is-expanded')) {
-          if (isElementScrolledOutOfView(itemContainer, panelSidebar)) {
-            hasOffscreenUpdatesInExpandedPanels = true;
-            break;
-          }
-        }
-      }
-
-      if (hasOffscreenUpdatesInExpandedPanels) {
-        panelSidebar.classList.add('panel-has-updates-below');
-      } else {
-        panelSidebar.classList.remove('panel-has-updates-below');
-      }
-    });
   }
 
   /**
@@ -261,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return await response.json();
     } catch (error) {
       log(LOG_LEVEL_ERROR, `Error fetching JSON ${filePath}:`, error);
-      throw error; // Re-throw to be handled by caller
+      throw error;
     }
   }
 
@@ -359,6 +302,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return success;
   }
 
+  /**
+   * Retrieves UI text based on key, language, and context (landing, theme, global).
+   * @param {string} key - The text key.
+   * @param {object} [replacements={}] - Placeholder replacements.
+   * @param {string|null} [explicitThemeContext=null] - Specific theme context for the text.
+   * @returns {string} The localized text or the key itself if not found.
+   */
   function getUIText(key, replacements = {}, explicitThemeContext = null) {
     let text;
     const onLandingPage = document.body.classList.contains(
@@ -366,7 +316,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     const lang = currentAppLanguage;
 
-    // 1. Try landing page specific texts from globalTextData.landing
     if (onLandingPage && globalTextData.landing?.[lang]?.[key]) {
       text = globalTextData.landing[lang][key];
     } else if (
@@ -374,30 +323,26 @@ document.addEventListener("DOMContentLoaded", () => {
       globalTextData.landing?.en?.[key] &&
       !globalTextData.landing?.[lang]?.[key]
     ) {
-      text = globalTextData.landing.en[key]; // Fallback to English for landing
+      text = globalTextData.landing.en[key];
     }
 
-    // 2. If not found on landing, or not on landing, try explicit theme context from themeTextData
     if (!text && explicitThemeContext && themeTextData[explicitThemeContext]) {
       text =
         themeTextData[explicitThemeContext]?.[lang]?.[key] ||
-        themeTextData[explicitThemeContext]?.en?.[key]; // Fallback to English for explicit theme
+        themeTextData[explicitThemeContext]?.en?.[key];
     }
 
-    // 3. If not found yet, try current game theme context from themeTextData
     if (!text && currentTheme && themeTextData[currentTheme]) {
       text =
         themeTextData[currentTheme]?.[lang]?.[key] ||
-        themeTextData[currentTheme]?.en?.[key]; // Fallback to English for current theme
+        themeTextData[currentTheme]?.en?.[key];
     }
 
-    // 4. If still not found, try the globalTextData.global section
     if (!text && globalTextData.global) {
       text =
-        globalTextData.global[lang]?.[key] || globalTextData.global.en?.[key]; // Fallback to English for global
+        globalTextData.global[lang]?.[key] || globalTextData.global.en?.[key];
     }
 
-    // 5. Fallback to default theme's UI text (from themeTextData) if it was a game-specific context and text still not found
     if (
       !text &&
       !onLandingPage &&
@@ -411,9 +356,8 @@ document.addEventListener("DOMContentLoaded", () => {
         themeTextData[themeForUI]?.en?.[key];
     }
 
-    text = text || key; // Use key as ultimate fallback if no translation found
+    text = text || key;
 
-    // Apply replacements
     for (const placeholder in replacements) {
       text = text.replace(
         new RegExp(`{${placeholder}}`, "g"),
@@ -425,7 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * Sets up the Gemini API key, prompting the user if not found in localStorage.
-   * @returns {boolean} True if API key is successfully set, false otherwise.
+   * @returns {Promise<boolean>} True if API key is successfully set, false otherwise.
    */
   async function setupApiKey() {
     GEMINI_API_KEY = localStorage.getItem("userGeminiApiKey");
@@ -480,7 +424,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Saves the current game state (history, dashboard, etc.) to localStorage for the active theme.
+   * Saves the current game state to localStorage for the active theme.
    */
   function saveGameState() {
     if (!playerIdentifier || !currentTheme) return;
@@ -513,7 +457,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const gameStateKey = GAME_STATE_STORAGE_KEY_PREFIX + themeIdToLoad;
     try {
       const savedStateString = localStorage.getItem(gameStateKey);
-      if (!savedStateString) return false; // No saved state found
+      if (!savedStateString) return false;
 
       const savedState = JSON.parse(savedStateString);
       if (
@@ -521,7 +465,7 @@ document.addEventListener("DOMContentLoaded", () => {
         !savedState.gameHistory ||
         savedState.gameHistory.length === 0
       ) {
-        clearGameStateInternal(themeIdToLoad); // Clear potentially corrupt state
+        clearGameStateInternal(themeIdToLoad);
         return false;
       }
 
@@ -592,8 +536,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Clears in-memory game state variables, typically for the current theme.
-   * @param {string} themeIdToClear - The ID of the theme whose state is being cleared in memory.
+   * Clears in-memory game state variables for a specific theme.
+   * @param {string} themeIdToClear - The ID of the theme whose state is being cleared.
    */
   function clearGameStateInternal(themeIdToClear) {
     if (themeIdToClear === currentTheme) {
@@ -621,10 +565,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * Fetches a specific prompt text file for a given theme.
-   * @param {string} promptName - The name of the prompt (e.g., 'initial', 'combat').
+   * @param {string} promptName - The name of the prompt.
    * @param {string} themeId - The ID of the theme.
-   * @param {boolean} isCritical - Whether the prompt is critical for the game to function.
-   * @returns {Promise<string>} A promise that resolves to the prompt text or an error message.
+   * @param {boolean} [isCritical=false] - Whether the prompt is critical.
+   * @returns {Promise<string>} The prompt text or an error message.
    */
   async function fetchPrompt(promptName, themeId, isCritical = false) {
     if (
@@ -667,8 +611,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Loads all prompt files for a specified theme and stores them in `gamePrompts`.
-   * @param {string} themeId - The ID of the theme for which to load prompts.
+   * Loads all prompt files for a specified theme.
+   * @param {string} themeId - The ID of the theme.
    * @returns {Promise<boolean>} True if all prompts loaded successfully, false otherwise.
    */
   async function loadAllPromptsForTheme(themeId) {
@@ -690,7 +634,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!text.startsWith("CRITICAL_ERROR:")) {
           gamePrompts[themeId][name] = text;
         } else {
-          gamePrompts[themeId][name] = text; // Store error placeholder
+          gamePrompts[themeId][name] = text;
         }
       });
     });
@@ -736,9 +680,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Constructs the system prompt for the AI based on current game state, theme, and player.
+   * Constructs the system prompt for the AI.
    * @param {string} currentPlayerIdentifierParam - The player's identifier.
-   * @param {string} promptTypeToUse - The type of prompt needed ('initial', 'default', 'combat_engaged', etc.).
+   * @param {string} promptTypeToUse - The type of prompt needed.
    * @returns {string} The fully constructed system prompt (JSON string) or an error JSON.
    */
   const getSystemPrompt = (currentPlayerIdentifierParam, promptTypeToUse) => {
@@ -886,7 +830,6 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
     } else {
-      // Fallback if dashboard_config.game_state_indicators is missing
       const activityStatusDesc =
         themeConfig.id === "grim_warden" &&
         dashboardItems.find((item) => item.id === "activity_status")
@@ -942,7 +885,6 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
           helperFileContent = gamePrompts[currentTheme][fallbackHelperKey];
         } else if (
-          // Fallback to default theme's helper
           gamePrompts[DEFAULT_THEME_ID] &&
           isValidPromptText(
             gamePrompts[DEFAULT_THEME_ID][langSpecificHelperKey]
@@ -951,7 +893,6 @@ document.addEventListener("DOMContentLoaded", () => {
           helperFileContent =
             gamePrompts[DEFAULT_THEME_ID][langSpecificHelperKey];
         } else if (
-          // Fallback to default theme's English helper
           gamePrompts[DEFAULT_THEME_ID] &&
           isValidPromptText(gamePrompts[DEFAULT_THEME_ID][fallbackHelperKey])
         ) {
@@ -1105,7 +1046,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         assetNamesContent = gamePrompts[currentTheme][assetKey];
       } else {
-        // Fallback checks
         if (
           gamePrompts[currentTheme]?.[assetKey] &&
           isValidPromptText(gamePrompts[currentTheme][assetKey])
@@ -1201,7 +1141,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * Toggles UI elements to indicate AI processing status.
-   * @param {boolean} isProcessing - True if AI is currently processing, false otherwise.
+   * @param {boolean} isProcessing - True if AI is currently processing.
    */
   function setGMActivity(isProcessing) {
     if (gmSpecificActivityIndicator)
@@ -1209,7 +1149,6 @@ document.addEventListener("DOMContentLoaded", () => {
         ? "inline-flex"
         : "none";
     if (systemStatusIndicator)
-      // Hide system status during GM activity
       systemStatusIndicator.style.display = isProcessing
         ? "none"
         : "inline-flex";
@@ -1231,12 +1170,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Briefly highlights a UI element to indicate an update.
-   * If the element is a container (.info-item or .info-item-meter),
-   * it attempts to highlight its main value display child (.value or .value-overlay).
-   * If the element is already a value display child, it highlights itself.
-   * Adds 'has-recent-update' class to the container for persistent indication.
-   * @param {HTMLElement} element - The DOM element to highlight (expected to be .info-item or .info-item-meter container).
+   * Briefly highlights a UI element container and adds a persistent update class.
+   * @param {HTMLElement} element - The DOM element container to highlight.
    */
   function highlightElementUpdate(element) {
     if (!element) return;
@@ -1246,7 +1181,6 @@ document.addEventListener("DOMContentLoaded", () => {
       element.classList.contains("value") ||
       element.classList.contains("value-overlay")
     ) {
-      // This case should ideally not be hit if we always pass the container
       textValueElement = element;
       const container = element.closest('.info-item, .info-item-meter');
       if (container) container.classList.add('has-recent-update');
@@ -1256,7 +1190,6 @@ document.addEventListener("DOMContentLoaded", () => {
       element.classList.contains("info-item-meter")
     ) {
       textValueElement = element.querySelector(".value, .value-overlay");
-      // Add persistent indicator to the container element itself
       element.classList.add('has-recent-update');
     }
 
@@ -1273,7 +1206,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Adds a message to the story log.
    * @param {string} text - The message text.
-   * @param {string} sender - The sender type ('player', 'gm', 'system', 'system-error').
+   * @param {string} sender - 'player', 'gm', 'system', or 'system-error'.
    */
   function addMessageToLog(text, sender) {
     if (!storyLog) {
@@ -1381,9 +1314,9 @@ document.addEventListener("DOMContentLoaded", () => {
    * Updates a UI meter element (progress bar and text).
    * @param {HTMLElement|null} barEl - The meter bar element.
    * @param {HTMLElement|null} textEl - The text element displaying meter value/status.
-   * @param {string|number|null} newPctStr - The new percentage value (as string or number) or status text like "---".
-   * @param {string} meterType - Type of meter (e.g., 'shields', 'fuel', 'mana') for specific styling/logic.
-   * @param {object} opts - Options: highlight (boolean), newStatusText (string), initialPlaceholder (string).
+   * @param {string|number|null} newPctStr - The new percentage value or status text.
+   * @param {string} meterType - Type of meter for specific styling/logic.
+   * @param {object} [opts={}] - Options: highlight, newStatusText, initialPlaceholder.
    * @returns {boolean} True if an update was made to the DOM, false otherwise.
    */
   const setMeter = (barEl, textEl, newPctStr, meterType, opts = {}) => {
@@ -1405,12 +1338,10 @@ document.addEventListener("DOMContentLoaded", () => {
           updatedOccurred = true;
         }
       }
-      // If updatedOccurred is true here, and highlight is true, we'd need to add has-recent-update
-      // to textEl's container. This case is less common.
       if (updatedOccurred && highlight) {
         const container = textEl ? textEl.closest('.info-item, .info-item-meter') : null;
         if (container) {
-            highlightElementUpdate(container); // This will add has-recent-update
+            highlightElementUpdate(container);
         }
       }
       return updatedOccurred;
@@ -1443,7 +1374,6 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           if (oldClasses.length > 0) updatedOccurred = true;
           oldClasses.forEach((c) => barEl.classList.remove(c));
-          // If updatedOccurred is true here, and highlight is true, add has-recent-update
           if (updatedOccurred && highlight) {
              const container = textEl.closest('.info-item, .info-item-meter') || barEl.closest('.info-item, .info-item-meter');
              if (container) highlightElementUpdate(container);
@@ -1575,12 +1505,12 @@ document.addEventListener("DOMContentLoaded", () => {
       barEl.classList.add("meter-bar");
     }
 
-    if (updatedOccurred && highlight) { // Check highlight flag from opts
+    if (updatedOccurred && highlight) {
       const containerToHighlight = textEl
         ? textEl.closest(".info-item, .info-item-meter")
         : barEl.closest(".info-item, .info-item-meter");
       if (containerToHighlight) {
-        highlightElementUpdate(containerToHighlight); // This will add .has-recent-update
+        highlightElementUpdate(containerToHighlight);
       }
     }
     return updatedOccurred;
@@ -1589,8 +1519,8 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Finds the parent panel configuration for a given dashboard item ID.
    * @param {string} itemId - The ID of the dashboard item.
-   * @param {object} dashboardConfig - The dashboard configuration object for the current theme.
-   * @returns {object|null} The panel configuration object or null if not found.
+   * @param {object} dashboardConfig - The dashboard configuration object.
+   * @returns {object|null} The panel configuration object or null.
    */
   function getParentPanelConfig(itemId, dashboardConfig) {
     if (!dashboardConfig) return null;
@@ -1611,8 +1541,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * Updates the dashboard UI elements based on data from the AI.
-   * @param {object} updatesFromAI - An object where keys are item IDs and values are new values.
-   * @param {boolean} highlightChanges - Whether to visually highlight updated elements.
+   * @param {object} updatesFromAI - Object of item IDs and new values.
+   * @param {boolean} [highlightChanges=true] - Whether to visually highlight changes.
    */
   function updateDashboard(updatesFromAI, highlightChanges = true) {
     if (
@@ -1671,15 +1601,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (itemCfg.type === "meter") {
           if (valueElement || meterBarElement) {
-            // setMeter now handles calling highlightElementUpdate if highlightChanges is true
-            // and an update occurred, which in turn adds .has-recent-update.
             actualUpdateOccurred = setMeter(
               meterBarElement,
               valueElement,
               String(value),
               itemCfg.meter_type,
               {
-                highlight: highlightChanges, // Pass this along
+                highlight: highlightChanges,
                 newStatusText: itemCfg.status_text_id
                   ? updatesFromAI[itemCfg.status_text_id]
                   : undefined,
@@ -1768,11 +1696,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // After all updates are processed, if any highlights occurred, update panel glows
-    if (highlightChanges) {
-      updatePanelGlows();
-    }
-
     lastKnownDashboardUpdates = {
       ...lastKnownDashboardUpdates,
       ...updatesFromAI,
@@ -1780,7 +1703,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Initializes dashboard elements with their default texts and values based on theme config.
+   * Initializes dashboard elements with their default texts and values.
    */
   function initializeDashboardDefaultTexts() {
     if (!currentTheme) return;
@@ -1818,10 +1741,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 initialPlaceholder: `${defaultStatus}: ${defaultValueText}%`,
               });
             }
-          } else if (itemCfg.type === "status_level") { // New type handling
+          } else if (itemCfg.type === "status_level") {
             if (valueEl && itemCfg.level_mappings && itemCfg.default_ai_value !== undefined) {
               const defaultAiValueStr = String(itemCfg.default_ai_value);
-              const levelConfig = itemCfg.level_mappings[defaultAiValueStr] || itemCfg.level_mappings["1"]; // Fallback to level 1
+              const levelConfig = itemCfg.level_mappings[defaultAiValueStr] || itemCfg.level_mappings["1"];
 
               if (levelConfig) {
                 const displayDefaultText = getUIText(
@@ -1840,9 +1763,8 @@ document.addEventListener("DOMContentLoaded", () => {
                  valueEl.textContent = getUIText("unknown");
                  valueEl.className = "value status-info";
             }
-          } else if (itemCfg.type === "status_text") { // Old status_text
+          } else if (itemCfg.type === "status_text") {
             if (valueEl) {
-              // Keep existing or simplify if all dynamic status texts are now 'status_level'
               const displayDefault = itemCfg.default_value_key
                 ? getUIText(itemCfg.default_value_key, {}, currentTheme)
                 : getUIText("unknown");
@@ -1850,7 +1772,7 @@ document.addEventListener("DOMContentLoaded", () => {
               let statusClass = itemCfg.default_css_class || "status-info";
               valueEl.className = `value ${statusClass}`;
             }
-          } else { // Handles "text", "number_text", "text_long"
+          } else {
             if (valueEl) {
               const suffix = itemCfg.suffix || "";
               valueEl.textContent = `${defaultValueText}${suffix}`;
@@ -1878,9 +1800,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * Finds a specific item's configuration within the theme's dashboard structure.
-   * @param {object} themeDashCfg - The dashboard configuration for the current theme.
+   * @param {object} themeDashCfg - The dashboard configuration.
    * @param {string} itemId - The ID of the item to find.
-   * @returns {object|null} The item configuration object or null if not found.
+   * @returns {object|null} The item configuration or null.
    */
   function findItemConfigById(themeDashCfg, itemId) {
     if (!themeDashCfg) return null;
@@ -1889,25 +1811,6 @@ document.addEventListener("DOMContentLoaded", () => {
       for (const boxCfg of themeDashCfg[sideKey]) {
         const foundItem = boxCfg.items.find((i) => i.id === itemId);
         if (foundItem) return foundItem;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Finds a specific panel's configuration within the theme's dashboard structure.
-   * @param {object} dashboardConfig - The dashboard configuration for the current theme.
-   * @param {string} panelId - The ID of the panel box to find.
-   * @returns {object|null} The panel configuration object or null if not found.
-   */
-  function findPanelConfigById(dashboardConfig, panelId) {
-    if (!dashboardConfig) return null;
-    for (const sideKey of ["left_panel", "right_panel"]) {
-      if (dashboardConfig[sideKey]) {
-        const foundPanel = dashboardConfig[sideKey].find(
-          (p) => p.id === panelId
-        );
-        if (foundPanel) return foundPanel;
       }
     }
     return null;
@@ -1936,8 +1839,8 @@ document.addEventListener("DOMContentLoaded", () => {
    * Animates the expansion or collapse of a panel box.
    * @param {string} boxId - The ID of the panel box element.
    * @param {boolean} shouldExpand - True to expand, false to collapse.
-   * @param {boolean} manageVisibility - True if the panel's display property should be managed.
-   * @param {boolean} isRestoringState - True if this call is part of restoring a saved panel state.
+   * @param {boolean} [manageVisibility=false] - If true, manage panel's display property.
+   * @param {boolean} [isRestoringState=false] - If true, this call restores a saved state.
    */
   function animatePanelBox(
     boxId,
@@ -1950,8 +1853,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const header = box.querySelector(".panel-box-header");
     const content = box.querySelector(".panel-box-content");
     if (!header || !content) return;
-
-    const wasExpanded = box.classList.contains("is-expanded");
 
     if (shouldExpand) {
       if (box.style.display === "none" && manageVisibility) {
@@ -1966,9 +1867,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (manageVisibility) box.style.opacity = "1";
         header.setAttribute("aria-expanded", "true");
         content.setAttribute("aria-hidden", "false");
-        if (!isRestoringState && wasExpanded !== shouldExpand) {
-          updatePanelGlows();
-        }
       });
     } else {
       box.classList.remove("is-expanded");
@@ -1986,13 +1884,10 @@ document.addEventListener("DOMContentLoaded", () => {
           if (event.target === content || event.target === box) {
             if (!box.classList.contains("is-expanded")) {
               box.style.display = "none";
-              content.style.display = ""; // Reset style for future expansions
+              content.style.display = "";
             }
             content.removeEventListener("transitionend", onHideTransitionEnd);
             box.removeEventListener("transitionend", onHideTransitionEnd);
-            if (!isRestoringState && wasExpanded !== shouldExpand) {
-              updatePanelGlows();
-            }
           }
         };
         content.addEventListener("transitionend", onHideTransitionEnd);
@@ -2005,14 +1900,8 @@ document.addEventListener("DOMContentLoaded", () => {
           ) {
             box.style.display = "none";
             content.style.display = "";
-             if (!isRestoringState && wasExpanded !== shouldExpand) {
-                updatePanelGlows();
-            }
           }
         }, transitionDuration + 100);
-      } else if (!isRestoringState && wasExpanded !== shouldExpand) {
-         // For non-managed visibility, update glows immediately after state change
-         updatePanelGlows();
       }
     }
     if (!isRestoringState) {
@@ -2021,9 +1910,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Initializes collapsible panel boxes for a given theme, setting up click/keyboard listeners.
-   * Panel states are restored from `currentPanelStates` if available, otherwise defaults are used.
-   * @param {string} themeIdForPanels - The ID of the theme whose panels are being initialized.
+   * Initializes collapsible panel boxes for a given theme.
+   * @param {string} themeIdForPanels - The ID of the theme.
    */
   function initializeCollapsiblePanelBoxes(themeIdForPanels) {
     const themeFullConfig = ALL_THEMES_CONFIG[themeIdForPanels];
@@ -2061,15 +1949,14 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         headerElement.addEventListener("click", () => {
           if (
-            // Allow click if visible
             boxElement.style.display !== "none" ||
-            boxCfg.type === "collapsible" // Collapsible always clickable
+            boxCfg.type === "collapsible"
           ) {
             animatePanelBox(
               boxCfg.id,
               !boxElement.classList.contains("is-expanded"),
               boxCfg.type === "hidden_until_active",
-              false // User interaction, not restoring from saved state
+              false
             );
           }
         });
@@ -2085,7 +1972,7 @@ document.addEventListener("DOMContentLoaded", () => {
               boxCfg.id,
               !boxElement.classList.contains("is-expanded"),
               boxCfg.type === "hidden_until_active",
-              false // User interaction
+              false
             );
           }
         });
@@ -2118,7 +2005,6 @@ document.addEventListener("DOMContentLoaded", () => {
           isRestoringThisPanelState
         );
       } else {
-        // Collapsible
         boxElement.style.display = "flex";
         boxElement.style.opacity = "1";
         const delay = boxCfg.boot_delay || 0;
@@ -2179,12 +2065,20 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  /** Checks if a theme is in the 'playing' list. */
+  /**
+   * Checks if a theme is in the 'playing' list.
+   * @param {string} themeId - The ID of the theme.
+   * @returns {boolean} True if the theme is playing.
+   */
   function isThemePlaying(themeId) {
     return playingThemes.includes(themeId);
   }
 
-  /** Checks if a theme is in the 'liked' list. */
+  /**
+   * Checks if a theme is in the 'liked' list.
+   * @param {string} themeId - The ID of the theme.
+   * @returns {boolean} True if the theme is liked.
+   */
   function isThemeLiked(themeId) {
     return likedThemes.includes(themeId);
   }
@@ -2195,8 +2089,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function addPlayingTheme(themeId) {
     if (!isThemePlaying(themeId)) {
-      // Only add if not already present
-      playingThemes.push(themeId); // Add to the end to maintain order of addition
+      playingThemes.push(themeId);
       saveThemeListsToStorage();
       updateTopbarThemeIcons();
     }
@@ -2229,9 +2122,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Removes a theme from the 'playing' list. Optionally moves it to 'liked' if not already liked.
+   * Removes a theme from the 'playing' list.
    * @param {string} themeId - The ID of the theme to remove.
-   * @param {boolean} moveToLiked - If true, add to liked list if not already there.
+   * @param {boolean} [moveToLiked=true] - If true, add to liked list if not already there.
    */
   function removePlayingTheme(themeId, moveToLiked = true) {
     const index = playingThemes.indexOf(themeId);
@@ -2273,7 +2166,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Handles closing a theme via its top bar icon (removes from playing/liked lists).
+   * Handles closing a theme via its top bar icon.
    * @param {string} themeId - The ID of the theme being closed.
    */
   function handleCloseTopbarIcon(themeId) {
@@ -2302,7 +2195,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Creates a theme icon button for the top bar.
    * @param {string} themeId - The ID of the theme.
    * @param {string} type - 'playing' or 'liked'.
-   * @returns {HTMLButtonElement|null} The created button element or null if theme config not found.
+   * @returns {HTMLButtonElement|null} The created button element or null.
    */
   function createThemeTopbarIcon(themeId, type) {
     const themeConfig = ALL_THEMES_CONFIG[themeId];
@@ -2324,7 +2217,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     button.title = `${themeNameText}${statusText ? ` (${statusText})` : ""}`;
     const img = document.createElement("img");
-    img.src = themeConfig.icon; // Path from config.json
+    img.src = themeConfig.icon;
     img.alt = button.title;
     button.appendChild(img);
     const closeBtn = document.createElement("button");
@@ -2344,7 +2237,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Updates the theme icons displayed in the top bar based on `playingThemes` and `likedThemes`.
+   * Updates the theme icons displayed in the top bar.
    */
   function updateTopbarThemeIcons() {
     if (
@@ -2357,7 +2250,6 @@ document.addEventListener("DOMContentLoaded", () => {
     likedThemesContainer.innerHTML = "";
     playingThemes.forEach((themeId) => {
       if (ALL_THEMES_CONFIG[themeId]) {
-        // Ensure theme config is loaded
         const icon = createThemeTopbarIcon(themeId, "playing");
         if (icon) {
           icon.dataset.type = "playing";
@@ -2367,7 +2259,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     likedThemes.forEach((themeId) => {
       if (ALL_THEMES_CONFIG[themeId] && !isThemePlaying(themeId)) {
-        // Ensure theme config is loaded
         const icon = createThemeTopbarIcon(themeId, "liked");
         if (icon) {
           icon.dataset.type = "liked";
@@ -2384,7 +2275,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Handles clicks on theme icons in the top bar (switches to that theme).
+   * Handles clicks on theme icons in the top bar.
    * @param {string} themeId - The ID of the clicked theme.
    */
   async function handleTopbarThemeIconClick(themeId) {
@@ -2399,7 +2290,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Toggles the AI model between free and paid (or other configured types).
+   * Toggles the AI model between configured types.
    */
   function toggleModelType() {
     currentModelName =
@@ -2417,9 +2308,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Sets the application language and updates all relevant UI text and theme-specific elements.
-   * @param {string} lang - The new language code (e.g., 'en', 'cs').
-   * @param {string|null} themeIdForUIContextIfGameActive - The current theme ID if a game is active, for context.
+   * Sets the application language and updates UI texts.
+   * @param {string} lang - The new language code.
+   * @param {string|null} themeIdForUIContextIfGameActive - Current theme ID if game active.
    */
   function setAppLanguageAndThemeUI(lang, themeIdForUIContextIfGameActive) {
     currentAppLanguage = lang;
@@ -2571,10 +2462,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Handles game state indicators from the AI, like showing/hiding conditional panels
-   * and potentially switching to specialized prompts (e.g., combat_engaged).
-   * @param {object} indicators - Object with indicator keys and boolean values (e.g., { "combat_engaged": true }).
-   * @param {boolean} isInitialBoot - True if this is part of the initial game/session load.
+   * Handles game state indicators from the AI.
+   * @param {object} indicators - Object with indicator keys and boolean values.
+   * @param {boolean} [isInitialBoot=false] - True if part of initial game load.
    */
   function handleGameStateIndicators(indicators, isInitialBoot = false) {
     if (!indicators || !currentTheme) return;
@@ -2616,7 +2506,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     let newPromptType = "default";
-    let highestPriorityFound = -1; // Start with a value lower than any possible priority
+    let highestPriorityFound = -1;
 
     if (
       themeDashCfg.game_state_indicators &&
@@ -2626,7 +2516,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const indicatorId = indicatorConfig.id;
 
         if (indicators[indicatorId] === true) {
-          // Check if a valid prompt exists for this indicator
           const promptText = gamePrompts[currentTheme]?.[indicatorId];
           const isValidPromptForIndicator =
             PROMPT_URLS_BY_THEME[currentTheme]?.[indicatorId] &&
@@ -2636,7 +2525,7 @@ document.addEventListener("DOMContentLoaded", () => {
             !promptText.startsWith("FILE_NOT_FOUND_NON_CRITICAL:");
 
           if (isValidPromptForIndicator) {
-            const priority = indicatorConfig.priority || 0; // Default to 0 if not specified
+            const priority = indicatorConfig.priority || 0;
             if (priority > highestPriorityFound) {
               highestPriorityFound = priority;
               newPromptType = indicatorId;
@@ -2659,7 +2548,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * Calls the Gemini API with the current game history and system prompt.
-   * @param {object[]} currentTurnHistory - The history of conversation turns for this API call.
+   * @param {object[]} currentTurnHistory - History of conversation turns.
    * @returns {Promise<string|null>} The narrative text from AI, or null on failure.
    */
   async function callGeminiAPI(currentTurnHistory) {
@@ -2761,7 +2650,6 @@ document.addEventListener("DOMContentLoaded", () => {
           try {
             parsedAIResponse = JSON.parse(jsonStringFromAI);
           } catch (parseError) {
-            // Log the full raw response when initial parsing fails
             log(
               LOG_LEVEL_ERROR,
               "Initial JSON.parse failed. Raw AI response:",
@@ -2769,7 +2657,6 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             let extractedJsonString = null;
-            // Attempt to extract content between the first '{' and last '}'
             const firstBrace = jsonStringFromAI.indexOf("{");
             const lastBrace = jsonStringFromAI.lastIndexOf("}");
 
@@ -2779,7 +2666,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 lastBrace + 1
               );
             } else {
-              // Fallback for cases where primary structure might be an array
               const firstBracket = jsonStringFromAI.indexOf("[");
               const lastBracket = jsonStringFromAI.lastIndexOf("]");
               if (firstBracket !== -1 && lastBracket > firstBracket) {
@@ -2808,12 +2694,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
               }
             } else {
-              // If no suitable JSON structure could be extracted, re-throw the original error
               throw parseError;
             }
           }
 
-          // Validate the structure of the (potentially cleaned) parsed response
           if (
             !parsedAIResponse ||
             typeof parsedAIResponse.narrative !== "string" ||
@@ -2821,7 +2705,6 @@ document.addEventListener("DOMContentLoaded", () => {
             !Array.isArray(parsedAIResponse.suggested_actions) ||
             typeof parsedAIResponse.game_state_indicators !== "object"
           ) {
-            // Log the full response if structure is invalid even after successful parse/cleanup
             log(
               LOG_LEVEL_ERROR,
               "Parsed JSON has invalid structure or is null/undefined. Full AI response (if not logged above in case of initial parse failure):",
@@ -2836,7 +2719,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           gameHistory.push({
             role: "model",
-            parts: [{ text: JSON.stringify(parsedAIResponse) }], // Store the cleaned, validated JSON
+            parts: [{ text: JSON.stringify(parsedAIResponse) }],
           });
           updateDashboard(parsedAIResponse.dashboard_updates);
           displaySuggestedActions(parsedAIResponse.suggested_actions);
@@ -2846,7 +2729,6 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           if (isInitialGameLoad) isInitialGameLoad = false;
           saveGameState();
-          updatePanelGlows(); // Update glows after processing AI response and saving
           if (systemStatusIndicator) {
             systemStatusIndicator.textContent = getUIText(
               "system_status_online_short"
@@ -2855,10 +2737,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           return parsedAIResponse.narrative;
         } catch (e) {
-          // Catches errors from JSON.parse, cleanup attempts, or structure validation
-          // The detailed error message (e.message) will be more specific now.
-          // The full raw AI response should have been logged by one of the inner catch blocks if parsing failed.
-          // This re-throws the error to be caught by the outer API call catch block.
           throw new Error(
             `Error processing AI response: ${e.message}. Check console for full AI output if parsing/validation failed.`
           );
@@ -2976,9 +2854,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Clear previous update indicators before sending new action
     document.querySelectorAll('.has-recent-update').forEach(el => el.classList.remove('has-recent-update'));
-    updatePanelGlows(); // This will remove glows as .has-recent-update classes are gone
 
     addMessageToLog(actionText, "player");
     if (playerActionInput) {
@@ -2988,7 +2864,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     clearSuggestedActions();
     gameHistory.push({ role: "user", parts: [{ text: actionText }] });
-    const narrative = await callGeminiAPI(gameHistory); // callGeminiAPI will call updatePanelGlows on success
+    const narrative = await callGeminiAPI(gameHistory);
     if (narrative) {
       addMessageToLog(narrative, "gm");
     }
@@ -2996,7 +2872,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * Initiates a new game session, prompting for confirmation.
-   * Uses current theme or landing page selection if no game is active.
    */
   async function startNewGameSession() {
     if (!currentTheme && !currentLandingGridSelection) {
@@ -3052,8 +2927,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Generates the HTML for dashboard panels (left and right) based on a theme's configuration.
-   * @param {string} themeId - The ID of the theme for which to generate panels.
+   * Generates the HTML for dashboard panels based on a theme's configuration.
+   * @param {string} themeId - The ID of the theme.
    */
   function generatePanelsForTheme(themeId) {
     const themeFullConfig = ALL_THEMES_CONFIG[themeId];
@@ -3169,9 +3044,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Changes the active game theme or starts a new game in the specified theme.
-   * @param {string} newThemeId - The ID of the theme to switch to or start.
-   * @param {boolean} forceNewGame - If true, discard any existing saved state for this theme.
+   * Changes the active game theme or starts a new game.
+   * @param {string} newThemeId - The ID of the theme to switch to.
+   * @param {boolean} [forceNewGame=false] - If true, discard existing saved state.
    */
   async function changeThemeAndStart(newThemeId, forceNewGame = false) {
     const oldThemeId = currentTheme;
@@ -3206,7 +3081,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (oldThemeId === newThemeId && !forceNewGame) {
       if (storyLogViewport && storyLogViewport.style.display === "none") {
         switchToGameView(newThemeId);
-        displaySuggestedActions(currentSuggestedActions); // Display them now
+        displaySuggestedActions(currentSuggestedActions);
         if (
           playerActionInput &&
           actionInputSection &&
@@ -3251,12 +3126,10 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTopbarThemeIcons();
 
     if (!forceNewGame && loadGameState(currentTheme)) {
-      // Populates currentSuggestedActions
       isInitialGameLoad = false;
 
       initializeCollapsiblePanelBoxes(currentTheme);
-      displaySuggestedActions(currentSuggestedActions); // Display them now
-      updatePanelGlows(); // Check glows after loading game state and panels
+      displaySuggestedActions(currentSuggestedActions);
 
       if (nameInputSection) nameInputSection.style.display = "none";
       if (actionInputSection) actionInputSection.style.display = "flex";
@@ -3283,11 +3156,10 @@ document.addEventListener("DOMContentLoaded", () => {
       isInitialGameLoad = true;
       currentPromptType = "initial";
       currentPanelStates = {};
-      currentSuggestedActions = []; // Ensure it's empty
+      currentSuggestedActions = [];
 
       initializeCollapsiblePanelBoxes(currentTheme);
-      displaySuggestedActions(currentSuggestedActions); // Clears display
-      updatePanelGlows(); // Check glows after setting up for new game
+      displaySuggestedActions(currentSuggestedActions);
 
       if (storyLog) storyLog.innerHTML = "";
       if (nameInputSection) nameInputSection.style.display = "flex";
@@ -3329,8 +3201,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Initializes click and keyboard listeners for a specific panel's header, typically for landing page panels.
-   * @param {HTMLElement} panelContainerElement - The container element holding the panel box.
+   * Initializes click/keyboard listeners for a panel's header.
+   * @param {HTMLElement} panelContainerElement - The container of the panel box.
    */
   function initializeSpecificPanelHeader(panelContainerElement) {
     if (!panelContainerElement) {
@@ -3366,7 +3238,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Switches the UI to the landing page view (theme selection).
+   * Switches the UI to the landing page view.
    */
   function switchToLandingView() {
     currentTheme = null;
@@ -3463,14 +3335,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     updateTopbarThemeIcons();
     setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID);
-    // Ensure panel glows are cleared when switching to landing view
-    if (leftPanel) leftPanel.classList.remove('panel-has-updates-below');
-    if (rightPanel) rightPanel.classList.remove('panel-has-updates-below');
   }
 
   /**
    * Switches the UI to the main game view for a specific theme.
-   * @param {string} themeId - The ID of the theme to display the game view for.
+   * @param {string} themeId - The ID of the theme.
    */
   function switchToGameView(themeId) {
     document.body.classList.remove("landing-page-active", "theme-landing");
@@ -3509,7 +3378,6 @@ document.addEventListener("DOMContentLoaded", () => {
     THEMES_MANIFEST.forEach((themeMeta) => {
       const themeConfig = ALL_THEMES_CONFIG[themeMeta.id];
       if (!themeConfig || !themeTextData[themeMeta.id]) {
-        // Ensure config and texts are loaded
         log(
           LOG_LEVEL_INFO,
           `Theme config or text data for ${themeMeta.id} not loaded. Skipping grid item.`
@@ -3522,22 +3390,20 @@ document.addEventListener("DOMContentLoaded", () => {
       button.dataset.theme = themeConfig.id;
 
       const themeFullName = getUIText(
-        // Get the full theme name for title and img alt fallback
         themeConfig.name_key,
         {},
         themeConfig.id
       );
-      button.title = themeFullName; // Tooltip shows the full name
+      button.title = themeFullName;
 
       const img = document.createElement("img");
-      img.src = themeConfig.icon; // Path from config.json
+      img.src = themeConfig.icon;
       const altTextKey = `theme_icon_alt_text_default_${themeConfig.id}`;
       img.alt = getUIText(altTextKey, {}, themeConfig.id) || themeFullName;
 
       const nameSpan = document.createElement("span");
       nameSpan.classList.add("theme-grid-icon-name");
       const themeShortName = getUIText(
-        // Get the short theme name for display
         themeConfig.name_short_key || themeConfig.name_key,
         {},
         themeConfig.id
@@ -3571,9 +3437,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Updates the content of the landing page's theme description and details panels.
-   * @param {string} themeId - The ID of the theme to display information for.
-   * @param {boolean} animate - Whether to animate panel expansion.
+   * Updates landing page's theme description and details panels.
+   * @param {string} themeId - The ID of the theme to display.
+   * @param {boolean} [animate=true] - Whether to animate panel expansion.
    */
   function updateLandingPagePanels(themeId, animate = true) {
     const themeConfig = ALL_THEMES_CONFIG[themeId];
@@ -3605,13 +3471,11 @@ document.addEventListener("DOMContentLoaded", () => {
       detailsTitle.textContent = getUIText("landing_theme_info_title");
 
     landingThemeLoreText.textContent = getUIText(
-      // Use themeId for context
       themeConfig.lore_key,
       {},
       themeId
     );
     if (animate) {
-      // Optionally animate lore panel expansion
       const lorePanelBox =
         landingThemeDescriptionContainer.querySelector(".panel-box");
       if (lorePanelBox && lorePanelBox.id)
@@ -3619,7 +3483,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const themeDisplayNameInBriefing = getUIText(
-      // Use name_long_key for briefing
       themeConfig.name_long_key || themeConfig.name_key,
       {},
       themeId
@@ -3634,29 +3497,28 @@ document.addEventListener("DOMContentLoaded", () => {
             )}:</strong> <span id="landing-selected-theme-inspiration">${getUIText(
       themeConfig.inspiration_key,
       {},
-      themeId // Use themeId for context
+      themeId
     )}</span></p>
             <p><strong>${getUIText(
               "landing_theme_tone_label"
             )}:</strong> <span id="landing-selected-theme-tone">${getUIText(
       themeConfig.tone_key,
       {},
-      themeId // Use themeId for context
+      themeId
     )}</span></p>
             <p><strong>${getUIText(
               "landing_theme_concept_label"
             )}:</strong> <span id="landing-selected-theme-concept">${getUIText(
       themeConfig.concept_key,
       {},
-      themeId // Use themeId for context
+      themeId
     )}</span></p>
         `;
 
-    renderLandingPageActionButtons(themeId); // Create "Choose" and "Like" buttons
+    renderLandingPageActionButtons(themeId);
     if (landingThemeActions) landingThemeActions.style.display = "flex";
 
     if (animate) {
-      // Optionally animate details panel expansion
       const detailsPanelBox =
         landingThemeDetailsContainer.querySelector(".panel-box");
       if (detailsPanelBox && detailsPanelBox.id)
@@ -3665,7 +3527,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Renders the "Choose this theme" and "Like" buttons on the landing page for a selected theme.
+   * Renders action buttons on the landing page for a selected theme.
    * @param {string} themeId - The ID of the currently selected theme.
    */
   function renderLandingPageActionButtons(themeId) {
@@ -3737,7 +3599,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Handles the "Like/Unlike" button click on the landing page.
    * @param {string} themeId - The ID of the theme.
-   * @param {HTMLButtonElement} likeButtonElement - The like button element itself for direct UI update.
+   * @param {HTMLButtonElement} likeButtonElement - The like button element.
    */
   function handleLikeThemeClick(themeId, likeButtonElement) {
     const themeConfig = ALL_THEMES_CONFIG[themeId];
@@ -3764,7 +3626,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Shows a custom modal.
    * @param {object} options - Configuration for the modal.
-   * @returns {Promise<string|boolean|null>} - Resolves with input value for 'prompt', etc.
+   * @returns {Promise<string|boolean|null>} Resolves with input value or confirmation.
    */
   function showCustomModal(options) {
     return new Promise((resolve) => {
@@ -3870,8 +3732,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Main application initialization function. Sets up API key, loads preferences,
-   * and determines whether to show landing page or resume a game.
+   * Main application initialization function.
    */
   async function initializeApp() {
     log(LOG_LEVEL_INFO, "Application initialization started.");
@@ -4003,7 +3864,6 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         if (await loadAllPromptsForTheme(currentTheme)) {
           if (loadGameState(currentTheme)) {
-            // Populates currentSuggestedActions
             gameToResume = currentTheme;
             successfullyLoadedStateForResume = true;
           } else {
@@ -4047,8 +3907,7 @@ document.addEventListener("DOMContentLoaded", () => {
       handleGameStateIndicators(lastKnownGameStateIndicators, true);
 
       initializeCollapsiblePanelBoxes(currentTheme);
-      displaySuggestedActions(currentSuggestedActions); // Display them now
-      updatePanelGlows(); // Check for glows after restoring and initializing panels
+      displaySuggestedActions(currentSuggestedActions);
 
       if (nameInputSection) nameInputSection.style.display = "none";
       if (actionInputSection) actionInputSection.style.display = "flex";
@@ -4075,23 +3934,14 @@ document.addEventListener("DOMContentLoaded", () => {
       isInitialGameLoad = false;
     } else {
       currentSuggestedActions = [];
-      switchToLandingView(); // This already clears glows and calls updatePanelGlows via setAppLanguage
-      updatePanelGlows(); // Explicit call in case switchToLandingView's effects are not sufficient
+      switchToLandingView();
     }
     updateTopbarThemeIcons();
     if (playerActionInput) autoGrowTextarea(playerActionInput);
 
-    // Add scroll listeners to side panels for dynamic glow updates
-    [leftPanel, rightPanel].forEach(panelSidebar => {
-      if(panelSidebar) {
-          panelSidebar.addEventListener('scroll', updatePanelGlows, { passive: true });
-      }
-    });
-
     log(LOG_LEVEL_INFO, "Application initialization complete.");
   }
 
-  // Event Listeners
   if (applicationLogoElement)
     applicationLogoElement.addEventListener("click", switchToLandingView);
   if (languageToggleButton)

@@ -41,7 +41,7 @@
             "label_key": "label_cognitive_dissonance_echo_sleuths",
             "type": "meter",
             "meter_type": "dissonance",
-            "default_value": "25",
+            "default_value": "0",
             "must_translate": false,
             "short_description": "Mental strain/fragmentation (0-100). Higher is worse, affecting perception or actions."
           },

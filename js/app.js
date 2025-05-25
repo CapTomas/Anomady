@@ -375,59 +375,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Sets up the Gemini API key, prompting the user if not found in localStorage.
-   * @returns {Promise<boolean>} True if API key is successfully set, false otherwise.
+   * Placeholder for API key setup. For v0.3.1+, the primary API key is server-side.
+   * This function can be expanded later if client-side key interaction is needed again.
+   * @returns {Promise<boolean>} True, as the key is now server-managed for core functionality.
    */
   async function setupApiKey() {
-    GEMINI_API_KEY = localStorage.getItem("userGeminiApiKey");
-    if (!GEMINI_API_KEY) {
-      const apiKeyInput = await showCustomModal({
-        type: "prompt",
-        titleKey: "prompt_enter_api_key_title",
-        messageKey: "prompt_enter_api_key",
-        confirmTextKey: "modal_confirm_button",
-        cancelTextKey: "modal_cancel_button",
-        inputPlaceholderKey: "placeholder_api_key_input",
-      });
+    GEMINI_API_KEY = "";
+    localStorage.removeItem("userGeminiApiKey"); // If you want to clear old stored keys
 
-      if (apiKeyInput && apiKeyInput.trim() !== "") {
-        GEMINI_API_KEY = apiKeyInput.trim();
-        localStorage.setItem("userGeminiApiKey", GEMINI_API_KEY);
-      } else if (apiKeyInput !== null) {
-        GEMINI_API_KEY = "";
-        await showCustomModal({
-          type: "alert",
-          titleKey: "alert_title_error",
-          messageKey: "alert_api_key_required",
-        });
-      } else {
-        GEMINI_API_KEY = "";
-      }
-    }
-
-    if (!GEMINI_API_KEY) {
-      const errorMsg = getUIText("error_critical_no_api_key");
-      const statusErrorMsg = getUIText("status_error");
-
-      addMessageToLog(errorMsg, "system");
-      log(LOG_LEVEL_ERROR, errorMsg);
-      if (systemStatusIndicator) {
-        systemStatusIndicator.textContent = statusErrorMsg;
-        systemStatusIndicator.className = "status-indicator status-danger";
-      }
-      [
-        startGameButton,
-        playerIdentifierInputEl,
-        playerActionInput,
-        sendActionButton,
-      ].forEach((el) => {
-        if (el) el.disabled = true;
-      });
-      if (themeGridContainer) themeGridContainer.style.pointerEvents = "none";
-      return false;
-    }
-    if (themeGridContainer) themeGridContainer.style.pointerEvents = "auto";
-    return true;
+    log(LOG_LEVEL_INFO, "API key management is now primarily server-side.");
+    if (themeGridContainer) themeGridContainer.style.pointerEvents = "auto"; // Ensure UI is enabled
+    return true; // Indicate success as the critical key is on the server
   }
 
   /**
@@ -2752,17 +2710,6 @@ function animatePanelBox(
    * @returns {Promise<string|null>} The narrative text from AI, or null on failure.
    */
   async function callGeminiAPI(currentTurnHistory) {
-    // Note: The client-side GEMINI_API_KEY is no longer directly used for the fetch call.
-    // The server uses its own environment variable.
-    // This initial check can remain for early user feedback if they haven't completed `setupApiKey`.
-    if (!GEMINI_API_KEY && systemStatusIndicator) {
-      addMessageToLog(getUIText("error_critical_no_api_key"), "system");
-      systemStatusIndicator.textContent = getUIText("status_error");
-      systemStatusIndicator.className = "status-indicator status-danger";
-      setGMActivity(false);
-      // return null; // Decide if to return early or let server handle final error. Current: let server handle.
-    }
-
     setGMActivity(true);
     clearSuggestedActions();
 

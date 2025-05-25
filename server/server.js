@@ -1,64 +1,78 @@
 // server/server.js
 
-// 1. Import necessary modules using ESM syntax
+// 1. Core Module Imports
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fetch from 'node-fetch';
-import cors from 'cors'; // <<< Import cors
+import fetch from 'node-fetch'; // node-fetch v3 is ESM native
+import cors from 'cors';
+import morgan from 'morgan';
 
-// ESM equivalent for __dirname
+// 2. Custom Utility Imports
+import logger from './utils/logger.js'; // Import our custom logger
+
+// 3. ESM __dirname and __filename Setup
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 2. Load environment variables
+// 4. Load Environment Variables (dotenv.config() is also called in logger.js, but good to have here too for PORT etc.)
 dotenv.config();
 
-// 3. Create an Express application instance
+// 5. Express Application Setup
 const app = express();
-
-// MIDDLEWARE
-app.use(cors()); // <<< Enable CORS for all routes
-app.use(express.json());
-// Example of more specific CORS options:
-// const corsOptions = {
-//   origin: 'https://your-anomady-frontend-domain.com', // Allow only your specific frontend domain
-//   methods: ['GET', 'POST'], // Allow only specific HTTP methods
-//   allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
-// };
-// app.use(cors(corsOptions));
-
-// 4. Define the port
 const PORT = process.env.PORT || 3000;
 
-// 5. Configure Static Asset Serving (paths remain the same logic)
+// 6. Core Middlewares
+app.use(cors()); // Enable Cross-Origin Resource Sharing
+app.use(express.json()); // Parse JSON request bodies
+
+// HTTP Request Logging Middleware (Morgan)
+// We can use a stream to pipe morgan logs through our custom logger if we want unified formatting,
+// but for simplicity and to leverage morgan's predefined formats, logging directly is fine.
+// 'dev' format is good for development: concise, color-coded.
+// 'combined' is a standard Apache combined log format, good for production.
+// if (process.env.NODE_ENV === 'production') {
+//   app.use(morgan('combined'));
+// } else {
+//   app.use(morgan('tiny'));
+// }
+
+// 7. Static Asset Serving
+// Serve files from the project root (one level up from 'server/')
 app.use(express.static(path.join(__dirname, '..')));
 
-// 6. Basic API route
+// 8. API Routes
+logger.info('Setting up API routes...');
+
+// Test API Route
 app.get('/api/test', (req, res) => {
+  logger.debug('GET /api/test hit');
   res.json({ message: 'Anomady Backend API is responding!' });
 });
 
-// NEW: Gemini API Proxy Endpoint
+// Gemini API Proxy Endpoint
 app.post('/api/v1/gemini/generate', async (req, res) => {
+  logger.info(`POST /api/v1/gemini/generate - Received request`);
   const geminiApiKey = process.env.GEMINI_API_KEY;
 
   if (!geminiApiKey) {
-    console.error('[AnomadyBE] GEMINI_API_KEY is not set in environment variables.');
-    return res.status(500).json({ /* ... */ });
+    logger.error('GEMINI_API_KEY is not set in environment variables.');
+    return res.status(500).json({
+      error: {
+        message: 'API key not configured on server. Cannot connect to AI service.'
+      }
+    });
   }
 
   const { contents, generationConfig, safetySettings, systemInstruction, modelName } = req.body;
 
   if (!contents) {
+    logger.warn('Missing "contents" in request body for /api/v1/gemini/generate');
     return res.status(400).json({ error: { message: 'Missing "contents" in request body' } });
   }
 
-  // 1. DEFINE effectiveModelName FIRST
-  const effectiveModelName = modelName || 'gemini-1.5-flash-latest';
-
-  // 2. THEN use it to construct GOOGLE_API_URL
+  const effectiveModelName = modelName || 'gemini-1.5-flash-latest'; // Default if not provided
   const GOOGLE_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${effectiveModelName}:generateContent?key=${geminiApiKey}`;
 
   const payload = {
@@ -68,61 +82,86 @@ app.post('/api/v1/gemini/generate', async (req, res) => {
     systemInstruction,
   };
 
-  console.log('[AnomadyBE] Proxying request to Gemini with model:', effectiveModelName);
-  console.log('[AnomadyBE] Target URL:', GOOGLE_API_URL);
+  logger.debug(`Proxying request to Gemini. Model: ${effectiveModelName}, Target URL: ${GOOGLE_API_URL}`);
+  // logger.debug('Payload to Gemini:', payload); // Uncomment for very verbose debugging of payload
 
   try {
-    const googleResponse = await fetch(GOOGLE_API_URL, {
+    const fetchOptions = {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-      timeout: 15000 // Add a timeout (e.g., 15 seconds in milliseconds)
-    });
-    console.log(`[AnomadyBE] Received status from Gemini: ${googleResponse.status}`);
+      timeout: 30000, // Increased timeout to 30 seconds
+    };
 
-    const responseText = await googleResponse.text(); // Get raw text first for debugging
-    console.log('[AnomadyBE] Raw response text from Gemini:', responseText);
+    const googleResponse = await fetch(GOOGLE_API_URL, fetchOptions);
+    logger.debug(`Gemini API response status: ${googleResponse.status}`);
+
+    const responseText = await googleResponse.text(); // Get raw text for robust parsing/debugging
 
     let responseData;
     try {
-        responseData = JSON.parse(responseText); // Now try to parse
+      responseData = JSON.parse(responseText);
     } catch (parseError) {
-        console.error('[AnomadyBE] Failed to parse Gemini JSON response:', parseError);
-        console.error('[AnomadyBE] Raw text that failed to parse:', responseText);
-        return res.status(500).json({ error: { message: 'Invalid JSON response from AI service.' } });
+      logger.error('Failed to parse Gemini JSON response. Raw text:', responseText, 'Parse error:', parseError.message);
+      return res.status(500).json({ error: { message: 'Invalid JSON response from AI service.' } });
     }
 
     if (!googleResponse.ok) {
-      console.error('[AnomadyBE] Error from Gemini API (parsed):', responseData);
-      return res.status(googleResponse.status).json(responseData);
+      logger.error(`Error from Gemini API (Status: ${googleResponse.status}). Parsed error:`, responseData);
+      return res.status(googleResponse.status).json(responseData); // Forward Gemini's error
     }
 
-    console.log('[AnomadyBE] Successfully received and parsed response from Gemini.');
+    logger.info(`Successfully proxied request for model ${effectiveModelName}.`);
     res.status(200).json(responseData);
+
   } catch (error) {
-    // ...
+    logger.error('Error calling Gemini API via proxy:', error.message, error.stack ? error.stack : '');
+    if (error.type === 'request-timeout') { // node-fetch specific timeout error
+        return res.status(504).json({ error: { message: 'Request to AI service timed out.' }});
+    }
+    res.status(500).json({
+      error: {
+        message: 'Failed to call external AI service: ' + error.message
+      }
+    });
   }
 });
 
-// 7. Fallback for Single Page Applications (SPA) - Serve index.html
-//    This MUST be placed AFTER specific API routes and static file serving.
+// 9. SPA Fallback Route
+// Serves index.html for non-API GET requests that haven't been handled by static serving.
 app.get((req, res, next) => {
   if (req.method === 'GET' && !req.path.startsWith('/api')) {
     const acceptsHtml = req.accepts('html');
     const isLikelyAsset = /\.(js|css|json|ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|map)$/i.test(req.path);
 
     if (acceptsHtml && !isLikelyAsset) {
+      logger.debug(`SPA Fallback: Serving index.html for ${req.path}`);
       return res.sendFile(path.join(__dirname, '..', 'index.html'));
     }
   }
-  next();
+  next(); // Pass to next error handler if not serving index.html
+});
+
+// 10. Centralized Error Handling (Optional but good practice)
+// This catches errors from `next(err)` or unhandled errors in synchronous route handlers.
+// Asynchronous errors in routes need to be caught and passed to `next()` or handled in a try-catch.
+// Our async route above uses try-catch, so this is more for other potential errors.
+app.use((err, req, res, next) => {
+  logger.error('Unhandled application error:', err.message, err.stack ? err.stack : '');
+  res.status(err.status || 500).json({
+    error: {
+      message: err.message || 'Internal Server Error',
+    },
+  });
 });
 
 
-// 8. Start the server
+// 11. Start Server
 app.listen(PORT, () => {
-  console.log(`[AnomadyBE] Server listening on http://localhost:${PORT}`);
-  console.log(`[AnomadyBE] Frontend should be accessible at http://localhost:${PORT}`);
+  logger.info(`Server listening on http://localhost:${PORT}`);
+  logger.info(`Frontend accessible at http://localhost:${PORT}`);
+  logger.info(`Current application log level: ${logger.getLogLevel()}`);
+  if (process.env.NODE_ENV !== 'production') {
+    logger.warn('Server is running in development mode.');
+  }
 });

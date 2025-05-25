@@ -2745,21 +2745,22 @@ function animatePanelBox(
       );
     }
   }
-
   /**
-   * Calls the Gemini API with the current game history and system prompt.
+   * Calls the backend proxy to interact with the Gemini API.
+   * The backend server handles the actual API key and communication with Google.
    * @param {object[]} currentTurnHistory - History of conversation turns.
    * @returns {Promise<string|null>} The narrative text from AI, or null on failure.
    */
   async function callGeminiAPI(currentTurnHistory) {
-    if (!GEMINI_API_KEY) {
+    // Note: The client-side GEMINI_API_KEY is no longer directly used for the fetch call.
+    // The server uses its own environment variable.
+    // This initial check can remain for early user feedback if they haven't completed `setupApiKey`.
+    if (!GEMINI_API_KEY && systemStatusIndicator) {
       addMessageToLog(getUIText("error_critical_no_api_key"), "system");
-      if (systemStatusIndicator) {
-        systemStatusIndicator.textContent = getUIText("status_error");
-        systemStatusIndicator.className = "status-indicator status-danger";
-      }
+      systemStatusIndicator.textContent = getUIText("status_error");
+      systemStatusIndicator.className = "status-indicator status-danger";
       setGMActivity(false);
-      return null;
+      // return null; // Decide if to return early or let server handle final error. Current: let server handle.
     }
 
     setGMActivity(true);
@@ -2802,7 +2803,8 @@ function animatePanelBox(
       return null;
     }
 
-    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${currentModelName}:generateContent?key=${GEMINI_API_KEY}`;
+    const PROXY_API_URL = '/api/v1/gemini/generate'; // Endpoint on our backend server
+
     const generationConfig = {
       temperature: 0.7,
       topP: 0.95,
@@ -2815,28 +2817,31 @@ function animatePanelBox(
       { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
       { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
     ];
+
     const payload = {
       contents: currentTurnHistory,
       generationConfig: generationConfig,
       safetySettings: safetySettings,
       systemInstruction: { parts: [{ text: systemPromptText }] },
+      modelName: currentModelName, // Send the selected model name to the proxy
     };
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(PROXY_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const responseData = await response.json();
+      const responseData = await response.json(); // Expecting JSON from our proxy
 
       if (!response.ok) {
-        let errorDetails =
-          responseData.error?.message || `API Error ${response.status}`;
-        if (responseData.error?.details)
-          errorDetails += ` Details: ${JSON.stringify(
-            responseData.error.details
-          )}`;
+        // The proxy should forward Gemini's error or provide its own structured error
+        let errorDetails = responseData.error?.message || `Proxy API Error ${response.status}`;
+        if (responseData.error?.details) {
+          errorDetails += ` Details: ${JSON.stringify(responseData.error.details)}`;
+        } else if (responseData.details) { // General details from proxy
+           errorDetails += ` Details: ${JSON.stringify(responseData.details)}`;
+        }
         throw new Error(errorDetails);
       }
 
@@ -2845,11 +2850,12 @@ function animatePanelBox(
         responseData.candidates[0]?.content?.parts?.[0]?.text
       ) {
         let jsonStringFromAI = responseData.candidates[0].content.parts[0].text;
-        try { // Outer try for parsing and validation
+        try {
           let parsedAIResponse;
-          try { // Inner try for initial parse
+          // Attempt to parse the JSON string from the AI
+          try {
             parsedAIResponse = JSON.parse(jsonStringFromAI);
-          } catch (parseError) { // Catch for initial parse failure
+          } catch (parseError) {
             log(
               LOG_LEVEL_ERROR,
               "Initial JSON.parse failed. Raw AI response:",
@@ -2857,89 +2863,61 @@ function animatePanelBox(
               "Error:", parseError.message
             );
 
+            // Attempt to clean up if initial parse fails (e.g., extract from markdown)
             let cleanedJsonString = null;
-
-            // Attempt 1: Extract from markdown code block (```json ... ``` or ``` ... ```)
             const markdownMatch = jsonStringFromAI.match(/```(?:json)?\s*([\s\S]*?)\s*```/s);
             if (markdownMatch && markdownMatch[1]) {
                 cleanedJsonString = markdownMatch[1].trim();
                 log(LOG_LEVEL_DEBUG, "Extracted from markdown block:", cleanedJsonString);
             } else {
-                // Attempt 2: Find the first opening brace/bracket and its matching closer
+                // Fallback to balance counting if no markdown block found
                 let openChar = '';
                 let closeChar = '';
                 let startIndex = -1;
-
                 const firstBrace = jsonStringFromAI.indexOf("{");
                 const firstBracket = jsonStringFromAI.indexOf("[");
 
                 if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
-                    openChar = '{';
-                    closeChar = '}';
-                    startIndex = firstBrace;
+                    openChar = '{'; closeChar = '}'; startIndex = firstBrace;
                 } else if (firstBracket !== -1) {
-                    openChar = '[';
-                    closeChar = ']';
-                    startIndex = firstBracket;
+                    openChar = '['; closeChar = ']'; startIndex = firstBracket;
                 }
 
                 if (startIndex !== -1) {
-                    let balance = 0;
-                    let endIndex = -1;
+                    let balance = 0; let endIndex = -1;
                     for (let i = startIndex; i < jsonStringFromAI.length; i++) {
-                        if (jsonStringFromAI[i] === openChar) {
-                            balance++;
-                        } else if (jsonStringFromAI[i] === closeChar) {
+                        if (jsonStringFromAI[i] === openChar) balance++;
+                        else if (jsonStringFromAI[i] === closeChar) {
                             balance--;
-                            if (balance === 0) {
-                                endIndex = i;
-                                break;
-                            }
+                            if (balance === 0) { endIndex = i; break; }
                         }
                     }
                     if (endIndex !== -1) {
                         cleanedJsonString = jsonStringFromAI.substring(startIndex, endIndex + 1);
                         log(LOG_LEVEL_DEBUG, "Extracted by balance counting:", cleanedJsonString);
                     } else {
-                        log(LOG_LEVEL_DEBUG, "Balance counting failed to find matching end for start char:", openChar, "at index:", startIndex);
+                        log(LOG_LEVEL_DEBUG, "Balance counting failed for char:", openChar, "at index:", startIndex);
                     }
                 } else {
-                     log(LOG_LEVEL_DEBUG, "No starting '{' or '[' found for balance counting extraction.");
+                     log(LOG_LEVEL_DEBUG, "No '{' or '[' found for balance counting extraction.");
                 }
             }
 
             if (cleanedJsonString) {
                 try {
                     parsedAIResponse = JSON.parse(cleanedJsonString);
-                    log(
-                      LOG_LEVEL_WARNING, // Successfully parsed CLEANED string, but original was bad
-                      "Raw AI response was malformed but successfully parsed after cleanup. Cleaned JSON used. Original parse error reason:",
-                      parseError.message // Provide context of the original error
-                    );
-                    // DEBUG log for the cleaned content if needed, but warning implies success.
-                    // log(LOG_LEVEL_DEBUG, "Cleaned JSON content that was parsed:", cleanedJsonString);
-                } catch (nestedParseError) { // Cleaned string STILL failed to parse
-                    log(
-                      LOG_LEVEL_ERROR,
-                      "Failed to parse even the cleaned JSON content. Cleaned part that failed:",
-                      cleanedJsonString,
-                      "Nested parse error:", nestedParseError.message
-                    );
-                    // Critical failure, throw a new comprehensive error.
-                    throw new Error(
-                        `Invalid JSON structure even after attempting cleanup. Original parse error: ${parseError.message}. Cleanup parse error: ${nestedParseError.message}. See full raw response and cleaned part in previous logs.`
-                    );
+                    log(LOG_LEVEL_WARNING, "Successfully parsed after cleanup. Original parse error:", parseError.message);
+                } catch (nestedParseError) {
+                    log(LOG_LEVEL_ERROR, "Failed to parse cleaned JSON. Cleaned:", cleanedJsonString, "Nested error:", nestedParseError.message);
+                    throw new Error(`Invalid JSON structure even after cleanup. Original: ${parseError.message}. Nested: ${nestedParseError.message}.`);
                 }
-            } else { // No cleaned string could be extracted
-                log(
-                    LOG_LEVEL_ERROR,
-                    "Could not extract a valid JSON structure after initial parse failure. Original response was likely too malformed. Re-throwing original error."
-                );
-                // Re-throw original parseError as we couldn't recover.
-                throw parseError;
+            } else {
+                log(LOG_LEVEL_ERROR, "Could not extract valid JSON after initial failure. Re-throwing original error.");
+                throw parseError; // Re-throw original error if no cleanup was possible
             }
-          }
+          } // End of parsing attempt block
 
+          // Validate the structure of the parsed AI response
           if (
             !parsedAIResponse ||
             typeof parsedAIResponse.narrative !== "string" ||
@@ -2947,18 +2925,11 @@ function animatePanelBox(
             !Array.isArray(parsedAIResponse.suggested_actions) ||
             typeof parsedAIResponse.game_state_indicators !== "object"
           ) {
-            log(
-              LOG_LEVEL_ERROR,
-              "Parsed JSON has invalid structure or is null/undefined. Full AI response (if not logged above in case of initial parse failure):",
-              jsonStringFromAI,
-              "Parsed object:",
-              parsedAIResponse
-            );
-            throw new Error(
-              "Invalid JSON structure from AI or cleanup failed. Missing required fields or response is null."
-            );
+            log(LOG_LEVEL_ERROR, "Parsed JSON has invalid structure. Full AI response:", jsonStringFromAI, "Parsed object:", parsedAIResponse);
+            throw new Error("Invalid JSON structure from AI. Missing required fields or response is null.");
           }
 
+          // Process the valid AI response
           gameHistory.push({
             role: "model",
             parts: [{ text: JSON.stringify(parsedAIResponse) }],
@@ -2972,17 +2943,19 @@ function animatePanelBox(
           if (isInitialGameLoad) isInitialGameLoad = false;
           saveGameState();
           if (systemStatusIndicator) {
-            systemStatusIndicator.textContent = getUIText(
-              "system_status_online_short"
-            );
+            systemStatusIndicator.textContent = getUIText("system_status_online_short");
             systemStatusIndicator.className = "status-indicator status-ok";
           }
           return parsedAIResponse.narrative;
-        } catch (e) { // This catch block is for errors from the cleanup logic or the structure validation
-          log(LOG_LEVEL_ERROR, "Error processing/validating AI response object:", e.message);
-          throw new Error(
-            `Error processing AI response: ${e.message}. Check console for full AI output if parsing/validation failed.`
-          );
+
+        } catch (e) { // Catches errors from JSON parsing or structure validation
+          log(LOG_LEVEL_ERROR, "Error processing/validating AI response object from proxy:", e.message);
+          addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Failed to process AI response: " + e.message }), "system");
+          if (systemStatusIndicator) {
+            systemStatusIndicator.textContent = getUIText("status_error");
+            systemStatusIndicator.className = "status-indicator status-danger";
+          }
+          return null;
         }
       } else if (responseData.promptFeedback?.blockReason) {
         const blockDetails =
@@ -2990,13 +2963,14 @@ function animatePanelBox(
             ?.map((r) => `${r.category}: ${r.probability}`)
             .join(", ") || "No details provided.";
         throw new Error(
-          `Content blocked by API: ${responseData.promptFeedback.blockReason}. Safety Ratings: ${blockDetails}`
+          `Content blocked by API via proxy: ${responseData.promptFeedback.blockReason}. Safety Ratings: ${blockDetails}`
         );
       } else {
-        throw new Error("No valid candidate or text found in AI response.");
+        log(LOG_LEVEL_WARNING, "Unexpected response structure from proxy (no candidates or blockReason):", responseData);
+        throw new Error("No valid candidate or text found in AI response from proxy.");
       }
-    } catch (error) { // This is the outermost catch for network errors or errors re-thrown from above
-      log(LOG_LEVEL_ERROR, "Gemini API call failed:", error);
+    } catch (error) { // Catches errors from fetch itself or errors thrown from response handling
+      log(LOG_LEVEL_ERROR, "callGeminiAPI (proxy) failed:", error);
       addMessageToLog(
         getUIText("error_api_call_failed", { ERROR_MSG: error.message }),
         "system"

@@ -4,19 +4,30 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
-import { fileURLToPath } from 'url'; // For __dirname equivalent
-import fetch from 'node-fetch'; // node-fetch v3 is ESM native
+import { fileURLToPath } from 'url';
+import fetch from 'node-fetch';
+import cors from 'cors'; // <<< Import cors
 
 // ESM equivalent for __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 2. Load environment variables
-dotenv.config(); // dotenv works fine with ESM
+dotenv.config();
 
 // 3. Create an Express application instance
 const app = express();
+
+// MIDDLEWARE
+app.use(cors()); // <<< Enable CORS for all routes
 app.use(express.json());
+// Example of more specific CORS options:
+// const corsOptions = {
+//   origin: 'https://your-anomady-frontend-domain.com', // Allow only your specific frontend domain
+//   methods: ['GET', 'POST'], // Allow only specific HTTP methods
+//   allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+// };
+// app.use(cors(corsOptions));
 
 // 4. Define the port
 const PORT = process.env.PORT || 3000;

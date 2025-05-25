@@ -15,4 +15,9 @@ const THEMES_MANIFEST = [
         path: "themes/echo_sleuths/",
         playable: true,
     },
+    {
+        id: "salt_reavers",
+        path: "themes/salt_reavers/",
+        playable: true,
+    },
 ];

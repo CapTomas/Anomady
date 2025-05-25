@@ -1,0 +1,478 @@
+{
+  "id": "salt_reavers",
+  "name_key": "theme_name_salt_reavers",
+  "name_short_key": "theme_name_short_salt_reavers",
+  "name_long_key": "theme_name_long_salt_reavers",
+  "icon": "themes/salt_reavers/images/icon_salt_reavers.svg",
+  "lore_key": "theme_lore_salt_reavers",
+  "inspiration_key": "theme_inspiration_salt_reavers",
+  "tone_key": "theme_tone_salt_reavers",
+  "concept_key": "theme_concept_salt_reavers",
+  "category_key": "theme_category_salt_reavers",
+  "style_key": "theme_style_salt_reavers",
+  "naming_convention": "entity",
+  "dashboard_config_ref": "salt_reavers",
+  "dashboard_config": {
+    "left_panel": [
+      {
+        "id": "captain-orders-panel-box",
+        "title_key": "title_captain_orders_salt_reavers",
+        "type": "collapsible",
+        "initial_expanded": true,
+        "items": [
+          {
+            "id": "character_name",
+            "label_key": "label_captains_name_salt_reavers",
+            "type": "text",
+            "default_value_key": "captain_unknown",
+            "must_translate": false,
+            "short_description": "Player character's chosen name or pirate moniker."
+          },
+          {
+            "id": "first_mate",
+            "label_key": "label_first_mate_salt_reavers",
+            "type": "text",
+            "default_value_key": "first_mate_default",
+            "must_translate": true,
+            "short_description": "Name of the ship's current First Mate."
+          },
+          {
+            "id": "captain_mood",
+            "label_key": "label_captain_mood_salt_reavers",
+            "type": "text",
+            "default_value_key": "mood_unpredictable",
+            "must_translate": true,
+            "short_description": "The Captain's current temperament or disposition."
+          },
+          {
+            "id": "ship_doubloons",
+            "label_key": "label_ship_doubloons_salt_reavers",
+            "type": "number_text",
+            "default_value_key": "doubloons_empty_chest",
+            "must_translate": true,
+            "short_description": "The ship's treasury; amount of gold doubloons."
+          },
+          {
+            "id": "ship_infamy",
+            "label_key": "label_ship_infamy_salt_reavers",
+            "type": "text",
+            "default_value_key": "infamy_unknown_scurvy_dogs",
+            "must_translate": true,
+            "short_description": "The ship's (and by extension, your) reputation across the Archipelago."
+          }
+        ]
+      },
+      {
+        "id": "ship-status-panel-box",
+        "title_key": "title_ship_status_salt_reavers",
+        "type": "collapsible",
+        "initial_expanded": true,
+        "boot_delay": 300,
+        "items": [
+          {
+            "id": "ship_name",
+            "label_key": "label_ship_name_salt_reavers",
+            "type": "text",
+            "default_value_key": "ship_name_default",
+            "must_translate": true,
+            "short_description": "The name of your current vessel."
+          },
+          {
+            "id": "hull_integrity_pct",
+            "label_key": "label_hull_integrity_salt_reavers",
+            "type": "meter",
+            "meter_type": "health",
+            "default_value": "100",
+            "must_translate": false,
+            "short_description": "Ship's current hull strength (0-100)."
+          },
+          {
+            "id": "sail_condition",
+            "label_key": "label_sail_condition_salt_reavers",
+            "type": "text",
+            "default_value_key": "sails_full_canvas",
+            "must_translate": true,
+            "short_description": "Condition of the ship's sails."
+          },
+          {
+            "id": "cannonball_count",
+            "label_key": "label_cannonball_count_salt_reavers",
+            "type": "number_text",
+            "default_value_key": "cannonballs_few_rounds",
+            "must_translate": true,
+            "short_description": "Number of cannonballs in the ship's magazine."
+          },
+          {
+            "id": "provisions_status",
+            "label_key": "label_provisions_status_salt_reavers",
+            "type": "text",
+            "default_value_key": "provisions_well_stocked",
+            "must_translate": true,
+            "short_description": "Current stock of food and water (e.g., days remaining, status)."
+          },
+          {
+            "id": "grog_rations",
+            "label_key": "label_grog_rations_salt_reavers",
+            "type": "text",
+            "default_value_key": "grog_barrel_full",
+            "must_translate": true,
+            "short_description": "Availability of grog for the crew."
+          }
+        ]
+      },
+      {
+        "id": "crew-manifest-panel-box",
+        "title_key": "title_crew_manifest_salt_reavers",
+        "type": "collapsible",
+        "initial_expanded": false,
+        "boot_delay": 900,
+        "items": [
+          {
+            "id": "crew_complement",
+            "label_key": "label_crew_complement_salt_reavers",
+            "type": "text",
+            "default_value_key": "crew_skeleton_crew",
+            "must_translate": true,
+            "short_description": "Number and general state of the crew."
+          },
+          {
+            "id": "crew_morale",
+            "label_key": "label_crew_morale_salt_reavers",
+            "type": "status_level",
+            "default_ai_value": 3,
+            "level_mappings": {
+              "1": { "display_text_key": "morale_mutinous", "css_class": "status-critical" },
+              "2": { "display_text_key": "morale_restless", "css_class": "status-danger" },
+              "3": { "display_text_key": "morale_content", "css_class": "status-warning" },
+              "4": { "display_text_key": "morale_loyal", "css_class": "status-ok" }
+            },
+            "must_translate": false,
+            "short_description": "Overall morale of the ship's crew (1-4). AI provides numerical level."
+          },
+          {
+            "id": "deck_rumors",
+            "label_key": "label_deck_rumors_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "rumors_quiet_decks",
+            "must_translate": true,
+            "short_description": "Whispers and gossip heard among the crew."
+          }
+        ]
+      },
+      {
+        "id": "mutiny-risk-panel-box",
+        "title_key": "title_mutiny_risk_salt_reavers",
+        "type": "hidden_until_active",
+        "initial_expanded": true,
+        "indicator_key": "mutiny_risk_high",
+        "items": [
+          {
+            "id": "mutiny_grievances",
+            "label_key": "label_mutiny_grievances_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "grievances_none_voiced",
+            "must_translate": true,
+            "short_description": "Specific reasons for crew discontent leading to mutiny risk."
+          },
+          {
+            "id": "mutiny_ringleaders",
+            "label_key": "label_mutiny_ringleaders_salt_reavers",
+            "type": "text",
+            "default_value_key": "ringleaders_none_identified",
+            "must_translate": true,
+            "short_description": "Key figures stirring up mutinous sentiment, if known."
+          }
+        ]
+      },
+      {
+        "id": "treasure-curse-panel-box",
+        "title_key": "title_treasure_curse_salt_reavers",
+        "type": "hidden_until_active",
+        "initial_expanded": true,
+        "indicator_key": "treasure_curse_active",
+        "items": [
+          {
+            "id": "cursed_relic_name",
+            "label_key": "label_cursed_relic_name_salt_reavers",
+            "type": "text",
+            "default_value_key": "relic_unknown_source",
+            "must_translate": true,
+            "short_description": "The name or description of the cursed item aboard."
+          },
+          {
+            "id": "curse_manifestations",
+            "label_key": "label_curse_manifestations_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "manifestations_none_yet",
+            "must_translate": true,
+            "short_description": "Supernatural or ill effects of the curse."
+          },
+          {
+            "id": "quartermaster_affliction",
+            "label_key": "label_quartermaster_affliction_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "affliction_unaffected",
+            "must_translate": true,
+            "short_description": "How the curse is specifically affecting the Quartermaster."
+          }
+        ]
+      }
+    ],
+    "right_panel": [
+      {
+        "id": "current-voyage-panel-box",
+        "title_key": "title_current_voyage_salt_reavers",
+        "type": "collapsible",
+        "initial_expanded": true,
+        "items": [
+          {
+            "id": "current_voyage_objective",
+            "label_key": "label_current_voyage_objective_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "objective_awaiting_captains_whim",
+            "must_translate": true,
+            "short_description": "The current primary quest, contract, or objective."
+          },
+          {
+            "id": "voyage_rumored_reward",
+            "label_key": "label_voyage_rumored_reward_salt_reavers",
+            "type": "text",
+            "default_value_key": "reward_glory_or_gallows",
+            "must_translate": true,
+            "short_description": "Rumored or stated reward for the current voyage."
+          },
+          {
+            "id": "quartermaster_stance",
+            "label_key": "label_quartermaster_stance_salt_reavers",
+            "type": "text",
+            "default_value_key": "stance_on_deck_observing",
+            "must_translate": true,
+            "short_description": "The Quartermaster's current primary activity or state."
+          },
+          {
+            "id": "sea_threat_level",
+            "label_key": "label_sea_threat_level_salt_reavers",
+            "type": "status_level",
+            "default_ai_value": 1,
+            "level_mappings": {
+              "1": { "display_text_key": "threat_level_1_display_sr", "css_class": "status-ok" },
+              "2": { "display_text_key": "threat_level_2_display_sr", "css_class": "status-warning" },
+              "3": { "display_text_key": "threat_level_3_display_sr", "css_class": "status-danger" },
+              "4": { "display_text_key": "threat_level_4_display_sr", "css_class": "status-critical" }
+            },
+            "must_translate": false,
+            "short_description": "Current perceived threat level in the immediate vicinity (1-4). AI provides numerical level."
+          }
+        ]
+      },
+      {
+        "id": "azure-chart-panel-box",
+        "title_key": "title_azure_chart_salt_reavers",
+        "type": "collapsible",
+        "initial_expanded": false,
+        "boot_delay": 600,
+        "items": [
+          {
+            "id": "current_sea_location",
+            "label_key": "label_current_sea_location_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "location_uncharted_waters",
+            "must_translate": true,
+            "short_description": "Current specific location within the Azure Archipelago."
+          },
+          {
+            "id": "regional_waters_faction",
+            "label_key": "label_regional_waters_faction_salt_reavers",
+            "type": "text",
+            "default_value_key": "faction_pirate_haven",
+            "must_translate": true,
+            "short_description": "Dominant faction or control in the current waters."
+          },
+          {
+            "id": "wind_weather_conditions",
+            "label_key": "label_wind_weather_conditions_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "weather_calm_seas_fair_breeze",
+            "must_translate": true,
+            "short_description": "Current wind, weather, and sea state."
+          },
+          {
+            "id": "time_sky_conditions",
+            "label_key": "label_time_sky_conditions_salt_reavers",
+            "type": "text",
+            "default_value_key": "sky_clear_midday_sun",
+            "must_translate": false,
+            "short_description": "Current time of day and sky/celestial conditions."
+          }
+        ]
+      },
+      {
+        "id": "naval-encounter-panel-box",
+        "title_key": "title_naval_encounter_salt_reavers",
+        "type": "hidden_until_active",
+        "initial_expanded": true,
+        "indicator_key": "naval_encounter_imminent",
+        "items": [
+          {
+            "id": "sighted_ship_type",
+            "label_key": "label_sighted_ship_type_salt_reavers",
+            "type": "text",
+            "default_value_key": "ship_type_unknown_sail",
+            "must_translate": true,
+            "short_description": "Type or class of the sighted vessel."
+          },
+          {
+            "id": "sighted_ship_armament",
+            "label_key": "label_sighted_ship_armament_salt_reavers",
+            "type": "text",
+            "default_value_key": "armament_unknown",
+            "must_translate": true,
+            "short_description": "Observed armament of the sighted vessel."
+          },
+          {
+            "id": "sighted_ship_bearing_speed",
+            "label_key": "label_sighted_ship_bearing_speed_salt_reavers",
+            "type": "text",
+            "default_value_key": "bearing_distant_horizon",
+            "must_translate": true,
+            "short_description": "Bearing, distance, and speed of the sighted vessel."
+          }
+        ]
+      },
+      {
+        "id": "storm-outlook-panel-box",
+        "title_key": "title_storm_outlook_salt_reavers",
+        "type": "hidden_until_active",
+        "initial_expanded": true,
+        "indicator_key": "storm_brewing_active",
+        "items": [
+          {
+            "id": "storm_intensity_type",
+            "label_key": "label_storm_intensity_type_salt_reavers",
+            "type": "text",
+            "default_value_key": "storm_type_passing_squall",
+            "must_translate": true,
+            "short_description": "Type and intensity of the current storm."
+          },
+          {
+            "id": "storm_immediate_danger",
+            "label_key": "label_storm_immediate_danger_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "danger_choppy_seas_strong_gusts",
+            "must_translate": true,
+            "short_description": "Most pressing dangers posed by the storm."
+          }
+        ]
+      },
+      {
+        "id": "adversary-ship-intel-panel-box",
+        "title_key": "title_adversary_ship_intel_salt_reavers",
+        "type": "hidden_until_active",
+        "initial_expanded": true,
+        "indicator_key": "combat_active",
+        "items": [
+          {
+            "id": "adversary_ship_type",
+            "label_key": "label_adversary_ship_type_salt_reavers",
+            "type": "text",
+            "default_value_key": "target_no_enemy_ship",
+            "must_translate": true,
+            "short_description": "Type of enemy vessel engaged."
+          },
+          {
+            "id": "adversary_hull_pct",
+            "label_key": "label_adversary_hull_salt_reavers",
+            "type": "meter",
+            "meter_type": "monster_health",
+            "default_value": "0",
+            "must_translate": false,
+            "short_description": "Enemy ship's remaining hull integrity (0-100)."
+          },
+          {
+            "id": "adversary_sail_status_text",
+            "label_key": "label_adversary_sail_status_salt_reavers",
+            "type": "text",
+            "default_value_key": "sails_status_unknown",
+            "must_translate": true,
+            "short_description": "Descriptive status of the enemy ship's sails and maneuverability."
+          },
+          {
+            "id": "adversary_crew_morale_pct",
+            "label_key": "label_adversary_crew_morale_salt_reavers",
+            "type": "meter",
+            "meter_type": "monster_defense",
+            "default_value": "0",
+            "status_text_id": "adversary_crew_status_text",
+            "default_status_key": "crew_status_unknown_sr",
+            "must_translate": false,
+            "short_description": "Enemy crew's morale/fighting spirit (0-100). AI MUST also update 'adversary_crew_status_text'."
+          },
+          {
+            "id": "adversary_crew_status_text",
+            "label_key": "label_adversary_crew_status_text_salt_reavers",
+            "type": "text",
+            "default_value_key": "crew_status_unknown_sr",
+            "must_translate": true,
+            "short_description": "Descriptive status of the enemy crew's morale, linked to 'adversary_crew_morale_pct'."
+          }
+        ]
+      }
+    ],
+    "game_state_indicators": [
+      {
+        "id": "naval_encounter_imminent",
+        "label_key": "label_naval_encounter_imminent_salt_reavers",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 3,
+        "short_description": "True if a vessel is sighted and interaction is pending (not yet combat)."
+      },
+      {
+        "id": "combat_active",
+        "label_key": "label_combat_active_salt_reavers",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 5,
+        "short_description": "True during active ship-to-ship or boarding combat."
+      },
+      {
+        "id": "storm_brewing_active",
+        "label_key": "label_storm_brewing_active_salt_reavers",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 4,
+        "short_description": "True when a significant weather event is actively impacting the ship."
+      },
+      {
+        "id": "mutiny_risk_high",
+        "label_key": "label_mutiny_risk_high_salt_reavers",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 2,
+        "short_description": "True if crew discontent reaches a critical point, risking mutiny."
+      },
+      {
+        "id": "treasure_curse_active",
+        "label_key": "label_treasure_curse_active_salt_reavers",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 1,
+        "short_description": "True if a cursed item is actively affecting the ship or crew."
+      },
+      {
+        "id": "significant_plunder_secured",
+        "label_key": "label_significant_plunder_secured_salt_reavers",
+        "type": "boolean",
+        "default_value": false,
+        "must_translate": false,
+        "priority": 0,
+        "short_description": "True for one turn after acquiring a major haul of treasure or valuable goods."
+      }
+    ]
+  }
+}

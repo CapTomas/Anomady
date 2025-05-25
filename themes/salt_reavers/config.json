@@ -121,45 +121,6 @@
         ]
       },
       {
-        "id": "crew-manifest-panel-box",
-        "title_key": "title_crew_manifest_salt_reavers",
-        "type": "collapsible",
-        "initial_expanded": false,
-        "boot_delay": 900,
-        "items": [
-          {
-            "id": "crew_complement",
-            "label_key": "label_crew_complement_salt_reavers",
-            "type": "text",
-            "default_value_key": "crew_skeleton_crew",
-            "must_translate": true,
-            "short_description": "Number and general state of the crew."
-          },
-          {
-            "id": "crew_morale",
-            "label_key": "label_crew_morale_salt_reavers",
-            "type": "status_level",
-            "default_ai_value": 3,
-            "level_mappings": {
-              "1": { "display_text_key": "morale_mutinous", "css_class": "status-critical" },
-              "2": { "display_text_key": "morale_restless", "css_class": "status-danger" },
-              "3": { "display_text_key": "morale_content", "css_class": "status-warning" },
-              "4": { "display_text_key": "morale_loyal", "css_class": "status-ok" }
-            },
-            "must_translate": false,
-            "short_description": "Overall morale of the ship's crew (1-4). AI provides numerical level."
-          },
-          {
-            "id": "deck_rumors",
-            "label_key": "label_deck_rumors_salt_reavers",
-            "type": "text_long",
-            "default_value_key": "rumors_quiet_decks",
-            "must_translate": true,
-            "short_description": "Whispers and gossip heard among the crew."
-          }
-        ]
-      },
-      {
         "id": "mutiny-risk-panel-box",
         "title_key": "title_mutiny_risk_salt_reavers",
         "type": "hidden_until_active",
@@ -262,6 +223,45 @@
             },
             "must_translate": false,
             "short_description": "Current perceived threat level in the immediate vicinity (1-4). AI provides numerical level."
+          }
+        ]
+      },
+      {
+        "id": "crew-manifest-panel-box",
+        "title_key": "title_crew_manifest_salt_reavers",
+        "type": "collapsible",
+        "initial_expanded": false,
+        "boot_delay": 900,
+        "items": [
+          {
+            "id": "crew_complement",
+            "label_key": "label_crew_complement_salt_reavers",
+            "type": "text",
+            "default_value_key": "crew_skeleton_crew",
+            "must_translate": true,
+            "short_description": "Number and general state of the crew."
+          },
+          {
+            "id": "crew_morale",
+            "label_key": "label_crew_morale_salt_reavers",
+            "type": "status_level",
+            "default_ai_value": 3,
+            "level_mappings": {
+              "1": { "display_text_key": "morale_mutinous", "css_class": "status-critical" },
+              "2": { "display_text_key": "morale_restless", "css_class": "status-danger" },
+              "3": { "display_text_key": "morale_content", "css_class": "status-warning" },
+              "4": { "display_text_key": "morale_loyal", "css_class": "status-ok" }
+            },
+            "must_translate": false,
+            "short_description": "Overall morale of the ship's crew (1-4). AI provides numerical level."
+          },
+          {
+            "id": "deck_rumors",
+            "label_key": "label_deck_rumors_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "rumors_quiet_decks",
+            "must_translate": true,
+            "short_description": "Whispers and gossip heard among the crew."
           }
         ]
       },

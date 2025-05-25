@@ -291,13 +291,18 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 .scroll-indicator {
     position: sticky;
     left: 50%;
-    width: 24px;
-    height: 12px;
+    width: 28px;
+    height: 28px;
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 50;
     pointer-events: none;
+		padding: 7px;
+		padding-bottom: 10px;
+		background-color: var(--color-bg-input-field);
+		border-radius: var(--radius-full);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 .scroll-indicator::after {
     content: '';
@@ -310,9 +315,8 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
     opacity: 0.7;
     animation: pulseChevronOpacity 1.5s infinite ease-in-out;
 }
-
 .scroll-indicator-down {
-    bottom: 5px;
+    bottom: 10px;
     animation-name: moveIndicatorBobbingDown;
     animation-duration: 1.3s;
     animation-iteration-count: infinite;

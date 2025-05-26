@@ -18,3 +18,6 @@ package-lock.json # If you're not using npm lockfiles consistently
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Prisma
+/generated/prisma

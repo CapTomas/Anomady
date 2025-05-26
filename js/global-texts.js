@@ -86,7 +86,36 @@ const globalTextData = {
             "system_lang_set_cs": "System: UI & Narrative set to CZECH.",
             "system_session_resumed": "Welcome back, {PLAYER_ID}! Session resumed for {THEME_NAME}.",
             "system_theme_set_generic": "System: {THEME_NAME} scenario activated.",
-            "system_new_game_initiated": "System: New {THEME_NAME} game sequence initiated."
+            "system_new_game_initiated": "System: New {THEME_NAME} game sequence initiated.",
+
+            // Login & Registration
+            "button_login": "Login",
+            "aria_label_login": "Log into your account",
+            "button_register": "Register",
+            "aria_label_register": "Create a new account",
+            "button_logout": "Logout",
+            "aria_label_logout": "Log out of your account",
+            "button_user_profile": "Profile",
+            "aria_label_user_profile": "View your profile",
+
+            "modal_title_login": "Login to Anomady",
+            "modal_title_register": "Create Anomady Account",
+            "label_email": "Email Address",
+            "placeholder_email": "your@email.com",
+            "label_password": "Password",
+            "placeholder_password": "Enter your password",
+            "placeholder_password_register": "Choose a strong password (min. 8 chars)",
+
+            "alert_registration_success_title": "Registration Successful",
+            "alert_registration_success_message": "Your account has been created! Please log in to continue.",
+            "alert_login_failed_title": "Login Failed",
+            "alert_invalid_email_format": "Please enter a valid email address.",
+            "alert_fill_required_fields": "Please fill in all required fields.",
+            "error_api_call_failed": "Operation failed: {ERROR_MSG}",
+
+            "system_logged_out": "System: You have been logged out.",
+            "system_session_restored": "System: Welcome back, {USER_EMAIL}! Your session has been restored.",
+            "system_token_expired_logged_out": "System: Your session has expired. Please log in again."
         },
         cs: {
             // General Status & UI
@@ -173,7 +202,36 @@ const globalTextData = {
             "system_lang_set_cs": "Systém: UI a Příběh nastaveny na ČEŠTINU.",
             "system_session_resumed": "Vítejte zpět, {PLAYER_ID}! Relace obnovena pro {THEME_NAME}.",
             "system_theme_set_generic": "Systém: Scénář {THEME_NAME} aktivován.",
-            "system_new_game_initiated": "Systém: Zahájena sekvence nové hry ({THEME_NAME})."
+            "system_new_game_initiated": "Systém: Zahájena sekvence nové hry ({THEME_NAME}).",
+
+            // Login & Registration
+            "button_login": "Přihlásit se",
+            "aria_label_login": "Přihlásit se k vašemu účtu",
+            "button_register": "Registrovat",
+            "aria_label_register": "Vytvořit nový účet",
+            "button_logout": "Odhlásit se",
+            "aria_label_logout": "Odhlásit se z vašeho účtu",
+            "button_user_profile": "Profil",
+            "aria_label_user_profile": "Zobrazit váš profil",
+
+            "modal_title_login": "Přihlášení do Anomady",
+            "modal_title_register": "Vytvořit Anomady Účet",
+            "label_email": "E-mailová Adresa",
+            "placeholder_email": "vas@email.cz",
+            "label_password": "Heslo",
+            "placeholder_password": "Zadejte své heslo",
+            "placeholder_password_register": "Zvolte silné heslo (min. 8 znaků)",
+
+            "alert_registration_success_title": "Registrace Úspěšná",
+            "alert_registration_success_message": "Váš účet byl vytvořen! Prosím, přihlaste se pro pokračování.",
+            "alert_login_failed_title": "Přihlášení Selhalo",
+            "alert_invalid_email_format": "Zadejte prosím platnou e-mailovou adresu.",
+            "alert_fill_required_fields": "Vyplňte prosím všechna povinná pole.",
+            "error_api_call_failed": "Operace selhala: {ERROR_MSG}",
+
+            "system_logged_out": "Systém: Byli jste odhlášeni.",
+            "system_session_restored": "Systém: Vítejte zpět, {USER_EMAIL}! Vaše relace byla obnovena.",
+            "system_token_expired_logged_out": "Systém: Platnost vaší relace vypršela. Přihlaste se prosím znovu."
         }
     },
     landing: {

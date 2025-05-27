@@ -2047,7 +2047,7 @@ async function callGeminiAPI(currentTurnHistory) {
     }
   }
 
-  /**
+/**
    * Shows a custom modal (alert, confirm, prompt, or form).
    */
   function showCustomModal(options) {
@@ -2057,6 +2057,7 @@ async function callGeminiAPI(currentTurnHistory) {
           type = "alert", titleKey, messageKey, htmlContent, formFields,
           replacements = {}, confirmTextKey, cancelTextKey,
           inputPlaceholderKey, defaultValue = "", explicitThemeContext = null, onSubmit,
+          customActions // New option for custom buttons
         } = options;
 
         if (!customModalOverlay || !customModalTitle || !customModalMessage || !customModalActions ) {
@@ -2066,8 +2067,11 @@ async function callGeminiAPI(currentTurnHistory) {
         }
 
         const modalThemeContext = explicitThemeContext || currentTheme;
+
         customModalTitle.textContent = getUIText(titleKey || `modal_default_title_${type}`, replacements, modalThemeContext);
-        customModalMessage.innerHTML = ""; customModalFormContainer.innerHTML = "";
+        customModalMessage.innerHTML = ""; // Clear previous message content
+        customModalFormContainer.innerHTML = ""; // Clear previous form content
+
         if (customModalInputContainer) customModalInputContainer.style.display = "none";
 
         if (messageKey) {
@@ -2075,13 +2079,23 @@ async function callGeminiAPI(currentTurnHistory) {
           staticMessageP.innerHTML = getUIText(messageKey, replacements, modalThemeContext).replace(/\n/g, "<br>");
           customModalMessage.appendChild(staticMessageP);
         }
+
         if (htmlContent) {
-          if (typeof htmlContent === 'string') customModalMessage.insertAdjacentHTML('beforeend', htmlContent);
-          else if (htmlContent instanceof HTMLElement) customModalMessage.appendChild(htmlContent);
+          if (typeof htmlContent === 'string') {
+            // Create a temporary div to parse the HTML string
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent;
+            // Append child nodes to ensure scripts (if any, though unlikely here) aren't executed globally
+            while (tempDiv.firstChild) {
+              customModalMessage.appendChild(tempDiv.firstChild);
+            }
+          } else if (htmlContent instanceof HTMLElement) {
+            customModalMessage.appendChild(htmlContent);
+          }
         }
 
         if (type === "form" || (formFields && formFields.length > 0)) {
-          customModalMessage.appendChild(customModalFormContainer);
+          customModalMessage.appendChild(customModalFormContainer); // Add form container to message area
           formFields.forEach(field => {
             const fieldGroup = document.createElement('div'); fieldGroup.classList.add('modal-form-group');
             const label = document.createElement('label'); label.htmlFor = field.id; label.textContent = getUIText(field.labelKey, {}, modalThemeContext); fieldGroup.appendChild(label);
@@ -2092,83 +2106,141 @@ async function callGeminiAPI(currentTurnHistory) {
           });
         } else if (type === "prompt") {
           if (customModalInputContainer && customModalInput) {
-            customModalInputContainer.style.display = "block"; customModalMessage.appendChild(customModalInputContainer);
+            customModalInputContainer.style.display = "block";
+            customModalMessage.appendChild(customModalInputContainer); // Add input container to message area
             customModalInput.value = defaultValue;
             customModalInput.placeholder = inputPlaceholderKey ? getUIText(inputPlaceholderKey, {}, modalThemeContext) : "";
             setTimeout(() => customModalInput.focus(), 50);
           }
         }
 
-        customModalActions.innerHTML = "";
-        const confirmBtn = document.createElement("button"); confirmBtn.classList.add("ui-button", "primary");
-        let defaultConfirmKey = "modal_ok_button";
-        if (type === "confirm" || type === "form") defaultConfirmKey = "modal_confirm_button";
-        if (type === "prompt") defaultConfirmKey = "modal_confirm_button";
-        confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, modalThemeContext);
+        customModalActions.innerHTML = ""; // Clear previous actions
 
-        confirmBtn.addEventListener("click", async () => {
-          let modalShouldClose = true; let resolveValue;
-          if (type === "form" || (formFields && formFields.length > 0)) {
-            const formData = {}; let firstInvalidField = null; let isValid = true;
-            customModalFormContainer.querySelectorAll('.modal-error-display').forEach(el => el.remove());
-
-            formFields.forEach(field => {
-              const inputElement = customModalFormContainer.querySelector(`#${field.id}`);
-              if (inputElement) {
-                formData[field.id] = inputElement.value;
-                if (field.required && !inputElement.value.trim()) { isValid = false; if (!firstInvalidField) firstInvalidField = inputElement; }
-                if (field.type === 'email' && inputElement.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputElement.value.trim())) {
-                  isValid = false; if (!firstInvalidField) firstInvalidField = inputElement;
-                  const emailErrorDisplay = document.createElement('p'); emailErrorDisplay.className = 'modal-error-display'; emailErrorDisplay.style.color = 'var(--color-meter-critical)'; emailErrorDisplay.textContent = getUIText("alert_invalid_email_format");
-                  inputElement.parentElement.appendChild(emailErrorDisplay);
-                }
-              }
+        if (customActions && Array.isArray(customActions) && customActions.length > 0) {
+            customActions.forEach(actionConfig => {
+                const btn = document.createElement("button");
+                btn.className = actionConfig.className || "ui-button";
+                btn.textContent = getUIText(actionConfig.textKey, {}, modalThemeContext);
+                btn.addEventListener("click", () => {
+                    if (actionConfig.onClick) {
+                        actionConfig.onClick(); // The onClick should handle hideCustomModal if it's a closing action
+                    }
+                    // If the action doesn't explicitly close, the modal remains open.
+                    // For profile modal, logout calls hideCustomModal, close calls hideCustomModal.
+                });
+                customModalActions.appendChild(btn);
             });
-            if (!isValid) {
-              if(firstInvalidField) firstInvalidField.focus();
-              log(LOG_LEVEL_WARN, "Modal form validation failed.");
-              if (!customModalFormContainer.querySelector('.modal-error-display')) {
-                const generalError = document.createElement('p'); generalError.className = 'modal-error-display'; generalError.style.color = 'var(--color-meter-critical)'; generalError.textContent = getUIText("alert_fill_required_fields");
-                customModalFormContainer.appendChild(generalError);
-              }
-              return;
+        } else {
+            // Fallback to default button behavior if no customActions
+            const confirmBtn = document.createElement("button");
+            confirmBtn.classList.add("ui-button", "primary");
+            let defaultConfirmKey = "modal_ok_button";
+            if (type === "confirm" || type === "form") defaultConfirmKey = "modal_confirm_button";
+            if (type === "prompt") defaultConfirmKey = "modal_confirm_button";
+
+            confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, modalThemeContext);
+            confirmBtn.addEventListener("click", async () => {
+                let modalShouldClose = true;
+                let resolveValue;
+
+                if (type === "form" || (formFields && formFields.length > 0)) {
+                    const formData = {};
+                    let firstInvalidField = null;
+                    let isValid = true;
+                    customModalFormContainer.querySelectorAll('.modal-error-display').forEach(el => el.remove());
+
+                    formFields.forEach(field => {
+                        const inputElement = customModalFormContainer.querySelector(`#${field.id}`);
+                        if (inputElement) {
+                            formData[field.id] = inputElement.value;
+                            if (field.required && !inputElement.value.trim()) {
+                                isValid = false;
+                                if (!firstInvalidField) firstInvalidField = inputElement;
+                            }
+                            if (field.type === 'email' && inputElement.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputElement.value.trim())) {
+                                isValid = false;
+                                if (!firstInvalidField) firstInvalidField = inputElement;
+                                const emailErrorDisplay = document.createElement('p');
+                                emailErrorDisplay.className = 'modal-error-display';
+                                emailErrorDisplay.style.color = 'var(--color-meter-critical)';
+                                emailErrorDisplay.textContent = getUIText("alert_invalid_email_format");
+                                inputElement.parentElement.appendChild(emailErrorDisplay);
+                            }
+                        }
+                    });
+
+                    if (!isValid) {
+                        if (firstInvalidField) firstInvalidField.focus();
+                        log(LOG_LEVEL_WARN, "Modal form validation failed.");
+                        if (!customModalFormContainer.querySelector('.modal-error-display')) {
+                            const generalError = document.createElement('p');
+                            generalError.className = 'modal-error-display';
+                            generalError.style.color = 'var(--color-meter-critical)';
+                            generalError.textContent = getUIText("alert_fill_required_fields");
+                            customModalFormContainer.appendChild(generalError);
+                        }
+                        return; // Prevent modal close and resolution
+                    }
+
+                    if (onSubmit) {
+                        try {
+                            confirmBtn.disabled = true;
+                            confirmBtn.textContent = getUIText("system_processing_short");
+                            const result = await onSubmit(formData);
+                            if (typeof result === 'object' && result !== null) {
+                                resolveValue = result.data !== undefined ? result.data : result.success;
+                                if (result.keepOpen === true) modalShouldClose = false;
+                            } else {
+                                resolveValue = result;
+                            }
+                        } catch (error) {
+                            log(LOG_LEVEL_ERROR, "Error in modal onSubmit:", error);
+                            const errorDisplay = customModalFormContainer.querySelector('.modal-error-display') || document.createElement('p');
+                            errorDisplay.className = 'modal-error-display';
+                            errorDisplay.style.color = 'var(--color-meter-critical)';
+                            errorDisplay.style.marginTop = 'var(--spacing-sm)';
+                            errorDisplay.textContent = error.message || getUIText("error_api_call_failed", { ERROR_MSG: "Operation failed" });
+                            if (!customModalFormContainer.querySelector('.modal-error-display')) customModalFormContainer.appendChild(errorDisplay);
+                            modalShouldClose = false; // Keep modal open on error
+                            resolveValue = false;     // Indicate failure
+                        } finally {
+                            confirmBtn.disabled = false;
+                            confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, modalThemeContext);
+                        }
+                    } else {
+                        resolveValue = formData;
+                    }
+                } else if (type === "prompt" && customModalInput) {
+                    resolveValue = customModalInput.value;
+                } else if (type === "confirm") {
+                    resolveValue = true;
+                } else { // 'alert' or unknown type
+                    resolveValue = null;
+                }
+
+                if (currentModalResolve) currentModalResolve(resolveValue);
+                if (modalShouldClose) hideCustomModal();
+            });
+            customModalActions.appendChild(confirmBtn);
+
+            if (type === "confirm" || type === "prompt" || type === "form" || (formFields && formFields.length > 0)) {
+                const cancelBtn = document.createElement("button");
+                cancelBtn.classList.add("ui-button");
+                cancelBtn.textContent = getUIText(cancelTextKey || "modal_cancel_button", {}, modalThemeContext);
+                cancelBtn.addEventListener("click", () => {
+                    if (currentModalResolve) currentModalResolve(type === "prompt" ? null : (type === "form" ? null : false));
+                    hideCustomModal();
+                });
+                customModalActions.appendChild(cancelBtn);
             }
-            if (onSubmit) {
-              try {
-                confirmBtn.disabled = true; confirmBtn.textContent = getUIText("system_processing_short");
-                const result = await onSubmit(formData);
-                if (typeof result === 'object' && result !== null) { resolveValue = result.data !== undefined ? result.data : result.success; if (result.keepOpen === true) modalShouldClose = false; }
-                else { resolveValue = result; }
-              } catch (error) {
-                log(LOG_LEVEL_ERROR, "Error in modal onSubmit:", error);
-                const errorDisplay = customModalFormContainer.querySelector('.modal-error-display') || document.createElement('p');
-                errorDisplay.className = 'modal-error-display'; errorDisplay.style.color = 'var(--color-meter-critical)'; errorDisplay.style.marginTop = 'var(--spacing-sm)';
-                errorDisplay.textContent = error.message || getUIText("error_api_call_failed", {ERROR_MSG: "Operation failed"});
-                if (!customModalFormContainer.querySelector('.modal-error-display')) customModalFormContainer.appendChild(errorDisplay);
-                modalShouldClose = false; resolveValue = false;
-              } finally { confirmBtn.disabled = false; confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, modalThemeContext); }
-            } else { resolveValue = formData; }
-          } else if (type === "prompt" && customModalInput) { resolveValue = customModalInput.value; }
-          else if (type === "confirm") { resolveValue = true; }
-          else { resolveValue = null; }
-
-          if (currentModalResolve) currentModalResolve(resolveValue);
-          if (modalShouldClose) hideCustomModal();
-        });
-        customModalActions.appendChild(confirmBtn);
-
-        if (type === "confirm" || type === "prompt" || type === "form" || (formFields && formFields.length > 0)) {
-          const cancelBtn = document.createElement("button"); cancelBtn.classList.add("ui-button");
-          cancelBtn.textContent = getUIText(cancelTextKey || "modal_cancel_button", {}, modalThemeContext);
-          cancelBtn.addEventListener("click", () => {
-            if(currentModalResolve) currentModalResolve(type === "prompt" ? null : (type === "form" ? null : false));
-            hideCustomModal();
-          });
-          customModalActions.appendChild(cancelBtn);
         }
+
         customModalOverlay.classList.add("active");
-        if ((type === "form" || (formFields && formFields.length > 0)) && customModalFormContainer.querySelector('input')) {
-            setTimeout(() => customModalFormContainer.querySelector('input:not([type=hidden])').focus(), 50);
+        if ((type === "form" || (formFields && formFields.length > 0)) && customModalFormContainer.querySelector('input:not([type=hidden])')) {
+            setTimeout(() => {
+                const firstInput = customModalFormContainer.querySelector('input:not([type=hidden])');
+                if (firstInput) firstInput.focus();
+            } , 50);
         } else if (type === "prompt" && customModalInput) {
              setTimeout(() => customModalInput.focus(), 50);
         }
@@ -2266,51 +2338,419 @@ async function callGeminiAPI(currentTurnHistory) {
   }
 
   /**
-   * Displays the registration modal.
+   * Changes the user's password via API.
    */
-  async function showRegistrationModal() {
-    await showCustomModal({
-      type: "form", titleKey: "modal_title_register",
-      formFields: [
-        { id: "regEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true },
-        { id: "regPassword", labelKey: "label_password", type: "password", placeholderKey: "placeholder_password_register", required: true },
-      ],
-      confirmTextKey: "button_register",
-      onSubmit: async (formData) => {
+  async function apiChangePassword(token, currentPassword, newPassword) {
+      try {
+          const response = await fetch('/api/v1/users/me/password', {
+              method: 'PUT',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ currentPassword, newPassword }),
+          });
+          const data = await response.json();
+          if (!response.ok) {
+              const errorMsg = data.error?.message || `HTTP error ${response.status}`;
+              log(LOG_LEVEL_WARN, `Change Password API error: ${errorMsg}`, data.error?.code);
+              throw new Error(errorMsg); // This will be caught by the modal's onSubmit handler
+          }
+          return data; // Expects { message: "Password changed successfully." }
+      } catch (error) {
+          log(LOG_LEVEL_ERROR, 'Error in apiChangePassword:', error);
+          throw error; // Re-throw to be handled by the calling function (modal)
+      }
+  }
+
+  /**
+   * Displays the user profile modal.
+   */
+  async function showUserProfileModal() {
+    if (!currentUser) {
+        log(LOG_LEVEL_WARN, "showUserProfileModal called but no user is logged in.");
+        return;
+    }
+
+    const profileContent = document.createElement('div');
+    profileContent.className = 'profile-modal-content';
+
+    const dl = document.createElement('dl');
+
+    // Email
+    const dtEmail = document.createElement('dt');
+    dtEmail.textContent = getUIText("label_profile_email");
+    const ddEmail = document.createElement('dd');
+    ddEmail.textContent = currentUser.email;
+    dl.appendChild(dtEmail);
+    dl.appendChild(ddEmail);
+
+    // Joined Date
+    if (currentUser.created_at) {
+        const dtJoined = document.createElement('dt');
+        dtJoined.textContent = getUIText("label_profile_joined_date");
+        const ddJoined = document.createElement('dd');
         try {
-          await apiRegisterUser(formData.regEmail, formData.regPassword);
-          await showCustomModal({ type: "alert", titleKey: "alert_registration_success_title", messageKey: "alert_registration_success_message" });
-          return { success: true };
-        } catch (error) {
-          log(LOG_LEVEL_ERROR, "Registration failed:", error.message);
-          throw error; // Re-throw to be caught by showCustomModal's onSubmit handler
+            ddJoined.textContent = new Date(currentUser.created_at).toLocaleDateString(currentAppLanguage, {
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
+        } catch (e) {
+            ddJoined.textContent = new Date(currentUser.created_at).toLocaleDateString(undefined, { // Fallback to default locale
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
+            log(LOG_LEVEL_WARN, "Error formatting date with currentAppLanguage, used default locale.", e);
         }
-      },
+        dl.appendChild(dtJoined);
+        dl.appendChild(ddJoined);
+    }
+
+    profileContent.appendChild(dl);
+
+    // Preferences Section
+    const prefsTitle = document.createElement('h4');
+    prefsTitle.textContent = getUIText("label_profile_preferences_title");
+    prefsTitle.style.fontWeight = 'var(--font-weight-semibold)';
+    prefsTitle.style.color = 'var(--color-text-secondary)';
+    prefsTitle.style.fontSize = 'var(--font-size-md)';
+    prefsTitle.style.marginBottom = 'var(--spacing-sm)';
+    prefsTitle.style.marginTop = 'var(--spacing-lg)';
+    profileContent.appendChild(prefsTitle);
+
+    const prefsList = document.createElement('div');
+
+    const appLangPref = document.createElement('div');
+    appLangPref.className = 'preference-item';
+    appLangPref.innerHTML = `
+        <span class="pref-label">${getUIText("label_profile_app_language")}</span>
+        <span class="pref-value">${currentAppLanguage.toUpperCase()}</span>
+    `; // TODO: Add button/dropdown to change
+    prefsList.appendChild(appLangPref);
+
+    const narrLangPref = document.createElement('div');
+    narrLangPref.className = 'preference-item';
+    narrLangPref.innerHTML = `
+        <span class="pref-label">${getUIText("label_profile_narrative_language")}</span>
+        <span class="pref-value">${currentNarrativeLanguage.toUpperCase()}</span>
+    `; // TODO: Add button/dropdown to change
+    prefsList.appendChild(narrLangPref);
+
+    const modelPref = document.createElement('div');
+    modelPref.className = 'preference-item';
+    modelPref.innerHTML = `
+        <span class="pref-label">${getUIText("label_profile_model_preference")}</span>
+        <span class="pref-value">${currentModelName === PAID_MODEL_NAME ? 'Pro' : 'Flash'}</span>
+    `; // TODO: Add button/dropdown to change
+    prefsList.appendChild(modelPref);
+
+    profileContent.appendChild(prefsList);
+
+    // Separator
+    const hr = document.createElement('hr');
+    profileContent.appendChild(hr);
+
+    // Change Password (Placeholder)
+    const changePasswordContainer = document.createElement('div');
+    changePasswordContainer.className = 'change-password-button-container';
+    const changePasswordButton = document.createElement('button');
+    changePasswordButton.className = 'ui-button';
+    changePasswordButton.textContent = getUIText("button_profile_change_password");
+    changePasswordButton.addEventListener('click', () => {
+        hideCustomModal();
+        showChangePasswordModal();
+    });
+
+    changePasswordContainer.appendChild(changePasswordButton);
+    profileContent.appendChild(changePasswordContainer);
+
+    showCustomModal({
+        type: "alert", // Using alert type to control buttons via custom actions
+        titleKey: "modal_title_user_profile",
+        htmlContent: profileContent,
+        customActions: [ // Define custom buttons here
+            {
+                textKey: "button_profile_logout",
+                className: "ui-button primary logout-button", // 'primary' for structure, 'logout-button' for specific styling
+                onClick: () => {
+                    handleLogout();
+                    hideCustomModal(); // Ensure modal closes after logout
+                }
+            },
+            {
+                textKey: "modal_cancel_button", // Or a "Close" key if you prefer
+                className: "ui-button",
+                onClick: () => {
+                    hideCustomModal();
+                }
+            }
+        ]
     });
   }
 
   /**
-   * Displays the login modal.
+   * Displays the modal for changing the user's password.
    */
-  async function showLoginModal() {
-    await showCustomModal({
-      type: "form", titleKey: "modal_title_login",
-      formFields: [
-        { id: "loginEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true },
-        { id: "loginPassword", labelKey: "label_password", type: "password", placeholderKey: "placeholder_password", required: true },
-      ],
-      confirmTextKey: "button_login",
-      onSubmit: async (formData) => {
-        try {
-          const loginData = await apiLoginUser(formData.loginEmail, formData.loginPassword);
-          await handleSuccessfulLogin(loginData.token, loginData.user); // await if handleSuccessfulLogin becomes async
-          return { success: true };
-        } catch (error) {
-          log(LOG_LEVEL_ERROR, "Login failed:", error.message);
-          throw error; // Re-throw
-        }
-      },
-    });
+  async function showChangePasswordModal() {
+      if (!currentUser || !currentUser.token) {
+          log(LOG_LEVEL_WARN, "showChangePasswordModal called but no user/token available.");
+          return;
+      }
+
+      await showCustomModal({
+          type: "form",
+          titleKey: "modal_title_change_password",
+          formFields: [
+              { id: "currentPassword", labelKey: "label_current_password", type: "password", placeholderKey: "placeholder_current_password", required: true },
+              { id: "newPassword", labelKey: "label_new_password", type: "password", placeholderKey: "placeholder_new_password", required: true },
+              { id: "confirmNewPassword", labelKey: "label_confirm_new_password", type: "password", placeholderKey: "placeholder_confirm_new_password", required: true },
+          ],
+          confirmTextKey: "button_profile_change_password", // Re-use if appropriate, or make a specific "Update Password"
+          onSubmit: async (formData) => {
+              const { currentPassword, newPassword, confirmNewPassword } = formData;
+
+              // Client-side validation
+              if (newPassword.length < 8) {
+                  throw new Error(getUIText("alert_new_password_too_short"));
+              }
+              if (newPassword !== confirmNewPassword) {
+                  throw new Error(getUIText("alert_passwords_do_not_match"));
+              }
+              if (currentPassword === newPassword) {
+                  throw new Error(getUIText("alert_new_password_same_as_old"));
+              }
+
+              try {
+                  await apiChangePassword(currentUser.token, currentPassword, newPassword);
+                  // Success! Modal will close by default. Then show success alert.
+                  return { success: true, actionAfterClose: 'showPasswordChangeSuccessAlert' };
+              } catch (error) {
+                  log(LOG_LEVEL_ERROR, "Password change failed:", error.message);
+                  throw error; // Re-throw to be displayed by showCustomModal's error handling
+              }
+          },
+      }).then(result => {
+          if (result && result.actionAfterClose === 'showPasswordChangeSuccessAlert') {
+              showCustomModal({
+                  type: "alert",
+                  titleKey: "alert_password_change_success_title",
+                  messageKey: "alert_password_change_success_message"
+              });
+              // Consider if you want to force re-login here for added security.
+              // For now, we'll just show a success message.
+              // If re-login is desired: handleLogout(); showLoginModal();
+          }
+      }).catch(error => {
+          // This catch is for fundamental issues with showCustomModal itself,
+          // or if onSubmit doesn't handle its own errors and they propagate.
+          // API errors from onSubmit should be caught and displayed within the modal by showCustomModal's logic.
+          log(LOG_LEVEL_ERROR, "Error from showChangePasswordModal's promise:", error);
+      });
+  }
+
+  /**
+   * Displays a modal for either login or registration, with a link to switch modes.
+   */
+  async function showAuthModal(initialMode = 'login') {
+      let currentMode = initialMode; // 'login' or 'register'
+
+      // This function will be called to render the modal content.
+      // It's defined inside showAuthModal to capture currentMode.
+      const renderAndShowModal = () => {
+          const isLogin = currentMode === 'login';
+          const titleKey = isLogin ? "modal_title_login" : "modal_title_register";
+          const confirmTextKey = isLogin ? "button_login" : "button_register";
+          const formFields = [];
+
+          if (isLogin) {
+              formFields.push({ id: "authEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true });
+              formFields.push({ id: "authPassword", labelKey: "label_password", type: "password", placeholderKey: "placeholder_password", required: true });
+          } else { // Register mode
+              formFields.push({ id: "authEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true });
+              formFields.push({ id: "authPassword", labelKey: "label_password", type: "password", placeholderKey: "placeholder_password_register", required: true });
+              // You can add more registration fields here if needed in the future, e.g., confirm password
+          }
+
+          const switchLinkContainer = document.createElement('div');
+          switchLinkContainer.style.marginTop = 'var(--spacing-sm)'; // Adjusted margin
+          switchLinkContainer.style.fontSize = 'var(--font-size-sm)';
+          switchLinkContainer.style.textAlign = 'center'; // Center the link
+
+          const switchLink = document.createElement('a');
+          switchLink.href = '#';
+          const switchLinkTextKey = isLogin ? "modal_switch_to_register" : "modal_switch_to_login";
+          switchLink.textContent = getUIText(switchLinkTextKey);
+          switchLink.style.color = 'var(--color-accent-teal)';
+          switchLink.style.textDecoration = 'underline';
+          switchLink.addEventListener('click', (e) => {
+              e.preventDefault();
+              currentMode = isLogin ? 'register' : 'login';
+              hideCustomModal(); // Close the current modal
+              renderAndShowModal(); // Re-render and show with the new mode
+          });
+          switchLinkContainer.appendChild(switchLink);
+
+          const handleSubmit = async (formData) => {
+              const email = formData.authEmail;
+              const password = formData.authPassword;
+
+              if (isLogin) {
+                  const loginData = await apiLoginUser(email, password);
+                  await handleSuccessfulLogin(loginData.token, loginData.user);
+                  return { success: true }; // Modal will close
+              } else { // Register
+                  await apiRegisterUser(email, password);
+                  // Return an indicator to show a success alert after this modal closes
+                  return { success: true, actionAfterClose: 'showRegistrationSuccessAlert' };
+              }
+          };
+
+          showCustomModal({
+              type: "form",
+              titleKey: titleKey,
+              formFields: formFields,
+              htmlContent: switchLinkContainer, // This will be appended to modalMessage
+              confirmTextKey: confirmTextKey,
+              onSubmit: handleSubmit,
+          }).then(result => {
+              if (result && result.actionAfterClose === 'showRegistrationSuccessAlert') {
+                  // Show the success alert only after the registration modal has closed
+                  showCustomModal({
+                      type: "alert",
+                      titleKey: "alert_registration_success_title",
+                      messageKey: "alert_registration_success_message"
+                  });
+              }
+          }).catch(error => {
+              // Errors thrown by handleSubmit (validation, API errors) are handled by showCustomModal's internal error display.
+              // This catch is for more fundamental issues with showCustomModal itself, or unhandled rejections.
+              log(LOG_LEVEL_ERROR, "Error from showAuthModal's showCustomModal promise:", error);
+          });
+      };
+
+      renderAndShowModal(); // Initial call to render and show the modal
+  }
+
+  /**
+   * Displays the user profile modal.
+   */
+  async function showUserProfileModal() {
+      if (!currentUser) {
+          log(LOG_LEVEL_WARN, "showUserProfileModal called but no user is logged in.");
+          return;
+      }
+
+      const profileContent = document.createElement('div');
+      profileContent.className = 'profile-modal-content';
+
+      const dl = document.createElement('dl');
+
+      // Email
+      const dtEmail = document.createElement('dt');
+      dtEmail.textContent = getUIText("label_profile_email");
+      const ddEmail = document.createElement('dd');
+      ddEmail.textContent = currentUser.email;
+      dl.appendChild(dtEmail);
+      dl.appendChild(ddEmail);
+
+      // Joined Date
+      if (currentUser.created_at) {
+          const dtJoined = document.createElement('dt');
+          dtJoined.textContent = getUIText("label_profile_joined_date");
+          const ddJoined = document.createElement('dd');
+          try {
+              ddJoined.textContent = new Date(currentUser.created_at).toLocaleDateString(currentAppLanguage, {
+                  year: 'numeric', month: 'long', day: 'numeric'
+              });
+          } catch (e) {
+              ddJoined.textContent = new Date(currentUser.created_at).toLocaleDateString(undefined, { // Fallback to default locale
+                  year: 'numeric', month: 'long', day: 'numeric'
+              });
+              log(LOG_LEVEL_WARN, "Error formatting date with currentAppLanguage, used default locale.", e);
+          }
+          dl.appendChild(dtJoined);
+          dl.appendChild(ddJoined);
+      }
+
+      profileContent.appendChild(dl);
+
+      // Preferences Section
+      const prefsTitle = document.createElement('h4');
+      prefsTitle.textContent = getUIText("label_profile_preferences_title");
+      prefsTitle.style.fontWeight = 'var(--font-weight-semibold)';
+      prefsTitle.style.color = 'var(--color-text-secondary)';
+      prefsTitle.style.fontSize = 'var(--font-size-md)';
+      prefsTitle.style.marginBottom = 'var(--spacing-sm)';
+      prefsTitle.style.marginTop = 'var(--spacing-lg)';
+      profileContent.appendChild(prefsTitle);
+
+      const prefsList = document.createElement('div');
+
+      const appLangPref = document.createElement('div');
+      appLangPref.className = 'preference-item';
+      appLangPref.innerHTML = `
+          <span class="pref-label">${getUIText("label_profile_app_language")}</span>
+          <span class="pref-value">${currentAppLanguage.toUpperCase()}</span>
+      `; // TODO: Add button/dropdown to change
+      prefsList.appendChild(appLangPref);
+
+      const narrLangPref = document.createElement('div');
+      narrLangPref.className = 'preference-item';
+      narrLangPref.innerHTML = `
+          <span class="pref-label">${getUIText("label_profile_narrative_language")}</span>
+          <span class="pref-value">${currentNarrativeLanguage.toUpperCase()}</span>
+      `; // TODO: Add button/dropdown to change
+      prefsList.appendChild(narrLangPref);
+
+      const modelPref = document.createElement('div');
+      modelPref.className = 'preference-item';
+      modelPref.innerHTML = `
+          <span class="pref-label">${getUIText("label_profile_model_preference")}</span>
+          <span class="pref-value">${currentModelName === PAID_MODEL_NAME ? 'Pro' : 'Flash'}</span>
+      `; // TODO: Add button/dropdown to change
+      prefsList.appendChild(modelPref);
+
+      profileContent.appendChild(prefsList);
+
+      // Separator
+      const hr = document.createElement('hr');
+      profileContent.appendChild(hr);
+
+      // Change Password
+          const changePasswordContainer = document.createElement('div');
+          changePasswordContainer.className = 'change-password-button-container';
+          const changePasswordButton = document.createElement('button');
+          changePasswordButton.className = 'ui-button'; // No longer disabled by default
+          changePasswordButton.textContent = getUIText("button_profile_change_password");
+          changePasswordButton.addEventListener('click', () => {
+              hideCustomModal(); // Close profile modal first
+              showChangePasswordModal(); // Then open change password modal
+          });
+
+          changePasswordContainer.appendChild(changePasswordButton);
+          // No "coming soon" text needed anymore
+          profileContent.appendChild(changePasswordContainer);
+
+      showCustomModal({
+          type: "alert", // Using alert type to control buttons via custom actions
+          titleKey: "modal_title_user_profile",
+          htmlContent: profileContent,
+          customActions: [ // Define custom buttons here
+              {
+                  textKey: "button_profile_logout",
+                  className: "ui-button primary logout-button", // 'primary' for structure, 'logout-button' for specific styling
+                  onClick: () => {
+                      handleLogout();
+                      hideCustomModal(); // Ensure modal closes after logout
+                  }
+              },
+              {
+                  textKey: "modal_cancel_button", // Or a "Close" key if you prefer
+                  className: "ui-button",
+                  onClick: () => {
+                      hideCustomModal();
+                  }
+              }
+          ]
+      });
   }
 
   /**
@@ -2391,10 +2831,7 @@ async function callGeminiAPI(currentTurnHistory) {
   function updateAuthUI() {
     const isLoggedIn = !!currentUser;
     if (loginButton) loginButton.style.display = isLoggedIn ? "none" : "inline-flex";
-    if (registerButton) registerButton.style.display = isLoggedIn ? "none" : "inline-flex";
-    if (logoutButton) logoutButton.style.display = isLoggedIn ? "inline-flex" : "none";
     if (userProfileButton) userProfileButton.style.display = isLoggedIn ? "inline-flex" : "none";
-
     if (playerIdentifierInputEl) {
         if (isLoggedIn) {
             if(nameInputSection) nameInputSection.style.display = "none";
@@ -2573,10 +3010,8 @@ async function callGeminiAPI(currentTurnHistory) {
       if (storyLogViewport.scrollHeight - storyLogViewport.clientHeight > storyLogViewport.scrollTop + AUTOSCROLL_THRESHOLD) { userHasManuallyScrolledLog = true; }
     });
   }
-  if (registerButton) registerButton.addEventListener("click", showRegistrationModal);
-  if (loginButton) loginButton.addEventListener("click", showLoginModal);
-  if (logoutButton) logoutButton.addEventListener("click", handleLogout);
-  // if (userProfileButton) userProfileButton.addEventListener("click", () => { /* TODO: Show user profile modal/page */ });
+  if (loginButton) loginButton.addEventListener("click", () => showAuthModal('login'));
+  if (userProfileButton) userProfileButton.addEventListener("click", showUserProfileModal);
 
   initializeApp();
 });

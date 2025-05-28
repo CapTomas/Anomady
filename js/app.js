@@ -2220,40 +2220,75 @@ async function callGeminiAPI(currentTurnHistory) {
                         try {
                             confirmBtn.disabled = true;
                             confirmBtn.textContent = getUIText("system_processing_short");
-                            const result = await onSubmit(formData);
-                            if (typeof result === 'object' && result !== null) {
-                                resolveValue = result.data !== undefined ? result.data : result.success;
-                                if (result.keepOpen === true) modalShouldClose = false;
+                            const resultFromOnSubmit = await onSubmit(formData); // This is where handleSubmitCallback is called
+
+                            // Check the structure of resultFromOnSubmit
+                            if (typeof resultFromOnSubmit === 'object' && resultFromOnSubmit !== null) {
+                                resolveValue = resultFromOnSubmit; // Pass the whole object
+                                if (resultFromOnSubmit.keepOpen === true) {
+                                    modalShouldClose = false;
+                                }
                             } else {
-                                resolveValue = result;
+                                // If onSubmit returns a simple value (e.g., true for success, or data directly)
+                                resolveValue = resultFromOnSubmit;
                             }
                         } catch (error) {
                             log(LOG_LEVEL_ERROR, "Error in modal onSubmit:", error);
-                            const errorDisplay = customModalFormContainer.querySelector('.modal-error-display') || document.createElement('p');
-                            errorDisplay.className = 'modal-error-display';
-                            errorDisplay.style.color = 'var(--color-meter-critical)';
-                            errorDisplay.style.marginTop = 'var(--spacing-sm)';
-                            errorDisplay.textContent = error.message || getUIText("error_api_call_failed", { ERROR_MSG: "Operation failed" });
-                            if (!customModalFormContainer.querySelector('.modal-error-display')) customModalFormContainer.appendChild(errorDisplay);
-                            modalShouldClose = false; // Keep modal open on error
-                            resolveValue = false;     // Indicate failure
+                            // Check for our custom flag to prevent double error display
+                            if (error.handledByCaller) {
+                                modalShouldClose = false; // The caller (e.g., showAuthModal) handled it by showing another modal.
+                                // We don't set resolveValue here because the promise from this modal's perspective
+                                // didn't "complete" in the typical sense for this specific path.
+                                // The flow was intentionally diverted.
+                            } else {
+                                // Display error within the current modal
+                                const errorDisplay = customModalFormContainer.querySelector('.modal-error-display') || document.createElement('p');
+                                errorDisplay.className = 'modal-error-display';
+                                errorDisplay.style.color = 'var(--color-meter-critical)';
+                                errorDisplay.style.marginTop = 'var(--spacing-sm)';
+                                errorDisplay.textContent = error.message || getUIText("error_api_call_failed", { ERROR_MSG: "Operation failed" });
+                                if (!customModalFormContainer.querySelector('.modal-error-display')) customModalFormContainer.appendChild(errorDisplay);
+                                modalShouldClose = false; // Keep modal open on error
+                            }
+                            // In case of error, we might not want to resolve the promise with a "success" value.
+                            // The .catch() on the showCustomModal call in showAuthModal will catch this.
+                            // However, to ensure the .then() doesn't fire with undefined if an error was handled by caller,
+                            // we ensure resolveValue is not set, or explicitly set to indicate error/diversion.
+                            if (!error.handledByCaller) {
+                                resolveValue = { success: false, error: error }; // Signal error to .then() if it's not already caught
+                            } else {
+                                // If handled by caller (e.g. EMAIL_NOT_CONFIRMED), the original modal promise
+                                // effectively doesn't "complete" successfully for THIS modal instance.
+                                // The flow is now in the new modal.
+                                // We can resolve with null or a specific marker if the .then() needs to know this.
+                                resolveValue = { success: false, flowDiverted: true };
+                            }
                         } finally {
-                            confirmBtn.disabled = false;
-                            confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, modalThemeContext);
+                            if (document.body.contains(confirmBtn)) { // Ensure button is still in DOM
+                               confirmBtn.disabled = false;
+                               confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, modalThemeContext);
+                            }
                         }
-                    } else {
+                    } else { // No onSubmit provided for a form type
                         resolveValue = formData;
                     }
                 } else if (type === "prompt" && customModalInput) {
                     resolveValue = customModalInput.value;
                 } else if (type === "confirm") {
                     resolveValue = true;
-                } else { // 'alert' or unknown type
-                    resolveValue = null;
+                } else { // 'alert' or unknown type without custom actions
+                    resolveValue = null; // Or true if OK button implies a resolution
                 }
 
-                if (currentModalResolve) currentModalResolve(resolveValue);
-                if (modalShouldClose) hideCustomModal();
+                // Only resolve if currentModalResolve is set (it should be)
+                // And only if the flow wasn't diverted by a handledByCaller error without an explicit resolveValue
+                if (currentModalResolve && !(resolveValue && resolveValue.flowDiverted && modalShouldClose === false)) {
+                     currentModalResolve(resolveValue);
+                }
+
+                if (modalShouldClose) {
+                    hideCustomModal();
+                }
             });
             customModalActions.appendChild(confirmBtn);
 
@@ -2745,14 +2780,15 @@ function displayModalError(messageText, containerElement) {
               confirmTextKey: confirmTextKey,
               onSubmit: handleSubmitCallback,
           }).then(result => {
-              // This .then() is for the promise returned by showCustomModal.
-              // It resolves when the modal is closed by a "successful" onSubmit, or by cancel.
               if (result && result.actionAfterClose === 'showRegistrationSuccessAlert') {
+                  const registeredEmail = result.data?.user?.email || ''; // Get email from registration response
+
                   showCustomModal({ // Show a new alert modal after registration
                       type: "alert",
                       titleKey: "alert_registration_success_title",
-                      // The backend already asks user to check email for confirmation
-                      messageKey: "alert_registration_success_message" // "Your account has been created! Please check your email to confirm your account and then log in."
+                      messageKey: "alert_registration_success_check_email_message", // USE THE NEW KEY
+                      replacements: { USER_EMAIL: registeredEmail }, // Pass the email
+                      // Default OK button is fine here
                   });
               }
               // If login was successful, handleSuccessfulLogin already took care of UI updates.

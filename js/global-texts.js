@@ -107,7 +107,7 @@ const globalTextData = {
             "placeholder_password_register": "Choose a strong password (min. 8 chars)",
 
             "alert_registration_success_title": "Registration Successful",
-            "alert_registration_success_message": "Your account has been created! Please log in to continue.",
+            "alert_registration_success_check_email_message": "Your account has been created! A confirmation link has been sent to {USER_EMAIL}. Please click the link in the email to confirm your account before logging in.",
             "alert_login_failed_title": "Login Failed",
             "alert_invalid_email_format": "Please enter a valid email address.",
             "alert_fill_required_fields": "Please fill in all required fields.",
@@ -272,7 +272,7 @@ const globalTextData = {
             "placeholder_password_register": "Zvolte silné heslo (min. 8 znaků)",
 
             "alert_registration_success_title": "Registrace Úspěšná",
-            "alert_registration_success_message": "Váš účet byl vytvořen! Prosím, přihlaste se pro pokračování.",
+            "alert_registration_success_check_email_message": "Váš účet byl vytvořen! Na adresu {USER_EMAIL} byl odeslán potvrzovací odkaz. Prosím, klikněte na odkaz v e-mailu pro potvrzení vašeho účtu před přihlášením.",
             "alert_login_failed_title": "Přihlášení Selhalo",
             "alert_invalid_email_format": "Zadejte prosím platnou e-mailovou adresu.",
             "alert_fill_required_fields": "Vyplňte prosím všechna povinná pole.",

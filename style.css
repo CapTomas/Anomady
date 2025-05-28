@@ -36,6 +36,7 @@
 	--color-accent-blue: #3b82f6;
 	--color-accent-amber: #f59e0b;
 	--color-accent-violet: #8b5cf6;
+	--color-accent-links: #0be0c8;
 	--color-accent-teal-rgb: 20, 184, 166;
 	--color-accent-blue-rgb: 59, 130, 246;
 	--color-accent-amber-rgb: 245, 158, 11;
@@ -589,7 +590,7 @@ background-color: var(--color-bg-content-view)
 }
 
 .auth-modal-links a:hover {
-  color: var(--color-accent-blue);
+  color: var(--color-accent-links);
 }
 .email-confirmation-container {
     padding: var(--spacing-xl);
@@ -642,7 +643,7 @@ background-color: var(--color-bg-content-view)
     font-size: var(--font-size-sm);
 }
 .profile-modal-content dd .resend-confirmation-link:hover {
-    color: var(--color-accent-blue);
+    color: var(--color-accent-links);
 }
 .profile-modal-content {
     text-align: left;

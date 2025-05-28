@@ -1,69 +1,74 @@
-// server/middleware/authMiddleware.js
 import jwt from 'jsonwebtoken';
+import prisma from '../db.js';
 import logger from '../utils/logger.js';
-import prisma from '../db.js'; // We'll need this to potentially fetch fresh user data
 
+/**
+ * Middleware to protect routes by verifying a JWT.
+ * It checks for a Bearer token in the Authorization header,
+ * verifies it, and fetches the user from the database,
+ * attaching the user object (excluding sensitive fields) to `req.user`.
+ *
+ * @async
+ * @function protect
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ * @returns {Promise<void>} Resolves or calls `next()` if authorized, otherwise sends an error response.
+ */
 const protect = async (req, res, next) => {
   let token;
 
-  // 1. Check for token in Authorization header (Bearer token)
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
-      // Get token from header (e.g., "Bearer <token>" -> "<token>")
       token = req.headers.authorization.split(' ')[1];
 
-      // 2. Verify the token
       const jwtSecret = process.env.JWT_SECRET;
       if (!jwtSecret) {
         logger.error('JWT_SECRET is not defined. Cannot verify token.');
-        // Do not expose "JWT_SECRET not defined" to client in production
-        return res.status(500).json({ error: { message: 'Server authentication configuration error.', code: 'AUTH_CONFIG_ERROR' }});
+        return res.status(500).json({
+          error: { message: 'Server authentication configuration error.', code: 'AUTH_CONFIG_ERROR' },
+        });
       }
 
       const decoded = jwt.verify(token, jwtSecret);
 
-      // 3. Attach user to request object
-      // We'll fetch the user from DB to ensure it's fresh and not deleted/disabled since token issuance.
-      // We select only non-sensitive fields.
       const user = await prisma.user.findUnique({
         where: { id: decoded.user.id },
         select: {
-            id: true,
-            email: true,
-            preferred_app_language: true,
-            preferred_narrative_language: true,
-            preferred_model_name: true,
-            created_at: true,
-            email_confirmed: true,
-            updated_at: true
-        }
+          id: true,
+          email: true,
+          preferred_app_language: true,
+          preferred_narrative_language: true,
+          preferred_model_name: true,
+          email_confirmed: true,
+          created_at: true,
+          updated_at: true,
+        },
       });
 
       if (!user) {
         logger.warn(`Authenticated user ID ${decoded.user.id} not found in DB.`);
-        return res.status(401).json({ error: { message: 'Not authorized, user not found.', code: 'USER_NOT_FOUND' }});
+        return res.status(401).json({ error: { message: 'Not authorized, user not found.', code: 'USER_NOT_FOUND' } });
       }
 
-      req.user = user; // Attach the fetched, sanitized user object
+      req.user = user;
       logger.debug(`User authenticated: ${req.user.email} (ID: ${req.user.id}) for path: ${req.path}`);
-      next(); // Proceed to the next middleware or route handler
-
+      next();
     } catch (error) {
       logger.error('Token verification failed:', { message: error.message, tokenUsed: token ? 'yes' : 'no' });
       if (error.name === 'JsonWebTokenError') {
-        return res.status(401).json({ error: { message: 'Not authorized, token failed verification.', code: 'TOKEN_INVALID' }});
+        return res.status(401).json({ error: { message: 'Not authorized, token failed verification.', code: 'TOKEN_INVALID' } });
       }
       if (error.name === 'TokenExpiredError') {
-        return res.status(401).json({ error: { message: 'Not authorized, token expired.', code: 'TOKEN_EXPIRED' }});
+        return res.status(401).json({ error: { message: 'Not authorized, token expired.', code: 'TOKEN_EXPIRED' } });
       }
-      // For other errors during token processing
-      return res.status(401).json({ error: { message: 'Not authorized, token error.', code: 'TOKEN_PROCESSING_ERROR' }});
+      return res.status(401).json({ error: { message: 'Not authorized, token error.', code: 'TOKEN_PROCESSING_ERROR' } });
     }
   }
 
   if (!token) {
     logger.info(`No token found in request to ${req.path}`);
-    return res.status(401).json({ error: { message: 'Not authorized, no token provided.', code: 'NO_TOKEN' }});
+    return res.status(401).json({ error: { message: 'Not authorized, no token provided.', code: 'NO_TOKEN' } });
   }
 };
 

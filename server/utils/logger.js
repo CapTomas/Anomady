@@ -1,8 +1,5 @@
-// server/utils/logger.js
 import dotenv from 'dotenv';
 
-// Load .env variables specifically for the logger, in case it's imported before server.js loads them.
-// This ensures LOG_LEVEL is available immediately.
 dotenv.config();
 
 const LOG_LEVELS = {
@@ -10,7 +7,7 @@ const LOG_LEVELS = {
   INFO: 1,
   WARN: 2,
   ERROR: 3,
-  SILENT: 4, // A level to turn off logging
+  SILENT: 4,
 };
 
 const CURRENT_LOG_LEVEL_NAME = (process.env.LOG_LEVEL || 'INFO').toUpperCase();
@@ -29,7 +26,7 @@ const APP_NAME_PREFIX = '[AnomadyBE]';
 function formatMessage(level, ...messages) {
   const timestamp = new Date().toISOString();
   const messageString = messages
-    .map(msg => (typeof msg === 'object' ? JSON.stringify(msg, null, 2) : msg))
+    .map(msg => (typeof msg === 'object' ? JSON.stringify(msg, null, 2) : String(msg))) // Added String() for broader compatibility
     .join(' ');
   return `${timestamp} ${APP_NAME_PREFIX} [${level.toUpperCase()}] ${messageString}`;
 }
@@ -55,7 +52,6 @@ const logger = {
       console.error(formatMessage('error', ...messages));
     }
   },
-  // Expose current level for potential checks elsewhere, though not strictly needed for basic use
   getLogLevel: () => CURRENT_LOG_LEVEL_NAME,
 };
 

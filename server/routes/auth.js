@@ -11,11 +11,11 @@ import {
 } from "../utils/tokenUtils.js";
 
 const router = express.Router();
-const SALT_ROUNDS = 10; // For bcrypt password hashing
+const SALT_ROUNDS = 10;
 
 /**
  * @route   POST /api/v1/auth/register
- * @desc    Register a new user
+ * @desc    Register a new user and initiate email confirmation.
  * @access  Public
  */
 router.post("/register", async (req, res) => {
@@ -27,7 +27,6 @@ router.post("/register", async (req, res) => {
     preferred_model_name,
   } = req.body;
 
-  // 1. Basic Input Validation
   if (!email || !password) {
     logger.warn("Registration attempt with missing email or password.");
     return res.status(400).json({
@@ -38,7 +37,6 @@ router.post("/register", async (req, res) => {
     });
   }
 
-  // Validate email format (simple regex, consider a more robust library for production)
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     logger.warn(`Registration attempt with invalid email format: ${email}`);
@@ -50,7 +48,6 @@ router.post("/register", async (req, res) => {
     });
   }
 
-  // Validate password strength (example: min 8 characters)
   if (password.length < 8) {
     logger.warn(`Registration attempt with weak password for email: ${email}`);
     return res.status(400).json({
@@ -62,15 +59,13 @@ router.post("/register", async (req, res) => {
   }
 
   try {
-    // 2. Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() }, // Store and check emails in lowercase
+      where: { email: email.toLowerCase() },
     });
 
     if (existingUser) {
       logger.info(`Registration attempt for existing email: ${email}`);
       return res.status(409).json({
-        // 409 Conflict
         error: {
           message: "User with this email already exists.",
           code: "USER_ALREADY_EXISTS",
@@ -78,20 +73,19 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // 3. Hash the password
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     logger.debug(`Password hashed for email: ${email}`);
-    const confirmationToken = generateSecureToken();
-    const confirmationTokenExpiresAt = generateTokenExpiry(24 * 60);
 
-    // 4. Create the new user in the database
+    const confirmationToken = generateSecureToken();
+    const confirmationTokenExpiresAt = generateTokenExpiry(24 * 60); // 24 hours
+
     const newUser = await prisma.user.create({
       data: {
         email: email.toLowerCase(),
         password_hash: hashedPassword,
         preferred_app_language: preferred_app_language || "en",
         preferred_narrative_language: preferred_narrative_language || "en",
-        preferred_model_name: preferred_model_name || "gemini-1.5-flash-latest",
+        preferred_model_name: preferred_model_name || "gemini-1.5-flash-latest", // Default model
         email_confirmed: false,
         email_confirmation_token: confirmationToken,
         email_confirmation_expires_at: confirmationTokenExpiresAt,
@@ -102,22 +96,16 @@ router.post("/register", async (req, res) => {
       `User registered successfully: ${newUser.email} (ID: ${newUser.id})`
     );
 
-    // --- SIMULATE SENDING CONFIRMATION EMAIL ---
-    // In a real app, you'd use an email service here.
-    // For now, we'll log the confirmation link.
     const confirmationLink = `${
-      process.env.FRONTEND_URL ||
-      "http://localhost:" + (process.env.PORT || 3000)
+      process.env.FRONTEND_URL || "http://localhost:" + (process.env.PORT || 3000)
     }/api/v1/auth/confirm-email/${confirmationToken}`;
     logger.info(
       `SIMULATED EMAIL: Confirmation link for ${newUser.email}: ${confirmationLink}`
     );
-    // --- END SIMULATION ---
 
-    // 5. Respond (excluding sensitive data)
     res.status(201).json({
       message:
-        "User registered successfully. Please check your email to confirm your account.", // Updated message
+        "User registered successfully. Please check your email to confirm your account.",
       user: {
         id: newUser.id,
         email: newUser.email,
@@ -125,14 +113,14 @@ router.post("/register", async (req, res) => {
         preferred_narrative_language: newUser.preferred_narrative_language,
         preferred_model_name: newUser.preferred_model_name,
         created_at: newUser.created_at,
-        email_confirmed: newUser.email_confirmed, // Include confirmation status
+        email_confirmed: newUser.email_confirmed,
       },
     });
   } catch (error) {
     logger.error("Error during user registration:", {
       message: error.message,
       stack: error.stack,
-      email: email, // Log which email caused the error
+      email: email,
     });
     res.status(500).json({
       error: {
@@ -144,331 +132,8 @@ router.post("/register", async (req, res) => {
 });
 
 /**
- * @route   POST /api/v1/auth/login
- * @desc    Authenticate user & get token
- * @access  Public
- */
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  // 1. Basic Input Validation
-  if (!email || !password) {
-    logger.warn("Login attempt with missing email or password.");
-    return res.status(400).json({
-      error: {
-        message: "Email and password are required.",
-        code: "MISSING_CREDENTIALS",
-      },
-    });
-  }
-
-  try {
-    // 2. Find the user by email
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-    });
-
-    if (!user) {
-      logger.info(`Login attempt for non-existent email: ${email}`);
-      return res.status(401).json({
-        error: {
-          message: "Invalid credentials.", // Generic for security
-          code: "INVALID_CREDENTIALS",
-        },
-      });
-    }
-
-    // 3. Compare the provided password with the stored hash
-    const isMatch = await bcrypt.compare(password, user.password_hash);
-
-    if (!isMatch) {
-      logger.info(`Login attempt with incorrect password for email: ${email}`);
-      return res.status(401).json({
-        error: {
-          message: "Invalid credentials.", // Generic for security
-          code: "INVALID_CREDENTIALS",
-        },
-      });
-    }
-
-    // 4. NEW: Check if email is confirmed
-    if (!user.email_confirmed) {
-      logger.info(`Login attempt for unconfirmed email: ${email}.`);
-      // We do NOT log the user in (i.e., no JWT is issued).
-      // We return a specific error so the frontend can offer to resend the confirmation.
-      return res.status(403).json({ // 403 Forbidden is appropriate
-        error: {
-          message: "Your email address is not confirmed. Please check your inbox or resend the confirmation email.",
-          code: "EMAIL_NOT_CONFIRMED",
-          email: user.email // Send back the email for the frontend to use
-        },
-      });
-    }
-
-    // 5. User matched AND email confirmed, create JWT payload
-    const payload = {
-      user: {
-        id: user.id,
-        email: user.email,
-        // Add other non-sensitive info if needed for the token, but keep minimal.
-      },
-    };
-
-    // 6. Sign the token
-    const jwtSecret = process.env.JWT_SECRET;
-    const jwtExpiresIn = process.env.JWT_EXPIRES_IN || "1d";
-
-    if (!jwtSecret) {
-      logger.error("JWT_SECRET is not defined in environment variables.");
-      return res.status(500).json({
-        error: {
-          message: "Server configuration error for authentication.",
-          code: "JWT_CONFIG_ERROR",
-        },
-      });
-    }
-
-    jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiresIn }, (err, token) => {
-      if (err) {
-        logger.error("Error signing JWT:", err);
-        return res.status(500).json({
-          error: {
-            message: "Server error during login. Could not generate token.",
-            code: "TOKEN_SIGN_ERROR",
-          },
-        });
-      }
-      logger.info(
-        `User logged in successfully: ${user.email} (ID: ${user.id})`
-      );
-      res.status(200).json({
-          message: 'Login successful.',
-          token,
-          user: { // Return the same user object shape as before
-              id: user.id,
-              email: user.email,
-              preferred_app_language: user.preferred_app_language,
-              preferred_narrative_language: user.preferred_narrative_language,
-              preferred_model_name: user.preferred_model_name,
-              email_confirmed: user.email_confirmed, // This will be true here
-              created_at: user.created_at
-          }
-      });
-    });
-
-  } catch (error) {
-    logger.error("Error during user login:", {
-      message: error.message,
-      stack: error.stack,
-      email: email,
-    });
-    res.status(500).json({
-      error: {
-        message: "Server error during login. Please try again later.",
-        code: "INTERNAL_SERVER_ERROR",
-      },
-    });
-  }
-});
-
-
-/**
- * @route   POST /api/v1/auth/forgot-password
- * @desc    Request a password reset link
- * @access  Public
- */
-router.post("/forgot-password", async (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    logger.warn("Forgot password attempt with no email provided.");
-    return res.status(400).json({
-      error: { message: "Email address is required.", code: "MISSING_EMAIL" },
-    });
-  }
-
-  try {
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-    });
-
-    if (!user) {
-      logger.info(`Password reset requested for non-existent email: ${email}. Sending generic response.`);
-      return res.status(200).json({
-        message: "If an account with that email exists, a password reset link has been sent.",
-      });
-    }
-
-    // Generate a reset token and expiry
-    const resetToken = generateSecureToken(32);
-    const resetTokenExpiresAt = generateTokenExpiry(15);
-
-    // Update user with the reset token and expiry
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        password_reset_token: resetToken,
-        password_reset_expires_at: resetTokenExpiresAt,
-      },
-    });
-
-    logger.info(`Password reset token generated for user: ${user.email}`);
-
-    // --- SIMULATE SENDING PASSWORD RESET EMAIL ---
-    const resetLink = `${
-      process.env.FRONTEND_URL || "http://localhost:" + (process.env.PORT || 3000)
-    }/reset-password?token=${resetToken}`;
-
-    logger.info(`SIMULATED EMAIL: Password reset link for ${user.email}: ${resetLink}`);
-    // --- END SIMULATION ---
-
-    res.status(200).json({
-      message: "If an account with that email exists, a password reset link has been sent.",
-    });
-
-  } catch (error) {
-    logger.error("Error during forgot password request:", {
-      message: error.message,
-      stack: error.stack,
-      email: email,
-    });
-    // Send a generic error to the client, do not expose internal details.
-    res.status(500).json({
-      error: {
-        message: "Server error processing your request. Please try again later.",
-        code: "INTERNAL_SERVER_ERROR",
-      },
-    });
-  }
-});
-
-
-/**
- * @route   POST /api/v1/auth/reset-password
- * @desc    Reset user's password using a token
- * @access  Public
- */
-router.post("/reset-password", async (req, res) => {
-  const { token, newPassword } = req.body;
-
-  if (!token || !newPassword) {
-    logger.warn("Password reset attempt with missing token or new password.");
-    return res.status(400).json({
-      error: {
-        message: "Token and new password are required.",
-        code: "MISSING_RESET_FIELDS",
-      },
-    });
-  }
-
-  // Validate new password strength (example: min 8 characters)
-  if (newPassword.length < 8) {
-    logger.warn(`Password reset attempt with weak new password for token: ${token.substring(0,10)}...`);
-    return res.status(400).json({
-      error: {
-        message: "Password must be at least 8 characters long.",
-        code: "WEAK_PASSWORD",
-      },
-    });
-  }
-
-  try {
-    // 1. Find user by the password reset token
-    const user = await prisma.user.findUnique({
-      where: { password_reset_token: token },
-    });
-
-    if (!user) {
-      logger.info(`Password reset attempt with invalid token: ${token.substring(0,10)}...`);
-      return res.status(400).json({
-        error: { message: "Invalid or expired password reset token.", code: "INVALID_TOKEN" },
-      });
-    }
-
-    // 2. Check if the token has expired
-    if (
-      !user.password_reset_expires_at ||
-      new Date() > new Date(user.password_reset_expires_at)
-    ) {
-      logger.info(`Expired password reset token used for user: ${user.email}`);
-      // Invalidate the token now that it's used or expired
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          password_reset_token: null,
-          password_reset_expires_at: null,
-        },
-      });
-      return res.status(400).json({
-        error: { message: "Password reset token has expired.", code: "EXPIRED_TOKEN" },
-      });
-    }
-
-    // 3. Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
-
-    // 4. Update user's password and invalidate the reset token
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        password_hash: hashedPassword,
-        password_reset_token: null, // Invalidate the token
-        password_reset_expires_at: null,
-      },
-    });
-
-    logger.info(`Password reset successfully for user: ${user.email}`);
-
-    // --- SIMULATE SENDING PASSWORD CHANGE NOTIFICATION EMAIL ---
-    logger.info(
-      `SIMULATED EMAIL: Your password for Anomady has been successfully changed for ${user.email}.`
-    );
-    // --- END SIMULATION ---
-
-    res.status(200).json({ message: "Password reset successfully. You can now log in with your new password." });
-
-  } catch (error) {
-    logger.error("Error during password reset:", {
-      message: error.message,
-      stack: error.stack,
-      tokenUsed: token ? token.substring(0,10) + '...' : 'N/A',
-    });
-    res.status(500).json({
-      error: {
-        message: "Server error resetting password. Please try again later.",
-        code: "INTERNAL_SERVER_ERROR",
-      },
-    });
-  }
-});
-
-/**
- * @route   GET /api/v1/auth/me
- * @desc    Get current logged-in user's data
- * @access  Private (requires token)
- */
-router.get("/me", protect, async (req, res) => {
-  if (!req.user) {
-    logger.error(
-      "/me route accessed without req.user, though protect middleware should have caught it."
-    );
-    return res.status(401).json({
-      error: { message: "Not authorized.", code: "UNEXPECTED_AUTH_FAILURE" },
-    });
-  }
-
-  logger.info(
-    `User data requested for /me by: ${req.user.email} (ID: ${req.user.id})`
-  );
-  res.status(200).json({
-    message: "Current user data fetched successfully.",
-    user: req.user, // req.user is already sanitized by the 'protect' middleware
-  });
-});
-
-/**
  * @route   GET /api/v1/auth/confirm-email/:token
- * @desc    Confirm user's email address
+ * @desc    Confirm user's email address using a token.
  * @access  Public
  */
 router.get("/confirm-email/:token", async (req, res) => {
@@ -476,7 +141,6 @@ router.get("/confirm-email/:token", async (req, res) => {
 
   if (!token) {
     logger.warn("Email confirmation attempt with no token.");
-    // Redirect to a frontend page indicating an invalid token or error
     return res
       .status(400)
       .redirect(
@@ -518,8 +182,6 @@ router.get("/confirm-email/:token", async (req, res) => {
       new Date() > new Date(user.email_confirmation_expires_at)
     ) {
       logger.info(`Expired confirmation token used for user: ${user.email}`);
-      // Optionally, you could delete the expired token here or allow resending.
-      // For now, just redirect.
       return res
         .status(400)
         .redirect(
@@ -529,12 +191,11 @@ router.get("/confirm-email/:token", async (req, res) => {
         );
     }
 
-    // Mark email as confirmed and clear token fields
     await prisma.user.update({
       where: { id: user.id },
       data: {
         email_confirmed: true,
-        email_confirmation_token: null, // Invalidate the token
+        email_confirmation_token: null,
         email_confirmation_expires_at: null,
       },
     });
@@ -564,12 +225,227 @@ router.get("/confirm-email/:token", async (req, res) => {
 });
 
 /**
+ * @route   POST /api/v1/auth/login
+ * @desc    Authenticate user and return JWT.
+ * @access  Public
+ */
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    logger.warn("Login attempt with missing email or password.");
+    return res.status(400).json({
+      error: {
+        message: "Email and password are required.",
+        code: "MISSING_CREDENTIALS",
+      },
+    });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (!user) {
+      logger.info(`Login attempt for non-existent email: ${email}`);
+      return res.status(401).json({
+        error: {
+          message: "Invalid credentials.",
+          code: "INVALID_CREDENTIALS",
+        },
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+
+    if (!isMatch) {
+      logger.info(`Login attempt with incorrect password for email: ${email}`);
+      return res.status(401).json({
+        error: {
+          message: "Invalid credentials.",
+          code: "INVALID_CREDENTIALS",
+        },
+      });
+    }
+
+    if (!user.email_confirmed) {
+      logger.info(`Login attempt for unconfirmed email: ${email}.`);
+      return res.status(403).json({
+        error: {
+          message: "Your email address is not confirmed. Please check your inbox or resend the confirmation email.",
+          code: "EMAIL_NOT_CONFIRMED",
+          email: user.email
+        },
+      });
+    }
+
+    const payload = {
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    };
+
+    const jwtSecret = process.env.JWT_SECRET;
+    const jwtExpiresIn = process.env.JWT_EXPIRES_IN || "1d";
+
+    if (!jwtSecret) {
+      logger.error("JWT_SECRET is not defined in environment variables.");
+      return res.status(500).json({
+        error: {
+          message: "Server configuration error for authentication.",
+          code: "JWT_CONFIG_ERROR",
+        },
+      });
+    }
+
+    jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiresIn }, (err, token) => {
+      if (err) {
+        logger.error("Error signing JWT:", err);
+        return res.status(500).json({
+          error: {
+            message: "Server error during login. Could not generate token.",
+            code: "TOKEN_SIGN_ERROR",
+          },
+        });
+      }
+      logger.info(
+        `User logged in successfully: ${user.email} (ID: ${user.id})`
+      );
+      res.status(200).json({
+          message: 'Login successful.',
+          token,
+          user: {
+              id: user.id,
+              email: user.email,
+              preferred_app_language: user.preferred_app_language,
+              preferred_narrative_language: user.preferred_narrative_language,
+              preferred_model_name: user.preferred_model_name,
+              email_confirmed: user.email_confirmed,
+              created_at: user.created_at
+          }
+      });
+    });
+  } catch (error) {
+    logger.error("Error during user login:", {
+      message: error.message,
+      stack: error.stack,
+      email: email,
+    });
+    res.status(500).json({
+      error: {
+        message: "Server error during login. Please try again later.",
+        code: "INTERNAL_SERVER_ERROR",
+      },
+    });
+  }
+});
+
+/**
+ * @route   GET /api/v1/auth/me
+ * @desc    Get current logged-in user's data.
+ * @access  Private
+ */
+router.get("/me", protect, async (req, res) => {
+  if (!req.user) {
+    logger.error(
+      "/me route accessed without req.user, though protect middleware should have caught it."
+    );
+    return res.status(401).json({
+      error: { message: "Not authorized.", code: "UNEXPECTED_AUTH_FAILURE" },
+    });
+  }
+  logger.info(
+    `User data requested for /me by: ${req.user.email} (ID: ${req.user.id})`
+  );
+  res.status(200).json({
+    message: "Current user data fetched successfully.",
+    user: req.user,
+  });
+});
+
+/**
+ * @route   POST /api/v1/auth/public-resend-confirmation
+ * @desc    Publicly request to resend a confirmation email for an unconfirmed account.
+ * @access  Public
+ */
+router.post("/public-resend-confirmation", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    logger.warn("Public resend confirmation attempt with no email provided.");
+    return res.status(400).json({
+      error: { message: "Email address is required.", code: "MISSING_EMAIL" },
+    });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    logger.warn(`Public resend confirmation attempt with invalid email format: ${email}`);
+    return res.status(400).json({
+      error: { message: "Invalid email format.", code: "INVALID_EMAIL_FORMAT" },
+    });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (user && !user.email_confirmed) {
+      const newConfirmationToken = generateSecureToken();
+      const newConfirmationTokenExpiresAt = generateTokenExpiry(24 * 60);
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          email_confirmation_token: newConfirmationToken,
+          email_confirmation_expires_at: newConfirmationTokenExpiresAt,
+        },
+      });
+      const confirmationLink = `${
+        process.env.FRONTEND_URL || "http://localhost:" + (process.env.PORT || 3000)
+      }/api/v1/auth/confirm-email/${newConfirmationToken}`;
+      logger.info(
+        `SIMULATED EMAIL (PUBLIC RESEND): Confirmation link for ${user.email}: ${confirmationLink}`
+      );
+      return res.status(200).json({
+        message: "A new confirmation email has been sent to your email address. Please check your inbox (and spam folder).",
+      });
+    } else if (user && user.email_confirmed) {
+      logger.info(`Public resend request for already confirmed email: ${email}.`);
+      return res.status(200).json({
+        message: "This email address has already been confirmed. You can try logging in.",
+        code: "EMAIL_ALREADY_CONFIRMED_PUBLIC"
+      });
+    } else {
+      logger.info(`Public resend request for non-existent email: ${email}. Sending generic response.`);
+      return res.status(200).json({
+        message: "If an account matching this email exists and requires confirmation, a new email has been sent. Please check your inbox (and spam folder).",
+      });
+    }
+  } catch (error) {
+    logger.error("Error during public resend confirmation email:", {
+      email: email,
+      message: error.message,
+      stack: error.stack,
+    });
+    res.status(500).json({
+      error: {
+        message: "Server error processing your request. Please try again later.",
+        code: "INTERNAL_SERVER_ERROR",
+      },
+    });
+  }
+});
+
+/**
  * @route   POST /api/v1/auth/resend-confirmation-email
- * @desc    Resend email confirmation link
- * @access  Private (User must be logged in but not confirmed)
+ * @desc    Resend email confirmation link for an authenticated but unconfirmed user.
+ * @access  Private
  */
 router.post("/resend-confirmation-email", protect, async (req, res) => {
-  const userId = req.user.id; // User from protect middleware
+  const userId = req.user.id;
 
   try {
     const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -599,10 +475,8 @@ router.post("/resend-confirmation-email", protect, async (req, res) => {
         });
     }
 
-    // Generate new token and expiry
     const newConfirmationToken = generateSecureToken();
-    const newConfirmationTokenExpiresAt = generateTokenExpiry(24 * 60); // 24 hours
-
+    const newConfirmationTokenExpiresAt = generateTokenExpiry(24 * 60);
     await prisma.user.update({
       where: { id: userId },
       data: {
@@ -611,7 +485,6 @@ router.post("/resend-confirmation-email", protect, async (req, res) => {
       },
     });
 
-    // --- SIMULATE RESENDING CONFIRMATION EMAIL ---
     const confirmationLink = `${
       process.env.FRONTEND_URL ||
       "http://localhost:" + (process.env.PORT || 3000)
@@ -619,7 +492,6 @@ router.post("/resend-confirmation-email", protect, async (req, res) => {
     logger.info(
       `SIMULATED EMAIL (RESEND): Confirmation link for ${user.email}: ${confirmationLink}`
     );
-    // --- END SIMULATION ---
 
     res
       .status(200)
@@ -640,27 +512,18 @@ router.post("/resend-confirmation-email", protect, async (req, res) => {
   }
 });
 
-
 /**
- * @route   POST /api/v1/auth/public-resend-confirmation
- * @desc    Publicly request to resend a confirmation email for an unconfirmed account.
- * @access  Public (should be rate-limited)
+ * @route   POST /api/v1/auth/forgot-password
+ * @desc    Request a password reset link.
+ * @access  Public
  */
-router.post("/public-resend-confirmation", async (req, res) => {
+router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
-    logger.warn("Public resend confirmation attempt with no email provided.");
+    logger.warn("Forgot password attempt with no email provided.");
     return res.status(400).json({
       error: { message: "Email address is required.", code: "MISSING_EMAIL" },
-    });
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    logger.warn(`Public resend confirmation attempt with invalid email format: ${email}`);
-    return res.status(400).json({
-      error: { message: "Invalid email format.", code: "INVALID_EMAIL_FORMAT" },
     });
   }
 
@@ -669,50 +532,39 @@ router.post("/public-resend-confirmation", async (req, res) => {
       where: { email: email.toLowerCase() },
     });
 
-    if (user && !user.email_confirmed) {
-      // User exists and email is not confirmed, proceed to resend
-      const newConfirmationToken = generateSecureToken();
-      const newConfirmationTokenExpiresAt = generateTokenExpiry(24 * 60); // 24 hours
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          email_confirmation_token: newConfirmationToken,
-          email_confirmation_expires_at: newConfirmationTokenExpiresAt,
-        },
-      });
-
-      const confirmationLink = `${
-        process.env.FRONTEND_URL || "http://localhost:" + (process.env.PORT || 3000)
-      }/api/v1/auth/confirm-email/${newConfirmationToken}`;
-
-      logger.info(
-        `SIMULATED EMAIL (PUBLIC RESEND): Confirmation link for ${user.email}: ${confirmationLink}`
-      );
-      // TODO: Actual email sending logic here in a real app
-
+    if (!user) {
+      logger.info(`Password reset requested for non-existent email: ${email}. Sending generic response.`);
       return res.status(200).json({
-        message: "A new confirmation email has been sent to your email address. Please check your inbox (and spam folder).",
-      });
-
-    } else if (user && user.email_confirmed) {
-      logger.info(`Public resend request for already confirmed email: ${email}.`);
-      return res.status(200).json({ // Frontend can choose to display this or the generic one
-        message: "This email address has already been confirmed. You can try logging in.",
-        code: "EMAIL_ALREADY_CONFIRMED_PUBLIC"
-      });
-    } else {
-      // User not found. Send a generic message to prevent email enumeration.
-      logger.info(`Public resend request for non-existent email: ${email}. Sending generic response.`);
-      return res.status(200).json({
-        message: "If an account matching this email exists and requires confirmation, a new email has been sent. Please check your inbox (and spam folder).",
+        message: "If an account with that email exists, a password reset link has been sent.",
       });
     }
+
+    const resetToken = generateSecureToken(32);
+    const resetTokenExpiresAt = generateTokenExpiry(15); // 15 minutes
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password_reset_token: resetToken,
+        password_reset_expires_at: resetTokenExpiresAt,
+      },
+    });
+
+    logger.info(`Password reset token generated for user: ${user.email}`);
+
+    const resetLink = `${
+      process.env.FRONTEND_URL || "http://localhost:" + (process.env.PORT || 3000)
+    }/reset-password?token=${resetToken}`;
+    logger.info(`SIMULATED EMAIL: Password reset link for ${user.email}: ${resetLink}`);
+
+    res.status(200).json({
+      message: "If an account with that email exists, a password reset link has been sent.",
+    });
   } catch (error) {
-    logger.error("Error during public resend confirmation email:", {
-      email: email,
+    logger.error("Error during forgot password request:", {
       message: error.message,
       stack: error.stack,
+      email: email,
     });
     res.status(500).json({
       error: {
@@ -723,5 +575,94 @@ router.post("/public-resend-confirmation", async (req, res) => {
   }
 });
 
-// Export the router
+/**
+ * @route   POST /api/v1/auth/reset-password
+ * @desc    Reset user's password using a token.
+ * @access  Public
+ */
+router.post("/reset-password", async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    logger.warn("Password reset attempt with missing token or new password.");
+    return res.status(400).json({
+      error: {
+        message: "Token and new password are required.",
+        code: "MISSING_RESET_FIELDS",
+      },
+    });
+  }
+
+  if (newPassword.length < 8) {
+    logger.warn(`Password reset attempt with weak new password for token: ${token.substring(0,10)}...`);
+    return res.status(400).json({
+      error: {
+        message: "Password must be at least 8 characters long.",
+        code: "WEAK_PASSWORD",
+      },
+    });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { password_reset_token: token },
+    });
+
+    if (!user) {
+      logger.info(`Password reset attempt with invalid token: ${token.substring(0,10)}...`);
+      return res.status(400).json({
+        error: { message: "Invalid or expired password reset token.", code: "INVALID_TOKEN" },
+      });
+    }
+
+    if (
+      !user.password_reset_expires_at ||
+      new Date() > new Date(user.password_reset_expires_at)
+    ) {
+      logger.info(`Expired password reset token used for user: ${user.email}`);
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          password_reset_token: null,
+          password_reset_expires_at: null,
+        },
+      });
+      return res.status(400).json({
+        error: { message: "Password reset token has expired.", code: "EXPIRED_TOKEN" },
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password_hash: hashedPassword,
+        password_reset_token: null,
+        password_reset_expires_at: null,
+      },
+    });
+
+    logger.info(`Password reset successfully for user: ${user.email}`);
+
+    logger.info(
+      `SIMULATED EMAIL: Your password for Anomady has been successfully changed for ${user.email}.`
+    );
+
+    res.status(200).json({ message: "Password reset successfully. You can now log in with your new password." });
+  } catch (error) {
+    logger.error("Error during password reset:", {
+      message: error.message,
+      stack: error.stack,
+      tokenUsed: token ? token.substring(0,10) + '...' : 'N/A',
+    });
+    res.status(500).json({
+      error: {
+        message: "Server error resetting password. Please try again later.",
+        code: "INTERNAL_SERVER_ERROR",
+      },
+    });
+  }
+});
+
 export default router;

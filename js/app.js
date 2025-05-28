@@ -1841,94 +1841,95 @@ async function callGeminiAPI(currentTurnHistory) {
   /**
    * Switches the UI to the landing page view.
    */
-function switchToLandingView() {
-    log(LOG_LEVEL_INFO, "Switching to landing view.");
+  function switchToLandingView() {
+      log(LOG_LEVEL_INFO, "Switching to landing view.");
 
-    const currentPathAndQuery = window.location.pathname + window.location.search;
-    if (currentPathAndQuery !== '/') { // Only push state if not already at root
-        const specialPathsToPreserve = ['/reset-password', '/email-confirmation-status']; // Paths handled by specific logic
-        let isOnSpecialPath = false;
-        for (const sp of specialPathsToPreserve) {
-            if (window.location.pathname.startsWith(sp)) {
-                isOnSpecialPath = true;
-                break;
-            }
-        }
+      const currentPath = window.location.pathname;
+      const currentSearch = window.location.search;
+      const currentParams = new URLSearchParams(currentSearch);
+      const actionParamValue = currentParams.get('action'); // e.g., "showLogin"
 
-        if (!window.location.pathname.startsWith('/api/') && !isOnSpecialPath) {
-            history.pushState(null, '', '/'); // Change URL to root
-            log(LOG_LEVEL_DEBUG, `switchToLandingView: URL changed to / from ${currentPathAndQuery}`);
-        } else if (isOnSpecialPath) {
-            // If on a special path and trying to go to landing, a full redirect is safer.
-            // This helps break out of the special path's UI handling.
-            log(LOG_LEVEL_DEBUG, `switchToLandingView: On special path ${window.location.pathname}. Forcing full navigation to /.`);
-            window.location.href = '/';
-            return; // Exit early as page will reload
-        }
-    }
+      const specialPaths = ['/reset-password', '/email-confirmation-status'];
+      const isOnSpecialPath = specialPaths.some(sp => currentPath.startsWith(sp));
 
-    Object.keys(outOfViewTrackedElements).forEach(side => { outOfViewTrackedElements[side].up.clear(); outOfViewTrackedElements[side].down.clear(); });
-    [leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown].forEach(indicator => { if (indicator) indicator.style.display = 'none'; });
-
-    currentTheme = null;
-    localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
-
-    document.body.classList.add("landing-page-active");
-    document.body.classList.remove(...Array.from(document.body.classList).filter(cn => cn.startsWith("theme-") && cn !== "theme-landing"));
-    if (!document.body.classList.contains("theme-landing")) document.body.classList.add("theme-landing");
-
-    if (storyLogViewport) storyLogViewport.style.display = "none";
-    if (suggestedActionsWrapper) suggestedActionsWrapper.style.display = "none";
-    if (playerInputControlPanel) playerInputControlPanel.style.display = "none";
-    if (nameInputSection) nameInputSection.style.display = "none";
-    if (actionInputSection) actionInputSection.style.display = "none";
-
-    if (leftPanel) { Array.from(leftPanel.children).filter(el => el.id !== "landing-theme-description-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
-    if (rightPanel) { Array.from(rightPanel.children).filter(el => el.id !== "landing-theme-details-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
-
-    if (themeGridContainer) themeGridContainer.style.display = "grid";
-
-    if (landingThemeDescriptionContainer) {
-      landingThemeDescriptionContainer.style.display = "flex";
-      if (leftPanel && !leftPanel.contains(landingThemeDescriptionContainer)) {
-        const scrollIndicatorDown = leftPanel.querySelector('.scroll-indicator-down');
-        if (scrollIndicatorDown) { leftPanel.insertBefore(landingThemeDescriptionContainer, scrollIndicatorDown); } else { leftPanel.appendChild(landingThemeDescriptionContainer); }
+      if (isOnSpecialPath) {
+          // If on a special path and trying to go to landing, a full redirect is best
+          // to ensure clean state, preserving ?action=showLogin if it was set.
+          let targetHref = '/';
+          if (actionParamValue === 'showLogin') {
+              targetHref = '/?action=showLogin';
+          }
+          log(LOG_LEVEL_DEBUG, `switchToLandingView: On special path ${currentPath}. Forcing full navigation to ${targetHref}.`);
+          window.location.href = targetHref;
+          return; // Exit early as page will reload
       }
-    }
-    if (landingThemeDetailsContainer) {
-      landingThemeDetailsContainer.style.display = "flex";
-      if (rightPanel && !rightPanel.contains(landingThemeDetailsContainer)) {
-        const scrollIndicatorDown = rightPanel.querySelector('.scroll-indicator-down');
-        if (scrollIndicatorDown) { rightPanel.insertBefore(landingThemeDetailsContainer, scrollIndicatorDown); } else { rightPanel.appendChild(landingThemeDetailsContainer); }
+
+      // If not on a special path, manage history state more gently
+      let targetUrl = '/';
+      if (actionParamValue === 'showLogin') {
+          targetUrl = '/?action=showLogin'; // Preserve if present
       }
-    }
 
-    if (landingThemeLoreText) landingThemeLoreText.textContent = getUIText("landing_select_theme_prompt_lore");
-    if (landingThemeInfoContent) landingThemeInfoContent.innerHTML = `<p>${getUIText("landing_select_theme_prompt_details")}</p>`;
-    if (landingThemeActions) { landingThemeActions.style.display = "none"; landingThemeActions.innerHTML = ""; }
+      if (currentPath + currentSearch !== targetUrl) {
+          if (!currentPath.startsWith('/api/')) { // Don't mess with API calls
+              history.pushState(null, '', targetUrl);
+              log(LOG_LEVEL_DEBUG, `switchToLandingView: URL changed to ${targetUrl} from ${currentPath + currentSearch}`);
+          }
+      }
 
-    const descTitle = landingThemeDescriptionContainer?.querySelector(".panel-box-title");
-    if (descTitle) descTitle.textContent = getUIText("landing_theme_description_title");
-    const detailsTitle = landingThemeDetailsContainer?.querySelector(".panel-box-title");
-    if (detailsTitle) detailsTitle.textContent = getUIText("landing_theme_info_title");
-
-    const lorePanelBox = landingThemeDescriptionContainer?.querySelector(".panel-box");
-    if (lorePanelBox) { if (!lorePanelBox.id) lorePanelBox.id = "landing-lore-panel-box"; animatePanelBox(lorePanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDescriptionContainer); }
-    const detailsPanelBox = landingThemeDetailsContainer?.querySelector(".panel-box");
-    if (detailsPanelBox) { if (!detailsPanelBox.id) detailsPanelBox.id = "landing-details-panel-box"; animatePanelBox(detailsPanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDetailsContainer); }
-
-    currentLandingGridSelection = localStorage.getItem(LANDING_SELECTED_GRID_THEME_KEY);
-    renderThemeGrid();
-    if (currentLandingGridSelection && ALL_THEMES_CONFIG[currentLandingGridSelection]) {
-        updateLandingPagePanels(currentLandingGridSelection, false);
-        const selectedBtn = themeGridContainer?.querySelector(`.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`);
-        if (selectedBtn) selectedBtn.classList.add("active");
-    }
-
-    if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("standby"); systemStatusIndicator.className = "status-indicator status-ok"; }
-    updateTopbarThemeIcons();
-    setAppLanguageAndThemeUI(currentAppLanguage, null);
-}
+      // --- Original rest of switchToLandingView logic ---
+      Object.keys(outOfViewTrackedElements).forEach(side => { outOfViewTrackedElements[side].up.clear(); outOfViewTrackedElements[side].down.clear(); });
+      [leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown].forEach(indicator => { if (indicator) indicator.style.display = 'none'; });
+      currentTheme = null;
+      localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+      document.body.classList.add("landing-page-active");
+      document.body.classList.remove(...Array.from(document.body.classList).filter(cn => cn.startsWith("theme-") && cn !== "theme-landing"));
+      if (!document.body.classList.contains("theme-landing")) document.body.classList.add("theme-landing");
+      if (storyLogViewport) storyLogViewport.style.display = "none";
+      if (suggestedActionsWrapper) suggestedActionsWrapper.style.display = "none";
+      if (playerInputControlPanel) playerInputControlPanel.style.display = "none";
+      if (nameInputSection) nameInputSection.style.display = "none";
+      if (actionInputSection) actionInputSection.style.display = "none";
+      if (leftPanel) { Array.from(leftPanel.children).filter(el => el.id !== "landing-theme-description-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
+      if (rightPanel) { Array.from(rightPanel.children).filter(el => el.id !== "landing-theme-details-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
+      if (themeGridContainer) themeGridContainer.style.display = "grid";
+      if (landingThemeDescriptionContainer) {
+        landingThemeDescriptionContainer.style.display = "flex";
+        if (leftPanel && !leftPanel.contains(landingThemeDescriptionContainer)) {
+          const scrollIndicatorDown = leftPanel.querySelector('.scroll-indicator-down');
+          if (scrollIndicatorDown) { leftPanel.insertBefore(landingThemeDescriptionContainer, scrollIndicatorDown); } else { leftPanel.appendChild(landingThemeDescriptionContainer); }
+        }
+      }
+      if (landingThemeDetailsContainer) {
+        landingThemeDetailsContainer.style.display = "flex";
+        if (rightPanel && !rightPanel.contains(landingThemeDetailsContainer)) {
+          const scrollIndicatorDown = rightPanel.querySelector('.scroll-indicator-down');
+          if (scrollIndicatorDown) { rightPanel.insertBefore(landingThemeDetailsContainer, scrollIndicatorDown); } else { rightPanel.appendChild(landingThemeDetailsContainer); }
+        }
+      }
+      if (landingThemeLoreText) landingThemeLoreText.textContent = getUIText("landing_select_theme_prompt_lore");
+      if (landingThemeInfoContent) landingThemeInfoContent.innerHTML = `<p>${getUIText("landing_select_theme_prompt_details")}</p>`;
+      if (landingThemeActions) { landingThemeActions.style.display = "none"; landingThemeActions.innerHTML = ""; }
+      const descTitle = landingThemeDescriptionContainer?.querySelector(".panel-box-title");
+      if (descTitle) descTitle.textContent = getUIText("landing_theme_description_title");
+      const detailsTitle = landingThemeDetailsContainer?.querySelector(".panel-box-title");
+      if (detailsTitle) detailsTitle.textContent = getUIText("landing_theme_info_title");
+      const lorePanelBox = landingThemeDescriptionContainer?.querySelector(".panel-box");
+      if (lorePanelBox) { if (!lorePanelBox.id) lorePanelBox.id = "landing-lore-panel-box"; animatePanelBox(lorePanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDescriptionContainer); }
+      const detailsPanelBox = landingThemeDetailsContainer?.querySelector(".panel-box");
+      if (detailsPanelBox) { if (!detailsPanelBox.id) detailsPanelBox.id = "landing-details-panel-box"; animatePanelBox(detailsPanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDetailsContainer); }
+      currentLandingGridSelection = localStorage.getItem(LANDING_SELECTED_GRID_THEME_KEY);
+      renderThemeGrid();
+      if (currentLandingGridSelection && ALL_THEMES_CONFIG[currentLandingGridSelection]) {
+          updateLandingPagePanels(currentLandingGridSelection, false);
+          const selectedBtn = themeGridContainer?.querySelector(`.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`);
+          if (selectedBtn) selectedBtn.classList.add("active");
+      }
+      if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("standby"); systemStatusIndicator.className = "status-indicator status-ok"; }
+      updateTopbarThemeIcons();
+      // This call is crucial and should happen *after* DOM for landing page is set up
+      setAppLanguageAndThemeUI(currentAppLanguage, null);
+  }
 
   /**
    * Switches the UI to the main game view for a specific theme.
@@ -2487,6 +2488,7 @@ function switchToLandingView() {
    * Displays a modal for either login or registration, with a link to switch modes.
    */
   async function showAuthModal(initialMode = 'login') {
+      console.log("showAuthModal: Called with mode:", initialMode);
       let currentMode = initialMode; // 'login' or 'register'
 
       // This function will be called to render the modal content.
@@ -2559,8 +2561,9 @@ function switchToLandingView() {
               confirmTextKey: confirmTextKey,
               onSubmit: handleSubmit,
           }).then(result => {
+              console.log("Forgot Password Modal - .then() entered. Result:", result);
               if (result && result.actionAfterClose === 'showRegistrationSuccessAlert') {
-                  // Show the success alert only after the registration modal has closed
+                  console.log("Forgot Password Modal - Condition met, showing 'Reset Link Sent' alert.");
                   showCustomModal({
                       type: "alert",
                       titleKey: "alert_registration_success_title",
@@ -2607,11 +2610,11 @@ async function showForgotPasswordRequestModal() {
         }
     }).then(result => {
         if (result && result.actionAfterClose === 'showResetRequestSentAlert' && result.message) {
-            showCustomModal({
-                type: "alert",
-                titleKey: "alert_title_notice", // Or a more specific title
-                messageText: result.message // Use the direct message from backend
-            });
+          showCustomModal({
+              type: "alert",
+              titleKey: "alert_reset_link_sent_title",
+              messageText: result.message
+          });
         }
     }).catch(error => {
         log(LOG_LEVEL_ERROR, "Error from showForgotPasswordRequestModal promise:", error);
@@ -3160,11 +3163,11 @@ async function showForgotPasswordRequestModal() {
                                   titleKey: "alert_password_reset_success_title",
                                   messageText: data.message, // Use the message from backend
                                   customActions: [{
-                                      textKey: "button_login", // Or "Continue to App"
+                                      textKey: "button_login",
                                       className: "ui-button primary",
                                       onClick: () => {
-                                          window.location.href = '/'; // Navigate to root
-                                          // hideCustomModal() will be implicitly handled by page reload
+                                          console.log("Password Reset Successful Modal - Login button clicked.");
+                                          window.location.href = '/?action=showLogin';
                                       }
                                   }]
                               });
@@ -3193,7 +3196,9 @@ async function showForgotPasswordRequestModal() {
    * Main application initialization function.
    */
   async function initializeApp() {
-     log(LOG_LEVEL_INFO, "Application initialization started.");
+    console.log("initializeApp: Started.");
+    const initialUrlParams = new URLSearchParams(window.location.search);
+    console.log("initializeApp: Initial URL params:", initialUrlParams.toString());
     if (handleEmailConfirmationStatus()) {
         log(LOG_LEVEL_INFO, "Email confirmation status handled. App initialization might be altered.");
         updateAuthUI();
@@ -3202,7 +3207,7 @@ async function showForgotPasswordRequestModal() {
         updateTopbarThemeIcons();
         return;
     }
-    if (handlePasswordResetPage()) { // <<< ADD THIS CALL
+    if (handlePasswordResetPage()) {
       log(LOG_LEVEL_INFO, "Password reset page handled. App initialization might be altered.");
       updateAuthUI();
       setAppLanguageAndThemeUI(currentAppLanguage, null);
@@ -3295,15 +3300,41 @@ async function showForgotPasswordRequestModal() {
           if (rightPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('right', rightPanel);
       });
     } else {
-      switchToLandingView(); // This also calls setAppLanguageAndThemeUI
+      switchToLandingView();
     }
     updateTopbarThemeIcons();
     if (playerActionInput) autoGrowTextarea(playerActionInput);
     [leftPanel, rightPanel].forEach(panel => {
       if (panel) { panel.addEventListener('scroll', () => { const panelSide = panel.id === 'left-panel' ? 'left' : 'right'; updateScrollIndicatorStateForPanel(panelSide, panel); }, { passive: true }); }
     });
+    // Check for actions from URL parameters after everything else is set up
+    const urlParamsInit = new URLSearchParams(window.location.search);
+    const actionToShow = urlParamsInit.get('action');
+    console.log("initializeApp: Checking for action in URL. Action found:", actionToShow);
+
+    if (actionToShow === 'showLogin') {
+        console.log("initializeApp: 'showLogin' action detected.");
+        if (!currentUser) {
+            log(LOG_LEVEL_INFO, "Action 'showLogin' detected in URL, opening login modal.");
+            console.log("initializeApp: No currentUser, calling showAuthModal('login').");
+            showAuthModal('login'); // Show the modal first
+            // Then clean the URL
+            const newUrl = window.location.pathname;
+            history.replaceState(null, '', newUrl);
+            console.log("initializeApp: Cleaned URL parameter after processing showLogin.");
+        } else {
+            log(LOG_LEVEL_INFO, "Action 'showLogin' detected, but user is already logged in.");
+            console.log("initializeApp: User already logged in, not showing login modal.");
+            // Still clean the URL param even if user is logged in, to prevent re-processing
+            const newUrl = window.location.pathname;
+            history.replaceState(null, '', newUrl);
+            console.log("initializeApp: Cleaned URL parameter for already logged-in user.");
+        }
+    }
+
     log(LOG_LEVEL_INFO, "Application initialization complete.");
-  }
+    console.log("initializeApp: Finished.");
+}
 
   // --- Event Listeners ---
   if (applicationLogoElement) applicationLogoElement.addEventListener("click", switchToLandingView);

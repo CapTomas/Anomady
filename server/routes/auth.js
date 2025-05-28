@@ -171,9 +171,8 @@ router.post("/login", async (req, res) => {
     if (!user) {
       logger.info(`Login attempt for non-existent email: ${email}`);
       return res.status(401).json({
-        // 401 Unauthorized
         error: {
-          message: "Invalid credentials.", // Keep messages generic for security
+          message: "Invalid credentials.", // Generic for security
           code: "INVALID_CREDENTIALS",
         },
       });
@@ -185,25 +184,37 @@ router.post("/login", async (req, res) => {
     if (!isMatch) {
       logger.info(`Login attempt with incorrect password for email: ${email}`);
       return res.status(401).json({
-        // 401 Unauthorized
         error: {
-          message: "Invalid credentials.",
+          message: "Invalid credentials.", // Generic for security
           code: "INVALID_CREDENTIALS",
         },
       });
     }
 
-    // 4. User matched, create JWT payload
+    // 4. NEW: Check if email is confirmed
+    if (!user.email_confirmed) {
+      logger.info(`Login attempt for unconfirmed email: ${email}.`);
+      // We do NOT log the user in (i.e., no JWT is issued).
+      // We return a specific error so the frontend can offer to resend the confirmation.
+      return res.status(403).json({ // 403 Forbidden is appropriate
+        error: {
+          message: "Your email address is not confirmed. Please check your inbox or resend the confirmation email.",
+          code: "EMAIL_NOT_CONFIRMED",
+          email: user.email // Send back the email for the frontend to use
+        },
+      });
+    }
+
+    // 5. User matched AND email confirmed, create JWT payload
     const payload = {
       user: {
         id: user.id,
         email: user.email,
-        // You can add other non-sensitive info here if needed for the token,
-        // but keep it minimal. User preferences will be fetched separately.
+        // Add other non-sensitive info if needed for the token, but keep minimal.
       },
     };
 
-    // 5. Sign the token
+    // 6. Sign the token
     const jwtSecret = process.env.JWT_SECRET;
     const jwtExpiresIn = process.env.JWT_EXPIRES_IN || "1d";
 
@@ -227,24 +238,24 @@ router.post("/login", async (req, res) => {
           },
         });
       }
-
       logger.info(
         `User logged in successfully: ${user.email} (ID: ${user.id})`
       );
       res.status(200).json({
           message: 'Login successful.',
           token,
-          user: {
+          user: { // Return the same user object shape as before
               id: user.id,
               email: user.email,
               preferred_app_language: user.preferred_app_language,
               preferred_narrative_language: user.preferred_narrative_language,
               preferred_model_name: user.preferred_model_name,
-              email_confirmed: user.email_confirmed,
+              email_confirmed: user.email_confirmed, // This will be true here
               created_at: user.created_at
           }
       });
     });
+
   } catch (error) {
     logger.error("Error during user login:", {
       message: error.message,
@@ -626,6 +637,89 @@ router.post("/resend-confirmation-email", protect, async (req, res) => {
           code: "RESEND_CONFIRMATION_ERROR",
         },
       });
+  }
+});
+
+
+/**
+ * @route   POST /api/v1/auth/public-resend-confirmation
+ * @desc    Publicly request to resend a confirmation email for an unconfirmed account.
+ * @access  Public (should be rate-limited)
+ */
+router.post("/public-resend-confirmation", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    logger.warn("Public resend confirmation attempt with no email provided.");
+    return res.status(400).json({
+      error: { message: "Email address is required.", code: "MISSING_EMAIL" },
+    });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    logger.warn(`Public resend confirmation attempt with invalid email format: ${email}`);
+    return res.status(400).json({
+      error: { message: "Invalid email format.", code: "INVALID_EMAIL_FORMAT" },
+    });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (user && !user.email_confirmed) {
+      // User exists and email is not confirmed, proceed to resend
+      const newConfirmationToken = generateSecureToken();
+      const newConfirmationTokenExpiresAt = generateTokenExpiry(24 * 60); // 24 hours
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          email_confirmation_token: newConfirmationToken,
+          email_confirmation_expires_at: newConfirmationTokenExpiresAt,
+        },
+      });
+
+      const confirmationLink = `${
+        process.env.FRONTEND_URL || "http://localhost:" + (process.env.PORT || 3000)
+      }/api/v1/auth/confirm-email/${newConfirmationToken}`;
+
+      logger.info(
+        `SIMULATED EMAIL (PUBLIC RESEND): Confirmation link for ${user.email}: ${confirmationLink}`
+      );
+      // TODO: Actual email sending logic here in a real app
+
+      return res.status(200).json({
+        message: "A new confirmation email has been sent to your email address. Please check your inbox (and spam folder).",
+      });
+
+    } else if (user && user.email_confirmed) {
+      logger.info(`Public resend request for already confirmed email: ${email}.`);
+      return res.status(200).json({ // Frontend can choose to display this or the generic one
+        message: "This email address has already been confirmed. You can try logging in.",
+        code: "EMAIL_ALREADY_CONFIRMED_PUBLIC"
+      });
+    } else {
+      // User not found. Send a generic message to prevent email enumeration.
+      logger.info(`Public resend request for non-existent email: ${email}. Sending generic response.`);
+      return res.status(200).json({
+        message: "If an account matching this email exists and requires confirmation, a new email has been sent. Please check your inbox (and spam folder).",
+      });
+    }
+  } catch (error) {
+    logger.error("Error during public resend confirmation email:", {
+      email: email,
+      message: error.message,
+      stack: error.stack,
+    });
+    res.status(500).json({
+      error: {
+        message: "Server error processing your request. Please try again later.",
+        code: "INTERNAL_SERVER_ERROR",
+      },
+    });
   }
 });
 

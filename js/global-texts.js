@@ -163,6 +163,8 @@ const globalTextData = {
             "button_reset_password": "Reset Password",
             "alert_password_reset_success_title": "Password Reset Successful",
             "text_try_request_again": "Please try requesting a new reset link.",
+            "modal_title_email_not_confirmed": "Email Not Confirmed",
+            "message_email_not_confirmed_instruction": "Your email address {USER_EMAIL} is not yet confirmed. Please check your inbox (and spam folder) for the confirmation link, or click the button below to resend it.",
         },
         cs: {
             // General Status & UI
@@ -326,6 +328,8 @@ const globalTextData = {
             "button_reset_password": "Obnovit Heslo",
             "alert_password_reset_success_title": "Heslo Úspěšně Obnoveno",
             "text_try_request_again": "Zkuste prosím požádat o nový odkaz pro obnovu.",
+            "modal_title_email_not_confirmed": "E-mail Není Potvrzen",
+            "message_email_not_confirmed_instruction": "Vaše e-mailová adresa {USER_EMAIL} ještě není potvrzena. Zkontrolujte prosím svou doručenou poštu (i složku se spamem) pro potvrzovací odkaz, nebo klikněte na tlačítko níže pro jeho opětovné zaslání.",
         }
     },
     landing: {

@@ -23,9 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Logging Configuration ---
   const LOG_LEVEL_DEBUG = "debug";
   const LOG_LEVEL_INFO = "info";
-  const LOG_LEVEL_WARNING = "warning";
+  const LOG_LEVEL_WARN = "warning";
   const LOG_LEVEL_ERROR = "error";
-  const LOG_LEVELS = [LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARNING, LOG_LEVEL_ERROR];
+  const LOG_LEVELS = [LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARN, LOG_LEVEL_ERROR];
   let currentLogLevel = localStorage.getItem(LOG_LEVEL_STORAGE_KEY) || LOG_LEVEL_INFO;
 
   // --- AI Model Configuration ---
@@ -782,7 +782,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 valueElement.textContent = newDisplayText; valueElement.className = `value ${newCssClass}`; if (itemContainer && highlightChanges) highlightElementUpdate(itemContainer); actualUpdateOccurred = true;
               }
             } else {
-              log(LOG_LEVEL_WARNING, `No level mapping for AI value "${aiValueStr}" for item "${itemCfg.id}". Using default.`);
+              log(LOG_LEVEL_WARN, `No level mapping for AI value "${aiValueStr}" for item "${itemCfg.id}". Using default.`);
               const defaultLevelConfig = itemCfg.level_mappings[String(itemCfg.default_ai_value || 1)] || { display_text_key: "unknown", css_class: "status-info" };
               const fallbackDisplayText = getUIText(defaultLevelConfig.display_text_key, {}, currentTheme);
               if (valueElement.textContent !== fallbackDisplayText || !valueElement.className.includes(defaultLevelConfig.css_class)) {
@@ -1573,7 +1573,7 @@ async function callGeminiAPI(currentTurnHistory) {
         `Content blocked by API via proxy: ${responseData.promptFeedback.blockReason}. Safety Ratings: ${blockDetails}`
       );
     } else {
-      log(LOG_LEVEL_WARNING, "Unexpected response structure from proxy (no candidates or blockReason):", responseData);
+      log(LOG_LEVEL_WARN, "Unexpected response structure from proxy (no candidates or blockReason):", responseData);
       throw new Error("No valid candidate or text found in AI response from proxy.");
     }
   } catch (error) { // Catches errors from fetch itself or errors thrown from response handling
@@ -2159,10 +2159,8 @@ async function callGeminiAPI(currentTurnHistory) {
                 btn.textContent = getUIText(actionConfig.textKey, {}, modalThemeContext);
                 btn.addEventListener("click", () => {
                     if (actionConfig.onClick) {
-                        actionConfig.onClick(); // The onClick should handle hideCustomModal if it's a closing action
+                        actionConfig.onClick(btn); // Pass the button element itself
                     }
-                    // If the action doesn't explicitly close, the modal remains open.
-                    // For profile modal, logout calls hideCustomModal, close calls hideCustomModal.
                 });
                 customModalActions.appendChild(btn);
             });
@@ -2302,7 +2300,6 @@ async function callGeminiAPI(currentTurnHistory) {
       return data;
     } catch (error) { log(LOG_LEVEL_ERROR, 'Error in apiRegisterUser:', error); throw error; }
   }
-
   /**
    * Logs in an existing user via API.
    */
@@ -2312,15 +2309,120 @@ async function callGeminiAPI(currentTurnHistory) {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      const data = await response.json();
+      const data = await response.json(); // Always try to parse JSON
       if (!response.ok) {
         const errorMsg = data.error?.message || `HTTP error ${response.status}`;
         log(LOG_LEVEL_WARN, `Login API error: ${errorMsg}`, data.error?.code);
-        throw new Error(errorMsg);
+        // Create a new error object and attach the code and original data
+        const err = new Error(errorMsg);
+        err.code = data.error?.code; // Attach the specific error code
+        err.data = data.error;      // Attach the full error data from backend (e.g., includes email for EMAIL_NOT_CONFIRMED)
+        throw err;
       }
       return data; // Expects { token, user: { id, email, preferred_app_language, ... } }
-    } catch (error) { log(LOG_LEVEL_ERROR, 'Error in apiLoginUser:', error); throw error; }
+    } catch (error) {
+      // If error is already augmented (from the !response.ok block), rethrow it.
+      // If it's a network error or something else, log it.
+      if (!error.code) { // Indicates it's likely a network error, not a server-sent JSON error
+        log(LOG_LEVEL_ERROR, 'Network or unexpected error in apiLoginUser:', error.message);
+      }
+      // Rethrow the error so the caller can inspect its properties (like .code)
+      throw error;
+    }
   }
+
+
+/**
+ * Displays a modal informing the user their email is not confirmed,
+ * and provides an option to resend the confirmation email.
+ * @param {string} unconfirmedEmail The email address that needs confirmation.
+ */
+async function showEmailNotConfirmedModal(unconfirmedEmail) {
+  log(LOG_LEVEL_INFO, `Showing 'Email Not Confirmed' modal for: ${unconfirmedEmail}`);
+
+  let resendCooldownActive = false; // Cooldown state for the resend button
+
+  const customActions = [
+    {
+      textKey: "button_resend_confirmation_email",
+      className: "ui-button primary",
+      onClick: async (clickedButtonElement) => { // Now receives the button element
+        if (resendCooldownActive) return;
+
+        resendCooldownActive = true;
+        clickedButtonElement.disabled = true;
+        const originalButtonText = clickedButtonElement.textContent;
+        clickedButtonElement.textContent = getUIText("system_processing_short");
+
+        const modalMessageElement = document.getElementById('custom-modal-message');
+
+        try {
+          const result = await apiPublicResendConfirmationEmail(unconfirmedEmail);
+          if (modalMessageElement) {
+            modalMessageElement.innerHTML = ''; // Clear previous instructions
+            const successP = document.createElement('p');
+            successP.textContent = result.message; // Display backend message
+            successP.style.color = 'var(--color-status-ok-text)';
+            modalMessageElement.appendChild(successP);
+          }
+          clickedButtonElement.style.display = 'none'; // Hide resend button after success
+
+          // Ensure the other button (Cancel/OK) is visible and says "OK" or "Close"
+          // Query for the cancel button specifically if needed.
+          const modalActionsArea = document.getElementById('custom-modal-actions');
+          let closeButton = modalActionsArea ? modalActionsArea.querySelector('.ui-button:not(.primary)') : null;
+
+          if (!closeButton && modalActionsArea) { // If cancel wasn't there or was removed, add an OK button
+            closeButton = document.createElement('button');
+            closeButton.className = 'ui-button';
+            modalActionsArea.appendChild(closeButton);
+          }
+          if (closeButton) {
+            closeButton.textContent = getUIText("modal_ok_button");
+            // Ensure its click listener simply closes the modal if it doesn't already
+            // This part is a bit tricky as the original cancel button's listener is set outside.
+            // A robust solution might involve having showCustomModal return button references.
+            // For now, we assume the "Cancel" button already has a hideCustomModal listener.
+            // If we add a new OK button, it needs one.
+            if (!closeButton.onclick) { // crude check if it has an existing onclick
+                closeButton.onclick = () => hideCustomModal();
+            }
+          }
+
+        } catch (resendError) {
+          log(LOG_LEVEL_ERROR, `Failed to resend confirmation email publicly: ${resendError.message}`);
+          if (modalMessageElement) {
+            displayModalError(getUIText("error_api_call_failed", { ERROR_MSG: resendError.message }), modalMessageElement);
+          }
+          clickedButtonElement.disabled = false; // Re-enable on error
+          clickedButtonElement.textContent = originalButtonText;
+          // Implement cooldown
+          setTimeout(() => {
+            resendCooldownActive = false;
+            if(document.body.contains(clickedButtonElement)) { // Check if button still exists
+                clickedButtonElement.disabled = false;
+            }
+          }, 30000); // 30-second cooldown
+        }
+      }
+    },
+    {
+      textKey: "modal_cancel_button",
+      className: "ui-button",
+      onClick: () => { // This button's onClick doesn't need the element itself
+        hideCustomModal();
+      }
+    }
+  ];
+
+  await showCustomModal({
+    type: "alert", // Using "alert" as base type; customActions define behavior.
+    titleKey: "modal_title_email_not_confirmed",
+    messageKey: "message_email_not_confirmed_instruction",
+    replacements: { USER_EMAIL: unconfirmedEmail },
+    customActions: customActions,
+  });
+}
 
   /**
    * Fetches user preferences from the backend.
@@ -2424,6 +2526,61 @@ async function callGeminiAPI(currentTurnHistory) {
       }
   }
 
+
+/**
+ * Calls the public API to resend a confirmation email.
+ * @param {string} email The email address to resend confirmation for.
+ * @returns {Promise<object>} The JSON response from the server.
+ */
+async function apiPublicResendConfirmationEmail(email) {
+  log(LOG_LEVEL_INFO, `Requesting public resend confirmation for: ${email}`);
+  try {
+    const response = await fetch('/api/v1/auth/public-resend-confirmation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await response.json(); // Always expect JSON
+    if (!response.ok) {
+      // Even if not response.ok, the body might contain a JSON error from the backend
+      const errorMsg = data.error?.message || `Public Resend API Error ${response.status}`;
+      log(LOG_LEVEL_WARN, `Public Resend Confirmation API error: ${errorMsg}`, data.error?.code);
+      const err = new Error(errorMsg);
+      err.code = data.error?.code;
+      err.data = data.error;
+      throw err;
+    }
+    log(LOG_LEVEL_INFO, "Public resend confirmation API success:", data.message);
+    return data; // Contains { message: "..." }
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, 'Error in apiPublicResendConfirmationEmail:', error);
+    throw error; // Re-throw to be handled by the caller
+  }
+}
+
+
+function displayModalError(messageText, containerElement) {
+    if (!containerElement) {
+        log(LOG_LEVEL_WARN, "displayModalError: containerElement is null or undefined.");
+        return;
+    }
+    let errorDisplay = containerElement.querySelector('.modal-error-display');
+    if (!errorDisplay) {
+        errorDisplay = document.createElement('p');
+        errorDisplay.className = 'modal-error-display'; // Ensure this class is styled in style.css
+        errorDisplay.style.color = 'var(--color-meter-critical)'; // Example styling
+        errorDisplay.style.marginTop = 'var(--spacing-sm)';
+        errorDisplay.style.marginBottom = 'var(--spacing-sm)'; // Ensure it doesn't push content too much
+        // Prepend error so it appears above form or input if container is modal-message
+        if (containerElement.id === 'custom-modal-message') {
+            containerElement.insertBefore(errorDisplay, containerElement.firstChild);
+        } else { // Append if it's inside a form container
+            containerElement.appendChild(errorDisplay);
+        }
+    }
+    errorDisplay.textContent = messageText;
+}
+
   /**
    * Displays the modal for changing the user's password.
    */
@@ -2484,16 +2641,12 @@ async function callGeminiAPI(currentTurnHistory) {
       });
   }
 
-  /**
-   * Displays a modal for either login or registration, with a link to switch modes.
-   */
   async function showAuthModal(initialMode = 'login') {
-      console.log("showAuthModal: Called with mode:", initialMode);
-      let currentMode = initialMode; // 'login' or 'register'
+      log(LOG_LEVEL_DEBUG,"showAuthModal: Called with mode:", initialMode);
+      let currentMode = initialMode;
 
-      // This function will be called to render the modal content.
-      // It's defined inside showAuthModal to capture currentMode.
-      const renderAndShowModal = () => {
+      // This function is called to (re)render the modal content based on currentMode
+      const renderAndDisplayForm = () => {
           const isLogin = currentMode === 'login';
           const titleKey = isLogin ? "modal_title_login" : "modal_title_register";
           const confirmTextKey = isLogin ? "button_login" : "button_register";
@@ -2505,22 +2658,20 @@ async function callGeminiAPI(currentTurnHistory) {
           } else { // Register mode
               formFields.push({ id: "authEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true });
               formFields.push({ id: "authPassword", labelKey: "label_password", type: "password", placeholderKey: "placeholder_password_register", required: true });
-              // You can add more registration fields here if needed in the future, e.g., confirm password
           }
 
           const switchLinkContainer = document.createElement('div');
-          switchLinkContainer.className = 'auth-modal-links'; // New class for better styling
+          switchLinkContainer.className = 'auth-modal-links';
 
-          // "Forgot Password?" Link (only for login form)
           if (isLogin) {
               const forgotPasswordLink = document.createElement('a');
               forgotPasswordLink.href = '#';
-              forgotPasswordLink.textContent = getUIText("button_forgot_password"); // Add this key to global-texts.js
+              forgotPasswordLink.textContent = getUIText("button_forgot_password");
               forgotPasswordLink.className = 'forgot-password-link';
               forgotPasswordLink.addEventListener('click', (e) => {
                   e.preventDefault();
-                  hideCustomModal(); // Close the auth modal
-                  showForgotPasswordRequestModal(); // Show the "request reset" modal
+                  hideCustomModal(); // Close current auth modal
+                  showForgotPasswordRequestModal(); // Open forgot password modal
               });
               switchLinkContainer.appendChild(forgotPasswordLink);
           }
@@ -2533,51 +2684,94 @@ async function callGeminiAPI(currentTurnHistory) {
           switchAuthModeLink.addEventListener('click', (e) => {
               e.preventDefault();
               currentMode = isLogin ? 'register' : 'login';
-              hideCustomModal();
-              renderAndShowModal();
+              hideCustomModal(); // Close the current modal
+              renderAndDisplayForm();   // Re-render and show with the new mode
           });
           switchLinkContainer.appendChild(switchAuthModeLink);
 
-          const handleSubmit = async (formData) => {
+          // This is the function that will be called when the modal's "confirm" button is clicked
+          const handleSubmitCallback = async (formData) => {
               const email = formData.authEmail;
               const password = formData.authPassword;
 
               if (isLogin) {
-                  const loginData = await apiLoginUser(email, password);
-                  await handleSuccessfulLogin(loginData.token, loginData.user);
-                  return { success: true }; // Modal will close
-              } else { // Register
-                  await apiRegisterUser(email, password);
-                  // Return an indicator to show a success alert after this modal closes
-                  return { success: true, actionAfterClose: 'showRegistrationSuccessAlert' };
+                  try {
+                      const loginData = await apiLoginUser(email, password);
+                      await handleSuccessfulLogin(loginData.token, loginData.user);
+                      // If login is successful, showCustomModal will close itself
+                      // because we are returning a "truthy" value (the loginData object).
+                      return loginData; // Success, resolve the modal's promise
+                  } catch (error) {
+                      if (error.code === "EMAIL_NOT_CONFIRMED") {
+                          // IMPORTANT: First, close the current login modal.
+                          hideCustomModal();
+                          // Then, show the specialized "email not confirmed" modal.
+                          // error.data.email should contain the email from backend
+                          await showEmailNotConfirmedModal(error.data?.email || email);
+                          // We've handled this error by showing another modal.
+                          // We need to signal to the original showCustomModal that this specific submission
+                          // path is "handled" and it shouldn't display a generic error.
+                          // We can achieve this by throwing a specific type of error or returning
+                          // a specific object that showCustomModal's .catch() can identify.
+                          // For simplicity, we'll let it fall through to the generic catch in
+                          // showCustomModal's onSubmit handling, but our error message from backend will be specific.
+                          // OR, better, throw an error that indicates it was handled, so generic error display is skipped.
+                          const handledError = new Error("Email not confirmed, alternate modal shown.");
+                          handledError.handledByCaller = true; // Custom flag
+                          throw handledError; // This will be caught by showCustomModal's catch
+                      }
+                      // For other errors, re-throw them so showCustomModal's internal error handling displays them.
+                      throw error;
+                  }
+              } else { // Register mode
+                  try {
+                    const registrationData = await apiRegisterUser(email, password);
+                    // For registration, we want the modal to close, and then show a success alert.
+                    // So, we return an object that showCustomModal can use in its .then()
+                    return { success: true, actionAfterClose: 'showRegistrationSuccessAlert', data: registrationData };
+                  } catch (error) {
+                    // Let showCustomModal display this error within the registration form.
+                    throw error;
+                  }
               }
           };
 
+          // Now call showCustomModal with all the configurations
           showCustomModal({
               type: "form",
               titleKey: titleKey,
               formFields: formFields,
-              htmlContent: switchLinkContainer,
+              htmlContent: switchLinkContainer, // This includes the "Forgot Password?" and mode switch links
               confirmTextKey: confirmTextKey,
-              onSubmit: handleSubmit,
+              onSubmit: handleSubmitCallback,
           }).then(result => {
-              console.log("Forgot Password Modal - .then() entered. Result:", result);
+              // This .then() is for the promise returned by showCustomModal.
+              // It resolves when the modal is closed by a "successful" onSubmit, or by cancel.
               if (result && result.actionAfterClose === 'showRegistrationSuccessAlert') {
-                  console.log("Forgot Password Modal - Condition met, showing 'Reset Link Sent' alert.");
-                  showCustomModal({
+                  showCustomModal({ // Show a new alert modal after registration
                       type: "alert",
                       titleKey: "alert_registration_success_title",
-                      messageKey: "alert_registration_success_message"
+                      // The backend already asks user to check email for confirmation
+                      messageKey: "alert_registration_success_message" // "Your account has been created! Please check your email to confirm your account and then log in."
                   });
               }
+              // If login was successful, handleSuccessfulLogin already took care of UI updates.
+              // If EMAIL_NOT_CONFIRMED, showEmailNotConfirmedModal was called.
           }).catch(error => {
-              // Errors thrown by handleSubmit (validation, API errors) are handled by showCustomModal's internal error display.
-              // This catch is for more fundamental issues with showCustomModal itself, or unhandled rejections.
-              log(LOG_LEVEL_ERROR, "Error from showAuthModal's showCustomModal promise:", error);
+              // This catch is for errors re-thrown by handleSubmitCallback that were NOT handledByCaller,
+              // OR if showCustomModal itself had an issue.
+              // showCustomModal's internal onSubmit catch should have displayed errors within the modal.
+              if (error && error.handledByCaller) {
+                  log(LOG_LEVEL_DEBUG, "Auth modal submission handled by custom flow (e.g., email not confirmed).");
+              } else {
+                log(LOG_LEVEL_ERROR, "Error from showAuthModal's promise chain (e.g., unhandled rejection from onSubmit or modal issue):", error);
+                // You might show a generic fallback alert here if needed,
+                // but errors during form submission should ideally be shown within the form modal itself.
+              }
           });
       };
 
-      renderAndShowModal(); // Initial call to render and show the modal
+      renderAndDisplayForm(); // Call to render the initial modal state
   }
 
 async function showForgotPasswordRequestModal() {

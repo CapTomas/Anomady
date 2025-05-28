@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
   // --- API Key & Endpoints (v0.3.1 and beyond) ---
-  const PROXY_API_URL = '/api/v1/gemini/generate'; // Backend proxy endpoint
+  const PROXY_API_URL = '/api/v1/gemini/generate';
 
   // --- Default Application Settings ---
   const DEFAULT_LANGUAGE = "cs";
   const DEFAULT_THEME_ID = "grim_warden";
-  const UPDATE_HIGHLIGHT_DURATION = 5000; // ms
+  const UPDATE_HIGHLIGHT_DURATION = 5000;
   const SCROLL_INDICATOR_TOLERANCE = 2;
 
   // --- localStorage Keys ---
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const LIKED_THEMES_STORAGE_KEY = "anomadyLikedThemes";
   const LANDING_SELECTED_GRID_THEME_KEY = "anomadyLandingSelectedGridTheme";
   const LOG_LEVEL_STORAGE_KEY = "anomadyLogLevel";
-  const JWT_STORAGE_KEY = "anomadyAuthToken"; // For storing the JWT
+  const JWT_STORAGE_KEY = "anomadyAuthToken";
 
   // --- Logging Configuration ---
   const LOG_LEVEL_DEBUG = "debug";
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentTheme = localStorage.getItem(CURRENT_THEME_STORAGE_KEY) || null;
   let currentAppLanguage = localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
   let currentNarrativeLanguage = localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) || currentAppLanguage;
-  let currentUser = null; // Will store { id, email, preferred_app_language, preferred_narrative_language, preferred_model_name, token }
+  let currentUser = null;
 
   // --- Dynamically Loaded Theme Data ---
   let ALL_THEMES_CONFIG = {};
@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function saveGameState() {
     if (!currentTheme) return;
-    // playerIdentifier is kept for potential anonymous play or legacy state.
+
     const identifierToSave = currentUser ? currentUser.email : playerIdentifier;
     if (!identifierToSave) return;
 
@@ -259,13 +259,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!savedState.playerIdentifier || !savedState.gameHistory || savedState.gameHistory.length === 0) {
         clearGameStateInternal(themeIdToLoad); return false;
       }
-      // If a user is logged in, their email is the primary identifier for the session.
-      // The loaded playerIdentifier from state helps associate the specific save file.
-      // For display and new AI calls, currentUser.email (via global playerIdentifier) will be used if logged in.
       if (currentUser) {
-        playerIdentifier = currentUser.email; // Ensure global playerIdentifier is the logged-in user's
+        playerIdentifier = currentUser.email;
       } else {
-        playerIdentifier = savedState.playerIdentifier; // For anonymous, use the one from the save
+        playerIdentifier = savedState.playerIdentifier;
       }
 
       gameHistory = savedState.gameHistory;
@@ -295,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const playerIdentifierConfig = findItemConfigById(dashboardConfig, playerIdentifierConfigKey);
           if (playerIdentifierConfig) {
             const el = document.getElementById(`info-${playerIdentifierConfig.id}`);
-            // Display current user's email if logged in, otherwise the identifier from the save.
+
             if (el) el.textContent = currentUser ? currentUser.email : savedState.playerIdentifier;
           }
         }
@@ -313,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function clearGameStateInternal(themeIdToClear) {
     if (themeIdToClear === currentTheme) {
       gameHistory = [];
-      // playerIdentifier is not cleared here, as it might be currentUser.email or an anonymous ID
+
       currentPromptType = "initial"; isInitialGameLoad = true;
       lastKnownDashboardUpdates = {}; lastKnownGameStateIndicators = {}; currentSuggestedActions = [];
       currentPanelStates = {}; if (storyLog) storyLog.innerHTML = ""; clearSuggestedActions();
@@ -746,20 +743,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const value = updatesFromAI[key];
         let itemCfg = itemConfigsMap.get(key);
         let actualUpdateOccurred = false;
-        const activePlayerIdentifier = currentUser ? currentUser.email : playerIdentifier; // Use global playerIdentifier
+        const activePlayerIdentifier = currentUser ? currentUser.email : playerIdentifier;
 
         if (key === "name" || key === "character_name") {
           const playerIdentifierItemId = (themeCfg.left_panel || []).flatMap(p => p.items).find(i => i.id === "name" || i.id === "character_name")?.id;
-          if (key === playerIdentifierItemId) { // If the update key directly matches the configured player ID item
+          if (key === playerIdentifierItemId) {
             itemCfg = itemConfigsMap.get(playerIdentifierItemId);
-            // The dashboard value is updated below, but global playerIdentifier is only changed for anonymous users
+
             if (itemCfg && !currentUser && activePlayerIdentifier !== String(value)) {
-                playerIdentifier = String(value); // AI changed anonymous player's name
+              playerIdentifier = String(value);
             }
-          } else if (!itemCfg && playerIdentifierItemId) { // If 'name'/'character_name' is updated but not an explicit item, assume it's for the player ID item
-             itemCfg = itemConfigsMap.get(playerIdentifierItemId);
-             if (itemCfg && !currentUser && activePlayerIdentifier !== String(value)) {
-                playerIdentifier = String(value);
+          } else if (!itemCfg && playerIdentifierItemId) {
+            itemCfg = itemConfigsMap.get(playerIdentifierItemId);
+            if (itemCfg && !currentUser && activePlayerIdentifier !== String(value)) {
+              playerIdentifier = String(value);
             }
           }
         }
@@ -800,7 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           if (valueElement) {
             const suffix = itemCfg.suffix || "";
-            // For the player identifier field, always use the activePlayerIdentifier (which is currentUser.email if logged in)
+
             const displayValue = (itemCfg.id === "name" || itemCfg.id === "character_name") && activePlayerIdentifier ? activePlayerIdentifier : value;
             const newValueText = `${displayValue}${suffix}`;
             if (valueElement.textContent !== newValueText) {
@@ -864,7 +861,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const idCfg = findItemConfigById(themeCfg, playerIdentifierItemId);
       if (idCfg) {
         const el = document.getElementById(`info-${idCfg.id}`);
-        // Use global playerIdentifier which is currentUser.email if logged in, or anonymous ID
+
         if (el) el.textContent = playerIdentifier || getUIText(idCfg.default_value_key, {}, currentTheme) || getUIText("unknown");
       }
     }
@@ -902,9 +899,9 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function updateScrollIndicatorStateForPanel(panelSide, panelElement) {
     if (!panelElement || document.body.classList.contains("landing-page-active")) {
-        const indicatorsToHide = panelSide === 'left' ? [leftPanelScrollUp, leftPanelScrollDown] : [rightPanelScrollUp, rightPanelScrollDown];
-        indicatorsToHide.forEach(ind => { if(ind) ind.style.display = 'none'; });
-        return;
+      const indicatorsToHide = panelSide === 'left' ? [leftPanelScrollUp, leftPanelScrollDown] : [rightPanelScrollUp, rightPanelScrollDown];
+      indicatorsToHide.forEach(ind => { if (ind) ind.style.display = 'none'; });
+      return;
     }
     const indicators = { up: panelSide === 'left' ? leftPanelScrollUp : rightPanelScrollUp, down: panelSide === 'left' ? leftPanelScrollDown : rightPanelScrollDown, };
     if (!indicators.up || !indicators.down) return;
@@ -912,21 +909,21 @@ document.addEventListener("DOMContentLoaded", () => {
     let needsUpIndicator = false; let needsDownIndicator = false;
     const upTrackedIdsCopy = new Set(outOfViewTrackedElements[panelSide].up);
     for (const elementId of upTrackedIdsCopy) {
-        const el = document.getElementById(elementId);
-        if (el && panelElement.contains(el)) {
-            const elRect = el.getBoundingClientRect();
-            if (elRect.top < sidebarRect.top - SCROLL_INDICATOR_TOLERANCE) { needsUpIndicator = true; }
-            else { outOfViewTrackedElements[panelSide].up.delete(elementId); }
-        } else { outOfViewTrackedElements[panelSide].up.delete(elementId); }
+      const el = document.getElementById(elementId);
+      if (el && panelElement.contains(el)) {
+        const elRect = el.getBoundingClientRect();
+        if (elRect.top < sidebarRect.top - SCROLL_INDICATOR_TOLERANCE) { needsUpIndicator = true; }
+        else { outOfViewTrackedElements[panelSide].up.delete(elementId); }
+      } else { outOfViewTrackedElements[panelSide].up.delete(elementId); }
     }
     const downTrackedIdsCopy = new Set(outOfViewTrackedElements[panelSide].down);
     for (const elementId of downTrackedIdsCopy) {
-        const el = document.getElementById(elementId);
-        if (el && panelElement.contains(el)) {
-            const elRect = el.getBoundingClientRect();
-            if (elRect.bottom > sidebarRect.bottom + SCROLL_INDICATOR_TOLERANCE) { needsDownIndicator = true; }
-            else { outOfViewTrackedElements[panelSide].down.delete(elementId); }
-        } else { outOfViewTrackedElements[panelSide].down.delete(elementId); }
+      const el = document.getElementById(elementId);
+      if (el && panelElement.contains(el)) {
+        const elRect = el.getBoundingClientRect();
+        if (elRect.bottom > sidebarRect.bottom + SCROLL_INDICATOR_TOLERANCE) { needsDownIndicator = true; }
+        else { outOfViewTrackedElements[panelSide].down.delete(elementId); }
+      } else { outOfViewTrackedElements[panelSide].down.delete(elementId); }
     }
     indicators.up.style.display = needsUpIndicator ? 'flex' : 'none';
     indicators.down.style.display = needsDownIndicator ? 'flex' : 'none';
@@ -943,12 +940,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (elementToCheck.classList.contains('panel-box')) { parentPanelBox = elementToCheck; }
     else { parentPanelBox = elementToCheck.closest('.panel-box'); }
     if (!parentPanelBox || !parentPanelBox.classList.contains('is-expanded')) {
-        const panelSideStr = parentSidebar.id === 'left-panel' ? 'left' : 'right';
-        let changedInTracking = false;
-        if (outOfViewTrackedElements[panelSideStr].up.has(elementToCheck.id)) { outOfViewTrackedElements[panelSideStr].up.delete(elementToCheck.id); changedInTracking = true; }
-        if (outOfViewTrackedElements[panelSideStr].down.has(elementToCheck.id)) { outOfViewTrackedElements[panelSideStr].down.delete(elementToCheck.id); changedInTracking = true; }
-        if (changedInTracking) { updateScrollIndicatorStateForPanel(panelSideStr, parentSidebar); }
-        return;
+      const panelSideStr = parentSidebar.id === 'left-panel' ? 'left' : 'right';
+      let changedInTracking = false;
+      if (outOfViewTrackedElements[panelSideStr].up.has(elementToCheck.id)) { outOfViewTrackedElements[panelSideStr].up.delete(elementToCheck.id); changedInTracking = true; }
+      if (outOfViewTrackedElements[panelSideStr].down.has(elementToCheck.id)) { outOfViewTrackedElements[panelSideStr].down.delete(elementToCheck.id); changedInTracking = true; }
+      if (changedInTracking) { updateScrollIndicatorStateForPanel(panelSideStr, parentSidebar); }
+      return;
     }
     requestAnimationFrame(() => {
       const panelSideStr = parentSidebar.id === 'left-panel' ? 'left' : 'right';
@@ -1054,7 +1051,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function saveThemeListsToStorage() {
     localStorage.setItem(PLAYING_THEMES_STORAGE_KEY, JSON.stringify(playingThemes));
     localStorage.setItem(LIKED_THEMES_STORAGE_KEY, JSON.stringify(likedThemes));
-    // Future: If currentUser, sync with backend.
+
   }
 
   /**
@@ -1063,7 +1060,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadThemeListsFromStorage() {
     playingThemes = JSON.parse(localStorage.getItem(PLAYING_THEMES_STORAGE_KEY) || "[]");
     likedThemes = JSON.parse(localStorage.getItem(LIKED_THEMES_STORAGE_KEY) || "[]");
-    // Future: If currentUser, fetch from backend and merge/replace.
+
   }
 
   /**
@@ -1135,7 +1132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let wasPlaying = false; const playingIndex = playingThemes.indexOf(themeId);
     if (playingIndex > -1) { playingThemes.splice(playingIndex, 1); wasPlaying = true; }
     const likedIndex = likedThemes.indexOf(themeId);
-    if (likedIndex > -1) { if (!wasPlaying) { likedThemes.splice(likedIndex, 1); } } // Only remove from liked if it wasn't also playing
+    if (likedIndex > -1) { if (!wasPlaying) { likedThemes.splice(likedIndex, 1); } }
     saveThemeListsToStorage(); updateTopbarThemeIcons();
     if (wasPlaying && currentTheme === themeId) {
       currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY); switchToLandingView();
@@ -1153,7 +1150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     button.dataset.theme = themeId; const themeNameText = getUIText(themeConfig.name_key, {}, themeId);
     let statusText = "";
     if (isCurrentlyPlaying) statusText = getUIText("theme_icon_alt_text_playing");
-    else if (type === "liked") statusText = getUIText("theme_icon_alt_text_liked"); // Only show liked if not playing
+    else if (type === "liked") statusText = getUIText("theme_icon_alt_text_liked");
     button.title = `${themeNameText}${statusText ? ` (${statusText})` : ""}`;
     const img = document.createElement("img"); img.src = themeConfig.icon; img.alt = button.title; button.appendChild(img);
     const closeBtn = document.createElement("button"); closeBtn.classList.add("theme-button-close"); closeBtn.innerHTML = "×";
@@ -1177,7 +1174,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
     likedThemes.forEach(themeId => {
-      // Only add to "liked" display if it's NOT currently in "playing" display
+
       if (ALL_THEMES_CONFIG[themeId] && !isThemePlaying(themeId)) {
         const icon = createThemeTopbarIcon(themeId, "liked");
         if (icon) { icon.dataset.type = "liked"; likedThemesContainer.appendChild(icon); }
@@ -1211,19 +1208,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const updatedUser = await apiUpdateUserPreferences(currentUser.token, {
           preferred_model_name: newModelName,
         });
-        currentUser.preferred_model_name = updatedUser.preferred_model_name; // Update local currentUser
+        currentUser.preferred_model_name = updatedUser.preferred_model_name;
         log(LOG_LEVEL_INFO, "Backend model preference updated successfully.");
       } catch (error) {
         log(LOG_LEVEL_ERROR, "Failed to update backend model preference:", error);
-        // Optionally notify user. Frontend change persists for the session.
+
         addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Could not save model preference." }), "system-error");
       }
     } else {
-      // For anonymous users, save to localStorage
+
       localStorage.setItem(MODEL_PREFERENCE_STORAGE_KEY, currentModelName);
     }
 
-    updateModelToggleButtonText(); // Update button text immediately
+    updateModelToggleButtonText();
     const msgKey = newModelName === PAID_MODEL_NAME ? "system_model_set_paid" : "system_model_set_free";
     if (currentTheme && storyLogViewport && storyLogViewport.style.display !== "none") {
       addMessageToLog(getUIText(msgKey, { MODEL_NAME: newModelName }), "system");
@@ -1235,8 +1232,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function setAppLanguageAndThemeUI(lang, themeIdForUIContextIfGameActive) {
     currentAppLanguage = lang;
-    // For anonymous users, localStorage is the source of truth for next session start.
-    // For logged-in users, their preference is in currentUser, localStorage is a fallback.
+
     localStorage.setItem(LANGUAGE_PREFERENCE_STORAGE_KEY, lang);
 
     if (document.documentElement) document.documentElement.lang = lang;
@@ -1306,7 +1302,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function toggleAppLanguage() {
     const newLang = currentAppLanguage === "en" ? "cs" : "en";
     currentAppLanguage = newLang;
-    currentNarrativeLanguage = newLang; // Keep them linked for now
+    currentNarrativeLanguage = newLang;
 
     log(LOG_LEVEL_INFO, `Language toggled to: ${newLang}`);
 
@@ -1317,30 +1313,29 @@ document.addEventListener("DOMContentLoaded", () => {
           preferred_app_language: newLang,
           preferred_narrative_language: newLang,
         });
-        // Update currentUser with fresh data from backend
+
         currentUser.preferred_app_language = updatedUser.preferred_app_language;
         currentUser.preferred_narrative_language = updatedUser.preferred_narrative_language;
         log(LOG_LEVEL_INFO, "Backend language preferences updated successfully.");
       } catch (error) {
         log(LOG_LEVEL_ERROR, "Failed to update backend language preferences:", error);
-        // Optionally revert frontend change or notify user
-        // For now, frontend change persists, backend might be out of sync temporarily
-         addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Could not save language preference." }), "system-error");
+
+        addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Could not save language preference." }), "system-error");
       }
     } else {
-      // For anonymous users, save to localStorage
+
       localStorage.setItem(LANGUAGE_PREFERENCE_STORAGE_KEY, currentAppLanguage);
       localStorage.setItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY, currentNarrativeLanguage);
     }
 
-    setAppLanguageAndThemeUI(currentAppLanguage, currentTheme); // This updates all UI texts
+    setAppLanguageAndThemeUI(currentAppLanguage, currentTheme);
     const langChangeMsgKey = newLang === "en" ? "system_lang_set_en" : "system_lang_set_cs";
     if (currentTheme && storyLogViewport && storyLogViewport.style.display !== "none") {
       addMessageToLog(getUIText(langChangeMsgKey), "system");
     } else {
       log(LOG_LEVEL_INFO, getUIText(langChangeMsgKey));
     }
-    if (currentTheme) saveGameState(); // Save game state as narrative language might affect prompts
+    if (currentTheme) saveGameState();
   }
 
   /**
@@ -1382,224 +1377,220 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Calls the backend proxy to interact with the Gemini API.
    */
-async function callGeminiAPI(currentTurnHistory) {
-  setGMActivity(true);
-  clearSuggestedActions();
+  async function callGeminiAPI(currentTurnHistory) {
+    setGMActivity(true);
+    clearSuggestedActions();
 
-  const activePromptType =
-    isInitialGameLoad ||
-    (currentTurnHistory.length === 1 &&
-      gameHistory[0].role === "user" &&
-      gameHistory[0].parts[0].text.includes("ready to start the game"))
-      ? "initial"
-      : currentPromptType;
+    const activePromptType =
+      isInitialGameLoad ||
+        (currentTurnHistory.length === 1 &&
+          gameHistory[0].role === "user" &&
+          gameHistory[0].parts[0].text.includes("ready to start the game"))
+        ? "initial"
+        : currentPromptType;
 
-  const systemPromptText = getSystemPrompt(
-    playerIdentifier, // Or currentUser.email / currentUser.id if you adapt prompts
-    activePromptType
-  );
-
-  log(LOG_LEVEL_DEBUG, "----- BEGIN SYSTEM PROMPT -----");
-  log(LOG_LEVEL_DEBUG, `Using prompt type: ${activePromptType}`);
-  // Log only a snippet of potentially very long system prompts
-  log(LOG_LEVEL_DEBUG, "System Prompt Text (Snippet):", systemPromptText.substring(0, 300) + (systemPromptText.length > 300 ? "..." : ""));
-  log(LOG_LEVEL_DEBUG, "----- END SYSTEM PROMPT -----");
-
-  if (systemPromptText.startsWith('{"narrative": "SYSTEM ERROR:')) {
-    try {
-      const errorResponse = JSON.parse(systemPromptText);
-      addMessageToLog(errorResponse.narrative, "system");
-      if (errorResponse.suggested_actions) displaySuggestedActions(errorResponse.suggested_actions);
-    } catch (e) {
-      addMessageToLog(systemPromptText, "system-error");
-      log(LOG_LEVEL_ERROR, "Failed to parse system error JSON from getSystemPrompt:", e, systemPromptText);
-    }
-    setGMActivity(false);
-    return null;
-  }
-
-  const generationConfig = {
-    temperature: 0.7,
-    topP: 0.95,
-    maxOutputTokens: 8192,
-    responseMimeType: "application/json",
-  };
-  const safetySettings = [
-    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
-  ];
-
-  const payload = {
-    contents: currentTurnHistory,
-    generationConfig: generationConfig,
-    safetySettings: safetySettings,
-    systemInstruction: { parts: [{ text: systemPromptText }] },
-    modelName: currentModelName,
-  };
-
-  const requestHeaders = {
-    "Content-Type": "application/json",
-  };
-
-  if (currentUser && currentUser.token) {
-    requestHeaders["Authorization"] = `Bearer ${currentUser.token}`;
-    log(LOG_LEVEL_DEBUG, "callGeminiAPI: Sending request with Authorization header.");
-  } else {
-    log(LOG_LEVEL_DEBUG, "callGeminiAPI: Sending request without Authorization header (no user/token).");
-  }
-
-  try {
-    const response = await fetch(PROXY_API_URL, {
-      method: "POST",
-      headers: requestHeaders,
-      body: JSON.stringify(payload),
-    });
-    const responseData = await response.json(); // Expecting JSON from our proxy
-
-    if (!response.ok) {
-      let errorDetails = responseData.error?.message || `Proxy API Error ${response.status}`;
-      if (responseData.error?.details) { errorDetails += ` Details: ${JSON.stringify(responseData.error.details)}`; }
-      else if (responseData.details) { errorDetails += ` Details: ${JSON.stringify(responseData.details)}`; }
-      throw new Error(errorDetails);
-    }
-
-    if (responseData.candidates && responseData.candidates[0]?.content?.parts?.[0]?.text) {
-      let jsonStringFromAI = responseData.candidates[0].content.parts[0].text;
-      let parsedAIResponse;
-
-      try {
-        // Attempt to parse the JSON string from the AI
-        try {
-          parsedAIResponse = JSON.parse(jsonStringFromAI);
-        } catch (parseError) {
-          log(LOG_LEVEL_ERROR, "Initial JSON.parse failed. Raw AI response (snippet):", jsonStringFromAI.substring(0, 500), "Error:", parseError.message);
-          let cleanedJsonString = null;
-          const markdownMatch = jsonStringFromAI.match(/```(?:json)?\s*([\s\S]*?)\s*```/s);
-          if (markdownMatch && markdownMatch[1]) {
-            cleanedJsonString = markdownMatch[1].trim();
-            log(LOG_LEVEL_DEBUG, "Extracted JSON from markdown block:", cleanedJsonString.substring(0, 300));
-          } else {
-            let openChar = ''; let closeChar = ''; let startIndex = -1;
-            const firstBrace = jsonStringFromAI.indexOf("{");
-            const firstBracket = jsonStringFromAI.indexOf("[");
-            if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) { openChar = '{'; closeChar = '}'; startIndex = firstBrace; }
-            else if (firstBracket !== -1) { openChar = '['; closeChar = ']'; startIndex = firstBracket; }
-
-            if (startIndex !== -1) {
-              let balance = 0; let endIndex = -1;
-              for (let i = startIndex; i < jsonStringFromAI.length; i++) {
-                if (jsonStringFromAI[i] === openChar) balance++;
-                else if (jsonStringFromAI[i] === closeChar) {
-                  balance--;
-                  if (balance === 0) { endIndex = i; break; }
-                }
-              }
-              if (endIndex !== -1) {
-                cleanedJsonString = jsonStringFromAI.substring(startIndex, endIndex + 1);
-                log(LOG_LEVEL_DEBUG, "Extracted JSON by balance counting:", cleanedJsonString.substring(0,300));
-              } else { log(LOG_LEVEL_DEBUG, "Balance counting for JSON extraction failed."); }
-            } else { log(LOG_LEVEL_DEBUG, "No '{' or '[' found for balance counting extraction."); }
-          }
-
-          if (cleanedJsonString) {
-            try {
-              parsedAIResponse = JSON.parse(cleanedJsonString);
-              log(LOG_LEVEL_INFO, "Successfully parsed JSON after cleanup. Original parse error was:", parseError.message);
-            } catch (nestedParseError) {
-              log(LOG_LEVEL_ERROR, "Failed to parse cleaned JSON. Cleaned (snippet):", cleanedJsonString.substring(0,500), "Nested error:", nestedParseError.message);
-              throw new Error(`Invalid JSON structure even after cleanup. Original: ${parseError.message}. Nested: ${nestedParseError.message}.`);
-            }
-          } else {
-            log(LOG_LEVEL_ERROR, "Could not extract valid JSON after initial failure. Re-throwing original parse error.");
-            throw parseError; // Re-throw original error if no cleanup was possible
-          }
-        } // End of initial parsing attempt block
-
-        // Validate the structure of the parsed AI response for core fields
-        if (
-          !parsedAIResponse ||
-          typeof parsedAIResponse.narrative !== "string" ||
-          typeof parsedAIResponse.dashboard_updates !== "object" || // Should be a non-null object
-          parsedAIResponse.dashboard_updates === null || // Explicitly check for null
-          !Array.isArray(parsedAIResponse.suggested_actions)
-        ) {
-          log(LOG_LEVEL_ERROR, "Parsed JSON is missing required core fields (narrative, dashboard_updates, suggested_actions) or they have wrong types/are null. Parsed object:", parsedAIResponse);
-          throw new Error("Invalid JSON structure from AI: missing or invalid core fields.");
-        }
-
-        // Ensure game_state_indicators exists and is an object, defaulting if necessary
-        let gameIndicators = parsedAIResponse.game_state_indicators;
-        if (typeof gameIndicators === 'undefined') {
-          log(LOG_LEVEL_WARN, "AI response was missing 'game_state_indicators'. Defaulting to {}. Full AI response (snippet):", jsonStringFromAI.substring(0,500));
-          gameIndicators = {};
-        } else if (typeof gameIndicators !== 'object' || gameIndicators === null) {
-          log(LOG_LEVEL_WARN, `AI response had 'game_state_indicators' of wrong type (${typeof gameIndicators}) or was null. Defaulting to {}. Value:`, gameIndicators);
-          gameIndicators = {};
-        }
-
-        // Process the valid AI response
-        gameHistory.push({
-          role: "model",
-          parts: [{ text: JSON.stringify(parsedAIResponse) }], // Store the original full (potentially corrected) response
-        });
-        updateDashboard(parsedAIResponse.dashboard_updates);
-        displaySuggestedActions(parsedAIResponse.suggested_actions);
-        handleGameStateIndicators(gameIndicators, isInitialGameLoad); // Use the (potentially defaulted) gameIndicators
-        if (isInitialGameLoad) isInitialGameLoad = false;
-        saveGameState();
-        if (systemStatusIndicator) {
-          systemStatusIndicator.textContent = getUIText("system_status_online_short");
-          systemStatusIndicator.className = "status-indicator status-ok";
-        }
-        return parsedAIResponse.narrative;
-
-      } catch (e) { // Catches errors from JSON parsing or structure validation
-        log(LOG_LEVEL_ERROR, "Error processing/validating AI response object:", e.message, "Raw AI string (snippet):", jsonStringFromAI.substring(0,500));
-        addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Failed to process AI response: " + e.message }), "system");
-        if (systemStatusIndicator) {
-          systemStatusIndicator.textContent = getUIText("status_error");
-          systemStatusIndicator.className = "status-indicator status-danger";
-        }
-        return null;
-      }
-    } else if (responseData.promptFeedback?.blockReason) {
-      const blockDetails =
-        responseData.promptFeedback.safetyRatings
-          ?.map((r) => `${r.category}: ${r.probability}`)
-          .join(", ") || "No details provided.";
-      throw new Error(
-        `Content blocked by API via proxy: ${responseData.promptFeedback.blockReason}. Safety Ratings: ${blockDetails}`
-      );
-    } else {
-      log(LOG_LEVEL_WARN, "Unexpected response structure from proxy (no candidates or blockReason):", responseData);
-      throw new Error("No valid candidate or text found in AI response from proxy.");
-    }
-  } catch (error) { // Catches errors from fetch itself or errors thrown from response handling
-    log(LOG_LEVEL_ERROR, "callGeminiAPI (proxy) failed:", error);
-    addMessageToLog(
-      getUIText("error_api_call_failed", { ERROR_MSG: error.message }),
-      "system"
+    const systemPromptText = getSystemPrompt(
+      playerIdentifier,
+      activePromptType
     );
-    if (systemStatusIndicator) {
-      systemStatusIndicator.textContent = getUIText("status_error");
-      systemStatusIndicator.className = "status-indicator status-danger";
+
+    log(LOG_LEVEL_DEBUG, "----- BEGIN SYSTEM PROMPT -----");
+    log(LOG_LEVEL_DEBUG, `Using prompt type: ${activePromptType}`);
+
+    log(LOG_LEVEL_DEBUG, "System Prompt Text (Snippet):", systemPromptText.substring(0, 300) + (systemPromptText.length > 300 ? "..." : ""));
+    log(LOG_LEVEL_DEBUG, "----- END SYSTEM PROMPT -----");
+
+    if (systemPromptText.startsWith('{"narrative": "SYSTEM ERROR:')) {
+      try {
+        const errorResponse = JSON.parse(systemPromptText);
+        addMessageToLog(errorResponse.narrative, "system");
+        if (errorResponse.suggested_actions) displaySuggestedActions(errorResponse.suggested_actions);
+      } catch (e) {
+        addMessageToLog(systemPromptText, "system-error");
+        log(LOG_LEVEL_ERROR, "Failed to parse system error JSON from getSystemPrompt:", e, systemPromptText);
+      }
+      setGMActivity(false);
+      return null;
     }
-    return null;
-  } finally {
-    setGMActivity(false);
+
+    const generationConfig = {
+      temperature: 0.7,
+      topP: 0.95,
+      maxOutputTokens: 8192,
+      responseMimeType: "application/json",
+    };
+    const safetySettings = [
+      { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
+    ];
+
+    const payload = {
+      contents: currentTurnHistory,
+      generationConfig: generationConfig,
+      safetySettings: safetySettings,
+      systemInstruction: { parts: [{ text: systemPromptText }] },
+      modelName: currentModelName,
+    };
+
+    const requestHeaders = {
+      "Content-Type": "application/json",
+    };
+
+    if (currentUser && currentUser.token) {
+      requestHeaders["Authorization"] = `Bearer ${currentUser.token}`;
+      log(LOG_LEVEL_DEBUG, "callGeminiAPI: Sending request with Authorization header.");
+    } else {
+      log(LOG_LEVEL_DEBUG, "callGeminiAPI: Sending request without Authorization header (no user/token).");
+    }
+
+    try {
+      const response = await fetch(PROXY_API_URL, {
+        method: "POST",
+        headers: requestHeaders,
+        body: JSON.stringify(payload),
+      });
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        let errorDetails = responseData.error?.message || `Proxy API Error ${response.status}`;
+        if (responseData.error?.details) { errorDetails += ` Details: ${JSON.stringify(responseData.error.details)}`; }
+        else if (responseData.details) { errorDetails += ` Details: ${JSON.stringify(responseData.details)}`; }
+        throw new Error(errorDetails);
+      }
+
+      if (responseData.candidates && responseData.candidates[0]?.content?.parts?.[0]?.text) {
+        let jsonStringFromAI = responseData.candidates[0].content.parts[0].text;
+        let parsedAIResponse;
+
+        try {
+
+          try {
+            parsedAIResponse = JSON.parse(jsonStringFromAI);
+          } catch (parseError) {
+            log(LOG_LEVEL_ERROR, "Initial JSON.parse failed. Raw AI response (snippet):", jsonStringFromAI.substring(0, 500), "Error:", parseError.message);
+            let cleanedJsonString = null;
+            const markdownMatch = jsonStringFromAI.match(/```(?:json)?\s*([\s\S]*?)\s*```/s);
+            if (markdownMatch && markdownMatch[1]) {
+              cleanedJsonString = markdownMatch[1].trim();
+              log(LOG_LEVEL_DEBUG, "Extracted JSON from markdown block:", cleanedJsonString.substring(0, 300));
+            } else {
+              let openChar = ''; let closeChar = ''; let startIndex = -1;
+              const firstBrace = jsonStringFromAI.indexOf("{");
+              const firstBracket = jsonStringFromAI.indexOf("[");
+              if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) { openChar = '{'; closeChar = '}'; startIndex = firstBrace; }
+              else if (firstBracket !== -1) { openChar = '['; closeChar = ']'; startIndex = firstBracket; }
+
+              if (startIndex !== -1) {
+                let balance = 0; let endIndex = -1;
+                for (let i = startIndex; i < jsonStringFromAI.length; i++) {
+                  if (jsonStringFromAI[i] === openChar) balance++;
+                  else if (jsonStringFromAI[i] === closeChar) {
+                    balance--;
+                    if (balance === 0) { endIndex = i; break; }
+                  }
+                }
+                if (endIndex !== -1) {
+                  cleanedJsonString = jsonStringFromAI.substring(startIndex, endIndex + 1);
+                  log(LOG_LEVEL_DEBUG, "Extracted JSON by balance counting:", cleanedJsonString.substring(0, 300));
+                } else { log(LOG_LEVEL_DEBUG, "Balance counting for JSON extraction failed."); }
+              } else { log(LOG_LEVEL_DEBUG, "No '{' or '[' found for balance counting extraction."); }
+            }
+
+            if (cleanedJsonString) {
+              try {
+                parsedAIResponse = JSON.parse(cleanedJsonString);
+                log(LOG_LEVEL_INFO, "Successfully parsed JSON after cleanup. Original parse error was:", parseError.message);
+              } catch (nestedParseError) {
+                log(LOG_LEVEL_ERROR, "Failed to parse cleaned JSON. Cleaned (snippet):", cleanedJsonString.substring(0, 500), "Nested error:", nestedParseError.message);
+                throw new Error(`Invalid JSON structure even after cleanup. Original: ${parseError.message}. Nested: ${nestedParseError.message}.`);
+              }
+            } else {
+              log(LOG_LEVEL_ERROR, "Could not extract valid JSON after initial failure. Re-throwing original parse error.");
+              throw parseError;
+            }
+          }
+
+          if (
+            !parsedAIResponse ||
+            typeof parsedAIResponse.narrative !== "string" ||
+            typeof parsedAIResponse.dashboard_updates !== "object" ||
+            parsedAIResponse.dashboard_updates === null ||
+            !Array.isArray(parsedAIResponse.suggested_actions)
+          ) {
+            log(LOG_LEVEL_ERROR, "Parsed JSON is missing required core fields (narrative, dashboard_updates, suggested_actions) or they have wrong types/are null. Parsed object:", parsedAIResponse);
+            throw new Error("Invalid JSON structure from AI: missing or invalid core fields.");
+          }
+
+          let gameIndicators = parsedAIResponse.game_state_indicators;
+          if (typeof gameIndicators === 'undefined') {
+            log(LOG_LEVEL_WARN, "AI response was missing 'game_state_indicators'. Defaulting to {}. Full AI response (snippet):", jsonStringFromAI.substring(0, 500));
+            gameIndicators = {};
+          } else if (typeof gameIndicators !== 'object' || gameIndicators === null) {
+            log(LOG_LEVEL_WARN, `AI response had 'game_state_indicators' of wrong type (${typeof gameIndicators}) or was null. Defaulting to {}. Value:`, gameIndicators);
+            gameIndicators = {};
+          }
+
+          gameHistory.push({
+            role: "model",
+            parts: [{ text: JSON.stringify(parsedAIResponse) }],
+          });
+          updateDashboard(parsedAIResponse.dashboard_updates);
+          displaySuggestedActions(parsedAIResponse.suggested_actions);
+          handleGameStateIndicators(gameIndicators, isInitialGameLoad);
+          if (isInitialGameLoad) isInitialGameLoad = false;
+          saveGameState();
+          if (systemStatusIndicator) {
+            systemStatusIndicator.textContent = getUIText("system_status_online_short");
+            systemStatusIndicator.className = "status-indicator status-ok";
+          }
+          return parsedAIResponse.narrative;
+
+        } catch (e) {
+          log(LOG_LEVEL_ERROR, "Error processing/validating AI response object:", e.message, "Raw AI string (snippet):", jsonStringFromAI.substring(0, 500));
+          addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Failed to process AI response: " + e.message }), "system");
+          if (systemStatusIndicator) {
+            systemStatusIndicator.textContent = getUIText("status_error");
+            systemStatusIndicator.className = "status-indicator status-danger";
+          }
+          return null;
+        }
+      } else if (responseData.promptFeedback?.blockReason) {
+        const blockDetails =
+          responseData.promptFeedback.safetyRatings
+            ?.map((r) => `${r.category}: ${r.probability}`)
+            .join(", ") || "No details provided.";
+        throw new Error(
+          `Content blocked by API via proxy: ${responseData.promptFeedback.blockReason}. Safety Ratings: ${blockDetails}`
+        );
+      } else {
+        log(LOG_LEVEL_WARN, "Unexpected response structure from proxy (no candidates or blockReason):", responseData);
+        throw new Error("No valid candidate or text found in AI response from proxy.");
+      }
+    } catch (error) {
+      log(LOG_LEVEL_ERROR, "callGeminiAPI (proxy) failed:", error);
+      addMessageToLog(
+        getUIText("error_api_call_failed", { ERROR_MSG: error.message }),
+        "system"
+      );
+      if (systemStatusIndicator) {
+        systemStatusIndicator.textContent = getUIText("status_error");
+        systemStatusIndicator.className = "status-indicator status-danger";
+      }
+      return null;
+    } finally {
+      setGMActivity(false);
+    }
   }
-}
 
   /**
    * Starts the game session after the player enters their identifier (for anonymous play).
    */
   async function startGameAfterIdentifier() {
-    // playerIdentifier is already set to currentUser.email if logged in,
-    // or will be set from input for anonymous users.
+
     if (currentUser) {
-        // playerIdentifier is already currentUser.email
+
     } else {
       const enteredIdentifier = playerIdentifierInputEl ? playerIdentifierInputEl.value.trim() : "";
       if (!enteredIdentifier) {
@@ -1607,7 +1598,7 @@ async function callGeminiAPI(currentTurnHistory) {
         if (playerIdentifierInputEl) playerIdentifierInputEl.focus();
         return;
       }
-      playerIdentifier = enteredIdentifier; // Set global playerIdentifier for anonymous session
+      playerIdentifier = enteredIdentifier;
     }
 
     isInitialGameLoad = true; currentPromptType = "initial";
@@ -1623,7 +1614,7 @@ async function callGeminiAPI(currentTurnHistory) {
       const foundIdItem = (dashboardConfig?.left_panel || []).flatMap(p => p.items).find(item => item.id === "name" || item.id === "character_name");
       if (foundIdItem) { idKeyForDashboard = foundIdItem.id; }
     }
-    // updateDashboard will use the global playerIdentifier (which is currentUser.email or anonymous ID)
+
     updateDashboard({ [idKeyForDashboard]: playerIdentifier }, false);
     addMessageToLog(getUIText("connecting", { PLAYER_ID: playerIdentifier }), "system");
     gameHistory = [{ role: "user", parts: [{ text: `My identifier is ${playerIdentifier}. I am ready to start the game in ${getUIText(themeConfig?.name_key || "unknown_theme", {}, currentTheme)} theme.` }], }];
@@ -1631,8 +1622,8 @@ async function callGeminiAPI(currentTurnHistory) {
     const narrative = await callGeminiAPI(gameHistory);
     if (narrative) { addMessageToLog(narrative, "gm"); }
     else {
-      // Revert UI if session init failed
-      if (nameInputSection && !currentUser) nameInputSection.style.display = "flex"; // Only show name input if anonymous
+
+      if (nameInputSection && !currentUser) nameInputSection.style.display = "flex";
       if (actionInputSection) actionInputSection.style.display = "none";
       addMessageToLog(getUIText("error_session_init_failed"), "system");
     }
@@ -1751,7 +1742,7 @@ async function callGeminiAPI(currentTurnHistory) {
       return;
     }
     if (newThemeId !== DEFAULT_THEME_ID && (!ALL_THEMES_CONFIG[DEFAULT_THEME_ID] || !themeTextData[DEFAULT_THEME_ID] || !PROMPT_URLS_BY_THEME[DEFAULT_THEME_ID])) {
-      await ensureThemeDataLoaded(DEFAULT_THEME_ID); // Ensure default theme base data is loaded if target is not default
+      await ensureThemeDataLoaded(DEFAULT_THEME_ID);
     }
 
     const themeWasAlreadyPlaying = isThemePlaying(newThemeId);
@@ -1769,7 +1760,7 @@ async function callGeminiAPI(currentTurnHistory) {
     if (forceNewGame) { localStorage.removeItem(GAME_STATE_STORAGE_KEY_PREFIX + currentTheme); }
 
     switchToGameView(currentTheme); generatePanelsForTheme(currentTheme);
-    setAppLanguageAndThemeUI(currentAppLanguage, currentTheme); // Apply current language to new theme UI
+    setAppLanguageAndThemeUI(currentAppLanguage, currentTheme);
 
     const promptsLoadedSuccessfully = await loadAllPromptsForTheme(currentTheme);
     if (!promptsLoadedSuccessfully) {
@@ -1785,7 +1776,7 @@ async function callGeminiAPI(currentTurnHistory) {
       if (nameInputSection) nameInputSection.style.display = "none";
       if (actionInputSection) actionInputSection.style.display = "flex";
       if (playerActionInput && document.body.contains(playerActionInput)) playerActionInput.focus();
-      // playerIdentifier is already set (currentUser.email or loaded anonymous ID) by loadGameState
+
       addMessageToLog(getUIText("system_session_resumed", { PLAYER_ID: playerIdentifier, THEME_NAME: newThemeDisplayName, }), "system");
       if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("system_status_online_short"); systemStatusIndicator.className = "status-indicator status-ok"; }
     } else {
@@ -1794,20 +1785,20 @@ async function callGeminiAPI(currentTurnHistory) {
       if (storyLog) storyLog.innerHTML = "";
 
       if (currentUser) {
-          playerIdentifier = currentUser.email; // Ensure it's set for new game with logged-in user
-          if (nameInputSection) nameInputSection.style.display = "none";
-          if (actionInputSection) actionInputSection.style.display = "flex";
-          if (playerActionInput && document.body.contains(playerActionInput)) playerActionInput.focus();
-          // Initial AI call for a new game with a logged-in user
-          await startGameAfterIdentifier();
+        playerIdentifier = currentUser.email;
+        if (nameInputSection) nameInputSection.style.display = "none";
+        if (actionInputSection) actionInputSection.style.display = "flex";
+        if (playerActionInput && document.body.contains(playerActionInput)) playerActionInput.focus();
+
+        await startGameAfterIdentifier();
       } else {
-          playerIdentifier = ""; // Clear anonymous identifier for a truly new game
-          if (nameInputSection) nameInputSection.style.display = "flex";
-          if (actionInputSection) actionInputSection.style.display = "none";
-          if (playerIdentifierInputEl) {
-            playerIdentifierInputEl.value = ""; playerIdentifierInputEl.placeholder = getUIText("placeholder_name_login");
-            if (document.body.contains(playerIdentifierInputEl)) playerIdentifierInputEl.focus();
-          }
+        playerIdentifier = "";
+        if (nameInputSection) nameInputSection.style.display = "flex";
+        if (actionInputSection) actionInputSection.style.display = "none";
+        if (playerIdentifierInputEl) {
+          playerIdentifierInputEl.value = ""; playerIdentifierInputEl.placeholder = getUIText("placeholder_name_login");
+          if (document.body.contains(playerIdentifierInputEl)) playerIdentifierInputEl.focus();
+        }
       }
 
       if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("standby"); systemStatusIndicator.className = "status-indicator status-warning"; }
@@ -1842,93 +1833,91 @@ async function callGeminiAPI(currentTurnHistory) {
    * Switches the UI to the landing page view.
    */
   function switchToLandingView() {
-      log(LOG_LEVEL_INFO, "Switching to landing view.");
+    log(LOG_LEVEL_INFO, "Switching to landing view.");
 
-      const currentPath = window.location.pathname;
-      const currentSearch = window.location.search;
-      const currentParams = new URLSearchParams(currentSearch);
-      const actionParamValue = currentParams.get('action'); // e.g., "showLogin"
+    const currentPath = window.location.pathname;
+    const currentSearch = window.location.search;
+    const currentParams = new URLSearchParams(currentSearch);
+    const actionParamValue = currentParams.get('action');
 
-      const specialPaths = ['/reset-password', '/email-confirmation-status'];
-      const isOnSpecialPath = specialPaths.some(sp => currentPath.startsWith(sp));
+    const specialPaths = ['/reset-password', '/email-confirmation-status'];
+    const isOnSpecialPath = specialPaths.some(sp => currentPath.startsWith(sp));
 
-      if (isOnSpecialPath) {
-          // If on a special path and trying to go to landing, a full redirect is best
-          // to ensure clean state, preserving ?action=showLogin if it was set.
-          let targetHref = '/';
-          if (actionParamValue === 'showLogin') {
-              targetHref = '/?action=showLogin';
-          }
-          log(LOG_LEVEL_DEBUG, `switchToLandingView: On special path ${currentPath}. Forcing full navigation to ${targetHref}.`);
-          window.location.href = targetHref;
-          return; // Exit early as page will reload
-      }
+    if (isOnSpecialPath) {
 
-      // If not on a special path, manage history state more gently
-      let targetUrl = '/';
+      let targetHref = '/';
       if (actionParamValue === 'showLogin') {
-          targetUrl = '/?action=showLogin'; // Preserve if present
+        targetHref = '/?action=showLogin';
       }
+      log(LOG_LEVEL_DEBUG, `switchToLandingView: On special path ${currentPath}. Forcing full navigation to ${targetHref}.`);
+      window.location.href = targetHref;
+      return;
+    }
 
-      if (currentPath + currentSearch !== targetUrl) {
-          if (!currentPath.startsWith('/api/')) { // Don't mess with API calls
-              history.pushState(null, '', targetUrl);
-              log(LOG_LEVEL_DEBUG, `switchToLandingView: URL changed to ${targetUrl} from ${currentPath + currentSearch}`);
-          }
-      }
+    let targetUrl = '/';
+    if (actionParamValue === 'showLogin') {
+      targetUrl = '/?action=showLogin';
+    }
 
-      // --- Original rest of switchToLandingView logic ---
-      Object.keys(outOfViewTrackedElements).forEach(side => { outOfViewTrackedElements[side].up.clear(); outOfViewTrackedElements[side].down.clear(); });
-      [leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown].forEach(indicator => { if (indicator) indicator.style.display = 'none'; });
-      currentTheme = null;
-      localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
-      document.body.classList.add("landing-page-active");
-      document.body.classList.remove(...Array.from(document.body.classList).filter(cn => cn.startsWith("theme-") && cn !== "theme-landing"));
-      if (!document.body.classList.contains("theme-landing")) document.body.classList.add("theme-landing");
-      if (storyLogViewport) storyLogViewport.style.display = "none";
-      if (suggestedActionsWrapper) suggestedActionsWrapper.style.display = "none";
-      if (playerInputControlPanel) playerInputControlPanel.style.display = "none";
-      if (nameInputSection) nameInputSection.style.display = "none";
-      if (actionInputSection) actionInputSection.style.display = "none";
-      if (leftPanel) { Array.from(leftPanel.children).filter(el => el.id !== "landing-theme-description-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
-      if (rightPanel) { Array.from(rightPanel.children).filter(el => el.id !== "landing-theme-details-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
-      if (themeGridContainer) themeGridContainer.style.display = "grid";
-      if (landingThemeDescriptionContainer) {
-        landingThemeDescriptionContainer.style.display = "flex";
-        if (leftPanel && !leftPanel.contains(landingThemeDescriptionContainer)) {
-          const scrollIndicatorDown = leftPanel.querySelector('.scroll-indicator-down');
-          if (scrollIndicatorDown) { leftPanel.insertBefore(landingThemeDescriptionContainer, scrollIndicatorDown); } else { leftPanel.appendChild(landingThemeDescriptionContainer); }
-        }
+    if (currentPath + currentSearch !== targetUrl) {
+      if (!currentPath.startsWith('/api/')) {
+        history.pushState(null, '', targetUrl);
+        log(LOG_LEVEL_DEBUG, `switchToLandingView: URL changed to ${targetUrl} from ${currentPath + currentSearch}`);
       }
-      if (landingThemeDetailsContainer) {
-        landingThemeDetailsContainer.style.display = "flex";
-        if (rightPanel && !rightPanel.contains(landingThemeDetailsContainer)) {
-          const scrollIndicatorDown = rightPanel.querySelector('.scroll-indicator-down');
-          if (scrollIndicatorDown) { rightPanel.insertBefore(landingThemeDetailsContainer, scrollIndicatorDown); } else { rightPanel.appendChild(landingThemeDetailsContainer); }
-        }
+    }
+
+    // --- Original rest of switchToLandingView logic ---
+    Object.keys(outOfViewTrackedElements).forEach(side => { outOfViewTrackedElements[side].up.clear(); outOfViewTrackedElements[side].down.clear(); });
+    [leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown].forEach(indicator => { if (indicator) indicator.style.display = 'none'; });
+    currentTheme = null;
+    localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+    document.body.classList.add("landing-page-active");
+    document.body.classList.remove(...Array.from(document.body.classList).filter(cn => cn.startsWith("theme-") && cn !== "theme-landing"));
+    if (!document.body.classList.contains("theme-landing")) document.body.classList.add("theme-landing");
+    if (storyLogViewport) storyLogViewport.style.display = "none";
+    if (suggestedActionsWrapper) suggestedActionsWrapper.style.display = "none";
+    if (playerInputControlPanel) playerInputControlPanel.style.display = "none";
+    if (nameInputSection) nameInputSection.style.display = "none";
+    if (actionInputSection) actionInputSection.style.display = "none";
+    if (leftPanel) { Array.from(leftPanel.children).filter(el => el.id !== "landing-theme-description-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
+    if (rightPanel) { Array.from(rightPanel.children).filter(el => el.id !== "landing-theme-details-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
+    if (themeGridContainer) themeGridContainer.style.display = "grid";
+    if (landingThemeDescriptionContainer) {
+      landingThemeDescriptionContainer.style.display = "flex";
+      if (leftPanel && !leftPanel.contains(landingThemeDescriptionContainer)) {
+        const scrollIndicatorDown = leftPanel.querySelector('.scroll-indicator-down');
+        if (scrollIndicatorDown) { leftPanel.insertBefore(landingThemeDescriptionContainer, scrollIndicatorDown); } else { leftPanel.appendChild(landingThemeDescriptionContainer); }
       }
-      if (landingThemeLoreText) landingThemeLoreText.textContent = getUIText("landing_select_theme_prompt_lore");
-      if (landingThemeInfoContent) landingThemeInfoContent.innerHTML = `<p>${getUIText("landing_select_theme_prompt_details")}</p>`;
-      if (landingThemeActions) { landingThemeActions.style.display = "none"; landingThemeActions.innerHTML = ""; }
-      const descTitle = landingThemeDescriptionContainer?.querySelector(".panel-box-title");
-      if (descTitle) descTitle.textContent = getUIText("landing_theme_description_title");
-      const detailsTitle = landingThemeDetailsContainer?.querySelector(".panel-box-title");
-      if (detailsTitle) detailsTitle.textContent = getUIText("landing_theme_info_title");
-      const lorePanelBox = landingThemeDescriptionContainer?.querySelector(".panel-box");
-      if (lorePanelBox) { if (!lorePanelBox.id) lorePanelBox.id = "landing-lore-panel-box"; animatePanelBox(lorePanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDescriptionContainer); }
-      const detailsPanelBox = landingThemeDetailsContainer?.querySelector(".panel-box");
-      if (detailsPanelBox) { if (!detailsPanelBox.id) detailsPanelBox.id = "landing-details-panel-box"; animatePanelBox(detailsPanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDetailsContainer); }
-      currentLandingGridSelection = localStorage.getItem(LANDING_SELECTED_GRID_THEME_KEY);
-      renderThemeGrid();
-      if (currentLandingGridSelection && ALL_THEMES_CONFIG[currentLandingGridSelection]) {
-          updateLandingPagePanels(currentLandingGridSelection, false);
-          const selectedBtn = themeGridContainer?.querySelector(`.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`);
-          if (selectedBtn) selectedBtn.classList.add("active");
+    }
+    if (landingThemeDetailsContainer) {
+      landingThemeDetailsContainer.style.display = "flex";
+      if (rightPanel && !rightPanel.contains(landingThemeDetailsContainer)) {
+        const scrollIndicatorDown = rightPanel.querySelector('.scroll-indicator-down');
+        if (scrollIndicatorDown) { rightPanel.insertBefore(landingThemeDetailsContainer, scrollIndicatorDown); } else { rightPanel.appendChild(landingThemeDetailsContainer); }
       }
-      if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("standby"); systemStatusIndicator.className = "status-indicator status-ok"; }
-      updateTopbarThemeIcons();
-      // This call is crucial and should happen *after* DOM for landing page is set up
-      setAppLanguageAndThemeUI(currentAppLanguage, null);
+    }
+    if (landingThemeLoreText) landingThemeLoreText.textContent = getUIText("landing_select_theme_prompt_lore");
+    if (landingThemeInfoContent) landingThemeInfoContent.innerHTML = `<p>${getUIText("landing_select_theme_prompt_details")}</p>`;
+    if (landingThemeActions) { landingThemeActions.style.display = "none"; landingThemeActions.innerHTML = ""; }
+    const descTitle = landingThemeDescriptionContainer?.querySelector(".panel-box-title");
+    if (descTitle) descTitle.textContent = getUIText("landing_theme_description_title");
+    const detailsTitle = landingThemeDetailsContainer?.querySelector(".panel-box-title");
+    if (detailsTitle) detailsTitle.textContent = getUIText("landing_theme_info_title");
+    const lorePanelBox = landingThemeDescriptionContainer?.querySelector(".panel-box");
+    if (lorePanelBox) { if (!lorePanelBox.id) lorePanelBox.id = "landing-lore-panel-box"; animatePanelBox(lorePanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDescriptionContainer); }
+    const detailsPanelBox = landingThemeDetailsContainer?.querySelector(".panel-box");
+    if (detailsPanelBox) { if (!detailsPanelBox.id) detailsPanelBox.id = "landing-details-panel-box"; animatePanelBox(detailsPanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDetailsContainer); }
+    currentLandingGridSelection = localStorage.getItem(LANDING_SELECTED_GRID_THEME_KEY);
+    renderThemeGrid();
+    if (currentLandingGridSelection && ALL_THEMES_CONFIG[currentLandingGridSelection]) {
+      updateLandingPagePanels(currentLandingGridSelection, false);
+      const selectedBtn = themeGridContainer?.querySelector(`.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`);
+      if (selectedBtn) selectedBtn.classList.add("active");
+    }
+    if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("standby"); systemStatusIndicator.className = "status-indicator status-ok"; }
+    updateTopbarThemeIcons();
+
+    setAppLanguageAndThemeUI(currentAppLanguage, null);
   }
 
   /**
@@ -2072,248 +2061,237 @@ async function callGeminiAPI(currentTurnHistory) {
       customModalOverlay.classList.remove("active");
       if (customModalInput) customModalInput.value = "";
       if (customModalInputContainer) customModalInputContainer.style.display = "none";
-      customModalFormContainer.innerHTML = ""; // Clear injected form
-      // Ensure the form container is removed if it was added to modal message
+      customModalFormContainer.innerHTML = "";
+
       if (customModalMessage.contains(customModalFormContainer)) {
-          customModalMessage.removeChild(customModalFormContainer);
+        customModalMessage.removeChild(customModalFormContainer);
       }
       if (customModalMessage.contains(customModalInputContainer)) {
-          customModalMessage.removeChild(customModalInputContainer);
+        customModalMessage.removeChild(customModalInputContainer);
       }
     }
   }
 
-/**
-   * Shows a custom modal (alert, confirm, prompt, or form).
-   */
+  /**
+     * Shows a custom modal (alert, confirm, prompt, or form).
+     */
   function showCustomModal(options) {
     return new Promise((resolve) => {
-        currentModalResolve = resolve;
-        const {
-          type = "alert", titleKey, messageKey, htmlContent, formFields,
-          replacements = {}, confirmTextKey, cancelTextKey,
-          inputPlaceholderKey, defaultValue = "", explicitThemeContext = null, onSubmit,
-          customActions // New option for custom buttons
-        } = options;
+      currentModalResolve = resolve;
+      const {
+        type = "alert", titleKey, messageKey, htmlContent, formFields,
+        replacements = {}, confirmTextKey, cancelTextKey,
+        inputPlaceholderKey, defaultValue = "", explicitThemeContext = null, onSubmit,
+        customActions
+      } = options;
 
-        if (!customModalOverlay || !customModalTitle || !customModalMessage || !customModalActions ) {
-            log(LOG_LEVEL_ERROR, "Custom modal core elements not found!");
-            currentModalResolve(type === "prompt" ? null : (type === "confirm" || type === "form") ? false : null);
-            return;
-        }
+      if (!customModalOverlay || !customModalTitle || !customModalMessage || !customModalActions) {
+        log(LOG_LEVEL_ERROR, "Custom modal core elements not found!");
+        currentModalResolve(type === "prompt" ? null : (type === "confirm" || type === "form") ? false : null);
+        return;
+      }
 
-        const modalThemeContext = explicitThemeContext || currentTheme;
+      const modalThemeContext = explicitThemeContext || currentTheme;
 
-        customModalTitle.textContent = getUIText(titleKey || `modal_default_title_${type}`, replacements, modalThemeContext);
-        customModalMessage.innerHTML = ""; // Clear previous message content
-        customModalFormContainer.innerHTML = ""; // Clear previous form content
+      customModalTitle.textContent = getUIText(titleKey || `modal_default_title_${type}`, replacements, modalThemeContext);
+      customModalMessage.innerHTML = "";
+      customModalFormContainer.innerHTML = "";
 
-        if (customModalInputContainer) customModalInputContainer.style.display = "none";
+      if (customModalInputContainer) customModalInputContainer.style.display = "none";
 
-        if (messageKey) {
-          const staticMessageP = document.createElement('p');
-          staticMessageP.innerHTML = getUIText(messageKey, replacements, modalThemeContext).replace(/\n/g, "<br>");
-          customModalMessage.appendChild(staticMessageP);
-        }
+      if (messageKey) {
+        const staticMessageP = document.createElement('p');
+        staticMessageP.innerHTML = getUIText(messageKey, replacements, modalThemeContext).replace(/\n/g, "<br>");
+        customModalMessage.appendChild(staticMessageP);
+      }
 
-        if (htmlContent) {
-          if (typeof htmlContent === 'string') {
-            // Create a temporary div to parse the HTML string
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlContent;
-            // Append child nodes to ensure scripts (if any, though unlikely here) aren't executed globally
-            while (tempDiv.firstChild) {
-              customModalMessage.appendChild(tempDiv.firstChild);
-            }
-          } else if (htmlContent instanceof HTMLElement) {
-            customModalMessage.appendChild(htmlContent);
+      if (htmlContent) {
+        if (typeof htmlContent === 'string') {
+
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = htmlContent;
+
+          while (tempDiv.firstChild) {
+            customModalMessage.appendChild(tempDiv.firstChild);
           }
+        } else if (htmlContent instanceof HTMLElement) {
+          customModalMessage.appendChild(htmlContent);
         }
+      }
 
-        if (type === "form" || (formFields && formFields.length > 0)) {
-          customModalMessage.appendChild(customModalFormContainer); // Add form container to message area
-          formFields.forEach(field => {
-            const fieldGroup = document.createElement('div'); fieldGroup.classList.add('modal-form-group');
-            const label = document.createElement('label'); label.htmlFor = field.id; label.textContent = getUIText(field.labelKey, {}, modalThemeContext); fieldGroup.appendChild(label);
-            const input = document.createElement('input'); input.type = field.type || 'text'; input.id = field.id; input.name = field.id;
-            if (field.placeholderKey) input.placeholder = getUIText(field.placeholderKey, {}, modalThemeContext);
-            if (field.required) input.required = true;
-            input.classList.add('modal-input'); fieldGroup.appendChild(input); customModalFormContainer.appendChild(fieldGroup);
+      if (type === "form" || (formFields && formFields.length > 0)) {
+        customModalMessage.appendChild(customModalFormContainer);
+        formFields.forEach(field => {
+          const fieldGroup = document.createElement('div'); fieldGroup.classList.add('modal-form-group');
+          const label = document.createElement('label'); label.htmlFor = field.id; label.textContent = getUIText(field.labelKey, {}, modalThemeContext); fieldGroup.appendChild(label);
+          const input = document.createElement('input'); input.type = field.type || 'text'; input.id = field.id; input.name = field.id;
+          if (field.placeholderKey) input.placeholder = getUIText(field.placeholderKey, {}, modalThemeContext);
+          if (field.required) input.required = true;
+          input.classList.add('modal-input'); fieldGroup.appendChild(input); customModalFormContainer.appendChild(fieldGroup);
+        });
+      } else if (type === "prompt") {
+        if (customModalInputContainer && customModalInput) {
+          customModalInputContainer.style.display = "block";
+          customModalMessage.appendChild(customModalInputContainer);
+          customModalInput.value = defaultValue;
+          customModalInput.placeholder = inputPlaceholderKey ? getUIText(inputPlaceholderKey, {}, modalThemeContext) : "";
+          setTimeout(() => customModalInput.focus(), 50);
+        }
+      }
+
+      customModalActions.innerHTML = "";
+
+      if (customActions && Array.isArray(customActions) && customActions.length > 0) {
+        customActions.forEach(actionConfig => {
+          const btn = document.createElement("button");
+          btn.className = actionConfig.className || "ui-button";
+          btn.textContent = getUIText(actionConfig.textKey, {}, modalThemeContext);
+          btn.addEventListener("click", () => {
+            if (actionConfig.onClick) {
+              actionConfig.onClick(btn);
+            }
           });
-        } else if (type === "prompt") {
-          if (customModalInputContainer && customModalInput) {
-            customModalInputContainer.style.display = "block";
-            customModalMessage.appendChild(customModalInputContainer); // Add input container to message area
-            customModalInput.value = defaultValue;
-            customModalInput.placeholder = inputPlaceholderKey ? getUIText(inputPlaceholderKey, {}, modalThemeContext) : "";
-            setTimeout(() => customModalInput.focus(), 50);
-          }
-        }
+          customModalActions.appendChild(btn);
+        });
+      } else {
 
-        customModalActions.innerHTML = ""; // Clear previous actions
+        const confirmBtn = document.createElement("button");
+        confirmBtn.classList.add("ui-button", "primary");
+        let defaultConfirmKey = "modal_ok_button";
+        if (type === "confirm" || type === "form") defaultConfirmKey = "modal_confirm_button";
+        if (type === "prompt") defaultConfirmKey = "modal_confirm_button";
 
-        if (customActions && Array.isArray(customActions) && customActions.length > 0) {
-            customActions.forEach(actionConfig => {
-                const btn = document.createElement("button");
-                btn.className = actionConfig.className || "ui-button";
-                btn.textContent = getUIText(actionConfig.textKey, {}, modalThemeContext);
-                btn.addEventListener("click", () => {
-                    if (actionConfig.onClick) {
-                        actionConfig.onClick(btn); // Pass the button element itself
-                    }
-                });
-                customModalActions.appendChild(btn);
+        confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, modalThemeContext);
+        confirmBtn.addEventListener("click", async () => {
+          let modalShouldClose = true;
+          let resolveValue;
+
+          if (type === "form" || (formFields && formFields.length > 0)) {
+            const formData = {};
+            let firstInvalidField = null;
+            let isValid = true;
+            customModalFormContainer.querySelectorAll('.modal-error-display').forEach(el => el.remove());
+
+            formFields.forEach(field => {
+              const inputElement = customModalFormContainer.querySelector(`#${field.id}`);
+              if (inputElement) {
+                formData[field.id] = inputElement.value;
+                if (field.required && !inputElement.value.trim()) {
+                  isValid = false;
+                  if (!firstInvalidField) firstInvalidField = inputElement;
+                }
+                if (field.type === 'email' && inputElement.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputElement.value.trim())) {
+                  isValid = false;
+                  if (!firstInvalidField) firstInvalidField = inputElement;
+                  const emailErrorDisplay = document.createElement('p');
+                  emailErrorDisplay.className = 'modal-error-display';
+                  emailErrorDisplay.style.color = 'var(--color-meter-critical)';
+                  emailErrorDisplay.textContent = getUIText("alert_invalid_email_format");
+                  inputElement.parentElement.appendChild(emailErrorDisplay);
+                }
+              }
             });
-        } else {
-            // Fallback to default button behavior if no customActions
-            const confirmBtn = document.createElement("button");
-            confirmBtn.classList.add("ui-button", "primary");
-            let defaultConfirmKey = "modal_ok_button";
-            if (type === "confirm" || type === "form") defaultConfirmKey = "modal_confirm_button";
-            if (type === "prompt") defaultConfirmKey = "modal_confirm_button";
 
-            confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, modalThemeContext);
-            confirmBtn.addEventListener("click", async () => {
-                let modalShouldClose = true;
-                let resolveValue;
-
-                if (type === "form" || (formFields && formFields.length > 0)) {
-                    const formData = {};
-                    let firstInvalidField = null;
-                    let isValid = true;
-                    customModalFormContainer.querySelectorAll('.modal-error-display').forEach(el => el.remove());
-
-                    formFields.forEach(field => {
-                        const inputElement = customModalFormContainer.querySelector(`#${field.id}`);
-                        if (inputElement) {
-                            formData[field.id] = inputElement.value;
-                            if (field.required && !inputElement.value.trim()) {
-                                isValid = false;
-                                if (!firstInvalidField) firstInvalidField = inputElement;
-                            }
-                            if (field.type === 'email' && inputElement.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputElement.value.trim())) {
-                                isValid = false;
-                                if (!firstInvalidField) firstInvalidField = inputElement;
-                                const emailErrorDisplay = document.createElement('p');
-                                emailErrorDisplay.className = 'modal-error-display';
-                                emailErrorDisplay.style.color = 'var(--color-meter-critical)';
-                                emailErrorDisplay.textContent = getUIText("alert_invalid_email_format");
-                                inputElement.parentElement.appendChild(emailErrorDisplay);
-                            }
-                        }
-                    });
-
-                    if (!isValid) {
-                        if (firstInvalidField) firstInvalidField.focus();
-                        log(LOG_LEVEL_WARN, "Modal form validation failed.");
-                        if (!customModalFormContainer.querySelector('.modal-error-display')) {
-                            const generalError = document.createElement('p');
-                            generalError.className = 'modal-error-display';
-                            generalError.style.color = 'var(--color-meter-critical)';
-                            generalError.textContent = getUIText("alert_fill_required_fields");
-                            customModalFormContainer.appendChild(generalError);
-                        }
-                        return; // Prevent modal close and resolution
-                    }
-
-                    if (onSubmit) {
-                        try {
-                            confirmBtn.disabled = true;
-                            confirmBtn.textContent = getUIText("system_processing_short");
-                            const resultFromOnSubmit = await onSubmit(formData); // This is where handleSubmitCallback is called
-
-                            // Check the structure of resultFromOnSubmit
-                            if (typeof resultFromOnSubmit === 'object' && resultFromOnSubmit !== null) {
-                                resolveValue = resultFromOnSubmit; // Pass the whole object
-                                if (resultFromOnSubmit.keepOpen === true) {
-                                    modalShouldClose = false;
-                                }
-                            } else {
-                                // If onSubmit returns a simple value (e.g., true for success, or data directly)
-                                resolveValue = resultFromOnSubmit;
-                            }
-                        } catch (error) {
-                            log(LOG_LEVEL_ERROR, "Error in modal onSubmit:", error);
-                            // Check for our custom flag to prevent double error display
-                            if (error.handledByCaller) {
-                                modalShouldClose = false; // The caller (e.g., showAuthModal) handled it by showing another modal.
-                                // We don't set resolveValue here because the promise from this modal's perspective
-                                // didn't "complete" in the typical sense for this specific path.
-                                // The flow was intentionally diverted.
-                            } else {
-                                // Display error within the current modal
-                                const errorDisplay = customModalFormContainer.querySelector('.modal-error-display') || document.createElement('p');
-                                errorDisplay.className = 'modal-error-display';
-                                errorDisplay.style.color = 'var(--color-meter-critical)';
-                                errorDisplay.style.marginTop = 'var(--spacing-sm)';
-                                errorDisplay.textContent = error.message || getUIText("error_api_call_failed", { ERROR_MSG: "Operation failed" });
-                                if (!customModalFormContainer.querySelector('.modal-error-display')) customModalFormContainer.appendChild(errorDisplay);
-                                modalShouldClose = false; // Keep modal open on error
-                            }
-                            // In case of error, we might not want to resolve the promise with a "success" value.
-                            // The .catch() on the showCustomModal call in showAuthModal will catch this.
-                            // However, to ensure the .then() doesn't fire with undefined if an error was handled by caller,
-                            // we ensure resolveValue is not set, or explicitly set to indicate error/diversion.
-                            if (!error.handledByCaller) {
-                                resolveValue = { success: false, error: error }; // Signal error to .then() if it's not already caught
-                            } else {
-                                // If handled by caller (e.g. EMAIL_NOT_CONFIRMED), the original modal promise
-                                // effectively doesn't "complete" successfully for THIS modal instance.
-                                // The flow is now in the new modal.
-                                // We can resolve with null or a specific marker if the .then() needs to know this.
-                                resolveValue = { success: false, flowDiverted: true };
-                            }
-                        } finally {
-                            if (document.body.contains(confirmBtn)) { // Ensure button is still in DOM
-                               confirmBtn.disabled = false;
-                               confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, modalThemeContext);
-                            }
-                        }
-                    } else { // No onSubmit provided for a form type
-                        resolveValue = formData;
-                    }
-                } else if (type === "prompt" && customModalInput) {
-                    resolveValue = customModalInput.value;
-                } else if (type === "confirm") {
-                    resolveValue = true;
-                } else { // 'alert' or unknown type without custom actions
-                    resolveValue = null; // Or true if OK button implies a resolution
-                }
-
-                // Only resolve if currentModalResolve is set (it should be)
-                // And only if the flow wasn't diverted by a handledByCaller error without an explicit resolveValue
-                if (currentModalResolve && !(resolveValue && resolveValue.flowDiverted && modalShouldClose === false)) {
-                     currentModalResolve(resolveValue);
-                }
-
-                if (modalShouldClose) {
-                    hideCustomModal();
-                }
-            });
-            customModalActions.appendChild(confirmBtn);
-
-            if (type === "confirm" || type === "prompt" || type === "form" || (formFields && formFields.length > 0)) {
-                const cancelBtn = document.createElement("button");
-                cancelBtn.classList.add("ui-button");
-                cancelBtn.textContent = getUIText(cancelTextKey || "modal_cancel_button", {}, modalThemeContext);
-                cancelBtn.addEventListener("click", () => {
-                    if (currentModalResolve) currentModalResolve(type === "prompt" ? null : (type === "form" ? null : false));
-                    hideCustomModal();
-                });
-                customModalActions.appendChild(cancelBtn);
+            if (!isValid) {
+              if (firstInvalidField) firstInvalidField.focus();
+              log(LOG_LEVEL_WARN, "Modal form validation failed.");
+              if (!customModalFormContainer.querySelector('.modal-error-display')) {
+                const generalError = document.createElement('p');
+                generalError.className = 'modal-error-display';
+                generalError.style.color = 'var(--color-meter-critical)';
+                generalError.textContent = getUIText("alert_fill_required_fields");
+                customModalFormContainer.appendChild(generalError);
+              }
+              return;
             }
-        }
 
-        customModalOverlay.classList.add("active");
-        if ((type === "form" || (formFields && formFields.length > 0)) && customModalFormContainer.querySelector('input:not([type=hidden])')) {
-            setTimeout(() => {
-                const firstInput = customModalFormContainer.querySelector('input:not([type=hidden])');
-                if (firstInput) firstInput.focus();
-            } , 50);
-        } else if (type === "prompt" && customModalInput) {
-             setTimeout(() => customModalInput.focus(), 50);
+            if (onSubmit) {
+              try {
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = getUIText("system_processing_short");
+                const resultFromOnSubmit = await onSubmit(formData);
+
+                if (typeof resultFromOnSubmit === 'object' && resultFromOnSubmit !== null) {
+                  resolveValue = resultFromOnSubmit;
+                  if (resultFromOnSubmit.keepOpen === true) {
+                    modalShouldClose = false;
+                  }
+                } else {
+
+                  resolveValue = resultFromOnSubmit;
+                }
+              } catch (error) {
+                log(LOG_LEVEL_ERROR, "Error in modal onSubmit:", error);
+
+                if (error.handledByCaller) {
+                  modalShouldClose = false;
+
+                } else {
+
+                  const errorDisplay = customModalFormContainer.querySelector('.modal-error-display') || document.createElement('p');
+                  errorDisplay.className = 'modal-error-display';
+                  errorDisplay.style.color = 'var(--color-meter-critical)';
+                  errorDisplay.style.marginTop = 'var(--spacing-sm)';
+                  errorDisplay.textContent = error.message || getUIText("error_api_call_failed", { ERROR_MSG: "Operation failed" });
+                  if (!customModalFormContainer.querySelector('.modal-error-display')) customModalFormContainer.appendChild(errorDisplay);
+                  modalShouldClose = false;
+                }
+
+                if (!error.handledByCaller) {
+                  resolveValue = { success: false, error: error };
+                } else {
+
+                  resolveValue = { success: false, flowDiverted: true };
+                }
+              } finally {
+                if (document.body.contains(confirmBtn)) {
+                  confirmBtn.disabled = false;
+                  confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, modalThemeContext);
+                }
+              }
+            } else {
+              resolveValue = formData;
+            }
+          } else if (type === "prompt" && customModalInput) {
+            resolveValue = customModalInput.value;
+          } else if (type === "confirm") {
+            resolveValue = true;
+          } else {
+            resolveValue = null;
+          }
+
+          if (currentModalResolve && !(resolveValue && resolveValue.flowDiverted && modalShouldClose === false)) {
+            currentModalResolve(resolveValue);
+          }
+
+          if (modalShouldClose) {
+            hideCustomModal();
+          }
+        });
+        customModalActions.appendChild(confirmBtn);
+
+        if (type === "confirm" || type === "prompt" || type === "form" || (formFields && formFields.length > 0)) {
+          const cancelBtn = document.createElement("button");
+          cancelBtn.classList.add("ui-button");
+          cancelBtn.textContent = getUIText(cancelTextKey || "modal_cancel_button", {}, modalThemeContext);
+          cancelBtn.addEventListener("click", () => {
+            if (currentModalResolve) currentModalResolve(type === "prompt" ? null : (type === "form" ? null : false));
+            hideCustomModal();
+          });
+          customModalActions.appendChild(cancelBtn);
         }
-      });
+      }
+
+      customModalOverlay.classList.add("active");
+      if ((type === "form" || (formFields && formFields.length > 0)) && customModalFormContainer.querySelector('input:not([type=hidden])')) {
+        setTimeout(() => {
+          const firstInput = customModalFormContainer.querySelector('input:not([type=hidden])');
+          if (firstInput) firstInput.focus();
+        }, 50);
+      } else if (type === "prompt" && customModalInput) {
+        setTimeout(() => customModalInput.focus(), 50);
+      }
+    });
   }
 
   // --- API Service Functions ---
@@ -2344,120 +2322,112 @@ async function callGeminiAPI(currentTurnHistory) {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      const data = await response.json(); // Always try to parse JSON
+      const data = await response.json();
       if (!response.ok) {
         const errorMsg = data.error?.message || `HTTP error ${response.status}`;
         log(LOG_LEVEL_WARN, `Login API error: ${errorMsg}`, data.error?.code);
-        // Create a new error object and attach the code and original data
+
         const err = new Error(errorMsg);
-        err.code = data.error?.code; // Attach the specific error code
-        err.data = data.error;      // Attach the full error data from backend (e.g., includes email for EMAIL_NOT_CONFIRMED)
+        err.code = data.error?.code;
+        err.data = data.error;
         throw err;
       }
-      return data; // Expects { token, user: { id, email, preferred_app_language, ... } }
+      return data;
     } catch (error) {
-      // If error is already augmented (from the !response.ok block), rethrow it.
-      // If it's a network error or something else, log it.
-      if (!error.code) { // Indicates it's likely a network error, not a server-sent JSON error
+
+      if (!error.code) {
         log(LOG_LEVEL_ERROR, 'Network or unexpected error in apiLoginUser:', error.message);
       }
-      // Rethrow the error so the caller can inspect its properties (like .code)
+
       throw error;
     }
   }
 
+  /**
+   * Displays a modal informing the user their email is not confirmed,
+   * and provides an option to resend the confirmation email.
+   * @param {string} unconfirmedEmail The email address that needs confirmation.
+   */
+  async function showEmailNotConfirmedModal(unconfirmedEmail) {
+    log(LOG_LEVEL_INFO, `Showing 'Email Not Confirmed' modal for: ${unconfirmedEmail}`);
 
-/**
- * Displays a modal informing the user their email is not confirmed,
- * and provides an option to resend the confirmation email.
- * @param {string} unconfirmedEmail The email address that needs confirmation.
- */
-async function showEmailNotConfirmedModal(unconfirmedEmail) {
-  log(LOG_LEVEL_INFO, `Showing 'Email Not Confirmed' modal for: ${unconfirmedEmail}`);
+    let resendCooldownActive = false;
 
-  let resendCooldownActive = false; // Cooldown state for the resend button
+    const customActions = [
+      {
+        textKey: "button_resend_confirmation_email",
+        className: "ui-button primary",
+        onClick: async (clickedButtonElement) => {
+          if (resendCooldownActive) return;
 
-  const customActions = [
-    {
-      textKey: "button_resend_confirmation_email",
-      className: "ui-button primary",
-      onClick: async (clickedButtonElement) => { // Now receives the button element
-        if (resendCooldownActive) return;
+          resendCooldownActive = true;
+          clickedButtonElement.disabled = true;
+          const originalButtonText = clickedButtonElement.textContent;
+          clickedButtonElement.textContent = getUIText("system_processing_short");
 
-        resendCooldownActive = true;
-        clickedButtonElement.disabled = true;
-        const originalButtonText = clickedButtonElement.textContent;
-        clickedButtonElement.textContent = getUIText("system_processing_short");
+          const modalMessageElement = document.getElementById('custom-modal-message');
 
-        const modalMessageElement = document.getElementById('custom-modal-message');
+          try {
+            const result = await apiPublicResendConfirmationEmail(unconfirmedEmail);
+            if (modalMessageElement) {
+              modalMessageElement.innerHTML = '';
+              const successP = document.createElement('p');
+              successP.textContent = result.message;
+              successP.style.color = 'var(--color-status-ok-text)';
+              modalMessageElement.appendChild(successP);
+            }
+            clickedButtonElement.style.display = 'none';
 
-        try {
-          const result = await apiPublicResendConfirmationEmail(unconfirmedEmail);
-          if (modalMessageElement) {
-            modalMessageElement.innerHTML = ''; // Clear previous instructions
-            const successP = document.createElement('p');
-            successP.textContent = result.message; // Display backend message
-            successP.style.color = 'var(--color-status-ok-text)';
-            modalMessageElement.appendChild(successP);
-          }
-          clickedButtonElement.style.display = 'none'; // Hide resend button after success
+            const modalActionsArea = document.getElementById('custom-modal-actions');
+            let closeButton = modalActionsArea ? modalActionsArea.querySelector('.ui-button:not(.primary)') : null;
 
-          // Ensure the other button (Cancel/OK) is visible and says "OK" or "Close"
-          // Query for the cancel button specifically if needed.
-          const modalActionsArea = document.getElementById('custom-modal-actions');
-          let closeButton = modalActionsArea ? modalActionsArea.querySelector('.ui-button:not(.primary)') : null;
+            if (!closeButton && modalActionsArea) {
+              closeButton = document.createElement('button');
+              closeButton.className = 'ui-button';
+              modalActionsArea.appendChild(closeButton);
+            }
+            if (closeButton) {
+              closeButton.textContent = getUIText("modal_ok_button");
 
-          if (!closeButton && modalActionsArea) { // If cancel wasn't there or was removed, add an OK button
-            closeButton = document.createElement('button');
-            closeButton.className = 'ui-button';
-            modalActionsArea.appendChild(closeButton);
-          }
-          if (closeButton) {
-            closeButton.textContent = getUIText("modal_ok_button");
-            // Ensure its click listener simply closes the modal if it doesn't already
-            // This part is a bit tricky as the original cancel button's listener is set outside.
-            // A robust solution might involve having showCustomModal return button references.
-            // For now, we assume the "Cancel" button already has a hideCustomModal listener.
-            // If we add a new OK button, it needs one.
-            if (!closeButton.onclick) { // crude check if it has an existing onclick
+              if (!closeButton.onclick) {
                 closeButton.onclick = () => hideCustomModal();
+              }
             }
-          }
 
-        } catch (resendError) {
-          log(LOG_LEVEL_ERROR, `Failed to resend confirmation email publicly: ${resendError.message}`);
-          if (modalMessageElement) {
-            displayModalError(getUIText("error_api_call_failed", { ERROR_MSG: resendError.message }), modalMessageElement);
-          }
-          clickedButtonElement.disabled = false; // Re-enable on error
-          clickedButtonElement.textContent = originalButtonText;
-          // Implement cooldown
-          setTimeout(() => {
-            resendCooldownActive = false;
-            if(document.body.contains(clickedButtonElement)) { // Check if button still exists
-                clickedButtonElement.disabled = false;
+          } catch (resendError) {
+            log(LOG_LEVEL_ERROR, `Failed to resend confirmation email publicly: ${resendError.message}`);
+            if (modalMessageElement) {
+              displayModalError(getUIText("error_api_call_failed", { ERROR_MSG: resendError.message }), modalMessageElement);
             }
-          }, 30000); // 30-second cooldown
+            clickedButtonElement.disabled = false;
+            clickedButtonElement.textContent = originalButtonText;
+
+            setTimeout(() => {
+              resendCooldownActive = false;
+              if (document.body.contains(clickedButtonElement)) {
+                clickedButtonElement.disabled = false;
+              }
+            }, 30000);
+          }
+        }
+      },
+      {
+        textKey: "modal_cancel_button",
+        className: "ui-button",
+        onClick: () => {
+          hideCustomModal();
         }
       }
-    },
-    {
-      textKey: "modal_cancel_button",
-      className: "ui-button",
-      onClick: () => { // This button's onClick doesn't need the element itself
-        hideCustomModal();
-      }
-    }
-  ];
+    ];
 
-  await showCustomModal({
-    type: "alert", // Using "alert" as base type; customActions define behavior.
-    titleKey: "modal_title_email_not_confirmed",
-    messageKey: "message_email_not_confirmed_instruction",
-    replacements: { USER_EMAIL: unconfirmedEmail },
-    customActions: customActions,
-  });
-}
+    await showCustomModal({
+      type: "alert",
+      titleKey: "modal_title_email_not_confirmed",
+      messageKey: "message_email_not_confirmed_instruction",
+      replacements: { USER_EMAIL: unconfirmedEmail },
+      customActions: customActions,
+    });
+  }
 
   /**
    * Fetches user preferences from the backend.
@@ -2477,7 +2447,7 @@ async function showEmailNotConfirmedModal(unconfirmedEmail) {
         log(LOG_LEVEL_WARN, `Fetch Preferences API error: ${errorMsg}`, data.error?.code);
         throw new Error(errorMsg);
       }
-      return data.preferences; // Should return { preferred_app_language, ... }
+      return data.preferences;
     } catch (error) {
       log(LOG_LEVEL_ERROR, 'Error in apiFetchUserPreferences:', error);
       throw error;
@@ -2503,7 +2473,7 @@ async function showEmailNotConfirmedModal(unconfirmedEmail) {
         log(LOG_LEVEL_WARN, `Update Preferences API error: ${errorMsg}`, data.error?.code);
         throw new Error(errorMsg);
       }
-      return data.user; // Returns the updated user object with new preferences
+      return data.user;
     } catch (error) {
       log(LOG_LEVEL_ERROR, 'Error in apiUpdateUserPreferences:', error);
       throw error;
@@ -2514,515 +2484,485 @@ async function showEmailNotConfirmedModal(unconfirmedEmail) {
    * Changes the user's password via API.
    */
   async function apiChangePassword(token, currentPassword, newPassword) {
-      try {
-          const response = await fetch('/api/v1/users/me/password', {
-              method: 'PUT',
-              headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ currentPassword, newPassword }),
-          });
-          const data = await response.json();
-          if (!response.ok) {
-              const errorMsg = data.error?.message || `HTTP error ${response.status}`;
-              log(LOG_LEVEL_WARN, `Change Password API error: ${errorMsg}`, data.error?.code);
-              throw new Error(errorMsg); // This will be caught by the modal's onSubmit handler
-          }
-          return data; // Expects { message: "Password changed successfully." }
-      } catch (error) {
-          log(LOG_LEVEL_ERROR, 'Error in apiChangePassword:', error);
-          throw error; // Re-throw to be handled by the calling function (modal)
+    try {
+      const response = await fetch('/api/v1/users/me/password', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        const errorMsg = data.error?.message || `HTTP error ${response.status}`;
+        log(LOG_LEVEL_WARN, `Change Password API error: ${errorMsg}`, data.error?.code);
+        throw new Error(errorMsg);
       }
+      return data;
+    } catch (error) {
+      log(LOG_LEVEL_ERROR, 'Error in apiChangePassword:', error);
+      throw error;
+    }
   }
 
   /**
    * Requests the backend to resend a confirmation email.
    */
   async function apiResendConfirmationEmail(token) {
-      try {
-          const response = await fetch('/api/v1/auth/resend-confirmation-email', {
-              method: 'POST',
-              headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json'
-              },
-          });
-          const data = await response.json();
-          if (!response.ok) {
-              const errorMsg = data.error?.message || `HTTP error ${response.status}`;
-              log(LOG_LEVEL_WARN, `Resend Confirmation API error: ${errorMsg}`, data.error?.code);
-              throw new Error(errorMsg);
-          }
-          return data; // Expects { message: "Confirmation email resent..." }
-      } catch (error) {
-          log(LOG_LEVEL_ERROR, 'Error in apiResendConfirmationEmail:', error);
-          throw error;
+    try {
+      const response = await fetch('/api/v1/auth/resend-confirmation-email', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        const errorMsg = data.error?.message || `HTTP error ${response.status}`;
+        log(LOG_LEVEL_WARN, `Resend Confirmation API error: ${errorMsg}`, data.error?.code);
+        throw new Error(errorMsg);
       }
-  }
-
-
-/**
- * Calls the public API to resend a confirmation email.
- * @param {string} email The email address to resend confirmation for.
- * @returns {Promise<object>} The JSON response from the server.
- */
-async function apiPublicResendConfirmationEmail(email) {
-  log(LOG_LEVEL_INFO, `Requesting public resend confirmation for: ${email}`);
-  try {
-    const response = await fetch('/api/v1/auth/public-resend-confirmation', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    });
-    const data = await response.json(); // Always expect JSON
-    if (!response.ok) {
-      // Even if not response.ok, the body might contain a JSON error from the backend
-      const errorMsg = data.error?.message || `Public Resend API Error ${response.status}`;
-      log(LOG_LEVEL_WARN, `Public Resend Confirmation API error: ${errorMsg}`, data.error?.code);
-      const err = new Error(errorMsg);
-      err.code = data.error?.code;
-      err.data = data.error;
-      throw err;
+      return data;
+    } catch (error) {
+      log(LOG_LEVEL_ERROR, 'Error in apiResendConfirmationEmail:', error);
+      throw error;
     }
-    log(LOG_LEVEL_INFO, "Public resend confirmation API success:", data.message);
-    return data; // Contains { message: "..." }
-  } catch (error) {
-    log(LOG_LEVEL_ERROR, 'Error in apiPublicResendConfirmationEmail:', error);
-    throw error; // Re-throw to be handled by the caller
   }
-}
 
+  /**
+   * Calls the public API to resend a confirmation email.
+   * @param {string} email The email address to resend confirmation for.
+   * @returns {Promise<object>} The JSON response from the server.
+   */
+  async function apiPublicResendConfirmationEmail(email) {
+    log(LOG_LEVEL_INFO, `Requesting public resend confirmation for: ${email}`);
+    try {
+      const response = await fetch('/api/v1/auth/public-resend-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
 
-function displayModalError(messageText, containerElement) {
+        const errorMsg = data.error?.message || `Public Resend API Error ${response.status}`;
+        log(LOG_LEVEL_WARN, `Public Resend Confirmation API error: ${errorMsg}`, data.error?.code);
+        const err = new Error(errorMsg);
+        err.code = data.error?.code;
+        err.data = data.error;
+        throw err;
+      }
+      log(LOG_LEVEL_INFO, "Public resend confirmation API success:", data.message);
+      return data;
+    } catch (error) {
+      log(LOG_LEVEL_ERROR, 'Error in apiPublicResendConfirmationEmail:', error);
+      throw error;
+    }
+  }
+
+  function displayModalError(messageText, containerElement) {
     if (!containerElement) {
-        log(LOG_LEVEL_WARN, "displayModalError: containerElement is null or undefined.");
-        return;
+      log(LOG_LEVEL_WARN, "displayModalError: containerElement is null or undefined.");
+      return;
     }
     let errorDisplay = containerElement.querySelector('.modal-error-display');
     if (!errorDisplay) {
-        errorDisplay = document.createElement('p');
-        errorDisplay.className = 'modal-error-display'; // Ensure this class is styled in style.css
-        errorDisplay.style.color = 'var(--color-meter-critical)'; // Example styling
-        errorDisplay.style.marginTop = 'var(--spacing-sm)';
-        errorDisplay.style.marginBottom = 'var(--spacing-sm)'; // Ensure it doesn't push content too much
-        // Prepend error so it appears above form or input if container is modal-message
-        if (containerElement.id === 'custom-modal-message') {
-            containerElement.insertBefore(errorDisplay, containerElement.firstChild);
-        } else { // Append if it's inside a form container
-            containerElement.appendChild(errorDisplay);
-        }
+      errorDisplay = document.createElement('p');
+      errorDisplay.className = 'modal-error-display';
+      errorDisplay.style.color = 'var(--color-meter-critical)';
+      errorDisplay.style.marginTop = 'var(--spacing-sm)';
+      errorDisplay.style.marginBottom = 'var(--spacing-sm)';
+
+      if (containerElement.id === 'custom-modal-message') {
+        containerElement.insertBefore(errorDisplay, containerElement.firstChild);
+      } else {
+        containerElement.appendChild(errorDisplay);
+      }
     }
     errorDisplay.textContent = messageText;
-}
+  }
 
   /**
    * Displays the modal for changing the user's password.
    */
   async function showChangePasswordModal() {
-      if (!currentUser || !currentUser.token) {
-          log(LOG_LEVEL_WARN, "showChangePasswordModal called but no user/token available.");
-          return;
+    if (!currentUser || !currentUser.token) {
+      log(LOG_LEVEL_WARN, "showChangePasswordModal called but no user/token available.");
+      return;
+    }
+
+    await showCustomModal({
+      type: "form",
+      titleKey: "modal_title_change_password",
+      formFields: [
+        { id: "currentPassword", labelKey: "label_current_password", type: "password", placeholderKey: "placeholder_current_password", required: true },
+        { id: "newPassword", labelKey: "label_new_password", type: "password", placeholderKey: "placeholder_new_password", required: true },
+        { id: "confirmNewPassword", labelKey: "label_confirm_new_password", type: "password", placeholderKey: "placeholder_confirm_new_password", required: true },
+      ],
+      confirmTextKey: "button_profile_change_password",
+      onSubmit: async (formData) => {
+        const { currentPassword, newPassword, confirmNewPassword } = formData;
+
+        if (newPassword.length < 8) {
+          throw new Error(getUIText("alert_new_password_too_short"));
+        }
+        if (newPassword !== confirmNewPassword) {
+          throw new Error(getUIText("alert_passwords_do_not_match"));
+        }
+        if (currentPassword === newPassword) {
+          throw new Error(getUIText("alert_new_password_same_as_old"));
+        }
+
+        try {
+          await apiChangePassword(currentUser.token, currentPassword, newPassword);
+
+          return { success: true, actionAfterClose: 'showPasswordChangeSuccessAlert' };
+        } catch (error) {
+          log(LOG_LEVEL_ERROR, "Password change failed:", error.message);
+          throw error;
+        }
+      },
+    }).then(result => {
+      if (result && result.actionAfterClose === 'showPasswordChangeSuccessAlert') {
+        showCustomModal({
+          type: "alert",
+          titleKey: "alert_password_change_success_title",
+          messageKey: "alert_password_change_success_message"
+        });
+
       }
+    }).catch(error => {
 
-      await showCustomModal({
-          type: "form",
-          titleKey: "modal_title_change_password",
-          formFields: [
-              { id: "currentPassword", labelKey: "label_current_password", type: "password", placeholderKey: "placeholder_current_password", required: true },
-              { id: "newPassword", labelKey: "label_new_password", type: "password", placeholderKey: "placeholder_new_password", required: true },
-              { id: "confirmNewPassword", labelKey: "label_confirm_new_password", type: "password", placeholderKey: "placeholder_confirm_new_password", required: true },
-          ],
-          confirmTextKey: "button_profile_change_password", // Re-use if appropriate, or make a specific "Update Password"
-          onSubmit: async (formData) => {
-              const { currentPassword, newPassword, confirmNewPassword } = formData;
-
-              // Client-side validation
-              if (newPassword.length < 8) {
-                  throw new Error(getUIText("alert_new_password_too_short"));
-              }
-              if (newPassword !== confirmNewPassword) {
-                  throw new Error(getUIText("alert_passwords_do_not_match"));
-              }
-              if (currentPassword === newPassword) {
-                  throw new Error(getUIText("alert_new_password_same_as_old"));
-              }
-
-              try {
-                  await apiChangePassword(currentUser.token, currentPassword, newPassword);
-                  // Success! Modal will close by default. Then show success alert.
-                  return { success: true, actionAfterClose: 'showPasswordChangeSuccessAlert' };
-              } catch (error) {
-                  log(LOG_LEVEL_ERROR, "Password change failed:", error.message);
-                  throw error; // Re-throw to be displayed by showCustomModal's error handling
-              }
-          },
-      }).then(result => {
-          if (result && result.actionAfterClose === 'showPasswordChangeSuccessAlert') {
-              showCustomModal({
-                  type: "alert",
-                  titleKey: "alert_password_change_success_title",
-                  messageKey: "alert_password_change_success_message"
-              });
-              // Consider if you want to force re-login here for added security.
-              // For now, we'll just show a success message.
-              // If re-login is desired: handleLogout(); showLoginModal();
-          }
-      }).catch(error => {
-          // This catch is for fundamental issues with showCustomModal itself,
-          // or if onSubmit doesn't handle its own errors and they propagate.
-          // API errors from onSubmit should be caught and displayed within the modal by showCustomModal's logic.
-          log(LOG_LEVEL_ERROR, "Error from showChangePasswordModal's promise:", error);
-      });
+      log(LOG_LEVEL_ERROR, "Error from showChangePasswordModal's promise:", error);
+    });
   }
 
   async function showAuthModal(initialMode = 'login') {
-      log(LOG_LEVEL_DEBUG,"showAuthModal: Called with mode:", initialMode);
-      let currentMode = initialMode;
+    log(LOG_LEVEL_DEBUG, "showAuthModal: Called with mode:", initialMode);
+    let currentMode = initialMode;
 
-      // This function is called to (re)render the modal content based on currentMode
-      const renderAndDisplayForm = () => {
-          const isLogin = currentMode === 'login';
-          const titleKey = isLogin ? "modal_title_login" : "modal_title_register";
-          const confirmTextKey = isLogin ? "button_login" : "button_register";
-          const formFields = [];
+    const renderAndDisplayForm = () => {
+      const isLogin = currentMode === 'login';
+      const titleKey = isLogin ? "modal_title_login" : "modal_title_register";
+      const confirmTextKey = isLogin ? "button_login" : "button_register";
+      const formFields = [];
 
-          if (isLogin) {
-              formFields.push({ id: "authEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true });
-              formFields.push({ id: "authPassword", labelKey: "label_password", type: "password", placeholderKey: "placeholder_password", required: true });
-          } else { // Register mode
-              formFields.push({ id: "authEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true });
-              formFields.push({ id: "authPassword", labelKey: "label_password", type: "password", placeholderKey: "placeholder_password_register", required: true });
+      if (isLogin) {
+        formFields.push({ id: "authEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true });
+        formFields.push({ id: "authPassword", labelKey: "label_password", type: "password", placeholderKey: "placeholder_password", required: true });
+      } else {
+        formFields.push({ id: "authEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true });
+        formFields.push({ id: "authPassword", labelKey: "label_password", type: "password", placeholderKey: "placeholder_password_register", required: true });
+      }
+
+      const switchLinkContainer = document.createElement('div');
+      switchLinkContainer.className = 'auth-modal-links';
+
+      if (isLogin) {
+        const forgotPasswordLink = document.createElement('a');
+        forgotPasswordLink.href = '#';
+        forgotPasswordLink.textContent = getUIText("button_forgot_password");
+        forgotPasswordLink.className = 'forgot-password-link';
+        forgotPasswordLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          hideCustomModal();
+          showForgotPasswordRequestModal();
+        });
+        switchLinkContainer.appendChild(forgotPasswordLink);
+      }
+
+      const switchAuthModeLink = document.createElement('a');
+      switchAuthModeLink.href = '#';
+      const switchLinkTextKey = isLogin ? "modal_switch_to_register" : "modal_switch_to_login";
+      switchAuthModeLink.textContent = getUIText(switchLinkTextKey);
+      switchAuthModeLink.className = 'switch-auth-mode-link';
+      switchAuthModeLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        currentMode = isLogin ? 'register' : 'login';
+        hideCustomModal();
+        renderAndDisplayForm();
+      });
+      switchLinkContainer.appendChild(switchAuthModeLink);
+
+      const handleSubmitCallback = async (formData) => {
+        const email = formData.authEmail;
+        const password = formData.authPassword;
+
+        if (isLogin) {
+          try {
+            const loginData = await apiLoginUser(email, password);
+            await handleSuccessfulLogin(loginData.token, loginData.user);
+
+            return loginData;
+          } catch (error) {
+            if (error.code === "EMAIL_NOT_CONFIRMED") {
+
+              hideCustomModal();
+
+              await showEmailNotConfirmedModal(error.data?.email || email);
+
+              const handledError = new Error("Email not confirmed, alternate modal shown.");
+              handledError.handledByCaller = true;
+              throw handledError;
+            }
+
+            throw error;
           }
+        } else {
+          try {
+            const registrationData = await apiRegisterUser(email, password);
 
-          const switchLinkContainer = document.createElement('div');
-          switchLinkContainer.className = 'auth-modal-links';
+            return { success: true, actionAfterClose: 'showRegistrationSuccessAlert', data: registrationData };
+          } catch (error) {
 
-          if (isLogin) {
-              const forgotPasswordLink = document.createElement('a');
-              forgotPasswordLink.href = '#';
-              forgotPasswordLink.textContent = getUIText("button_forgot_password");
-              forgotPasswordLink.className = 'forgot-password-link';
-              forgotPasswordLink.addEventListener('click', (e) => {
-                  e.preventDefault();
-                  hideCustomModal(); // Close current auth modal
-                  showForgotPasswordRequestModal(); // Open forgot password modal
-              });
-              switchLinkContainer.appendChild(forgotPasswordLink);
+            throw error;
           }
-
-          const switchAuthModeLink = document.createElement('a');
-          switchAuthModeLink.href = '#';
-          const switchLinkTextKey = isLogin ? "modal_switch_to_register" : "modal_switch_to_login";
-          switchAuthModeLink.textContent = getUIText(switchLinkTextKey);
-          switchAuthModeLink.className = 'switch-auth-mode-link';
-          switchAuthModeLink.addEventListener('click', (e) => {
-              e.preventDefault();
-              currentMode = isLogin ? 'register' : 'login';
-              hideCustomModal(); // Close the current modal
-              renderAndDisplayForm();   // Re-render and show with the new mode
-          });
-          switchLinkContainer.appendChild(switchAuthModeLink);
-
-          // This is the function that will be called when the modal's "confirm" button is clicked
-          const handleSubmitCallback = async (formData) => {
-              const email = formData.authEmail;
-              const password = formData.authPassword;
-
-              if (isLogin) {
-                  try {
-                      const loginData = await apiLoginUser(email, password);
-                      await handleSuccessfulLogin(loginData.token, loginData.user);
-                      // If login is successful, showCustomModal will close itself
-                      // because we are returning a "truthy" value (the loginData object).
-                      return loginData; // Success, resolve the modal's promise
-                  } catch (error) {
-                      if (error.code === "EMAIL_NOT_CONFIRMED") {
-                          // IMPORTANT: First, close the current login modal.
-                          hideCustomModal();
-                          // Then, show the specialized "email not confirmed" modal.
-                          // error.data.email should contain the email from backend
-                          await showEmailNotConfirmedModal(error.data?.email || email);
-                          // We've handled this error by showing another modal.
-                          // We need to signal to the original showCustomModal that this specific submission
-                          // path is "handled" and it shouldn't display a generic error.
-                          // We can achieve this by throwing a specific type of error or returning
-                          // a specific object that showCustomModal's .catch() can identify.
-                          // For simplicity, we'll let it fall through to the generic catch in
-                          // showCustomModal's onSubmit handling, but our error message from backend will be specific.
-                          // OR, better, throw an error that indicates it was handled, so generic error display is skipped.
-                          const handledError = new Error("Email not confirmed, alternate modal shown.");
-                          handledError.handledByCaller = true; // Custom flag
-                          throw handledError; // This will be caught by showCustomModal's catch
-                      }
-                      // For other errors, re-throw them so showCustomModal's internal error handling displays them.
-                      throw error;
-                  }
-              } else { // Register mode
-                  try {
-                    const registrationData = await apiRegisterUser(email, password);
-                    // For registration, we want the modal to close, and then show a success alert.
-                    // So, we return an object that showCustomModal can use in its .then()
-                    return { success: true, actionAfterClose: 'showRegistrationSuccessAlert', data: registrationData };
-                  } catch (error) {
-                    // Let showCustomModal display this error within the registration form.
-                    throw error;
-                  }
-              }
-          };
-
-          // Now call showCustomModal with all the configurations
-          showCustomModal({
-              type: "form",
-              titleKey: titleKey,
-              formFields: formFields,
-              htmlContent: switchLinkContainer, // This includes the "Forgot Password?" and mode switch links
-              confirmTextKey: confirmTextKey,
-              onSubmit: handleSubmitCallback,
-          }).then(result => {
-              if (result && result.actionAfterClose === 'showRegistrationSuccessAlert') {
-                  const registeredEmail = result.data?.user?.email || ''; // Get email from registration response
-
-                  showCustomModal({ // Show a new alert modal after registration
-                      type: "alert",
-                      titleKey: "alert_registration_success_title",
-                      messageKey: "alert_registration_success_check_email_message", // USE THE NEW KEY
-                      replacements: { USER_EMAIL: registeredEmail }, // Pass the email
-                      // Default OK button is fine here
-                  });
-              }
-              // If login was successful, handleSuccessfulLogin already took care of UI updates.
-              // If EMAIL_NOT_CONFIRMED, showEmailNotConfirmedModal was called.
-          }).catch(error => {
-              // This catch is for errors re-thrown by handleSubmitCallback that were NOT handledByCaller,
-              // OR if showCustomModal itself had an issue.
-              // showCustomModal's internal onSubmit catch should have displayed errors within the modal.
-              if (error && error.handledByCaller) {
-                  log(LOG_LEVEL_DEBUG, "Auth modal submission handled by custom flow (e.g., email not confirmed).");
-              } else {
-                log(LOG_LEVEL_ERROR, "Error from showAuthModal's promise chain (e.g., unhandled rejection from onSubmit or modal issue):", error);
-                // You might show a generic fallback alert here if needed,
-                // but errors during form submission should ideally be shown within the form modal itself.
-              }
-          });
+        }
       };
 
-      renderAndDisplayForm(); // Call to render the initial modal state
-  }
-
-async function showForgotPasswordRequestModal() {
-    await showCustomModal({
+      showCustomModal({
         type: "form",
-        titleKey: "modal_title_forgot_password", // Add to global-texts.js
-        formFields: [
-            { id: "resetEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true }
-        ],
-        confirmTextKey: "button_send_reset_link", // Add to global-texts.js
-        onSubmit: async (formData) => {
-            const email = formData.resetEmail;
-            try {
-                const response = await fetch('/api/v1/auth/forgot-password', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email }),
-                });
-                const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(data.error?.message || "Failed to request password reset.");
-                }
-                // On success (even if email doesn't exist), the backend sends a generic message.
-                // We show this generic message to the user.
-                return { success: true, message: data.message, actionAfterClose: 'showResetRequestSentAlert' };
-            } catch (error) {
-                log(LOG_LEVEL_ERROR, "Forgot password request failed:", error);
-                throw error; // Let showCustomModal handle displaying this error
-            }
-        }
-    }).then(result => {
-        if (result && result.actionAfterClose === 'showResetRequestSentAlert' && result.message) {
+        titleKey: titleKey,
+        formFields: formFields,
+        htmlContent: switchLinkContainer,
+        confirmTextKey: confirmTextKey,
+        onSubmit: handleSubmitCallback,
+      }).then(result => {
+        if (result && result.actionAfterClose === 'showRegistrationSuccessAlert') {
+          const registeredEmail = result.data?.user?.email || '';
+
           showCustomModal({
-              type: "alert",
-              titleKey: "alert_reset_link_sent_title",
-              messageText: result.message
+            type: "alert",
+            titleKey: "alert_registration_success_title",
+            messageKey: "alert_registration_success_check_email_message",
+            replacements: { USER_EMAIL: registeredEmail },
+
           });
         }
+
+      }).catch(error => {
+
+        if (error && error.handledByCaller) {
+          log(LOG_LEVEL_DEBUG, "Auth modal submission handled by custom flow (e.g., email not confirmed).");
+        } else {
+          log(LOG_LEVEL_ERROR, "Error from showAuthModal's promise chain (e.g., unhandled rejection from onSubmit or modal issue):", error);
+
+        }
+      });
+    };
+
+    renderAndDisplayForm();
+  }
+
+  async function showForgotPasswordRequestModal() {
+    await showCustomModal({
+      type: "form",
+      titleKey: "modal_title_forgot_password",
+      formFields: [
+        { id: "resetEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true }
+      ],
+      confirmTextKey: "button_send_reset_link",
+      onSubmit: async (formData) => {
+        const email = formData.resetEmail;
+        try {
+          const response = await fetch('/api/v1/auth/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error?.message || "Failed to request password reset.");
+          }
+
+          return { success: true, message: data.message, actionAfterClose: 'showResetRequestSentAlert' };
+        } catch (error) {
+          log(LOG_LEVEL_ERROR, "Forgot password request failed:", error);
+          throw error;
+        }
+      }
+    }).then(result => {
+      if (result && result.actionAfterClose === 'showResetRequestSentAlert' && result.message) {
+        showCustomModal({
+          type: "alert",
+          titleKey: "alert_reset_link_sent_title",
+          messageText: result.message
+        });
+      }
     }).catch(error => {
-        log(LOG_LEVEL_ERROR, "Error from showForgotPasswordRequestModal promise:", error);
-        // Error already displayed in the modal by onSubmit, or by showCustomModal if it was a validation issue
+      log(LOG_LEVEL_ERROR, "Error from showForgotPasswordRequestModal promise:", error);
+
     });
-}
+  }
 
   /**
    * Displays the user profile modal.
    */
   async function showUserProfileModal() {
-      if (!currentUser) {
-          log(LOG_LEVEL_WARN, "showUserProfileModal called but no user is logged in.");
-          return;
-      }
+    if (!currentUser) {
+      log(LOG_LEVEL_WARN, "showUserProfileModal called but no user is logged in.");
+      return;
+    }
 
-      const profileContent = document.createElement('div');
-      profileContent.className = 'profile-modal-content';
+    const profileContent = document.createElement('div');
+    profileContent.className = 'profile-modal-content';
 
-      const dl = document.createElement('dl');
+    const dl = document.createElement('dl');
 
-      // Email
-      const dtEmail = document.createElement('dt');
-      dtEmail.textContent = getUIText("label_profile_email");
-      const ddEmail = document.createElement('dd');
+    const dtEmail = document.createElement('dt');
+    dtEmail.textContent = getUIText("label_profile_email");
+    const ddEmail = document.createElement('dd');
 
-      const emailTextNode = document.createTextNode(currentUser.email + " "); // Add space after email
-      ddEmail.appendChild(emailTextNode);
+    const emailTextNode = document.createTextNode(currentUser.email + " ");
+    ddEmail.appendChild(emailTextNode);
 
-      const emailStatusSpan = document.createElement('span');
-      emailStatusSpan.className = 'email-status';
+    const emailStatusSpan = document.createElement('span');
+    emailStatusSpan.className = 'email-status';
 
-      if (currentUser.email_confirmed) {
-          emailStatusSpan.textContent = `(${getUIText("profile_email_confirmed_status")})`;
-          emailStatusSpan.classList.add('confirmed');
-          ddEmail.appendChild(emailStatusSpan);
-      } else {
-          emailStatusSpan.textContent = `(${getUIText("profile_email_unconfirmed_status")})`;
-          emailStatusSpan.classList.add('unconfirmed');
-          ddEmail.appendChild(emailStatusSpan); // Add " (Not Confirmed"
+    if (currentUser.email_confirmed) {
+      emailStatusSpan.textContent = `(${getUIText("profile_email_confirmed_status")})`;
+      emailStatusSpan.classList.add('confirmed');
+      ddEmail.appendChild(emailStatusSpan);
+    } else {
+      emailStatusSpan.textContent = `(${getUIText("profile_email_unconfirmed_status")})`;
+      emailStatusSpan.classList.add('unconfirmed');
+      ddEmail.appendChild(emailStatusSpan);
 
-          const resendLink = document.createElement('a');
-          resendLink.href = '#';
-          resendLink.textContent = getUIText("button_resend_confirmation_email");
-          resendLink.className = 'resend-confirmation-link';
-          resendLink.style.marginLeft = '5px'; // Add some space
+      const resendLink = document.createElement('a');
+      resendLink.href = '#';
+      resendLink.textContent = getUIText("button_resend_confirmation_email");
+      resendLink.className = 'resend-confirmation-link';
+      resendLink.style.marginLeft = '5px';
 
-          resendLink.addEventListener('click', async (e) => {
-              e.preventDefault();
-              // ... (same event listener logic as above) ...
-              e.preventDefault();
-              try {
-                  resendLink.textContent = getUIText("system_processing_short"); // Indicate processing
-                  resendLink.style.pointerEvents = 'none'; // Disable link during API call
-                  await apiResendConfirmationEmail(currentUser.token);
-                  hideCustomModal(); // Close profile modal
-                  await showCustomModal({ // Show success alert
-                      type: "alert",
-                      titleKey: "alert_confirmation_email_resent_title",
-                      messageKey: "alert_confirmation_email_resent_message"
-                  });
-              } catch (error) {
-                  log(LOG_LEVEL_ERROR, "Failed to resend confirmation email:", error);
-                  hideCustomModal();
-                  await showCustomModal({
-                      type: "alert",
-                      titleKey: "alert_title_error",
-                      messageKey: "error_api_call_failed",
-                      replacements: { ERROR_MSG: error.message }
-                  });
-              }
+      resendLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        e.preventDefault();
+        try {
+          resendLink.textContent = getUIText("system_processing_short");
+          resendLink.style.pointerEvents = 'none';
+          await apiResendConfirmationEmail(currentUser.token);
+          hideCustomModal();
+          await showCustomModal({
+            type: "alert",
+            titleKey: "alert_confirmation_email_resent_title",
+            messageKey: "alert_confirmation_email_resent_message"
           });
-          ddEmail.appendChild(document.createTextNode(" - ")); // Separator
-          ddEmail.appendChild(resendLink); // Add resend link
+        } catch (error) {
+          log(LOG_LEVEL_ERROR, "Failed to resend confirmation email:", error);
+          hideCustomModal();
+          await showCustomModal({
+            type: "alert",
+            titleKey: "alert_title_error",
+            messageKey: "error_api_call_failed",
+            replacements: { ERROR_MSG: error.message }
+          });
+        }
+      });
+      ddEmail.appendChild(document.createTextNode(" - "));
+      ddEmail.appendChild(resendLink);
+    }
+    dl.appendChild(dtEmail);
+    dl.appendChild(ddEmail);
+
+    if (currentUser.created_at) {
+      const dtJoined = document.createElement('dt');
+      dtJoined.textContent = getUIText("label_profile_joined_date");
+      const ddJoined = document.createElement('dd');
+      try {
+        ddJoined.textContent = new Date(currentUser.created_at).toLocaleDateString(currentAppLanguage, {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+      } catch (e) {
+        ddJoined.textContent = new Date(currentUser.created_at).toLocaleDateString(undefined, {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+        log(LOG_LEVEL_WARN, "Error formatting date with currentAppLanguage, used default locale.", e);
       }
-      dl.appendChild(dtEmail);
-      dl.appendChild(ddEmail);
+      dl.appendChild(dtJoined);
+      dl.appendChild(ddJoined);
+    }
 
-      // Joined Date
-      if (currentUser.created_at) {
-          const dtJoined = document.createElement('dt');
-          dtJoined.textContent = getUIText("label_profile_joined_date");
-          const ddJoined = document.createElement('dd');
-          try {
-              ddJoined.textContent = new Date(currentUser.created_at).toLocaleDateString(currentAppLanguage, {
-                  year: 'numeric', month: 'long', day: 'numeric'
-              });
-          } catch (e) {
-              ddJoined.textContent = new Date(currentUser.created_at).toLocaleDateString(undefined, { // Fallback to default locale
-                  year: 'numeric', month: 'long', day: 'numeric'
-              });
-              log(LOG_LEVEL_WARN, "Error formatting date with currentAppLanguage, used default locale.", e);
-          }
-          dl.appendChild(dtJoined);
-          dl.appendChild(ddJoined);
-      }
+    profileContent.appendChild(dl);
 
-      profileContent.appendChild(dl);
+    const prefsTitle = document.createElement('h4');
+    prefsTitle.textContent = getUIText("label_profile_preferences_title");
+    prefsTitle.style.fontWeight = 'var(--font-weight-semibold)';
+    prefsTitle.style.color = 'var(--color-text-secondary)';
+    prefsTitle.style.fontSize = 'var(--font-size-md)';
+    prefsTitle.style.marginBottom = 'var(--spacing-sm)';
+    prefsTitle.style.marginTop = 'var(--spacing-lg)';
+    profileContent.appendChild(prefsTitle);
 
-      // Preferences Section
-      const prefsTitle = document.createElement('h4');
-      prefsTitle.textContent = getUIText("label_profile_preferences_title");
-      prefsTitle.style.fontWeight = 'var(--font-weight-semibold)';
-      prefsTitle.style.color = 'var(--color-text-secondary)';
-      prefsTitle.style.fontSize = 'var(--font-size-md)';
-      prefsTitle.style.marginBottom = 'var(--spacing-sm)';
-      prefsTitle.style.marginTop = 'var(--spacing-lg)';
-      profileContent.appendChild(prefsTitle);
+    const prefsList = document.createElement('div');
 
-      const prefsList = document.createElement('div');
-
-      const appLangPref = document.createElement('div');
-      appLangPref.className = 'preference-item';
-      appLangPref.innerHTML = `
+    const appLangPref = document.createElement('div');
+    appLangPref.className = 'preference-item';
+    appLangPref.innerHTML = `
           <span class="pref-label">${getUIText("label_profile_app_language")}</span>
           <span class="pref-value">${currentAppLanguage.toUpperCase()}</span>
-      `; // TODO: Add button/dropdown to change
-      prefsList.appendChild(appLangPref);
+      `;
+    prefsList.appendChild(appLangPref);
 
-      const narrLangPref = document.createElement('div');
-      narrLangPref.className = 'preference-item';
-      narrLangPref.innerHTML = `
+    const narrLangPref = document.createElement('div');
+    narrLangPref.className = 'preference-item';
+    narrLangPref.innerHTML = `
           <span class="pref-label">${getUIText("label_profile_narrative_language")}</span>
           <span class="pref-value">${currentNarrativeLanguage.toUpperCase()}</span>
-      `; // TODO: Add button/dropdown to change
-      prefsList.appendChild(narrLangPref);
+      `;
+    prefsList.appendChild(narrLangPref);
 
-      const modelPref = document.createElement('div');
-      modelPref.className = 'preference-item';
-      modelPref.innerHTML = `
+    const modelPref = document.createElement('div');
+    modelPref.className = 'preference-item';
+    modelPref.innerHTML = `
           <span class="pref-label">${getUIText("label_profile_model_preference")}</span>
           <span class="pref-value">${currentModelName === PAID_MODEL_NAME ? 'Pro' : 'Flash'}</span>
-      `; // TODO: Add button/dropdown to change
-      prefsList.appendChild(modelPref);
+      `;
+    prefsList.appendChild(modelPref);
 
-      profileContent.appendChild(prefsList);
+    profileContent.appendChild(prefsList);
 
-      // Separator
-      const hr = document.createElement('hr');
-      profileContent.appendChild(hr);
+    const hr = document.createElement('hr');
+    profileContent.appendChild(hr);
 
-      // Change Password
-          const changePasswordContainer = document.createElement('div');
-          changePasswordContainer.className = 'change-password-button-container';
-          const changePasswordButton = document.createElement('button');
-          changePasswordButton.className = 'ui-button'; // No longer disabled by default
-          changePasswordButton.textContent = getUIText("button_profile_change_password");
-          changePasswordButton.addEventListener('click', () => {
-              hideCustomModal(); // Close profile modal first
-              showChangePasswordModal(); // Then open change password modal
-          });
+    const changePasswordContainer = document.createElement('div');
+    changePasswordContainer.className = 'change-password-button-container';
+    const changePasswordButton = document.createElement('button');
+    changePasswordButton.className = 'ui-button';
+    changePasswordButton.textContent = getUIText("button_profile_change_password");
+    changePasswordButton.addEventListener('click', () => {
+      hideCustomModal();
+      showChangePasswordModal();
+    });
 
-          changePasswordContainer.appendChild(changePasswordButton);
-          // No "coming soon" text needed anymore
-          profileContent.appendChild(changePasswordContainer);
+    changePasswordContainer.appendChild(changePasswordButton);
 
-      showCustomModal({
-          type: "alert", // Using alert type to control buttons via custom actions
-          titleKey: "modal_title_user_profile",
-          htmlContent: profileContent,
-          customActions: [ // Define custom buttons here
-              {
-                  textKey: "button_profile_logout",
-                  className: "ui-button primary logout-button", // 'primary' for structure, 'logout-button' for specific styling
-                  onClick: () => {
-                      handleLogout();
-                      hideCustomModal(); // Ensure modal closes after logout
-                  }
-              },
-              {
-                  textKey: "modal_cancel_button", // Or a "Close" key if you prefer
-                  className: "ui-button",
-                  onClick: () => {
-                      hideCustomModal();
-                  }
-              }
-          ]
-      });
+    profileContent.appendChild(changePasswordContainer);
+
+    showCustomModal({
+      type: "alert",
+      titleKey: "modal_title_user_profile",
+      htmlContent: profileContent,
+      customActions: [
+        {
+          textKey: "button_profile_logout",
+          className: "ui-button primary logout-button",
+          onClick: () => {
+            handleLogout();
+            hideCustomModal();
+          }
+        },
+        {
+          textKey: "modal_cancel_button",
+          className: "ui-button",
+          onClick: () => {
+            hideCustomModal();
+          }
+        }
+      ]
+    });
   }
 
   /**
@@ -3032,7 +2972,6 @@ async function showForgotPasswordRequestModal() {
     log(LOG_LEVEL_INFO, "Login successful for:", userData.email);
     localStorage.setItem(JWT_STORAGE_KEY, token);
 
-    // userData from login or /me endpoint now includes preferences
     currentUser = {
       id: userData.id,
       email: userData.email,
@@ -3043,11 +2982,10 @@ async function showForgotPasswordRequestModal() {
       email_confirmed: userData.email_confirmed,
       created_at: userData.created_at
     };
-    playerIdentifier = currentUser.email; // Set global playerIdentifier
+    playerIdentifier = currentUser.email;
 
     updateAuthUI();
 
-    // Apply user's preferences
     if (currentUser.preferred_app_language) currentAppLanguage = currentUser.preferred_app_language;
     else currentAppLanguage = localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
 
@@ -3062,62 +3000,60 @@ async function showForgotPasswordRequestModal() {
     setAppLanguageAndThemeUI(currentAppLanguage, currentTheme);
     updateModelToggleButtonText();
 
-    // If a game was active, ensure its dashboard (especially player name) reflects the logged-in user.
     if (currentTheme && !document.body.classList.contains("landing-page-active")) {
-        const themeConfig = ALL_THEMES_CONFIG[currentTheme];
-        if (themeConfig && themeConfig.dashboard_config) {
-            const dashboardConfig = themeConfig.dashboard_config;
-            const playerIdentifierConfigKey = (dashboardConfig.left_panel || []).flatMap(p => p.items).find(item => item.id === "name" || item.id === "character_name")?.id;
-            if (playerIdentifierConfigKey) {
-                const el = document.getElementById(`info-${playerIdentifierConfigKey}`);
-                if (el) el.textContent = currentUser.email; // Directly update the dashboard name field
-            }
+      const themeConfig = ALL_THEMES_CONFIG[currentTheme];
+      if (themeConfig && themeConfig.dashboard_config) {
+        const dashboardConfig = themeConfig.dashboard_config;
+        const playerIdentifierConfigKey = (dashboardConfig.left_panel || []).flatMap(p => p.items).find(item => item.id === "name" || item.id === "character_name")?.id;
+        if (playerIdentifierConfigKey) {
+          const el = document.getElementById(`info-${playerIdentifierConfigKey}`);
+          if (el) el.textContent = currentUser.email;
         }
+      }
     }
 
-    // Check if email is confirmed and show a notice if not
     if (currentUser && !currentUser.email_confirmed) {
-        showCustomModal({
-            type: "alert", // Non-blocking alert
-            titleKey: "email_confirmation_pending_title",
-            messageKey: "email_confirmation_pending_message",
-            replacements: { USER_EMAIL: currentUser.email },
-            customActions: [
-                {
-                    textKey: "button_resend_confirmation_email",
-                    className: "ui-button primary",
-                    onClick: async () => {
-                        try {
-                            // Disable button during resend might be tricky as modal closes
-                            await apiResendConfirmationEmail(currentUser.token);
-                            hideCustomModal(); // Close this notice
-                            await showCustomModal({ // Show success alert
-                                type: "alert",
-                                titleKey: "alert_confirmation_email_resent_title",
-                                messageKey: "alert_confirmation_email_resent_message"
-                            });
-                        } catch (error) {
-                            hideCustomModal(); // Close this notice
-                            await showCustomModal({
-                                type: "alert",
-                                titleKey: "alert_title_error",
-                                messageKey: "error_api_call_failed",
-                                replacements: { ERROR_MSG: error.message }
-                            });
-                        }
-                    }
-                },
-                {
-                    textKey: "modal_ok_button", // "OK" or "Close"
-                    className: "ui-button",
-                    onClick: () => {
-                        hideCustomModal();
-                    }
-                }
-            ]
-        });
+      showCustomModal({
+        type: "alert",
+        titleKey: "email_confirmation_pending_title",
+        messageKey: "email_confirmation_pending_message",
+        replacements: { USER_EMAIL: currentUser.email },
+        customActions: [
+          {
+            textKey: "button_resend_confirmation_email",
+            className: "ui-button primary",
+            onClick: async () => {
+              try {
+
+                await apiResendConfirmationEmail(currentUser.token);
+                hideCustomModal();
+                await showCustomModal({
+                  type: "alert",
+                  titleKey: "alert_confirmation_email_resent_title",
+                  messageKey: "alert_confirmation_email_resent_message"
+                });
+              } catch (error) {
+                hideCustomModal();
+                await showCustomModal({
+                  type: "alert",
+                  titleKey: "alert_title_error",
+                  messageKey: "error_api_call_failed",
+                  replacements: { ERROR_MSG: error.message }
+                });
+              }
+            }
+          },
+          {
+            textKey: "modal_ok_button",
+            className: "ui-button",
+            onClick: () => {
+              hideCustomModal();
+            }
+          }
+        ]
+      });
     }
-}
+  }
 
   /**
    * Handles user logout.
@@ -3127,14 +3063,14 @@ async function showForgotPasswordRequestModal() {
     const previousAppLang = currentUser?.preferred_app_language || localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
     localStorage.removeItem(JWT_STORAGE_KEY);
     currentUser = null;
-    playerIdentifier = ""; // Clear global player identifier
+    playerIdentifier = "";
 
     updateAuthUI();
-    // Revert to localStorage/default preferences for anonymous state
+
     loadAnonymousUserPreferences();
 
     if (currentAppLanguage !== previousAppLang || document.body.classList.contains("landing-page-active") || !currentTheme) {
-        setAppLanguageAndThemeUI(currentAppLanguage, document.body.classList.contains("landing-page-active") ? null : currentTheme);
+      setAppLanguageAndThemeUI(currentAppLanguage, document.body.classList.contains("landing-page-active") ? null : currentTheme);
     }
     updateModelToggleButtonText();
     if (!document.body.classList.contains("landing-page-active")) {
@@ -3147,111 +3083,100 @@ async function showForgotPasswordRequestModal() {
    * This would typically clear the main game/landing UI and show a dedicated message.
    */
   function handleEmailConfirmationStatus() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const confirmationStatus = urlParams.get('status');
-      const confirmationTokenForDebug = urlParams.get('token'); // For the case where we land on /confirm-email directly
+    const urlParams = new URLSearchParams(window.location.search);
+    const confirmationStatus = urlParams.get('status');
+    const confirmationTokenForDebug = urlParams.get('token');
 
-      if (window.location.pathname === '/confirm-email' && confirmationTokenForDebug) {
-          // This means the backend didn't redirect properly, or user landed here directly.
-          // We should show a generic "Processing..." or "Invalid Link" message
-          // because the actual confirmation happens on the backend via redirect.
-          // For robustness, the backend should always redirect.
-          // This path indicates a potential misconfiguration or direct access.
-          displayConfirmationMessage("email_confirmation_invalid_token", "status-error", true);
-          history.replaceState(null, '', window.location.pathname.split('?')[0].replace('/confirm-email', '/')); // Clean URL
-          return true; // Indicated we handled something
+    if (window.location.pathname === '/confirm-email' && confirmationTokenForDebug) {
+
+      displayConfirmationMessage("email_confirmation_invalid_token", "status-error", true);
+      history.replaceState(null, '', window.location.pathname.split('?')[0].replace('/confirm-email', '/'));
+      return true;
+    }
+
+    if (confirmationStatus) {
+      let messageKey = "";
+      let messageClass = "status-info";
+
+      switch (confirmationStatus) {
+        case "success":
+          messageKey = "email_confirmation_success";
+          messageClass = "status-success";
+          break;
+        case "invalid_token":
+          messageKey = "email_confirmation_invalid_token";
+          messageClass = "status-error";
+          break;
+        case "already_confirmed":
+          messageKey = "email_confirmation_already_confirmed";
+          messageClass = "status-info";
+          break;
+        case "expired_token":
+          messageKey = "email_confirmation_expired_token";
+          messageClass = "status-error";
+          break;
+        case "server_error":
+          messageKey = "email_confirmation_server_error";
+          messageClass = "status-error";
+          break;
+        default:
+          log(LOG_LEVEL_WARN, "Unknown email confirmation status in URL:", confirmationStatus);
+
+          return false;
       }
 
+      displayConfirmationMessage(messageKey, messageClass);
 
-      if (confirmationStatus) {
-          let messageKey = "";
-          let messageClass = "status-info"; // Default class
-
-          switch (confirmationStatus) {
-              case "success":
-                  messageKey = "email_confirmation_success";
-                  messageClass = "status-success";
-                  break;
-              case "invalid_token":
-                  messageKey = "email_confirmation_invalid_token";
-                  messageClass = "status-error";
-                  break;
-              case "already_confirmed":
-                  messageKey = "email_confirmation_already_confirmed";
-                  messageClass = "status-info";
-                  break;
-              case "expired_token":
-                  messageKey = "email_confirmation_expired_token";
-                  messageClass = "status-error";
-                  break;
-              case "server_error":
-                  messageKey = "email_confirmation_server_error";
-                  messageClass = "status-error";
-                  break;
-              default:
-                  log(LOG_LEVEL_WARN, "Unknown email confirmation status in URL:", confirmationStatus);
-                  // Optionally display a generic error or ignore
-                  return false; // No known status to handle
-          }
-
-          displayConfirmationMessage(messageKey, messageClass);
-
-          // Clean the URL query parameters after displaying the message
-          history.replaceState(null, '', window.location.pathname.split('?')[0]);
-          return true; // Indicated we handled something
-      }
-      return false; // No confirmation status in URL
+      history.replaceState(null, '', window.location.pathname.split('?')[0]);
+      return true;
+    }
+    return false;
   }
 
   /**
    * Helper to display the confirmation message, clearing other UI.
    */
   function displayConfirmationMessage(messageKey, messageClass = "status-info", isDirectAccessError = false) {
-      // Clear existing game/landing UI
-      if (themeGridContainer) themeGridContainer.style.display = 'none';
-      if (storyLogViewport) storyLogViewport.style.display = 'none';
-      if (playerInputControlPanel) playerInputControlPanel.style.display = 'none';
-      if (suggestedActionsWrapper) suggestedActionsWrapper.style.display = 'none';
-      if (leftPanel) leftPanel.innerHTML = ''; // Clear panels
-      if (rightPanel) rightPanel.innerHTML = '';
 
-      const centerColumn = document.getElementById('center-column');
-      if (centerColumn) {
-          centerColumn.innerHTML = ''; // Clear center column for the message
+    if (themeGridContainer) themeGridContainer.style.display = 'none';
+    if (storyLogViewport) storyLogViewport.style.display = 'none';
+    if (playerInputControlPanel) playerInputControlPanel.style.display = 'none';
+    if (suggestedActionsWrapper) suggestedActionsWrapper.style.display = 'none';
+    if (leftPanel) leftPanel.innerHTML = '';
+    if (rightPanel) rightPanel.innerHTML = '';
 
-          const container = document.createElement('div');
-          container.className = 'email-confirmation-container';
+    const centerColumn = document.getElementById('center-column');
+    if (centerColumn) {
+      centerColumn.innerHTML = '';
 
-          const title = document.createElement('h2');
-          title.textContent = getUIText("email_confirmation_status_page_title");
-          container.appendChild(title);
+      const container = document.createElement('div');
+      container.className = 'email-confirmation-container';
 
-          const messageP = document.createElement('p');
-          messageP.innerHTML = getUIText(messageKey).replace(/\n/g, "<br>");
-          messageP.classList.add(messageClass);
-          container.appendChild(messageP);
+      const title = document.createElement('h2');
+      title.textContent = getUIText("email_confirmation_status_page_title");
+      container.appendChild(title);
 
-          // Add a button to go to login/landing page
-          const backButton = document.createElement('button');
-          backButton.className = 'ui-button primary';
-          backButton.textContent = getUIText(currentUser ? "button_new_game" : "button_login"); // Adapt based on if user somehow got logged in
-          backButton.addEventListener('click', () => {
-              window.location.href = '/'; // Simple redirect to root, which will re-initialize
-          });
-          container.appendChild(backButton);
+      const messageP = document.createElement('p');
+      messageP.innerHTML = getUIText(messageKey).replace(/\n/g, "<br>");
+      messageP.classList.add(messageClass);
+      container.appendChild(messageP);
 
-          centerColumn.appendChild(container);
+      const backButton = document.createElement('button');
+      backButton.className = 'ui-button primary';
+      backButton.textContent = getUIText(currentUser ? "button_new_game" : "button_login");
+      backButton.addEventListener('click', () => {
+        window.location.href = '/';
+      });
+      container.appendChild(backButton);
 
-          // Ensure body classes are appropriate for this view
-          document.body.className = "theme-landing"; // Use a generic class for this page
-          appRoot.style.height = '100vh'; // Ensure full height for this standalone view
-      }
-      if (isDirectAccessError) {
-          // If it's a direct access error, the user is likely not logged in
-          // and we want them to go back to the main landing page experience.
-          // We might not want to immediately replaceState if they directly typed /confirm-email.
-          // The goal is to inform them and let them navigate away.
-      }
+      centerColumn.appendChild(container);
+
+      document.body.className = "theme-landing";
+      appRoot.style.height = '100vh';
+    }
+    if (isDirectAccessError) {
+
+    }
   }
 
   /**
@@ -3262,15 +3187,14 @@ async function showForgotPasswordRequestModal() {
     if (loginButton) loginButton.style.display = isLoggedIn ? "none" : "inline-flex";
     if (userProfileButton) userProfileButton.style.display = isLoggedIn ? "inline-flex" : "none";
     if (playerIdentifierInputEl) {
-        if (isLoggedIn) {
-            if(nameInputSection) nameInputSection.style.display = "none";
-        } else {
-            // If not logged in and on game page (not landing), name input might be shown by changeThemeAndStart
-            // On landing page, it's always hidden.
-            if (currentTheme && !document.body.classList.contains("landing-page-active") && nameInputSection) {
-                 // This state is handled by changeThemeAndStart depending on whether a game is loaded or new
-            }
+      if (isLoggedIn) {
+        if (nameInputSection) nameInputSection.style.display = "none";
+      } else {
+
+        if (currentTheme && !document.body.classList.contains("landing-page-active") && nameInputSection) {
+
         }
+      }
     }
   }
 
@@ -3283,7 +3207,6 @@ async function showForgotPasswordRequestModal() {
     currentModelName = localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME;
     log(LOG_LEVEL_INFO, "Loaded anonymous user preferences:", { lang: currentAppLanguage, narrLang: currentNarrativeLanguage, model: currentModelName });
   }
-
 
   /**
    * Checks authentication status on application load.
@@ -3299,128 +3222,122 @@ async function showForgotPasswordRequestModal() {
         });
         if (response.ok) {
           const data = await response.json();
-          // The /me endpoint returns user data including preferences
-          await handleSuccessfulLogin(token, data.user); // Use await if handleSuccessfulLogin performs async operations
+
+          await handleSuccessfulLogin(token, data.user);
           log(LOG_LEVEL_INFO, "Token verified via /me, user session restored with preferences.");
         } else {
           const errorData = await response.json().catch(() => ({}));
           log(LOG_LEVEL_WARN, "Token verification failed or token expired via /me. Logging out.", response.status, errorData.error?.message);
-          handleLogout(); // Clears token, currentUser, loads anonymous prefs, updates UI
+          handleLogout();
         }
       } catch (error) {
         log(LOG_LEVEL_ERROR, "Error during initial /me token verification:", error);
-        handleLogout(); // Clears token, currentUser, loads anonymous prefs, updates UI
+        handleLogout();
       }
     } else {
-      // No token, ensure UI is in logged-out state and load anonymous preferences
-      currentUser = null; // Explicitly nullify
-      playerIdentifier = ""; // Clear player identifier for anonymous
+
+      currentUser = null;
+      playerIdentifier = "";
       updateAuthUI();
-      loadAnonymousUserPreferences(); // Load from localStorage or defaults
-      setAppLanguageAndThemeUI(currentAppLanguage, currentTheme || null); // Update UI with these prefs
+      loadAnonymousUserPreferences();
+      setAppLanguageAndThemeUI(currentAppLanguage, currentTheme || null);
       updateModelToggleButtonText();
     }
   }
 
   function handlePasswordResetPage() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const resetToken = urlParams.get('token');
+    const urlParams = new URLSearchParams(window.location.search);
+    const resetToken = urlParams.get('token');
 
-      if (window.location.pathname === '/reset-password' && resetToken) {
-          // Clear existing game/landing UI to show the reset form
-          // This part is important to make sure the page is blank except for the modal
-          if (themeGridContainer) themeGridContainer.innerHTML = ''; themeGridContainer.style.display = 'none';
-          if (storyLogViewport) storyLogViewport.innerHTML = ''; storyLogViewport.style.display = 'none';
-          if (playerInputControlPanel) playerInputControlPanel.style.display = 'none';
-          if (suggestedActionsWrapper) suggestedActionsWrapper.innerHTML = ''; suggestedActionsWrapper.style.display = 'none';
-          if (leftPanel) leftPanel.innerHTML = ''; // Clear panels completely
-          if (rightPanel) rightPanel.innerHTML = '';
-          document.body.className = "theme-landing"; // Use a generic class for this intermediate page
+    if (window.location.pathname === '/reset-password' && resetToken) {
 
-          // Set up the modal for password reset
-          showCustomModal({
-              type: "form",
-              titleKey: "modal_title_reset_password",
-              formFields: [
-                  { id: "newPassword", labelKey: "label_new_password", type: "password", placeholderKey: "placeholder_new_password", required: true },
-                  { id: "confirmNewPassword", labelKey: "label_confirm_new_password", type: "password", placeholderKey: "placeholder_confirm_new_password", required: true }
-              ],
-              confirmTextKey: "button_reset_password",
-              // No cancel button by default if we want to force them through or to an explicit exit path
-              customActions: [ // Using customActions to control the submit button better
-                  {
-                      textKey: "button_reset_password",
-                      className: "ui-button primary",
-                      onClick: async () => { // This is essentially the original onSubmit
-                          const newPasswordInput = document.getElementById('newPassword');
-                          const confirmNewPasswordInput = document.getElementById('confirmNewPassword');
-                          const newPassword = newPasswordInput ? newPasswordInput.value : '';
-                          const confirmNewPassword = confirmNewPasswordInput ? confirmNewPasswordInput.value : '';
-                          const modalMessageArea = document.getElementById('custom-modal-message'); // For displaying form errors
+      if (themeGridContainer) themeGridContainer.innerHTML = ''; themeGridContainer.style.display = 'none';
+      if (storyLogViewport) storyLogViewport.innerHTML = ''; storyLogViewport.style.display = 'none';
+      if (playerInputControlPanel) playerInputControlPanel.style.display = 'none';
+      if (suggestedActionsWrapper) suggestedActionsWrapper.innerHTML = ''; suggestedActionsWrapper.style.display = 'none';
+      if (leftPanel) leftPanel.innerHTML = '';
+      if (rightPanel) rightPanel.innerHTML = '';
+      document.body.className = "theme-landing";
 
-                          // Clear previous errors in modal
-                          if (modalMessageArea) {
-                              const existingError = modalMessageArea.querySelector('.modal-error-display');
-                              if (existingError) existingError.remove();
-                          }
+      showCustomModal({
+        type: "form",
+        titleKey: "modal_title_reset_password",
+        formFields: [
+          { id: "newPassword", labelKey: "label_new_password", type: "password", placeholderKey: "placeholder_new_password", required: true },
+          { id: "confirmNewPassword", labelKey: "label_confirm_new_password", type: "password", placeholderKey: "placeholder_confirm_new_password", required: true }
+        ],
+        confirmTextKey: "button_reset_password",
 
-                          if (newPassword !== confirmNewPassword) {
-                              if(modalMessageArea) displayModalError(getUIText("alert_passwords_do_not_match"), modalMessageArea);
-                              return; // Keep modal open
-                          }
-                          if (newPassword.length < 8) {
-                              if(modalMessageArea) displayModalError(getUIText("alert_new_password_too_short"), modalMessageArea);
-                              return; // Keep modal open
-                          }
+        customActions: [
+          {
+            textKey: "button_reset_password",
+            className: "ui-button primary",
+            onClick: async () => {
+              const newPasswordInput = document.getElementById('newPassword');
+              const confirmNewPasswordInput = document.getElementById('confirmNewPassword');
+              const newPassword = newPasswordInput ? newPasswordInput.value : '';
+              const confirmNewPassword = confirmNewPasswordInput ? confirmNewPasswordInput.value : '';
+              const modalMessageArea = document.getElementById('custom-modal-message');
 
-                          try {
-                              const response = await fetch('/api/v1/auth/reset-password', {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ token: resetToken, newPassword }),
-                              });
-                              const data = await response.json();
-                              if (!response.ok) {
-                                  throw new Error(data.error?.message || "Failed to reset password.");
-                              }
+              if (modalMessageArea) {
+                const existingError = modalMessageArea.querySelector('.modal-error-display');
+                if (existingError) existingError.remove();
+              }
 
-                              // Password reset successful
-                              hideCustomModal(); // Close the current reset form modal
+              if (newPassword !== confirmNewPassword) {
+                if (modalMessageArea) displayModalError(getUIText("alert_passwords_do_not_match"), modalMessageArea);
+                return;
+              }
+              if (newPassword.length < 8) {
+                if (modalMessageArea) displayModalError(getUIText("alert_new_password_too_short"), modalMessageArea);
+                return;
+              }
 
-                              // Show a new success alert modal
-                              await showCustomModal({
-                                  type: "alert",
-                                  titleKey: "alert_password_reset_success_title",
-                                  messageText: data.message, // Use the message from backend
-                                  customActions: [{
-                                      textKey: "button_login",
-                                      className: "ui-button primary",
-                                      onClick: () => {
-                                          console.log("Password Reset Successful Modal - Login button clicked.");
-                                          window.location.href = '/?action=showLogin';
-                                      }
-                                  }]
-                              });
+              try {
+                const response = await fetch('/api/v1/auth/reset-password', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ token: resetToken, newPassword }),
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                  throw new Error(data.error?.message || "Failed to reset password.");
+                }
 
-                          } catch (error) {
-                              log(LOG_LEVEL_ERROR, "Password reset submission failed:", error);
-                              if(modalMessageArea) displayModalError(error.message + (error.message.includes("Invalid or expired") ? " " + getUIText("text_try_request_again") : ""), modalMessageArea);
-                              // Do not close modal on error, let user see the error message.
-                          }
-                      }
-                  }
-              ],
-          }).catch(error => {
-              // This catch is for fundamental issues with showCustomModal itself (e.g., elements not found)
-              log(LOG_LEVEL_ERROR, "Error setting up reset password modal:", error);
-              window.location.href = '/'; // Fallback to safety
-          });
+                hideCustomModal();
 
-          return true; // Indicate that this function took over the page view
-      }
-      return false; // This path wasn't for password reset
+                await showCustomModal({
+                  type: "alert",
+                  titleKey: "alert_password_reset_success_title",
+                  messageText: data.message,
+                  customActions: [{
+                    textKey: "button_login",
+                    className: "ui-button primary",
+                    onClick: () => {
+                      console.log("Password Reset Successful Modal - Login button clicked.");
+                      window.location.href = '/?action=showLogin';
+                    }
+                  }]
+                });
+
+              } catch (error) {
+                log(LOG_LEVEL_ERROR, "Password reset submission failed:", error);
+                if (modalMessageArea) displayModalError(error.message + (error.message.includes("Invalid or expired") ? " " + getUIText("text_try_request_again") : ""), modalMessageArea);
+
+              }
+            }
+          }
+        ],
+      }).catch(error => {
+
+        log(LOG_LEVEL_ERROR, "Error setting up reset password modal:", error);
+        window.location.href = '/';
+      });
+
+      return true;
+    }
+    return false;
   }
-
 
   /**
    * Main application initialization function.
@@ -3430,12 +3347,12 @@ async function showForgotPasswordRequestModal() {
     const initialUrlParams = new URLSearchParams(window.location.search);
     console.log("initializeApp: Initial URL params:", initialUrlParams.toString());
     if (handleEmailConfirmationStatus()) {
-        log(LOG_LEVEL_INFO, "Email confirmation status handled. App initialization might be altered.");
-        updateAuthUI();
-        setAppLanguageAndThemeUI(currentAppLanguage, null);
-        updateModelToggleButtonText();
-        updateTopbarThemeIcons();
-        return;
+      log(LOG_LEVEL_INFO, "Email confirmation status handled. App initialization might be altered.");
+      updateAuthUI();
+      setAppLanguageAndThemeUI(currentAppLanguage, null);
+      updateModelToggleButtonText();
+      updateTopbarThemeIcons();
+      return;
     }
     if (handlePasswordResetPage()) {
       log(LOG_LEVEL_INFO, "Password reset page handled. App initialization might be altered.");
@@ -3455,79 +3372,77 @@ async function showForgotPasswordRequestModal() {
     }
 
     const themeLoadPromises = THEMES_MANIFEST.map(async (themeMeta) => {
-        const themePath = themeMeta.path;
-        if (!ALL_THEMES_CONFIG[themeMeta.id]) await loadThemeConfig(themeMeta.id, themePath);
-        if (ALL_THEMES_CONFIG[themeMeta.id] && !themeTextData[themeMeta.id]) await loadThemeTexts(themeMeta.id, themePath);
-        if (themeMeta.id === DEFAULT_THEME_ID) {
-             if (!PROMPT_URLS_BY_THEME[themeMeta.id] || !NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[themeMeta.id]) {
-                await loadThemePromptsConfig(themeMeta.id, themePath);
-            }
+      const themePath = themeMeta.path;
+      if (!ALL_THEMES_CONFIG[themeMeta.id]) await loadThemeConfig(themeMeta.id, themePath);
+      if (ALL_THEMES_CONFIG[themeMeta.id] && !themeTextData[themeMeta.id]) await loadThemeTexts(themeMeta.id, themePath);
+      if (themeMeta.id === DEFAULT_THEME_ID) {
+        if (!PROMPT_URLS_BY_THEME[themeMeta.id] || !NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[themeMeta.id]) {
+          await loadThemePromptsConfig(themeMeta.id, themePath);
         }
+      }
     });
     try { await Promise.all(themeLoadPromises); }
     catch (error) {
-        log(LOG_LEVEL_ERROR, "Error loading initial theme data:", error);
-        await showCustomModal({ type: "alert", titleKey: "alert_title_error", messageKey: "error_initial_theme_data_load_failed", });
+      log(LOG_LEVEL_ERROR, "Error loading initial theme data:", error);
+      await showCustomModal({ type: "alert", titleKey: "alert_title_error", messageKey: "error_initial_theme_data_load_failed", });
     }
 
     loadThemeListsFromStorage();
-    // currentTheme will be loaded from localStorage inside this function or checkAuthStatusOnLoad will clear it.
-    // Initial preference values (currentAppLanguage, etc.) are set by checkAuthStatusOnLoad.
 
     leftPanelScrollUp = document.getElementById('left-panel-scroll-indicator-up');
     leftPanelScrollDown = document.getElementById('left-panel-scroll-indicator-down');
     rightPanelScrollUp = document.getElementById('right-panel-scroll-indicator-up');
     rightPanelScrollDown = document.getElementById('right-panel-scroll-indicator-down');
-    [leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown].forEach(ind => { if(ind) ind.style.display = 'none';});
+    [leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown].forEach(ind => { if (ind) ind.style.display = 'none'; });
 
     const apiKeyIsSetup = await setupApiKey();
     if (!apiKeyIsSetup) {
-        if (DEFAULT_THEME_ID && ALL_THEMES_CONFIG[DEFAULT_THEME_ID] && themeTextData[DEFAULT_THEME_ID]) { switchToLandingView(); }
-        else { log(LOG_LEVEL_ERROR, "Cannot switch to landing, default theme data missing."); }
-        return;
+      if (DEFAULT_THEME_ID && ALL_THEMES_CONFIG[DEFAULT_THEME_ID] && themeTextData[DEFAULT_THEME_ID]) { switchToLandingView(); }
+      else { log(LOG_LEVEL_ERROR, "Cannot switch to landing, default theme data missing."); }
+      return;
     }
 
-    await checkAuthStatusOnLoad(); // Sets currentUser, applies prefs, updates UI
+    await checkAuthStatusOnLoad();
 
     let gameToResume = null;
-    currentTheme = localStorage.getItem(CURRENT_THEME_STORAGE_KEY) || null; // Re-check after auth
+    currentTheme = localStorage.getItem(CURRENT_THEME_STORAGE_KEY) || null;
 
     if (currentTheme && ALL_THEMES_CONFIG[currentTheme] && isThemePlaying(currentTheme)) {
-        const resumeDataLoaded = await ensureThemeDataLoaded(currentTheme);
-        if (resumeDataLoaded && await loadAllPromptsForTheme(currentTheme)) {
-            if (loadGameState(currentTheme)) { // loadGameState now handles playerIdentifier based on currentUser
-                gameToResume = currentTheme;
-            }
-            else { removePlayingTheme(currentTheme, false); clearGameState(currentTheme); currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY); }
-        } else {
-            addMessageToLog(getUIText("error_resume_failed_prompts", { THEME: currentTheme }), "system-error");
-            removePlayingTheme(currentTheme, false); clearGameState(currentTheme); currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+      const resumeDataLoaded = await ensureThemeDataLoaded(currentTheme);
+      if (resumeDataLoaded && await loadAllPromptsForTheme(currentTheme)) {
+        if (loadGameState(currentTheme)) {
+          gameToResume = currentTheme;
         }
-    } else if (currentTheme) { // Stale currentTheme in localStorage
-        currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+        else { removePlayingTheme(currentTheme, false); clearGameState(currentTheme); currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY); }
+      } else {
+        addMessageToLog(getUIText("error_resume_failed_prompts", { THEME: currentTheme }), "system-error");
+        removePlayingTheme(currentTheme, false); clearGameState(currentTheme); currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+      }
+    } else if (currentTheme) {
+      currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
     }
 
     if (gameToResume) {
       switchToGameView(currentTheme);
       generatePanelsForTheme(currentTheme);
-      // setAppLanguageAndThemeUI and updateModelToggleButtonText are called by checkAuthStatusOnLoad / handleSuccessfulLogin
+
       updateDashboard(lastKnownDashboardUpdates, false);
       handleGameStateIndicators(lastKnownGameStateIndicators, true);
       initializeCollapsiblePanelBoxes(currentTheme);
       displaySuggestedActions(currentSuggestedActions);
 
-      if (nameInputSection) nameInputSection.style.display = "none"; // Hidden if game resumed (either anon or logged in)
+      if (nameInputSection) nameInputSection.style.display = "none";
       if (actionInputSection) actionInputSection.style.display = "flex";
       if (playerActionInput && document.body.contains(playerActionInput)) playerActionInput.focus();
 
       const themeDisplayName = ALL_THEMES_CONFIG[currentTheme] ? getUIText(ALL_THEMES_CONFIG[currentTheme].name_key, {}, currentTheme) : currentTheme;
-      // playerIdentifier is already correctly set by loadGameState or handleSuccessfulLogin
+
       addMessageToLog(getUIText("system_session_resumed", { PLAYER_ID: playerIdentifier, THEME_NAME: themeDisplayName }), "system");
       if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("system_status_online_short"); systemStatusIndicator.className = "status-indicator status-ok"; }
       isInitialGameLoad = false;
       requestAnimationFrame(() => {
-          if (leftPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('left', leftPanel);
-          if (rightPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('right', rightPanel);
+        if (leftPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('left', leftPanel);
+        if (rightPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('right', rightPanel);
       });
     } else {
       switchToLandingView();
@@ -3537,34 +3452,34 @@ async function showForgotPasswordRequestModal() {
     [leftPanel, rightPanel].forEach(panel => {
       if (panel) { panel.addEventListener('scroll', () => { const panelSide = panel.id === 'left-panel' ? 'left' : 'right'; updateScrollIndicatorStateForPanel(panelSide, panel); }, { passive: true }); }
     });
-    // Check for actions from URL parameters after everything else is set up
+
     const urlParamsInit = new URLSearchParams(window.location.search);
     const actionToShow = urlParamsInit.get('action');
     console.log("initializeApp: Checking for action in URL. Action found:", actionToShow);
 
     if (actionToShow === 'showLogin') {
-        console.log("initializeApp: 'showLogin' action detected.");
-        if (!currentUser) {
-            log(LOG_LEVEL_INFO, "Action 'showLogin' detected in URL, opening login modal.");
-            console.log("initializeApp: No currentUser, calling showAuthModal('login').");
-            showAuthModal('login'); // Show the modal first
-            // Then clean the URL
-            const newUrl = window.location.pathname;
-            history.replaceState(null, '', newUrl);
-            console.log("initializeApp: Cleaned URL parameter after processing showLogin.");
-        } else {
-            log(LOG_LEVEL_INFO, "Action 'showLogin' detected, but user is already logged in.");
-            console.log("initializeApp: User already logged in, not showing login modal.");
-            // Still clean the URL param even if user is logged in, to prevent re-processing
-            const newUrl = window.location.pathname;
-            history.replaceState(null, '', newUrl);
-            console.log("initializeApp: Cleaned URL parameter for already logged-in user.");
-        }
+      console.log("initializeApp: 'showLogin' action detected.");
+      if (!currentUser) {
+        log(LOG_LEVEL_INFO, "Action 'showLogin' detected in URL, opening login modal.");
+        console.log("initializeApp: No currentUser, calling showAuthModal('login').");
+        showAuthModal('login');
+
+        const newUrl = window.location.pathname;
+        history.replaceState(null, '', newUrl);
+        console.log("initializeApp: Cleaned URL parameter after processing showLogin.");
+      } else {
+        log(LOG_LEVEL_INFO, "Action 'showLogin' detected, but user is already logged in.");
+        console.log("initializeApp: User already logged in, not showing login modal.");
+
+        const newUrl = window.location.pathname;
+        history.replaceState(null, '', newUrl);
+        console.log("initializeApp: Cleaned URL parameter for already logged-in user.");
+      }
     }
 
     log(LOG_LEVEL_INFO, "Application initialization complete.");
     console.log("initializeApp: Finished.");
-}
+  }
 
   // --- Event Listeners ---
   if (applicationLogoElement) applicationLogoElement.addEventListener("click", switchToLandingView);

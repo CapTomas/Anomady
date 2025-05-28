@@ -574,7 +574,76 @@ background-color: var(--color-bg-content-view)
   border-color: var(--color-accent-teal);
   box-shadow: var(--shadow-focus-ring);
 }
-/* Profile Modal Styles */
+.auth-modal-links {
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.auth-modal-links a {
+  color: var(--color-accent-teal);
+  text-decoration: underline;
+}
+
+.auth-modal-links a:hover {
+  color: var(--color-accent-blue);
+}
+.email-confirmation-container {
+    padding: var(--spacing-xl);
+    text-align: center;
+    max-width: 600px;
+    margin: var(--spacing-xxl) auto;
+    background-color: var(--color-bg-content-view);
+    border-radius: var(--radius-md);
+}
+
+.email-confirmation-container h2 {
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.email-confirmation-container p {
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-base);
+    margin-bottom: var(--spacing-xl);
+}
+
+.email-confirmation-container .status-success {
+    color: var(--color-status-ok-text);
+    font-weight: var(--font-weight-semibold);
+}
+
+.email-confirmation-container .status-error {
+    color: var(--color-status-critical-text);
+    font-weight: var(--font-weight-semibold);
+}
+.profile-modal-content dd .email-status {
+    font-size: var(--font-size-sm);
+    margin-left: var(--spacing-sm);
+    padding: 2px var(--spacing-xs);
+    border-radius: var(--radius-xs);
+}
+.profile-modal-content dd .email-status.confirmed {
+    color: var(--color-status-ok-text);
+    /* background-color: rgba(var(--color-accent-teal-rgb), 0.1); */
+}
+.profile-modal-content dd .email-status.unconfirmed {
+    color: var(--color-status-warning-text);
+    /* background-color: rgba(var(--color-accent-amber-rgb), 0.1); */
+}
+.profile-modal-content dd .resend-confirmation-link {
+    margin-left: var(--spacing-xs);
+    color: var(--color-accent-teal);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+}
+.profile-modal-content dd .resend-confirmation-link:hover {
+    color: var(--color-accent-blue);
+}
 .profile-modal-content {
     text-align: left;
     padding: 0 var(--spacing-sm); /* Add some padding if content is directly in modal-message */
@@ -626,6 +695,14 @@ background-color: var(--color-bg-content-view)
 .profile-modal-content .change-password-button-container .ui-button.disabled {
     background-color: var(--color-text-muted);
     opacity: 0.5;
+}
+.password-reset-form-container {
+    padding: var(--spacing-xl);
+    text-align: center;
+    max-width: 500px;
+    margin: var(--spacing-xxl) auto;
+    background-color: var(--color-bg-content-view);
+    border-radius: var(--radius-md);
 }
 .profile-modal-content .coming-soon-text {
     font-size: var(--font-size-xs);

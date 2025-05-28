@@ -11,12 +11,17 @@ datasource db {
 }
 
 model User {
-  id                         String    @id @default(cuid()) // Using CUID for unique IDs, common with Prisma
-  email                      String    @unique
-  password_hash              String
-  preferred_app_language     String?   // Optional, can be null
-  preferred_narrative_language String?   // Optional, can be null
-  preferred_model_name       String?   // Optional, can be null
-  created_at                 DateTime  @default(now())
-  updated_at                 DateTime  @updatedAt
+  id                             String    @id @default(cuid())
+  email                          String    @unique
+  password_hash                  String
+  preferred_app_language         String?
+  preferred_narrative_language   String?
+  preferred_model_name           String?
+  created_at                     DateTime  @default(now())
+  updated_at                     DateTime  @updatedAt
+  email_confirmed                Boolean   @default(false)
+  email_confirmation_token       String?   @unique
+  email_confirmation_expires_at  DateTime?
+  password_reset_token           String?   @unique
+  password_reset_expires_at      DateTime?
 }

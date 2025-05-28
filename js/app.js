@@ -1841,23 +1841,53 @@ async function callGeminiAPI(currentTurnHistory) {
   /**
    * Switches the UI to the landing page view.
    */
-  function switchToLandingView() {
+function switchToLandingView() {
+    log(LOG_LEVEL_INFO, "Switching to landing view.");
+
+    const currentPathAndQuery = window.location.pathname + window.location.search;
+    if (currentPathAndQuery !== '/') { // Only push state if not already at root
+        const specialPathsToPreserve = ['/reset-password', '/email-confirmation-status']; // Paths handled by specific logic
+        let isOnSpecialPath = false;
+        for (const sp of specialPathsToPreserve) {
+            if (window.location.pathname.startsWith(sp)) {
+                isOnSpecialPath = true;
+                break;
+            }
+        }
+
+        if (!window.location.pathname.startsWith('/api/') && !isOnSpecialPath) {
+            history.pushState(null, '', '/'); // Change URL to root
+            log(LOG_LEVEL_DEBUG, `switchToLandingView: URL changed to / from ${currentPathAndQuery}`);
+        } else if (isOnSpecialPath) {
+            // If on a special path and trying to go to landing, a full redirect is safer.
+            // This helps break out of the special path's UI handling.
+            log(LOG_LEVEL_DEBUG, `switchToLandingView: On special path ${window.location.pathname}. Forcing full navigation to /.`);
+            window.location.href = '/';
+            return; // Exit early as page will reload
+        }
+    }
+
     Object.keys(outOfViewTrackedElements).forEach(side => { outOfViewTrackedElements[side].up.clear(); outOfViewTrackedElements[side].down.clear(); });
     [leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown].forEach(indicator => { if (indicator) indicator.style.display = 'none'; });
-    currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
-    // playerIdentifier remains (currentUser.email or last anonymous ID)
-    gameHistory = []; // Clear game history when returning to landing
+
+    currentTheme = null;
+    localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+
     document.body.classList.add("landing-page-active");
     document.body.classList.remove(...Array.from(document.body.classList).filter(cn => cn.startsWith("theme-") && cn !== "theme-landing"));
     if (!document.body.classList.contains("theme-landing")) document.body.classList.add("theme-landing");
+
     if (storyLogViewport) storyLogViewport.style.display = "none";
     if (suggestedActionsWrapper) suggestedActionsWrapper.style.display = "none";
     if (playerInputControlPanel) playerInputControlPanel.style.display = "none";
     if (nameInputSection) nameInputSection.style.display = "none";
     if (actionInputSection) actionInputSection.style.display = "none";
+
     if (leftPanel) { Array.from(leftPanel.children).filter(el => el.id !== "landing-theme-description-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
     if (rightPanel) { Array.from(rightPanel.children).filter(el => el.id !== "landing-theme-details-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
+
     if (themeGridContainer) themeGridContainer.style.display = "grid";
+
     if (landingThemeDescriptionContainer) {
       landingThemeDescriptionContainer.style.display = "flex";
       if (leftPanel && !leftPanel.contains(landingThemeDescriptionContainer)) {
@@ -1872,28 +1902,33 @@ async function callGeminiAPI(currentTurnHistory) {
         if (scrollIndicatorDown) { rightPanel.insertBefore(landingThemeDetailsContainer, scrollIndicatorDown); } else { rightPanel.appendChild(landingThemeDetailsContainer); }
       }
     }
+
     if (landingThemeLoreText) landingThemeLoreText.textContent = getUIText("landing_select_theme_prompt_lore");
     if (landingThemeInfoContent) landingThemeInfoContent.innerHTML = `<p>${getUIText("landing_select_theme_prompt_details")}</p>`;
     if (landingThemeActions) { landingThemeActions.style.display = "none"; landingThemeActions.innerHTML = ""; }
+
     const descTitle = landingThemeDescriptionContainer?.querySelector(".panel-box-title");
     if (descTitle) descTitle.textContent = getUIText("landing_theme_description_title");
     const detailsTitle = landingThemeDetailsContainer?.querySelector(".panel-box-title");
     if (detailsTitle) detailsTitle.textContent = getUIText("landing_theme_info_title");
+
     const lorePanelBox = landingThemeDescriptionContainer?.querySelector(".panel-box");
-    if (lorePanelBox) { if (!lorePanelBox.id) lorePanelBox.id = "landing-lore-panel-box"; animatePanelBox(lorePanelBox.id, true, false); initializeSpecificPanelHeader(landingThemeDescriptionContainer); }
+    if (lorePanelBox) { if (!lorePanelBox.id) lorePanelBox.id = "landing-lore-panel-box"; animatePanelBox(lorePanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDescriptionContainer); }
     const detailsPanelBox = landingThemeDetailsContainer?.querySelector(".panel-box");
-    if (detailsPanelBox) { if (!detailsPanelBox.id) detailsPanelBox.id = "landing-details-panel-box"; animatePanelBox(detailsPanelBox.id, true, false); initializeSpecificPanelHeader(landingThemeDetailsContainer); }
+    if (detailsPanelBox) { if (!detailsPanelBox.id) detailsPanelBox.id = "landing-details-panel-box"; animatePanelBox(detailsPanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDetailsContainer); }
+
     currentLandingGridSelection = localStorage.getItem(LANDING_SELECTED_GRID_THEME_KEY);
     renderThemeGrid();
     if (currentLandingGridSelection && ALL_THEMES_CONFIG[currentLandingGridSelection]) {
-      updateLandingPagePanels(currentLandingGridSelection, false);
-      const selectedBtn = themeGridContainer?.querySelector(`.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`);
-      if (selectedBtn) selectedBtn.classList.add("active");
+        updateLandingPagePanels(currentLandingGridSelection, false);
+        const selectedBtn = themeGridContainer?.querySelector(`.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`);
+        if (selectedBtn) selectedBtn.classList.add("active");
     }
+
     if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("standby"); systemStatusIndicator.className = "status-indicator status-ok"; }
     updateTopbarThemeIcons();
-    setAppLanguageAndThemeUI(currentAppLanguage, DEFAULT_THEME_ID); // Use default for landing context
-  }
+    setAppLanguageAndThemeUI(currentAppLanguage, null);
+}
 
   /**
    * Switches the UI to the main game view for a specific theme.
@@ -2364,126 +2399,28 @@ async function callGeminiAPI(currentTurnHistory) {
   }
 
   /**
-   * Displays the user profile modal.
+   * Requests the backend to resend a confirmation email.
    */
-  async function showUserProfileModal() {
-    if (!currentUser) {
-        log(LOG_LEVEL_WARN, "showUserProfileModal called but no user is logged in.");
-        return;
-    }
-
-    const profileContent = document.createElement('div');
-    profileContent.className = 'profile-modal-content';
-
-    const dl = document.createElement('dl');
-
-    // Email
-    const dtEmail = document.createElement('dt');
-    dtEmail.textContent = getUIText("label_profile_email");
-    const ddEmail = document.createElement('dd');
-    ddEmail.textContent = currentUser.email;
-    dl.appendChild(dtEmail);
-    dl.appendChild(ddEmail);
-
-    // Joined Date
-    if (currentUser.created_at) {
-        const dtJoined = document.createElement('dt');
-        dtJoined.textContent = getUIText("label_profile_joined_date");
-        const ddJoined = document.createElement('dd');
-        try {
-            ddJoined.textContent = new Date(currentUser.created_at).toLocaleDateString(currentAppLanguage, {
-                year: 'numeric', month: 'long', day: 'numeric'
-            });
-        } catch (e) {
-            ddJoined.textContent = new Date(currentUser.created_at).toLocaleDateString(undefined, { // Fallback to default locale
-                year: 'numeric', month: 'long', day: 'numeric'
-            });
-            log(LOG_LEVEL_WARN, "Error formatting date with currentAppLanguage, used default locale.", e);
-        }
-        dl.appendChild(dtJoined);
-        dl.appendChild(ddJoined);
-    }
-
-    profileContent.appendChild(dl);
-
-    // Preferences Section
-    const prefsTitle = document.createElement('h4');
-    prefsTitle.textContent = getUIText("label_profile_preferences_title");
-    prefsTitle.style.fontWeight = 'var(--font-weight-semibold)';
-    prefsTitle.style.color = 'var(--color-text-secondary)';
-    prefsTitle.style.fontSize = 'var(--font-size-md)';
-    prefsTitle.style.marginBottom = 'var(--spacing-sm)';
-    prefsTitle.style.marginTop = 'var(--spacing-lg)';
-    profileContent.appendChild(prefsTitle);
-
-    const prefsList = document.createElement('div');
-
-    const appLangPref = document.createElement('div');
-    appLangPref.className = 'preference-item';
-    appLangPref.innerHTML = `
-        <span class="pref-label">${getUIText("label_profile_app_language")}</span>
-        <span class="pref-value">${currentAppLanguage.toUpperCase()}</span>
-    `; // TODO: Add button/dropdown to change
-    prefsList.appendChild(appLangPref);
-
-    const narrLangPref = document.createElement('div');
-    narrLangPref.className = 'preference-item';
-    narrLangPref.innerHTML = `
-        <span class="pref-label">${getUIText("label_profile_narrative_language")}</span>
-        <span class="pref-value">${currentNarrativeLanguage.toUpperCase()}</span>
-    `; // TODO: Add button/dropdown to change
-    prefsList.appendChild(narrLangPref);
-
-    const modelPref = document.createElement('div');
-    modelPref.className = 'preference-item';
-    modelPref.innerHTML = `
-        <span class="pref-label">${getUIText("label_profile_model_preference")}</span>
-        <span class="pref-value">${currentModelName === PAID_MODEL_NAME ? 'Pro' : 'Flash'}</span>
-    `; // TODO: Add button/dropdown to change
-    prefsList.appendChild(modelPref);
-
-    profileContent.appendChild(prefsList);
-
-    // Separator
-    const hr = document.createElement('hr');
-    profileContent.appendChild(hr);
-
-    // Change Password (Placeholder)
-    const changePasswordContainer = document.createElement('div');
-    changePasswordContainer.className = 'change-password-button-container';
-    const changePasswordButton = document.createElement('button');
-    changePasswordButton.className = 'ui-button';
-    changePasswordButton.textContent = getUIText("button_profile_change_password");
-    changePasswordButton.addEventListener('click', () => {
-        hideCustomModal();
-        showChangePasswordModal();
-    });
-
-    changePasswordContainer.appendChild(changePasswordButton);
-    profileContent.appendChild(changePasswordContainer);
-
-    showCustomModal({
-        type: "alert", // Using alert type to control buttons via custom actions
-        titleKey: "modal_title_user_profile",
-        htmlContent: profileContent,
-        customActions: [ // Define custom buttons here
-            {
-                textKey: "button_profile_logout",
-                className: "ui-button primary logout-button", // 'primary' for structure, 'logout-button' for specific styling
-                onClick: () => {
-                    handleLogout();
-                    hideCustomModal(); // Ensure modal closes after logout
-                }
-            },
-            {
-                textKey: "modal_cancel_button", // Or a "Close" key if you prefer
-                className: "ui-button",
-                onClick: () => {
-                    hideCustomModal();
-                }
-            }
-        ]
-    });
+  async function apiResendConfirmationEmail(token) {
+      try {
+          const response = await fetch('/api/v1/auth/resend-confirmation-email', {
+              method: 'POST',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              },
+          });
+          const data = await response.json();
+          if (!response.ok) {
+              const errorMsg = data.error?.message || `HTTP error ${response.status}`;
+              log(LOG_LEVEL_WARN, `Resend Confirmation API error: ${errorMsg}`, data.error?.code);
+              throw new Error(errorMsg);
+          }
+          return data; // Expects { message: "Confirmation email resent..." }
+      } catch (error) {
+          log(LOG_LEVEL_ERROR, 'Error in apiResendConfirmationEmail:', error);
+          throw error;
+      }
   }
 
   /**
@@ -2570,23 +2507,34 @@ async function callGeminiAPI(currentTurnHistory) {
           }
 
           const switchLinkContainer = document.createElement('div');
-          switchLinkContainer.style.marginTop = 'var(--spacing-sm)'; // Adjusted margin
-          switchLinkContainer.style.fontSize = 'var(--font-size-sm)';
-          switchLinkContainer.style.textAlign = 'center'; // Center the link
+          switchLinkContainer.className = 'auth-modal-links'; // New class for better styling
 
-          const switchLink = document.createElement('a');
-          switchLink.href = '#';
+          // "Forgot Password?" Link (only for login form)
+          if (isLogin) {
+              const forgotPasswordLink = document.createElement('a');
+              forgotPasswordLink.href = '#';
+              forgotPasswordLink.textContent = getUIText("button_forgot_password"); // Add this key to global-texts.js
+              forgotPasswordLink.className = 'forgot-password-link';
+              forgotPasswordLink.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  hideCustomModal(); // Close the auth modal
+                  showForgotPasswordRequestModal(); // Show the "request reset" modal
+              });
+              switchLinkContainer.appendChild(forgotPasswordLink);
+          }
+
+          const switchAuthModeLink = document.createElement('a');
+          switchAuthModeLink.href = '#';
           const switchLinkTextKey = isLogin ? "modal_switch_to_register" : "modal_switch_to_login";
-          switchLink.textContent = getUIText(switchLinkTextKey);
-          switchLink.style.color = 'var(--color-accent-teal)';
-          switchLink.style.textDecoration = 'underline';
-          switchLink.addEventListener('click', (e) => {
+          switchAuthModeLink.textContent = getUIText(switchLinkTextKey);
+          switchAuthModeLink.className = 'switch-auth-mode-link';
+          switchAuthModeLink.addEventListener('click', (e) => {
               e.preventDefault();
               currentMode = isLogin ? 'register' : 'login';
-              hideCustomModal(); // Close the current modal
-              renderAndShowModal(); // Re-render and show with the new mode
+              hideCustomModal();
+              renderAndShowModal();
           });
-          switchLinkContainer.appendChild(switchLink);
+          switchLinkContainer.appendChild(switchAuthModeLink);
 
           const handleSubmit = async (formData) => {
               const email = formData.authEmail;
@@ -2607,7 +2555,7 @@ async function callGeminiAPI(currentTurnHistory) {
               type: "form",
               titleKey: titleKey,
               formFields: formFields,
-              htmlContent: switchLinkContainer, // This will be appended to modalMessage
+              htmlContent: switchLinkContainer,
               confirmTextKey: confirmTextKey,
               onSubmit: handleSubmit,
           }).then(result => {
@@ -2629,6 +2577,48 @@ async function callGeminiAPI(currentTurnHistory) {
       renderAndShowModal(); // Initial call to render and show the modal
   }
 
+async function showForgotPasswordRequestModal() {
+    await showCustomModal({
+        type: "form",
+        titleKey: "modal_title_forgot_password", // Add to global-texts.js
+        formFields: [
+            { id: "resetEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true }
+        ],
+        confirmTextKey: "button_send_reset_link", // Add to global-texts.js
+        onSubmit: async (formData) => {
+            const email = formData.resetEmail;
+            try {
+                const response = await fetch('/api/v1/auth/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email }),
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error?.message || "Failed to request password reset.");
+                }
+                // On success (even if email doesn't exist), the backend sends a generic message.
+                // We show this generic message to the user.
+                return { success: true, message: data.message, actionAfterClose: 'showResetRequestSentAlert' };
+            } catch (error) {
+                log(LOG_LEVEL_ERROR, "Forgot password request failed:", error);
+                throw error; // Let showCustomModal handle displaying this error
+            }
+        }
+    }).then(result => {
+        if (result && result.actionAfterClose === 'showResetRequestSentAlert' && result.message) {
+            showCustomModal({
+                type: "alert",
+                titleKey: "alert_title_notice", // Or a more specific title
+                messageText: result.message // Use the direct message from backend
+            });
+        }
+    }).catch(error => {
+        log(LOG_LEVEL_ERROR, "Error from showForgotPasswordRequestModal promise:", error);
+        // Error already displayed in the modal by onSubmit, or by showCustomModal if it was a validation issue
+    });
+}
+
   /**
    * Displays the user profile modal.
    */
@@ -2647,7 +2637,56 @@ async function callGeminiAPI(currentTurnHistory) {
       const dtEmail = document.createElement('dt');
       dtEmail.textContent = getUIText("label_profile_email");
       const ddEmail = document.createElement('dd');
-      ddEmail.textContent = currentUser.email;
+
+      const emailTextNode = document.createTextNode(currentUser.email + " "); // Add space after email
+      ddEmail.appendChild(emailTextNode);
+
+      const emailStatusSpan = document.createElement('span');
+      emailStatusSpan.className = 'email-status';
+
+      if (currentUser.email_confirmed) {
+          emailStatusSpan.textContent = `(${getUIText("profile_email_confirmed_status")})`;
+          emailStatusSpan.classList.add('confirmed');
+          ddEmail.appendChild(emailStatusSpan);
+      } else {
+          emailStatusSpan.textContent = `(${getUIText("profile_email_unconfirmed_status")})`;
+          emailStatusSpan.classList.add('unconfirmed');
+          ddEmail.appendChild(emailStatusSpan); // Add " (Not Confirmed"
+
+          const resendLink = document.createElement('a');
+          resendLink.href = '#';
+          resendLink.textContent = getUIText("button_resend_confirmation_email");
+          resendLink.className = 'resend-confirmation-link';
+          resendLink.style.marginLeft = '5px'; // Add some space
+
+          resendLink.addEventListener('click', async (e) => {
+              e.preventDefault();
+              // ... (same event listener logic as above) ...
+              e.preventDefault();
+              try {
+                  resendLink.textContent = getUIText("system_processing_short"); // Indicate processing
+                  resendLink.style.pointerEvents = 'none'; // Disable link during API call
+                  await apiResendConfirmationEmail(currentUser.token);
+                  hideCustomModal(); // Close profile modal
+                  await showCustomModal({ // Show success alert
+                      type: "alert",
+                      titleKey: "alert_confirmation_email_resent_title",
+                      messageKey: "alert_confirmation_email_resent_message"
+                  });
+              } catch (error) {
+                  log(LOG_LEVEL_ERROR, "Failed to resend confirmation email:", error);
+                  hideCustomModal();
+                  await showCustomModal({
+                      type: "alert",
+                      titleKey: "alert_title_error",
+                      messageKey: "error_api_call_failed",
+                      replacements: { ERROR_MSG: error.message }
+                  });
+              }
+          });
+          ddEmail.appendChild(document.createTextNode(" - ")); // Separator
+          ddEmail.appendChild(resendLink); // Add resend link
+      }
       dl.appendChild(dtEmail);
       dl.appendChild(ddEmail);
 
@@ -2767,7 +2806,9 @@ async function callGeminiAPI(currentTurnHistory) {
       token: token,
       preferred_app_language: userData.preferred_app_language,
       preferred_narrative_language: userData.preferred_narrative_language,
-      preferred_model_name: userData.preferred_model_name
+      preferred_model_name: userData.preferred_model_name,
+      email_confirmed: userData.email_confirmed,
+      created_at: userData.created_at
     };
     playerIdentifier = currentUser.email; // Set global playerIdentifier
 
@@ -2800,7 +2841,50 @@ async function callGeminiAPI(currentTurnHistory) {
             }
         }
     }
-  }
+
+    // Check if email is confirmed and show a notice if not
+    if (currentUser && !currentUser.email_confirmed) {
+        showCustomModal({
+            type: "alert", // Non-blocking alert
+            titleKey: "email_confirmation_pending_title",
+            messageKey: "email_confirmation_pending_message",
+            replacements: { USER_EMAIL: currentUser.email },
+            customActions: [
+                {
+                    textKey: "button_resend_confirmation_email",
+                    className: "ui-button primary",
+                    onClick: async () => {
+                        try {
+                            // Disable button during resend might be tricky as modal closes
+                            await apiResendConfirmationEmail(currentUser.token);
+                            hideCustomModal(); // Close this notice
+                            await showCustomModal({ // Show success alert
+                                type: "alert",
+                                titleKey: "alert_confirmation_email_resent_title",
+                                messageKey: "alert_confirmation_email_resent_message"
+                            });
+                        } catch (error) {
+                            hideCustomModal(); // Close this notice
+                            await showCustomModal({
+                                type: "alert",
+                                titleKey: "alert_title_error",
+                                messageKey: "error_api_call_failed",
+                                replacements: { ERROR_MSG: error.message }
+                            });
+                        }
+                    }
+                },
+                {
+                    textKey: "modal_ok_button", // "OK" or "Close"
+                    className: "ui-button",
+                    onClick: () => {
+                        hideCustomModal();
+                    }
+                }
+            ]
+        });
+    }
+}
 
   /**
    * Handles user logout.
@@ -2823,6 +2907,118 @@ async function callGeminiAPI(currentTurnHistory) {
     if (!document.body.classList.contains("landing-page-active")) {
       switchToLandingView();
     }
+  }
+
+  /**
+   * Checks URL for email confirmation status and displays appropriate message.
+   * This would typically clear the main game/landing UI and show a dedicated message.
+   */
+  function handleEmailConfirmationStatus() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const confirmationStatus = urlParams.get('status');
+      const confirmationTokenForDebug = urlParams.get('token'); // For the case where we land on /confirm-email directly
+
+      if (window.location.pathname === '/confirm-email' && confirmationTokenForDebug) {
+          // This means the backend didn't redirect properly, or user landed here directly.
+          // We should show a generic "Processing..." or "Invalid Link" message
+          // because the actual confirmation happens on the backend via redirect.
+          // For robustness, the backend should always redirect.
+          // This path indicates a potential misconfiguration or direct access.
+          displayConfirmationMessage("email_confirmation_invalid_token", "status-error", true);
+          history.replaceState(null, '', window.location.pathname.split('?')[0].replace('/confirm-email', '/')); // Clean URL
+          return true; // Indicated we handled something
+      }
+
+
+      if (confirmationStatus) {
+          let messageKey = "";
+          let messageClass = "status-info"; // Default class
+
+          switch (confirmationStatus) {
+              case "success":
+                  messageKey = "email_confirmation_success";
+                  messageClass = "status-success";
+                  break;
+              case "invalid_token":
+                  messageKey = "email_confirmation_invalid_token";
+                  messageClass = "status-error";
+                  break;
+              case "already_confirmed":
+                  messageKey = "email_confirmation_already_confirmed";
+                  messageClass = "status-info";
+                  break;
+              case "expired_token":
+                  messageKey = "email_confirmation_expired_token";
+                  messageClass = "status-error";
+                  break;
+              case "server_error":
+                  messageKey = "email_confirmation_server_error";
+                  messageClass = "status-error";
+                  break;
+              default:
+                  log(LOG_LEVEL_WARN, "Unknown email confirmation status in URL:", confirmationStatus);
+                  // Optionally display a generic error or ignore
+                  return false; // No known status to handle
+          }
+
+          displayConfirmationMessage(messageKey, messageClass);
+
+          // Clean the URL query parameters after displaying the message
+          history.replaceState(null, '', window.location.pathname.split('?')[0]);
+          return true; // Indicated we handled something
+      }
+      return false; // No confirmation status in URL
+  }
+
+  /**
+   * Helper to display the confirmation message, clearing other UI.
+   */
+  function displayConfirmationMessage(messageKey, messageClass = "status-info", isDirectAccessError = false) {
+      // Clear existing game/landing UI
+      if (themeGridContainer) themeGridContainer.style.display = 'none';
+      if (storyLogViewport) storyLogViewport.style.display = 'none';
+      if (playerInputControlPanel) playerInputControlPanel.style.display = 'none';
+      if (suggestedActionsWrapper) suggestedActionsWrapper.style.display = 'none';
+      if (leftPanel) leftPanel.innerHTML = ''; // Clear panels
+      if (rightPanel) rightPanel.innerHTML = '';
+
+      const centerColumn = document.getElementById('center-column');
+      if (centerColumn) {
+          centerColumn.innerHTML = ''; // Clear center column for the message
+
+          const container = document.createElement('div');
+          container.className = 'email-confirmation-container';
+
+          const title = document.createElement('h2');
+          title.textContent = getUIText("email_confirmation_status_page_title");
+          container.appendChild(title);
+
+          const messageP = document.createElement('p');
+          messageP.innerHTML = getUIText(messageKey).replace(/\n/g, "<br>");
+          messageP.classList.add(messageClass);
+          container.appendChild(messageP);
+
+          // Add a button to go to login/landing page
+          const backButton = document.createElement('button');
+          backButton.className = 'ui-button primary';
+          backButton.textContent = getUIText(currentUser ? "button_new_game" : "button_login"); // Adapt based on if user somehow got logged in
+          backButton.addEventListener('click', () => {
+              window.location.href = '/'; // Simple redirect to root, which will re-initialize
+          });
+          container.appendChild(backButton);
+
+          centerColumn.appendChild(container);
+
+          // Ensure body classes are appropriate for this view
+          document.body.className = "theme-landing"; // Use a generic class for this page
+          appRoot.style.height = '100vh'; // Ensure full height for this standalone view
+      }
+      if (isDirectAccessError) {
+          // If it's a direct access error, the user is likely not logged in
+          // and we want them to go back to the main landing page experience.
+          // We might not want to immediately replaceState if they directly typed /confirm-email.
+          // The goal is to inform them and let them navigate away.
+      }
   }
 
   /**
@@ -2893,11 +3089,127 @@ async function callGeminiAPI(currentTurnHistory) {
     }
   }
 
+  function handlePasswordResetPage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const resetToken = urlParams.get('token');
+
+      if (window.location.pathname === '/reset-password' && resetToken) {
+          // Clear existing game/landing UI to show the reset form
+          // This part is important to make sure the page is blank except for the modal
+          if (themeGridContainer) themeGridContainer.innerHTML = ''; themeGridContainer.style.display = 'none';
+          if (storyLogViewport) storyLogViewport.innerHTML = ''; storyLogViewport.style.display = 'none';
+          if (playerInputControlPanel) playerInputControlPanel.style.display = 'none';
+          if (suggestedActionsWrapper) suggestedActionsWrapper.innerHTML = ''; suggestedActionsWrapper.style.display = 'none';
+          if (leftPanel) leftPanel.innerHTML = ''; // Clear panels completely
+          if (rightPanel) rightPanel.innerHTML = '';
+          document.body.className = "theme-landing"; // Use a generic class for this intermediate page
+
+          // Set up the modal for password reset
+          showCustomModal({
+              type: "form",
+              titleKey: "modal_title_reset_password",
+              formFields: [
+                  { id: "newPassword", labelKey: "label_new_password", type: "password", placeholderKey: "placeholder_new_password", required: true },
+                  { id: "confirmNewPassword", labelKey: "label_confirm_new_password", type: "password", placeholderKey: "placeholder_confirm_new_password", required: true }
+              ],
+              confirmTextKey: "button_reset_password",
+              // No cancel button by default if we want to force them through or to an explicit exit path
+              customActions: [ // Using customActions to control the submit button better
+                  {
+                      textKey: "button_reset_password",
+                      className: "ui-button primary",
+                      onClick: async () => { // This is essentially the original onSubmit
+                          const newPasswordInput = document.getElementById('newPassword');
+                          const confirmNewPasswordInput = document.getElementById('confirmNewPassword');
+                          const newPassword = newPasswordInput ? newPasswordInput.value : '';
+                          const confirmNewPassword = confirmNewPasswordInput ? confirmNewPasswordInput.value : '';
+                          const modalMessageArea = document.getElementById('custom-modal-message'); // For displaying form errors
+
+                          // Clear previous errors in modal
+                          if (modalMessageArea) {
+                              const existingError = modalMessageArea.querySelector('.modal-error-display');
+                              if (existingError) existingError.remove();
+                          }
+
+                          if (newPassword !== confirmNewPassword) {
+                              if(modalMessageArea) displayModalError(getUIText("alert_passwords_do_not_match"), modalMessageArea);
+                              return; // Keep modal open
+                          }
+                          if (newPassword.length < 8) {
+                              if(modalMessageArea) displayModalError(getUIText("alert_new_password_too_short"), modalMessageArea);
+                              return; // Keep modal open
+                          }
+
+                          try {
+                              const response = await fetch('/api/v1/auth/reset-password', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ token: resetToken, newPassword }),
+                              });
+                              const data = await response.json();
+                              if (!response.ok) {
+                                  throw new Error(data.error?.message || "Failed to reset password.");
+                              }
+
+                              // Password reset successful
+                              hideCustomModal(); // Close the current reset form modal
+
+                              // Show a new success alert modal
+                              await showCustomModal({
+                                  type: "alert",
+                                  titleKey: "alert_password_reset_success_title",
+                                  messageText: data.message, // Use the message from backend
+                                  customActions: [{
+                                      textKey: "button_login", // Or "Continue to App"
+                                      className: "ui-button primary",
+                                      onClick: () => {
+                                          window.location.href = '/'; // Navigate to root
+                                          // hideCustomModal() will be implicitly handled by page reload
+                                      }
+                                  }]
+                              });
+
+                          } catch (error) {
+                              log(LOG_LEVEL_ERROR, "Password reset submission failed:", error);
+                              if(modalMessageArea) displayModalError(error.message + (error.message.includes("Invalid or expired") ? " " + getUIText("text_try_request_again") : ""), modalMessageArea);
+                              // Do not close modal on error, let user see the error message.
+                          }
+                      }
+                  }
+              ],
+          }).catch(error => {
+              // This catch is for fundamental issues with showCustomModal itself (e.g., elements not found)
+              log(LOG_LEVEL_ERROR, "Error setting up reset password modal:", error);
+              window.location.href = '/'; // Fallback to safety
+          });
+
+          return true; // Indicate that this function took over the page view
+      }
+      return false; // This path wasn't for password reset
+  }
+
+
   /**
    * Main application initialization function.
    */
   async function initializeApp() {
-    log(LOG_LEVEL_INFO, "Application initialization started.");
+     log(LOG_LEVEL_INFO, "Application initialization started.");
+    if (handleEmailConfirmationStatus()) {
+        log(LOG_LEVEL_INFO, "Email confirmation status handled. App initialization might be altered.");
+        updateAuthUI();
+        setAppLanguageAndThemeUI(currentAppLanguage, null);
+        updateModelToggleButtonText();
+        updateTopbarThemeIcons();
+        return;
+    }
+    if (handlePasswordResetPage()) { // <<< ADD THIS CALL
+      log(LOG_LEVEL_INFO, "Password reset page handled. App initialization might be altered.");
+      updateAuthUI();
+      setAppLanguageAndThemeUI(currentAppLanguage, null);
+      updateModelToggleButtonText();
+      updateTopbarThemeIcons();
+      return;
+    }
     if (typeof THEMES_MANIFEST === "undefined" || THEMES_MANIFEST.length === 0) {
       log(LOG_LEVEL_ERROR, "CRITICAL: THEMES_MANIFEST is not loaded or is empty.");
       await showCustomModal({ type: "alert", titleKey: "alert_title_error", messageKey: "error_critical_manifest_missing", });

@@ -296,23 +296,16 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 
 // 9. SPA Fallback Route
-// Serves index.html for non-API GET requests that haven't been handled by static serving.
-app.get((req, res, next) => {
-  if (req.method === 'GET' && !req.path.startsWith('/api')) {
-    const acceptsHtml = req.accepts('html');
-    const isLikelyAsset = /\.(js|css|json|ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|map|txt|xml)$/i.test(req.path);
-
-    if (acceptsHtml && !isLikelyAsset) {
-      logger.debug(`SPA Fallback: Serving index.html for ${req.path}`);
-      return res.sendFile(path.join(__dirname, '..', 'index.html'), (err) => {
-        if (err) {
-          logger.error('Error serving index.html:', err.message);
-          res.status(404).json({ error: { message: 'Page not found.' } });
-        }
-      });
+app.get(/^\/(?!api\/)(?!.*\.\w{2,5}$).*$/, (req, res) => {
+  logger.debug(`Regex SPA Fallback: Serving index.html for GET ${req.path}`);
+  res.sendFile(path.join(__dirname, '..', 'index.html'), (err) => {
+    if (err) {
+      logger.error('Error serving index.html via Regex SPA fallback:', { path: req.path, message: err.message });
+      if (!res.headersSent) {
+        res.status(500).send('Error loading application content.');
+      }
     }
-  }
-  next(); // Pass to next error handler if not serving index.html
+  });
 });
 
 // 10. 404 Handler for unmatched routes

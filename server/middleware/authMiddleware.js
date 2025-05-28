@@ -28,14 +28,14 @@ const protect = async (req, res, next) => {
       const user = await prisma.user.findUnique({
         where: { id: decoded.user.id },
         select: {
-          id: true,
-          email: true,
-          preferred_app_language: true,
-          preferred_narrative_language: true,
-          preferred_model_name: true,
-          created_at: true,
-          updated_at: true
-          // DO NOT select password_hash or other sensitive fields
+            id: true,
+            email: true,
+            preferred_app_language: true,
+            preferred_narrative_language: true,
+            preferred_model_name: true,
+            created_at: true,
+            email_confirmed: true,
+            updated_at: true
         }
       });
 

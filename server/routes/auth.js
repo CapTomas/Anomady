@@ -1,31 +1,40 @@
 // server/routes/auth.js
-import express from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import prisma from '../db.js';
-import logger from '../utils/logger.js';
-import { protect } from '../middleware/authMiddleware.js';
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import prisma from "../db.js";
+import logger from "../utils/logger.js";
+import { protect } from "../middleware/authMiddleware.js";
+import {
+  generateSecureToken,
+  generateTokenExpiry,
+} from "../utils/tokenUtils.js";
 
 const router = express.Router();
 const SALT_ROUNDS = 10; // For bcrypt password hashing
-
 
 /**
  * @route   POST /api/v1/auth/register
  * @desc    Register a new user
  * @access  Public
  */
-router.post('/register', async (req, res) => {
-  const { email, password, preferred_app_language, preferred_narrative_language, preferred_model_name } = req.body;
+router.post("/register", async (req, res) => {
+  const {
+    email,
+    password,
+    preferred_app_language,
+    preferred_narrative_language,
+    preferred_model_name,
+  } = req.body;
 
   // 1. Basic Input Validation
   if (!email || !password) {
-    logger.warn('Registration attempt with missing email or password.');
+    logger.warn("Registration attempt with missing email or password.");
     return res.status(400).json({
       error: {
-        message: 'Email and password are required.',
-        code: 'MISSING_CREDENTIALS'
-      }
+        message: "Email and password are required.",
+        code: "MISSING_CREDENTIALS",
+      },
     });
   }
 
@@ -35,9 +44,9 @@ router.post('/register', async (req, res) => {
     logger.warn(`Registration attempt with invalid email format: ${email}`);
     return res.status(400).json({
       error: {
-        message: 'Invalid email format.',
-        code: 'INVALID_EMAIL_FORMAT'
-      }
+        message: "Invalid email format.",
+        code: "INVALID_EMAIL_FORMAT",
+      },
     });
   }
 
@@ -46,9 +55,9 @@ router.post('/register', async (req, res) => {
     logger.warn(`Registration attempt with weak password for email: ${email}`);
     return res.status(400).json({
       error: {
-        message: 'Password must be at least 8 characters long.',
-        code: 'WEAK_PASSWORD'
-      }
+        message: "Password must be at least 8 characters long.",
+        code: "WEAK_PASSWORD",
+      },
     });
   }
 
@@ -60,36 +69,55 @@ router.post('/register', async (req, res) => {
 
     if (existingUser) {
       logger.info(`Registration attempt for existing email: ${email}`);
-      return res.status(409).json({ // 409 Conflict
+      return res.status(409).json({
+        // 409 Conflict
         error: {
-          message: 'User with this email already exists.',
-          code: 'USER_ALREADY_EXISTS'
-        }
+          message: "User with this email already exists.",
+          code: "USER_ALREADY_EXISTS",
+        },
       });
     }
 
     // 3. Hash the password
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     logger.debug(`Password hashed for email: ${email}`);
+    const confirmationToken = generateSecureToken();
+    const confirmationTokenExpiresAt = generateTokenExpiry(24 * 60);
 
     // 4. Create the new user in the database
     const newUser = await prisma.user.create({
       data: {
-        email: email.toLowerCase(), // Store email in lowercase
+        email: email.toLowerCase(),
         password_hash: hashedPassword,
-        preferred_app_language: preferred_app_language || 'en', // Default if not provided
-        preferred_narrative_language: preferred_narrative_language || 'en', // Default if not provided
-        preferred_model_name: preferred_model_name || 'gemini-1.5-flash-latest', // Default if not provided
+        preferred_app_language: preferred_app_language || "en",
+        preferred_narrative_language: preferred_narrative_language || "en",
+        preferred_model_name: preferred_model_name || "gemini-1.5-flash-latest",
+        email_confirmed: false,
+        email_confirmation_token: confirmationToken,
+        email_confirmation_expires_at: confirmationTokenExpiresAt,
       },
     });
 
-    logger.info(`User registered successfully: ${newUser.email} (ID: ${newUser.id})`);
+    logger.info(
+      `User registered successfully: ${newUser.email} (ID: ${newUser.id})`
+    );
+
+    // --- SIMULATE SENDING CONFIRMATION EMAIL ---
+    // In a real app, you'd use an email service here.
+    // For now, we'll log the confirmation link.
+    const confirmationLink = `${
+      process.env.FRONTEND_URL ||
+      "http://localhost:" + (process.env.PORT || 3000)
+    }/api/v1/auth/confirm-email/${confirmationToken}`;
+    logger.info(
+      `SIMULATED EMAIL: Confirmation link for ${newUser.email}: ${confirmationLink}`
+    );
+    // --- END SIMULATION ---
 
     // 5. Respond (excluding sensitive data)
-    // For registration, we usually don't immediately log them in or send a JWT.
-    // We just confirm registration. Login will be a separate step.
     res.status(201).json({
-      message: 'User registered successfully. Please log in.',
+      message:
+        "User registered successfully. Please check your email to confirm your account.", // Updated message
       user: {
         id: newUser.id,
         email: newUser.email,
@@ -97,20 +125,20 @@ router.post('/register', async (req, res) => {
         preferred_narrative_language: newUser.preferred_narrative_language,
         preferred_model_name: newUser.preferred_model_name,
         created_at: newUser.created_at,
+        email_confirmed: newUser.email_confirmed, // Include confirmation status
       },
     });
-
   } catch (error) {
-    logger.error('Error during user registration:', {
+    logger.error("Error during user registration:", {
       message: error.message,
       stack: error.stack,
-      email: email // Log which email caused the error
+      email: email, // Log which email caused the error
     });
     res.status(500).json({
       error: {
-        message: 'Server error during registration. Please try again later.',
-        code: 'INTERNAL_SERVER_ERROR'
-      }
+        message: "Server error during registration. Please try again later.",
+        code: "INTERNAL_SERVER_ERROR",
+      },
     });
   }
 });
@@ -120,17 +148,17 @@ router.post('/register', async (req, res) => {
  * @desc    Authenticate user & get token
  * @access  Public
  */
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   // 1. Basic Input Validation
   if (!email || !password) {
-    logger.warn('Login attempt with missing email or password.');
+    logger.warn("Login attempt with missing email or password.");
     return res.status(400).json({
       error: {
-        message: 'Email and password are required.',
-        code: 'MISSING_CREDENTIALS'
-      }
+        message: "Email and password are required.",
+        code: "MISSING_CREDENTIALS",
+      },
     });
   }
 
@@ -142,11 +170,12 @@ router.post('/login', async (req, res) => {
 
     if (!user) {
       logger.info(`Login attempt for non-existent email: ${email}`);
-      return res.status(401).json({ // 401 Unauthorized
+      return res.status(401).json({
+        // 401 Unauthorized
         error: {
-          message: 'Invalid credentials.', // Keep messages generic for security
-          code: 'INVALID_CREDENTIALS'
-        }
+          message: "Invalid credentials.", // Keep messages generic for security
+          code: "INVALID_CREDENTIALS",
+        },
       });
     }
 
@@ -155,11 +184,12 @@ router.post('/login', async (req, res) => {
 
     if (!isMatch) {
       logger.info(`Login attempt with incorrect password for email: ${email}`);
-      return res.status(401).json({ // 401 Unauthorized
+      return res.status(401).json({
+        // 401 Unauthorized
         error: {
-          message: 'Invalid credentials.',
-          code: 'INVALID_CREDENTIALS'
-        }
+          message: "Invalid credentials.",
+          code: "INVALID_CREDENTIALS",
+        },
       });
     }
 
@@ -175,80 +205,428 @@ router.post('/login', async (req, res) => {
 
     // 5. Sign the token
     const jwtSecret = process.env.JWT_SECRET;
-    const jwtExpiresIn = process.env.JWT_EXPIRES_IN || '1d';
+    const jwtExpiresIn = process.env.JWT_EXPIRES_IN || "1d";
 
     if (!jwtSecret) {
-        logger.error('JWT_SECRET is not defined in environment variables.');
-        return res.status(500).json({
-            error: {
-                message: 'Server configuration error for authentication.',
-                code: 'JWT_CONFIG_ERROR'
-            }
-        });
+      logger.error("JWT_SECRET is not defined in environment variables.");
+      return res.status(500).json({
+        error: {
+          message: "Server configuration error for authentication.",
+          code: "JWT_CONFIG_ERROR",
+        },
+      });
     }
 
-    jwt.sign(
-      payload,
-      jwtSecret,
-      { expiresIn: jwtExpiresIn },
-      (err, token) => {
-        if (err) {
-            logger.error('Error signing JWT:', err);
-            return res.status(500).json({
-                error: {
-                    message: 'Server error during login. Could not generate token.',
-                    code: 'TOKEN_SIGN_ERROR'
-                }
-            });
-        }
-
-        logger.info(`User logged in successfully: ${user.email} (ID: ${user.id})`);
-        res.status(200).json({
-          message: 'Login successful.',
-          token,
-          user: { // Return some user info for the frontend to use immediately
-            id: user.id,
-            email: user.email,
-            preferred_app_language: user.preferred_app_language,
-            preferred_narrative_language: user.preferred_narrative_language,
-            preferred_model_name: user.preferred_model_name,
-          }
+    jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiresIn }, (err, token) => {
+      if (err) {
+        logger.error("Error signing JWT:", err);
+        return res.status(500).json({
+          error: {
+            message: "Server error during login. Could not generate token.",
+            code: "TOKEN_SIGN_ERROR",
+          },
         });
       }
-    );
 
+      logger.info(
+        `User logged in successfully: ${user.email} (ID: ${user.id})`
+      );
+      res.status(200).json({
+          message: 'Login successful.',
+          token,
+          user: {
+              id: user.id,
+              email: user.email,
+              preferred_app_language: user.preferred_app_language,
+              preferred_narrative_language: user.preferred_narrative_language,
+              preferred_model_name: user.preferred_model_name,
+              email_confirmed: user.email_confirmed,
+              created_at: user.created_at
+          }
+      });
+    });
   } catch (error) {
-    logger.error('Error during user login:', {
-        message: error.message,
-        stack: error.stack,
-        email: email
+    logger.error("Error during user login:", {
+      message: error.message,
+      stack: error.stack,
+      email: email,
     });
     res.status(500).json({
-        error: {
-            message: 'Server error during login. Please try again later.',
-            code: 'INTERNAL_SERVER_ERROR'
-        }
+      error: {
+        message: "Server error during login. Please try again later.",
+        code: "INTERNAL_SERVER_ERROR",
+      },
     });
   }
 });
 
 
 /**
+ * @route   POST /api/v1/auth/forgot-password
+ * @desc    Request a password reset link
+ * @access  Public
+ */
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    logger.warn("Forgot password attempt with no email provided.");
+    return res.status(400).json({
+      error: { message: "Email address is required.", code: "MISSING_EMAIL" },
+    });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (!user) {
+      logger.info(`Password reset requested for non-existent email: ${email}. Sending generic response.`);
+      return res.status(200).json({
+        message: "If an account with that email exists, a password reset link has been sent.",
+      });
+    }
+
+    // Generate a reset token and expiry
+    const resetToken = generateSecureToken(32);
+    const resetTokenExpiresAt = generateTokenExpiry(15);
+
+    // Update user with the reset token and expiry
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password_reset_token: resetToken,
+        password_reset_expires_at: resetTokenExpiresAt,
+      },
+    });
+
+    logger.info(`Password reset token generated for user: ${user.email}`);
+
+    // --- SIMULATE SENDING PASSWORD RESET EMAIL ---
+    const resetLink = `${
+      process.env.FRONTEND_URL || "http://localhost:" + (process.env.PORT || 3000)
+    }/reset-password?token=${resetToken}`;
+
+    logger.info(`SIMULATED EMAIL: Password reset link for ${user.email}: ${resetLink}`);
+    // --- END SIMULATION ---
+
+    res.status(200).json({
+      message: "If an account with that email exists, a password reset link has been sent.",
+    });
+
+  } catch (error) {
+    logger.error("Error during forgot password request:", {
+      message: error.message,
+      stack: error.stack,
+      email: email,
+    });
+    // Send a generic error to the client, do not expose internal details.
+    res.status(500).json({
+      error: {
+        message: "Server error processing your request. Please try again later.",
+        code: "INTERNAL_SERVER_ERROR",
+      },
+    });
+  }
+});
+
+
+/**
+ * @route   POST /api/v1/auth/reset-password
+ * @desc    Reset user's password using a token
+ * @access  Public
+ */
+router.post("/reset-password", async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    logger.warn("Password reset attempt with missing token or new password.");
+    return res.status(400).json({
+      error: {
+        message: "Token and new password are required.",
+        code: "MISSING_RESET_FIELDS",
+      },
+    });
+  }
+
+  // Validate new password strength (example: min 8 characters)
+  if (newPassword.length < 8) {
+    logger.warn(`Password reset attempt with weak new password for token: ${token.substring(0,10)}...`);
+    return res.status(400).json({
+      error: {
+        message: "Password must be at least 8 characters long.",
+        code: "WEAK_PASSWORD",
+      },
+    });
+  }
+
+  try {
+    // 1. Find user by the password reset token
+    const user = await prisma.user.findUnique({
+      where: { password_reset_token: token },
+    });
+
+    if (!user) {
+      logger.info(`Password reset attempt with invalid token: ${token.substring(0,10)}...`);
+      return res.status(400).json({
+        error: { message: "Invalid or expired password reset token.", code: "INVALID_TOKEN" },
+      });
+    }
+
+    // 2. Check if the token has expired
+    if (
+      !user.password_reset_expires_at ||
+      new Date() > new Date(user.password_reset_expires_at)
+    ) {
+      logger.info(`Expired password reset token used for user: ${user.email}`);
+      // Invalidate the token now that it's used or expired
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          password_reset_token: null,
+          password_reset_expires_at: null,
+        },
+      });
+      return res.status(400).json({
+        error: { message: "Password reset token has expired.", code: "EXPIRED_TOKEN" },
+      });
+    }
+
+    // 3. Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+    // 4. Update user's password and invalidate the reset token
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password_hash: hashedPassword,
+        password_reset_token: null, // Invalidate the token
+        password_reset_expires_at: null,
+      },
+    });
+
+    logger.info(`Password reset successfully for user: ${user.email}`);
+
+    // --- SIMULATE SENDING PASSWORD CHANGE NOTIFICATION EMAIL ---
+    logger.info(
+      `SIMULATED EMAIL: Your password for Anomady has been successfully changed for ${user.email}.`
+    );
+    // --- END SIMULATION ---
+
+    res.status(200).json({ message: "Password reset successfully. You can now log in with your new password." });
+
+  } catch (error) {
+    logger.error("Error during password reset:", {
+      message: error.message,
+      stack: error.stack,
+      tokenUsed: token ? token.substring(0,10) + '...' : 'N/A',
+    });
+    res.status(500).json({
+      error: {
+        message: "Server error resetting password. Please try again later.",
+        code: "INTERNAL_SERVER_ERROR",
+      },
+    });
+  }
+});
+
+/**
  * @route   GET /api/v1/auth/me
  * @desc    Get current logged-in user's data
  * @access  Private (requires token)
  */
-router.get('/me', protect, async (req, res) => {
+router.get("/me", protect, async (req, res) => {
   if (!req.user) {
-    logger.error('/me route accessed without req.user, though protect middleware should have caught it.');
-    return res.status(401).json({ error: { message: 'Not authorized.', code: 'UNEXPECTED_AUTH_FAILURE' }});
+    logger.error(
+      "/me route accessed without req.user, though protect middleware should have caught it."
+    );
+    return res.status(401).json({
+      error: { message: "Not authorized.", code: "UNEXPECTED_AUTH_FAILURE" },
+    });
   }
 
-  logger.info(`User data requested for /me by: ${req.user.email} (ID: ${req.user.id})`);
+  logger.info(
+    `User data requested for /me by: ${req.user.email} (ID: ${req.user.id})`
+  );
   res.status(200).json({
     message: "Current user data fetched successfully.",
-    user: req.user // req.user is already sanitized by the 'protect' middleware
+    user: req.user, // req.user is already sanitized by the 'protect' middleware
   });
+});
+
+/**
+ * @route   GET /api/v1/auth/confirm-email/:token
+ * @desc    Confirm user's email address
+ * @access  Public
+ */
+router.get("/confirm-email/:token", async (req, res) => {
+  const { token } = req.params;
+
+  if (!token) {
+    logger.warn("Email confirmation attempt with no token.");
+    // Redirect to a frontend page indicating an invalid token or error
+    return res
+      .status(400)
+      .redirect(
+        `${
+          process.env.FRONTEND_URL || "http://localhost:3000"
+        }/email-confirmation-status?status=invalid_token`
+      );
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email_confirmation_token: token },
+    });
+
+    if (!user) {
+      logger.info(`Email confirmation attempt with invalid token: ${token}`);
+      return res
+        .status(400)
+        .redirect(
+          `${
+            process.env.FRONTEND_URL || "http://localhost:3000"
+          }/email-confirmation-status?status=invalid_token`
+        );
+    }
+
+    if (user.email_confirmed) {
+      logger.info(`Email already confirmed for user: ${user.email}`);
+      return res
+        .status(200)
+        .redirect(
+          `${
+            process.env.FRONTEND_URL || "http://localhost:3000"
+          }/email-confirmation-status?status=already_confirmed`
+        );
+    }
+
+    if (
+      user.email_confirmation_expires_at &&
+      new Date() > new Date(user.email_confirmation_expires_at)
+    ) {
+      logger.info(`Expired confirmation token used for user: ${user.email}`);
+      // Optionally, you could delete the expired token here or allow resending.
+      // For now, just redirect.
+      return res
+        .status(400)
+        .redirect(
+          `${
+            process.env.FRONTEND_URL || "http://localhost:3000"
+          }/email-confirmation-status?status=expired_token`
+        );
+    }
+
+    // Mark email as confirmed and clear token fields
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        email_confirmed: true,
+        email_confirmation_token: null, // Invalidate the token
+        email_confirmation_expires_at: null,
+      },
+    });
+
+    logger.info(`Email confirmed successfully for user: ${user.email}`);
+    return res
+      .status(200)
+      .redirect(
+        `${
+          process.env.FRONTEND_URL || "http://localhost:3000"
+        }/email-confirmation-status?status=success`
+      );
+  } catch (error) {
+    logger.error("Error during email confirmation:", {
+      token,
+      message: error.message,
+      stack: error.stack,
+    });
+    return res
+      .status(500)
+      .redirect(
+        `${
+          process.env.FRONTEND_URL || "http://localhost:3000"
+        }/email-confirmation-status?status=server_error`
+      );
+  }
+});
+
+/**
+ * @route   POST /api/v1/auth/resend-confirmation-email
+ * @desc    Resend email confirmation link
+ * @access  Private (User must be logged in but not confirmed)
+ */
+router.post("/resend-confirmation-email", protect, async (req, res) => {
+  const userId = req.user.id; // User from protect middleware
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      logger.error(
+        `Authenticated user ID ${userId} not found for resending confirmation.`
+      );
+      return res
+        .status(404)
+        .json({
+          error: { message: "User not found.", code: "USER_NOT_FOUND" },
+        });
+    }
+
+    if (user.email_confirmed) {
+      logger.info(
+        `User ${user.email} requested resend, but email already confirmed.`
+      );
+      return res
+        .status(400)
+        .json({
+          error: {
+            message: "Email is already confirmed.",
+            code: "EMAIL_ALREADY_CONFIRMED",
+          },
+        });
+    }
+
+    // Generate new token and expiry
+    const newConfirmationToken = generateSecureToken();
+    const newConfirmationTokenExpiresAt = generateTokenExpiry(24 * 60); // 24 hours
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        email_confirmation_token: newConfirmationToken,
+        email_confirmation_expires_at: newConfirmationTokenExpiresAt,
+      },
+    });
+
+    // --- SIMULATE RESENDING CONFIRMATION EMAIL ---
+    const confirmationLink = `${
+      process.env.FRONTEND_URL ||
+      "http://localhost:" + (process.env.PORT || 3000)
+    }/api/v1/auth/confirm-email/${newConfirmationToken}`;
+    logger.info(
+      `SIMULATED EMAIL (RESEND): Confirmation link for ${user.email}: ${confirmationLink}`
+    );
+    // --- END SIMULATION ---
+
+    res
+      .status(200)
+      .json({ message: "Confirmation email resent. Please check your inbox." });
+  } catch (error) {
+    logger.error(
+      `Error resending confirmation email for user ID ${userId}:`,
+      error
+    );
+    res
+      .status(500)
+      .json({
+        error: {
+          message: "Server error resending confirmation email.",
+          code: "RESEND_CONFIRMATION_ERROR",
+        },
+      });
+  }
 });
 
 // Export the router

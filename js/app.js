@@ -1822,20 +1822,18 @@ document.addEventListener("DOMContentLoaded", () => {
    * Starts the game session after the player enters their identifier (for anonymous play).
    */
   async function startGameAfterIdentifier() {
+    const enteredIdentifier = playerIdentifierInputEl ? playerIdentifierInputEl.value.trim() : "";
 
-    if (currentUser) {
-
-    } else {
-      const enteredIdentifier = playerIdentifierInputEl ? playerIdentifierInputEl.value.trim() : "";
-      if (!enteredIdentifier) {
-        await showCustomModal({ type: "alert", titleKey: "alert_title_notice", messageKey: "alert_identifier_required", });
-        if (playerIdentifierInputEl) playerIdentifierInputEl.focus();
-        return;
-      }
-      playerIdentifier = enteredIdentifier;
+    if (!enteredIdentifier) {
+      await showCustomModal({ type: "alert", titleKey: "alert_title_notice", messageKey: "alert_identifier_required", });
+      if (playerIdentifierInputEl) playerIdentifierInputEl.focus();
+      return;
     }
+    playerIdentifier = enteredIdentifier;
 
-    isInitialGameLoad = true; currentPromptType = "initial";
+    isInitialGameLoad = true;
+    currentPromptType = "initial";
+
     if (nameInputSection) nameInputSection.style.display = "none";
     if (actionInputSection) actionInputSection.style.display = "flex";
     if (storyLogViewport) { storyLogViewport.style.opacity = "1"; storyLogViewport.style.transform = "translateY(0) scale(1)"; }
@@ -1846,20 +1844,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (themeConfig && themeConfig.dashboard_config) {
       const dashboardConfig = themeConfig.dashboard_config;
       const foundIdItem = (dashboardConfig?.left_panel || []).flatMap(p => p.items).find(item => item.id === "name" || item.id === "character_name");
-      if (foundIdItem) { idKeyForDashboard = foundIdItem.id; }
+      if (foundIdItem) {
+        idKeyForDashboard = foundIdItem.id;
+      }
     }
-
     updateDashboard({ [idKeyForDashboard]: playerIdentifier }, false);
     addMessageToLog(getUIText("connecting", { PLAYER_ID: playerIdentifier }), "system");
+
     gameHistory = [{ role: "user", parts: [{ text: `My identifier is ${playerIdentifier}. I am ready to start the game in ${getUIText(themeConfig?.name_key || "unknown_theme", {}, currentTheme)} theme.` }], }];
+
     await saveGameState();
+
     clearSuggestedActions();
     const narrative = await callGeminiAPI(gameHistory);
     if (narrative) { addMessageToLog(narrative, "gm"); }
     else {
-
-      if (nameInputSection && !currentUser) nameInputSection.style.display = "flex";
-      if (actionInputSection) actionInputSection.style.display = "none";
+      if (nameInputSection) nameInputSection.style.display = "none";
+      if (actionInputSection) actionInputSection.style.display = "flex";
       addMessageToLog(getUIText("error_session_init_failed"), "system");
     }
   }
@@ -1976,6 +1977,7 @@ document.addEventListener("DOMContentLoaded", () => {
       else { switchToLandingView(); }
       return;
     }
+
     if (newThemeId !== DEFAULT_THEME_ID && (!ALL_THEMES_CONFIG[DEFAULT_THEME_ID] || !themeTextData[DEFAULT_THEME_ID] || !PROMPT_URLS_BY_THEME[DEFAULT_THEME_ID])) {
       await ensureThemeDataLoaded(DEFAULT_THEME_ID);
     }
@@ -1990,23 +1992,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     currentTheme = newThemeId; localStorage.setItem(CURRENT_THEME_STORAGE_KEY, currentTheme);
-    if (forceNewGame || !themeWasAlreadyPlaying) { addPlayingTheme(newThemeId); }
-    clearGameStateInternal(currentTheme);
+    if (forceNewGame || !themeWasAlreadyPlaying) {
+      addPlayingTheme(newThemeId);
+    }
 
-    switchToGameView(currentTheme); generatePanelsForTheme(currentTheme);
+    if (oldThemeId !== newThemeId || forceNewGame) {
+        clearGameStateInternal(currentTheme);
+    }
+
+    switchToGameView(currentTheme);
+    generatePanelsForTheme(currentTheme);
     setAppLanguageAndThemeUI(currentAppLanguage, currentTheme);
 
     const promptsLoadedSuccessfully = await loadAllPromptsForTheme(currentTheme);
     if (!promptsLoadedSuccessfully) {
       addMessageToLog(getUIText("error_load_prompts_critical", { THEME: currentTheme }), "system-error");
-      if (startGameButton) startGameButton.disabled = true; switchToLandingView(); return;
+      if (startGameButton) startGameButton.disabled = true;
+      switchToLandingView();
+      return;
     }
     if (startGameButton) startGameButton.disabled = false;
+
     updateTopbarThemeIcons();
     const newThemeDisplayName = ALL_THEMES_CONFIG[newThemeId] ? getUIText(ALL_THEMES_CONFIG[newThemeId].name_key, {}, newThemeId) : newThemeId;
 
-    if (!forceNewGame && await loadGameState(currentTheme)) {
-      isInitialGameLoad = false; initializeCollapsiblePanelBoxes(currentTheme); displaySuggestedActions(currentSuggestedActions);
+    const successfullyLoadedExistingGame = !forceNewGame && await loadGameState(currentTheme);
+
+    if (successfullyLoadedExistingGame) {
+      // Game state loaded and resumed successfully
+      isInitialGameLoad = false;
+      initializeCollapsiblePanelBoxes(currentTheme);
+      displaySuggestedActions(currentSuggestedActions);
+
       if (nameInputSection) nameInputSection.style.display = "none";
       if (actionInputSection) actionInputSection.style.display = "flex";
       if (playerActionInput && document.body.contains(playerActionInput)) playerActionInput.focus();
@@ -2014,33 +2031,46 @@ document.addEventListener("DOMContentLoaded", () => {
       addMessageToLog(getUIText("system_session_resumed", { PLAYER_ID: playerIdentifier, THEME_NAME: newThemeDisplayName, }), "system");
       if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("system_status_online_short"); systemStatusIndicator.className = "status-indicator status-ok"; }
     } else {
-      isInitialGameLoad = true; currentPromptType = "initial"; currentPanelStates = {}; currentSuggestedActions = [];
-      initializeCollapsiblePanelBoxes(currentTheme); displaySuggestedActions(currentSuggestedActions);
+      isInitialGameLoad = true;
+      currentPromptType = "initial";
+      currentPanelStates = {};
+      currentSuggestedActions = [];
+      lastKnownDashboardUpdates = {};
+      lastKnownGameStateIndicators = {};
+      lastKnownCumulativePlayerSummary = "";
+      lastKnownEvolvedWorldLore = "";
+
+      initializeDashboardDefaultTexts();
+      initializeCollapsiblePanelBoxes(currentTheme);
+      displaySuggestedActions(currentSuggestedActions);
+
       if (storyLog) storyLog.innerHTML = "";
 
-      if (currentUser) {
-        playerIdentifier = currentUser.email;
-        if (nameInputSection) nameInputSection.style.display = "none";
-        if (actionInputSection) actionInputSection.style.display = "flex";
-        if (playerActionInput && document.body.contains(playerActionInput)) playerActionInput.focus();
-
-        await startGameAfterIdentifier();
-      } else {
-        playerIdentifier = "";
-        if (nameInputSection) nameInputSection.style.display = "flex";
-        if (actionInputSection) actionInputSection.style.display = "none";
-        if (playerIdentifierInputEl) {
-          playerIdentifierInputEl.value = ""; playerIdentifierInputEl.placeholder = getUIText("placeholder_name_login");
-          if (document.body.contains(playerIdentifierInputEl)) playerIdentifierInputEl.focus();
-        }
+      playerIdentifier = "";
+      if (playerIdentifierInputEl) {
+        playerIdentifierInputEl.value = "";
+        playerIdentifierInputEl.placeholder = getUIText("placeholder_name_login");
       }
 
-      if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("standby"); systemStatusIndicator.className = "status-indicator status-warning"; }
+      if (nameInputSection) nameInputSection.style.display = "flex";
+      if (actionInputSection) actionInputSection.style.display = "none";
+      if (playerIdentifierInputEl && document.body.contains(playerIdentifierInputEl)) {
+        playerIdentifierInputEl.focus();
+      }
+
+      if (systemStatusIndicator) {
+        systemStatusIndicator.textContent = getUIText("standby");
+        systemStatusIndicator.className = "status-indicator status-warning";
+      }
+
       if (oldThemeId !== newThemeId || forceNewGame) {
         addMessageToLog(getUIText("system_theme_set_generic", { THEME_NAME: newThemeDisplayName, }), "system");
-        if (forceNewGame) addMessageToLog(getUIText("system_new_game_initiated", { THEME_NAME: newThemeDisplayName, }), "system");
+        if (forceNewGame) {
+          addMessageToLog(getUIText("system_new_game_initiated", { THEME_NAME: newThemeDisplayName, }), "system");
+        }
       }
     }
+
     requestAnimationFrame(() => {
       if (leftPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('left', leftPanel);
       if (rightPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('right', rightPanel);

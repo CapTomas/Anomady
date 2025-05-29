@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const DEFAULT_THEME_ID = "grim_warden";
   const UPDATE_HIGHLIGHT_DURATION = 5000;
   const SCROLL_INDICATOR_TOLERANCE = 2;
+  const RECENT_INTERACTION_WINDOW_SIZE = 10;
 
   // --- localStorage Keys ---
   const CURRENT_THEME_STORAGE_KEY = "anomadyCurrentTheme";
@@ -248,7 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
       theme_id: currentTheme,
       player_identifier: narrativePlayerIdentifier || "Unnamed Protagonist",
       game_history: gameHistory,
-      // game_history_summary: "", // Optional: To be implemented if needed
       last_dashboard_updates: lastKnownDashboardUpdates,
       last_game_state_indicators: lastKnownGameStateIndicators,
       current_prompt_type: currentPromptType,
@@ -262,13 +262,15 @@ document.addEventListener("DOMContentLoaded", () => {
       // showGlobalLoadingIndicator(true, "Saving progress...");
       const response = await _callApi('/api/v1/gamestates', 'POST', gameStatePayload, currentUser.token);
       log(LOG_LEVEL_INFO, "Game state saved successfully to backend.", response);
-      addMessageToLog("Progress saved to server.", "system");
       // showGlobalLoadingIndicator(false);
     } catch (error) {
       log(LOG_LEVEL_ERROR, "Error saving game state to backend:", error.message, error.code, error.details);
       addMessageToLog(getUIText("error_saving_progress") + ` (Server: ${error.message})`, "system-error");
     }
   }
+
+  let lastKnownCumulativePlayerSummary = "";
+  let lastKnownEvolvedWorldLore = "";
 
   /**
    * Loads game state. If a user is logged in, it fetches from the backend.
@@ -287,6 +289,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const loadedState = await _callApi(`/api/v1/gamestates/${themeIdToLoad}`, 'GET', null, currentUser.token);
 
       playerIdentifier = loadedState.player_identifier;
+      lastKnownCumulativePlayerSummary = loadedState.game_history_summary || "";
+      lastKnownEvolvedWorldLore = loadedState.game_history_lore || "";
       gameHistory = loadedState.game_history || [];
       lastKnownDashboardUpdates = loadedState.last_dashboard_updates || {};
       lastKnownGameStateIndicators = loadedState.last_game_state_indicators || {};
@@ -347,6 +351,8 @@ document.addEventListener("DOMContentLoaded", () => {
         log(LOG_LEVEL_INFO, `No game state found on backend for theme '${themeIdToLoad}'. Starting fresh.`);
         clearGameStateInternal(themeIdToLoad); // Clear any local/in-memory remnants
         // For a new game, playerIdentifier (character name) might be prompted or use a default
+        lastKnownCumulativePlayerSummary = "";
+        lastKnownEvolvedWorldLore = "";
         isInitialGameLoad = true; // Treat as a new game start for this theme for this user
         currentPromptType = "initial";
         return false; // Signifies no existing game state was loaded
@@ -593,6 +599,9 @@ document.addEventListener("DOMContentLoaded", () => {
     processedPromptText = processedPromptText.replace(/\$\{theme_specific_instructions\}/g, themeSpecificInstructions);
     processedPromptText = processedPromptText.replace(/\$\{generated_dashboard_description\}/g, generatedDashboardDescription);
     processedPromptText = processedPromptText.replace(/\$\{generated_game_state_indicators\}/g, generatedGameStateIndicators);
+    processedPromptText = processedPromptText.replace(/\$\{game_history_lore\}/g, lastKnownEvolvedWorldLore || getUIText(themeConfig.lore_key, {}, currentTheme));
+    processedPromptText = processedPromptText.replace(/\$\{game_history_summary\}/g, lastKnownCumulativePlayerSummary || "No major long-term events have been summarized yet.");
+    processedPromptText = processedPromptText.replace(/\$\{RIW\}/g, RECENT_INTERACTION_WINDOW_SIZE);
     if (promptTypeToUse === "initial" || basePromptKey === "master_initial") {
       if (gamePrompts[currentTheme]?.starts && isValidPromptText(gamePrompts[currentTheme].starts)) {
         const allStarts = gamePrompts[currentTheme].starts.split("\n").map(s => s.trim()).filter(s => s.length > 0);

@@ -38,6 +38,7 @@ model GameState {
 
   game_history                   Json
   game_history_summary           String?   @db.Text
+  game_history_lore              String?   @db.Text
 
   last_dashboard_updates         Json
   last_game_state_indicators     Json
@@ -51,6 +52,8 @@ model GameState {
 
   created_at                     DateTime  @default(now())
   updated_at                     DateTime  @updatedAt
+
+  summarization_in_progress      Boolean   @default(false)
 
   @@unique([userId, theme_id])
   @@index([userId])

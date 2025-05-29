@@ -24,4 +24,55 @@ model User {
   email_confirmation_expires_at  DateTime?
   password_reset_token           String?   @unique
   password_reset_expires_at      DateTime?
+  gameStates                     GameState[]
+  themeInteractions              UserThemeInteraction[]
+}
+
+model GameState {
+  id                             String    @id @default(cuid())
+  user                           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                         String    @map("user_id")
+
+  theme_id                       String
+  player_identifier              String
+
+  game_history                   Json
+  game_history_summary           String?   @db.Text
+
+  last_dashboard_updates         Json
+  last_game_state_indicators     Json
+  current_prompt_type            String
+  current_narrative_language     String
+  last_suggested_actions         Json
+  panel_states                   Json
+
+  model_name_used                String?
+  theme_version_id               String?
+
+  created_at                     DateTime  @default(now())
+  updated_at                     DateTime  @updatedAt
+
+  @@unique([userId, theme_id])
+  @@index([userId])
+  @@index([theme_id])
+}
+
+model UserThemeInteraction {
+  id                             String    @id @default(cuid())
+  user                           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                         String    @map("user_id")
+
+  theme_id                       String
+
+  is_playing                     Boolean   @default(false)
+  is_liked                       Boolean   @default(false)
+
+  last_played_at                 DateTime?
+
+  created_at                     DateTime  @default(now())
+  updated_at                     DateTime  @updatedAt
+
+  @@unique([userId, theme_id])
+  @@index([userId])
+  @@index([theme_id])
 }

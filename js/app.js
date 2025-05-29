@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // --- API Key & Endpoints (v0.3.1 and beyond) ---
+  // --- API Key & Endpoints (v0.4.5 and beyond) ---
   const PROXY_API_URL = '/api/v1/gemini/generate';
 
   // --- Default Application Settings ---
@@ -10,12 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- localStorage Keys ---
   const CURRENT_THEME_STORAGE_KEY = "anomadyCurrentTheme";
-  const GAME_STATE_STORAGE_KEY_PREFIX = "anomadyGameState_";
   const MODEL_PREFERENCE_STORAGE_KEY = "anomadyModelPreference";
   const LANGUAGE_PREFERENCE_STORAGE_KEY = "preferredAppLanguage";
   const NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY = "preferredNarrativeLanguage";
-  const PLAYING_THEMES_STORAGE_KEY = "anomadyPlayingThemes";
-  const LIKED_THEMES_STORAGE_KEY = "anomadyLikedThemes";
   const LANDING_SELECTED_GRID_THEME_KEY = "anomadyLandingSelectedGridTheme";
   const LOG_LEVEL_STORAGE_KEY = "anomadyLogLevel";
   const JWT_STORAGE_KEY = "anomadyAuthToken";
@@ -223,107 +220,207 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Saves the current game state to localStorage.
+   * Saves the current game state. If a user is logged in, it saves to the backend.
+   * Otherwise, it does nothing (as localStorage persistence is being removed for game states).
+   * This function is now asynchronous due to the API call.
    */
-  function saveGameState() {
-    if (!currentTheme) return;
+  async function saveGameState() {
+    if (!currentTheme) {
+      log(LOG_LEVEL_WARN, "Cannot save game state: currentTheme not set.");
+      return;
+    }
 
-    const identifierToSave = currentUser ? currentUser.email : playerIdentifier;
-    if (!identifierToSave) return;
+    if (!currentUser || !currentUser.token) {
+      log(LOG_LEVEL_INFO, "User not logged in. Game state not saved to backend.");
+      return;
+    }
 
-    const gameStateKey = GAME_STATE_STORAGE_KEY_PREFIX + currentTheme;
-    const gameState = {
-      playerIdentifier: identifierToSave,
-      gameHistory: gameHistory,
-      lastDashboardUpdates: lastKnownDashboardUpdates,
-      lastGameStateIndicators: lastKnownGameStateIndicators,
-      currentPromptType: currentPromptType,
-      currentNarrativeLanguage: currentNarrativeLanguage,
-      lastSuggestedActions: currentSuggestedActions,
-      panelStates: currentPanelStates,
+    const narrativePlayerIdentifier = playerIdentifier;
+
+    if (!narrativePlayerIdentifier && gameHistory.length === 0) {
+      log(LOG_LEVEL_INFO, "Player identifier not set and game history empty, skipping initial save for new game until identifier is set.");
+      return;
+    }
+
+    log(LOG_LEVEL_INFO, `Attempting to save game state for theme '${currentTheme}' for user '${currentUser.email}'`);
+
+    const gameStatePayload = {
+      theme_id: currentTheme,
+      player_identifier: narrativePlayerIdentifier || "Unnamed Protagonist",
+      game_history: gameHistory,
+      // game_history_summary: "", // Optional: To be implemented if needed
+      last_dashboard_updates: lastKnownDashboardUpdates,
+      last_game_state_indicators: lastKnownGameStateIndicators,
+      current_prompt_type: currentPromptType,
+      current_narrative_language: currentNarrativeLanguage,
+      last_suggested_actions: currentSuggestedActions,
+      panel_states: currentPanelStates,
+      model_name_used: currentModelName,
     };
-    try { localStorage.setItem(gameStateKey, JSON.stringify(gameState)); }
-    catch (e) { log(LOG_LEVEL_ERROR, "Error saving game state:", e); addMessageToLog(getUIText("error_saving_progress"), "system-error"); }
+
+    try {
+      // showGlobalLoadingIndicator(true, "Saving progress...");
+      const response = await _callApi('/api/v1/gamestates', 'POST', gameStatePayload, currentUser.token);
+      log(LOG_LEVEL_INFO, "Game state saved successfully to backend.", response);
+      addMessageToLog("Progress saved to server.", "system");
+      // showGlobalLoadingIndicator(false);
+    } catch (error) {
+      log(LOG_LEVEL_ERROR, "Error saving game state to backend:", error.message, error.code, error.details);
+      addMessageToLog(getUIText("error_saving_progress") + ` (Server: ${error.message})`, "system-error");
+    }
   }
 
   /**
-   * Loads game state from localStorage for a given theme.
+   * Loads game state. If a user is logged in, it fetches from the backend.
    */
-  function loadGameState(themeIdToLoad) {
-    const gameStateKey = GAME_STATE_STORAGE_KEY_PREFIX + themeIdToLoad;
+  async function loadGameState(themeIdToLoad) {
+    if (!currentUser || !currentUser.token) {
+      log(LOG_LEVEL_INFO, "User not logged in. Cannot load game state from backend.");
+      clearGameStateInternal(themeIdToLoad);
+      return false;
+    }
+
+    log(LOG_LEVEL_INFO, `Attempting to load game state for theme '${themeIdToLoad}' for user '${currentUser.email}' from backend.`);
+    // showGlobalLoadingIndicator(true, "Loading game..."); // Example UI Feedback
+
     try {
-      const savedStateString = localStorage.getItem(gameStateKey);
-      if (!savedStateString) return false;
-      const savedState = JSON.parse(savedStateString);
+      const loadedState = await _callApi(`/api/v1/gamestates/${themeIdToLoad}`, 'GET', null, currentUser.token);
 
-      if (!savedState.playerIdentifier || !savedState.gameHistory || savedState.gameHistory.length === 0) {
-        clearGameStateInternal(themeIdToLoad); return false;
-      }
-      if (currentUser) {
-        playerIdentifier = currentUser.email;
-      } else {
-        playerIdentifier = savedState.playerIdentifier;
-      }
+      playerIdentifier = loadedState.player_identifier;
+      gameHistory = loadedState.game_history || [];
+      lastKnownDashboardUpdates = loadedState.last_dashboard_updates || {};
+      lastKnownGameStateIndicators = loadedState.last_game_state_indicators || {};
+      currentPromptType = loadedState.current_prompt_type || "default";
+      currentNarrativeLanguage = loadedState.current_narrative_language || currentAppLanguage;
+      currentSuggestedActions = loadedState.last_suggested_actions || [];
+      currentPanelStates = loadedState.panel_states || {};
 
-      gameHistory = savedState.gameHistory;
-      lastKnownDashboardUpdates = savedState.lastDashboardUpdates || {};
-      lastKnownGameStateIndicators = savedState.lastGameStateIndicators || {};
-      currentPromptType = savedState.currentPromptType || "default";
-      currentNarrativeLanguage = savedState.currentNarrativeLanguage || currentAppLanguage;
-      currentSuggestedActions = savedState.lastSuggestedActions || [];
-      currentPanelStates = savedState.panelStates || {};
       if (storyLog) storyLog.innerHTML = "";
       gameHistory.forEach((turn) => {
         if (turn.role === "user") { addMessageToLog(turn.parts[0].text, "player"); }
         else if (turn.role === "model") {
           try {
             const modelResponse = JSON.parse(turn.parts[0].text); addMessageToLog(modelResponse.narrative, "gm");
-          } catch (e) { log(LOG_LEVEL_ERROR, "Error parsing model response from history:", e, turn.parts[0].text); addMessageToLog(getUIText("error_reconstruct_story"), "system"); }
+          } catch (e) { log(LOG_LEVEL_ERROR, "Error parsing model response from loaded history:", e, turn.parts[0].text); addMessageToLog(getUIText("error_reconstruct_story"), "system"); }
         }
       });
-      updateDashboard(lastKnownDashboardUpdates, false);
-      handleGameStateIndicators(lastKnownGameStateIndicators, false);
 
+      updateDashboard(lastKnownDashboardUpdates, false);
+      handleGameStateIndicators(lastKnownGameStateIndicators, true);
+
+      if (playerIdentifierInputEl) {
+        playerIdentifierInputEl.value = playerIdentifier;
+      }
       const themeConfig = ALL_THEMES_CONFIG[themeIdToLoad];
       if (themeConfig && themeConfig.dashboard_config) {
         const dashboardConfig = themeConfig.dashboard_config;
         const playerIdentifierConfigKey = (dashboardConfig.left_panel || []).flatMap((p) => p.items).find((item) => item.id === "name" || item.id === "character_name")?.id;
         if (playerIdentifierConfigKey) {
-          const playerIdentifierConfig = findItemConfigById(dashboardConfig, playerIdentifierConfigKey);
-          if (playerIdentifierConfig) {
-            const el = document.getElementById(`info-${playerIdentifierConfig.id}`);
-
-            if (el) el.textContent = currentUser ? currentUser.email : savedState.playerIdentifier;
-          }
+          const el = document.getElementById(`info-${playerIdentifierConfigKey}`);
+          if (el) el.textContent = playerIdentifier;
         }
       }
-      isInitialGameLoad = false; return true;
-    } catch (e) {
-      log(LOG_LEVEL_ERROR, `Error loading game state for ${themeIdToLoad}:`, e);
-      clearGameStateInternal(themeIdToLoad); localStorage.removeItem(gameStateKey); return false;
+
+      Object.keys(currentPanelStates).forEach(panelId => {
+          const panelElement = document.getElementById(panelId);
+          if (panelElement && panelElement.classList.contains('collapsible')) {
+              const shouldBeExpanded = currentPanelStates[panelId];
+              const isCurrentlyExpanded = panelElement.classList.contains('is-expanded');
+              if (shouldBeExpanded !== isCurrentlyExpanded) {
+                  const panelBoxConfig = findPanelBoxConfigById(themeIdToLoad, panelId);
+                  if (panelBoxConfig) {
+                    animatePanelBox(panelId, shouldBeExpanded, panelBoxConfig.type === 'hidden_until_active', true);
+                  }
+              }
+          }
+      });
+
+
+      isInitialGameLoad = false;
+      log(LOG_LEVEL_INFO, `Game state for theme '${themeIdToLoad}' loaded successfully from backend.`);
+      // showGlobalLoadingIndicator(false);
+      return true;
+
+    } catch (error) {
+      // showGlobalLoadingIndicator(false);
+      if (error.status === 404 && error.code === 'GAME_STATE_NOT_FOUND') {
+        log(LOG_LEVEL_INFO, `No game state found on backend for theme '${themeIdToLoad}'. Starting fresh.`);
+        clearGameStateInternal(themeIdToLoad); // Clear any local/in-memory remnants
+        // For a new game, playerIdentifier (character name) might be prompted or use a default
+        isInitialGameLoad = true; // Treat as a new game start for this theme for this user
+        currentPromptType = "initial";
+        return false; // Signifies no existing game state was loaded
+      } else {
+        log(LOG_LEVEL_ERROR, `Error loading game state for theme '${themeIdToLoad}' from backend:`, error.message, error.code);
+        addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: `Could not load game: ${error.message}` }), "system-error");
+        clearGameStateInternal(themeIdToLoad);
+        return false;
+      }
     }
+  }
+
+  /**
+   * Finds a panel box's configuration by its ID within a theme's dashboard structure.
+   */
+  function findPanelBoxConfigById(themeId, panelBoxId) {
+    const themeFullConfig = ALL_THEMES_CONFIG[themeId];
+    if (!themeFullConfig || !themeFullConfig.dashboard_config) return null;
+    const dashboardConfig = themeFullConfig.dashboard_config;
+    for (const sideKey of ["left_panel", "right_panel"]) {
+        if (dashboardConfig[sideKey]) {
+            const foundPanelConfig = dashboardConfig[sideKey].find(pCfg => pCfg.id === panelBoxId);
+            if (foundPanelConfig) return foundPanelConfig;
+        }
+    }
+    return null;
+  }
+
+  /**
+   * Clears in-memory game state variables for a specific theme.
+   */
+  async function clearGameState(themeIdToClear) {
+    log(LOG_LEVEL_INFO, `Attempting to clear game state for theme '${themeIdToClear}'.`);
+
+    if (currentUser && currentUser.token) {
+      try {
+        // showGlobalLoadingIndicator(true, "Clearing game data..."); // Example UI Feedback
+        await _callApi(`/api/v1/gamestates/${themeIdToClear}`, 'DELETE', null, currentUser.token);
+        log(LOG_LEVEL_INFO, `Game state for theme '${themeIdToClear}' successfully deleted from backend for user '${currentUser.email}'.`);
+        // showGlobalLoadingIndicator(false);
+      } catch (error) {
+        // showGlobalLoadingIndicator(false);
+        if (error.status === 404 && error.code === 'GAME_STATE_NOT_FOUND_FOR_DELETE') {
+            log(LOG_LEVEL_INFO, `No game state found on backend to delete for theme '${themeIdToClear}'. Frontend will be cleared.`);
+        } else {
+            log(LOG_LEVEL_ERROR, `Error deleting game state for theme '${themeIdToClear}' from backend:`, error.message, error.code);
+        }
+      }
+    } else {
+      log(LOG_LEVEL_INFO, "User not logged in. Skipping backend game state deletion.");
+    }
+
+    clearGameStateInternal(themeIdToClear);
   }
 
   /**
    * Clears in-memory game state variables for a specific theme.
    */
   function clearGameStateInternal(themeIdToClear) {
-    if (themeIdToClear === currentTheme) {
+    if (themeIdToClear === currentTheme || !currentTheme) {
       gameHistory = [];
-
-      currentPromptType = "initial"; isInitialGameLoad = true;
-      lastKnownDashboardUpdates = {}; lastKnownGameStateIndicators = {}; currentSuggestedActions = [];
-      currentPanelStates = {}; if (storyLog) storyLog.innerHTML = ""; clearSuggestedActions();
+      currentPromptType = "initial";
+      isInitialGameLoad = true;
+      lastKnownDashboardUpdates = {};
+      lastKnownGameStateIndicators = {};
+      currentSuggestedActions = [];
+      currentPanelStates = {};
+      if (storyLog) storyLog.innerHTML = "";
+      clearSuggestedActions();
+      playerIdentifier = "";
+      log(LOG_LEVEL_INFO, `Internal game state cleared for theme: ${themeIdToClear}`);
     }
   }
 
-  /**
-   * Clears game state from localStorage and in-memory for a specific theme.
-   */
-  function clearGameState(themeIdToClear) {
-    localStorage.removeItem(GAME_STATE_STORAGE_KEY_PREFIX + themeIdToClear);
-    clearGameStateInternal(themeIdToClear);
-  }
 
   /**
    * Fetches a specific prompt text file for a given theme.
@@ -534,6 +631,69 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     return processedPromptText;
   };
+
+  /**
+   * Helper function for making API calls to the backend.
+   */
+  async function _callApi(url, method = 'GET', body = null, token = null) {
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const config = {
+      method,
+      headers,
+    };
+
+    if (body && (method === 'POST' || method === 'PUT')) {
+      config.body = JSON.stringify(body);
+    }
+
+    log(LOG_LEVEL_DEBUG, `Calling API: ${method} ${url}`, body ? `with body (first 200 chars): ${JSON.stringify(body).substring(0,200)}...` : 'without body');
+
+    // Placeholder for UI loading indicator - activate before fetch
+    // showGlobalLoadingIndicator(true, `API: ${method} ${url.split('/').pop()}`);
+
+    try {
+      const response = await fetch(url, config);
+
+      if (response.status === 204 && (method === 'DELETE' || method === 'PUT' /* if PUT might return 204 */)) {
+        log(LOG_LEVEL_INFO, `API call ${method} ${url} successful with 204 No Content.`);
+        // showGlobalLoadingIndicator(false);
+        return { success: true, status: response.status };
+      }
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        const errorMessage = responseData.error?.message || `API Error: ${response.status}`;
+        const errorCode = responseData.error?.code || `HTTP_${response.status}`;
+        log(LOG_LEVEL_WARN, `API Error (${response.status} ${errorCode}) for ${method} ${url}: ${errorMessage}`, responseData.error?.details || responseData);
+        const error = new Error(errorMessage);
+        error.status = response.status;
+        error.code = errorCode;
+        error.details = responseData.error?.details || responseData;
+        throw error;
+      }
+      log(LOG_LEVEL_DEBUG, `API call ${method} ${url} successful. Status: ${response.status}.`);
+      // showGlobalLoadingIndicator(false);
+      return responseData;
+    } catch (error) {
+      // showGlobalLoadingIndicator(false);
+      if (error.status) { // Error we constructed and threw from non-ok response
+        throw error;
+      }
+      // Network error or fetch/JSON parsing related error before our custom error
+      log(LOG_LEVEL_ERROR, `Network or unexpected error in _callApi for ${method} ${url}:`, error.message, error);
+      const networkError = new Error(`Network error or server unavailable: ${error.message}`);
+      networkError.isNetworkError = true;
+      networkError.code = 'NETWORK_ERROR';
+      throw networkError;
+    }
+  }
 
   /**
    * Toggles UI elements to indicate AI processing status.
@@ -1046,21 +1206,41 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Saves the lists of playing and liked themes to localStorage.
+   * Loads user's theme interactions (playing/liked themes).
+   * If logged in, fetches from the backend. Otherwise, initializes as empty.
+   * This is now an asynchronous function.
    */
-  function saveThemeListsToStorage() {
-    localStorage.setItem(PLAYING_THEMES_STORAGE_KEY, JSON.stringify(playingThemes));
-    localStorage.setItem(LIKED_THEMES_STORAGE_KEY, JSON.stringify(likedThemes));
-
-  }
-
-  /**
-   * Loads the lists of playing and liked themes from localStorage.
-   */
-  function loadThemeListsFromStorage() {
-    playingThemes = JSON.parse(localStorage.getItem(PLAYING_THEMES_STORAGE_KEY) || "[]");
-    likedThemes = JSON.parse(localStorage.getItem(LIKED_THEMES_STORAGE_KEY) || "[]");
-
+  async function loadUserThemeInteractions() {
+    if (currentUser && currentUser.token) {
+      log(LOG_LEVEL_INFO, `Fetching theme interactions for user ${currentUser.email} from backend.`);
+      try {
+        // showGlobalLoadingIndicator(true, "Loading your themes...");
+        const response = await _callApi('/api/v1/themes/interactions', 'GET', null, currentUser.token);
+        if (response && response.interactions) {
+          playingThemes = response.interactions.playingThemeIds || [];
+          likedThemes = response.interactions.likedThemeIds || [];
+          log(LOG_LEVEL_INFO, "Theme interactions loaded from backend:", { playing: playingThemes.length, liked: likedThemes.length });
+        } else {
+          log(LOG_LEVEL_WARN, "Unexpected response structure from /api/v1/themes/interactions. Defaulting to empty lists.", response);
+          playingThemes = [];
+          likedThemes = [];
+        }
+        // showGlobalLoadingIndicator(false);
+      } catch (error) {
+        // showGlobalLoadingIndicator(false);
+        log(LOG_LEVEL_ERROR, "Error fetching theme interactions from backend:", error.message, error.code);
+        playingThemes = [];
+        likedThemes = [];
+      }
+    } else {
+      log(LOG_LEVEL_INFO, "User not logged in. Initializing theme lists as empty.");
+      playingThemes = [];
+      likedThemes = [];
+    }
+    updateTopbarThemeIcons();
+    if (document.body.classList.contains("landing-page-active") && currentLandingGridSelection) {
+        renderLandingPageActionButtons(currentLandingGridSelection);
+    }
   }
 
   /**
@@ -1073,54 +1253,99 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function isThemeLiked(themeId) { return likedThemes.includes(themeId); }
 
-  /**
-   * Adds a theme to the 'playing' list.
+/**
+   * Helper function to update a single theme interaction (playing or liked) on the backend.
+   * @param {string} themeId - The ID of the theme.
+   * @param {object} interactionPayload - e.g., { is_playing: true } or { is_liked: false }
    */
-  function addPlayingTheme(themeId) {
-    if (!isThemePlaying(themeId)) { playingThemes.push(themeId); saveThemeListsToStorage(); updateTopbarThemeIcons(); }
+  async function _updateThemeInteractionOnBackend(themeId, interactionPayload) {
+    if (!currentUser || !currentUser.token) {
+      log(LOG_LEVEL_INFO, "User not logged in. Skipping backend update for theme interaction.");
+      return false; // Indicate backend sync was not attempted/successful
+    }
+    try {
+      log(LOG_LEVEL_DEBUG, `Updating backend theme interaction for theme ${themeId}:`, interactionPayload);
+      await _callApi(`/api/v1/themes/${themeId}/interactions`, 'POST', interactionPayload, currentUser.token);
+      log(LOG_LEVEL_INFO, `Theme interaction for ${themeId} updated successfully on backend.`);
+      return true;
+    } catch (error) {
+      log(LOG_LEVEL_ERROR, `Failed to update theme interaction for ${themeId} on backend:`, error.message, error.code);
+      // Here you might want to revert the optimistic UI update if the backend call fails.
+      // For now, just log the error.
+      // addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: `Could not save like/play status for ${themeId}.` }), "system-error");
+      return false;
+    }
   }
 
   /**
-   * Adds a theme to the 'liked' list.
+   * Adds a theme to the 'playing' list. Updates locally and syncs with backend if logged in.
+   * @param {string} themeId - The ID of the theme to add.
    */
-  function addLikedTheme(themeId) {
-    if (!isThemeLiked(themeId)) {
-      likedThemes.push(themeId); saveThemeListsToStorage(); updateTopbarThemeIcons();
-      if (!currentTheme && currentLandingGridSelection === themeId) {
-        const likeButton = document.getElementById("like-theme-button");
-        if (likeButton) {
-          likeButton.innerHTML = `<img src="images/app/icon_heart_filled.svg" alt="${getUIText("aria_label_unlike_theme")}" class="like-icon">`;
-          likeButton.setAttribute("aria-label", getUIText("aria_label_unlike_theme")); likeButton.title = likeButton.getAttribute("aria-label"); likeButton.classList.add("liked");
-        }
+  async function addPlayingTheme(themeId) {
+    if (!isThemePlaying(themeId)) {
+      playingThemes.push(themeId);
+      updateTopbarThemeIcons();
+
+      if (currentUser && currentUser.token) {
+        await _updateThemeInteractionOnBackend(themeId, { is_playing: true });
+      } else {
+        // Anonymous interaction - session only
+        log(LOG_LEVEL_DEBUG, "Anonymous user: playing theme added to session list.");
       }
     }
   }
 
-  /**
-   * Removes a theme from the 'playing' list.
-   */
-  function removePlayingTheme(themeId, moveToLiked = true) {
+  async function removePlayingTheme(themeId, moveToLiked = true) {
     const index = playingThemes.indexOf(themeId);
     if (index > -1) {
       playingThemes.splice(index, 1);
-      if (moveToLiked && !isThemeLiked(themeId)) { likedThemes.push(themeId); }
-      saveThemeListsToStorage(); updateTopbarThemeIcons();
+      let wasMovedToLiked = false;
+      if (moveToLiked && !isThemeLiked(themeId)) {
+        likedThemes.push(themeId);
+        wasMovedToLiked = true;
+      }
+      updateTopbarThemeIcons();
+
+      if (currentUser && currentUser.token) {
+        const payload = { is_playing: false };
+        if (wasMovedToLiked) {
+          payload.is_liked = true;
+        }
+        await _updateThemeInteractionOnBackend(themeId, payload);
+      } else {
+        // Anonymous interaction - session only
+        log(LOG_LEVEL_DEBUG, "Anonymous user: playing theme removed from session list.");
+      }
     }
   }
 
-  /**
-   * Removes a theme from the 'liked' list.
-   */
-  function removeLikedTheme(themeId) {
+  async function addLikedTheme(themeId) {
+    if (!isThemeLiked(themeId)) {
+      likedThemes.push(themeId);
+      updateTopbarThemeIcons();
+      if (!currentTheme && currentLandingGridSelection === themeId) { /* ... UI update ... */ }
+
+      if (currentUser && currentUser.token) {
+        await _updateThemeInteractionOnBackend(themeId, { is_liked: true });
+      } else {
+        // Anonymous interaction - session only
+        log(LOG_LEVEL_DEBUG, "Anonymous user: liked theme added to session list.");
+      }
+    }
+  }
+
+  async function removeLikedTheme(themeId) {
     const index = likedThemes.indexOf(themeId);
     if (index > -1) {
-      likedThemes.splice(index, 1); saveThemeListsToStorage(); updateTopbarThemeIcons();
-      if (!currentTheme && currentLandingGridSelection === themeId) {
-        const likeButton = document.getElementById("like-theme-button");
-        if (likeButton) {
-          likeButton.innerHTML = `<img src="images/app/icon_heart_empty.svg" alt="${getUIText("aria_label_like_theme")}" class="like-icon">`;
-          likeButton.setAttribute("aria-label", getUIText("aria_label_like_theme")); likeButton.title = likeButton.getAttribute("aria-label"); likeButton.classList.remove("liked");
-        }
+      likedThemes.splice(index, 1);
+      updateTopbarThemeIcons();
+      if (!currentTheme && currentLandingGridSelection === themeId) { /* ... UI update ... */ }
+
+      if (currentUser && currentUser.token) {
+        await _updateThemeInteractionOnBackend(themeId, { is_liked: false });
+      } else {
+        // Anonymous interaction - session only
+        log(LOG_LEVEL_DEBUG, "Anonymous user: liked theme removed from session list.");
       }
     }
   }
@@ -1133,7 +1358,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (playingIndex > -1) { playingThemes.splice(playingIndex, 1); wasPlaying = true; }
     const likedIndex = likedThemes.indexOf(themeId);
     if (likedIndex > -1) { if (!wasPlaying) { likedThemes.splice(likedIndex, 1); } }
-    saveThemeListsToStorage(); updateTopbarThemeIcons();
+    updateTopbarThemeIcons();
     if (wasPlaying && currentTheme === themeId) {
       currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY); switchToLandingView();
     }
@@ -1335,7 +1560,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       log(LOG_LEVEL_INFO, getUIText(langChangeMsgKey));
     }
-    if (currentTheme) saveGameState();
+    if (currentTheme) await saveGameState();
   }
 
   /**
@@ -1540,7 +1765,7 @@ document.addEventListener("DOMContentLoaded", () => {
           displaySuggestedActions(parsedAIResponse.suggested_actions);
           handleGameStateIndicators(gameIndicators, isInitialGameLoad);
           if (isInitialGameLoad) isInitialGameLoad = false;
-          saveGameState();
+          await saveGameState();
           if (systemStatusIndicator) {
             systemStatusIndicator.textContent = getUIText("system_status_online_short");
             systemStatusIndicator.className = "status-indicator status-ok";
@@ -1618,7 +1843,8 @@ document.addEventListener("DOMContentLoaded", () => {
     updateDashboard({ [idKeyForDashboard]: playerIdentifier }, false);
     addMessageToLog(getUIText("connecting", { PLAYER_ID: playerIdentifier }), "system");
     gameHistory = [{ role: "user", parts: [{ text: `My identifier is ${playerIdentifier}. I am ready to start the game in ${getUIText(themeConfig?.name_key || "unknown_theme", {}, currentTheme)} theme.` }], }];
-    saveGameState(); clearSuggestedActions();
+    await saveGameState();
+    clearSuggestedActions();
     const narrative = await callGeminiAPI(gameHistory);
     if (narrative) { addMessageToLog(narrative, "gm"); }
     else {
@@ -1757,7 +1983,6 @@ document.addEventListener("DOMContentLoaded", () => {
     currentTheme = newThemeId; localStorage.setItem(CURRENT_THEME_STORAGE_KEY, currentTheme);
     if (forceNewGame || !themeWasAlreadyPlaying) { addPlayingTheme(newThemeId); }
     clearGameStateInternal(currentTheme);
-    if (forceNewGame) { localStorage.removeItem(GAME_STATE_STORAGE_KEY_PREFIX + currentTheme); }
 
     switchToGameView(currentTheme); generatePanelsForTheme(currentTheme);
     setAppLanguageAndThemeUI(currentAppLanguage, currentTheme);
@@ -1771,7 +1996,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTopbarThemeIcons();
     const newThemeDisplayName = ALL_THEMES_CONFIG[newThemeId] ? getUIText(ALL_THEMES_CONFIG[newThemeId].name_key, {}, newThemeId) : newThemeId;
 
-    if (!forceNewGame && loadGameState(currentTheme)) {
+    if (!forceNewGame && await loadGameState(currentTheme)) {
       isInitialGameLoad = false; initializeCollapsiblePanelBoxes(currentTheme); displaySuggestedActions(currentSuggestedActions);
       if (nameInputSection) nameInputSection.style.display = "none";
       if (actionInputSection) actionInputSection.style.display = "flex";
@@ -3011,6 +3236,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
+    await loadUserThemeInteractions();
 
     if (currentUser && !currentUser.email_confirmed) {
       showCustomModal({
@@ -3058,7 +3284,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Handles user logout.
    */
-  function handleLogout() {
+  async function handleLogout() {
     log(LOG_LEVEL_INFO, "User logged out.");
     const previousAppLang = currentUser?.preferred_app_language || localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
     localStorage.removeItem(JWT_STORAGE_KEY);
@@ -3073,6 +3299,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setAppLanguageAndThemeUI(currentAppLanguage, document.body.classList.contains("landing-page-active") ? null : currentTheme);
     }
     updateModelToggleButtonText();
+    await loadUserThemeInteractions();
     if (!document.body.classList.contains("landing-page-active")) {
       switchToLandingView();
     }
@@ -3235,13 +3462,14 @@ document.addEventListener("DOMContentLoaded", () => {
         handleLogout();
       }
     } else {
-
       currentUser = null;
       playerIdentifier = "";
       updateAuthUI();
-      loadAnonymousUserPreferences();
+      loadAnonymousUserPreferences(); // Sets local state vars
+      // No currentTheme means we are on landing page or just logged out
       setAppLanguageAndThemeUI(currentAppLanguage, currentTheme || null);
       updateModelToggleButtonText();
+      await loadUserThemeInteractions();
     }
   }
 
@@ -3387,8 +3615,6 @@ document.addEventListener("DOMContentLoaded", () => {
       await showCustomModal({ type: "alert", titleKey: "alert_title_error", messageKey: "error_initial_theme_data_load_failed", });
     }
 
-    loadThemeListsFromStorage();
-
     leftPanelScrollUp = document.getElementById('left-panel-scroll-indicator-up');
     leftPanelScrollDown = document.getElementById('left-panel-scroll-indicator-down');
     rightPanelScrollUp = document.getElementById('right-panel-scroll-indicator-up');
@@ -3410,24 +3636,25 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentTheme && ALL_THEMES_CONFIG[currentTheme] && isThemePlaying(currentTheme)) {
       const resumeDataLoaded = await ensureThemeDataLoaded(currentTheme);
       if (resumeDataLoaded && await loadAllPromptsForTheme(currentTheme)) {
-        if (loadGameState(currentTheme)) {
+        if (await loadGameState(currentTheme)) {
           gameToResume = currentTheme;
         }
-        else { removePlayingTheme(currentTheme, false); clearGameState(currentTheme); currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY); }
+        else { currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY); }
       } else {
         addMessageToLog(getUIText("error_resume_failed_prompts", { THEME: currentTheme }), "system-error");
-        removePlayingTheme(currentTheme, false); clearGameState(currentTheme); currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+        currentTheme = null;
+        localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
       }
     } else if (currentTheme) {
-      currentTheme = null; localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+      log(LOG_LEVEL_INFO, `Theme ${currentTheme} was in localStorage but not in playing list or config missing. Clearing.`);
+      currentTheme = null;
+      localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
     }
 
     if (gameToResume) {
       switchToGameView(currentTheme);
       generatePanelsForTheme(currentTheme);
 
-      updateDashboard(lastKnownDashboardUpdates, false);
-      handleGameStateIndicators(lastKnownGameStateIndicators, true);
       initializeCollapsiblePanelBoxes(currentTheme);
       displaySuggestedActions(currentSuggestedActions);
 

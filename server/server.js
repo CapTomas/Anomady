@@ -10,6 +10,8 @@ import helmet from 'helmet';
 import logger from './utils/logger.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
+import gameStateRoutes from './routes/gamestates.js';
+import themeInteractionRoutes from './routes/themeInteractions.js';
 import { protect } from './middleware/authMiddleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -28,7 +30,7 @@ app.use(helmet({
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production'
     ? process.env.ALLOWED_ORIGINS?.split(',') || false
-    : true,
+    : ['http://localhost:3000', 'http://127.0.0.1:3000'],
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -257,6 +259,8 @@ app.post('/api/v1/gemini/generate', protect, validateGeminiRequest, async (req, 
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/gamestates', gameStateRoutes);
+app.use('/api/v1/themes', themeInteractionRoutes);
 
 app.get(/^\/(?!api\/)(?!.*\.\w{2,5}$).*$/, (req, res) => {
   logger.debug(`SPA Fallback: Serving index.html for GET ${req.path}`);

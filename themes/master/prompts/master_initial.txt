@@ -58,7 +58,8 @@ Your ENTIRE response MUST be a single, valid JSON object. No introductory text, 
     ],
     "game_state_indicators": {
         ${generated_game_state_indicators}
-    }
+    },
+    "input_placeholder": "string (A short, context-aware, and subtle hint for the player's next input. Must be in ${currentNarrativeLanguage.toUpperCase()})"
 }
 
 PLAYERS CHARACTER NAME: ${currentNameForPrompt}
@@ -73,5 +74,12 @@ GM INSTRUCTIONS FOR THIS INITIAL TURN:
     *   The `narrative` string and ALL strings within the `suggested_actions` array MUST be in the language specified by ${currentNarrativeLanguage.toUpperCase()}.
 ALL human-readable string values within the `dashboard_updates` object MUST ALSO be in ${currentNarrativeLanguage.toUpperCase()}. Strive for originality and natural phrasing in the target language.    *   The **ONLY EXCEPTION** is the `alertLevel` field, which MUST use the specific English phrases: 'Green', 'Yellow', or 'Red' for script parsing logic.
     This is a non-negotiable, critical requirement.
+
+INPUT_PLACEHOLDER GUIDANCE:
+    Always provide a short, subtle input_placeholder string in the NARRATIVE LANGUAGE (${currentNarrativeLanguage.toUpperCase()}).
+This placeholder must not reference or suggest any specific action or path.
+It should evoke the inner state, sensory mood, or atmosphere of the scene without implying intent, decision, or direction.
+Keep it under 50 characters, emotionally or descriptively rich, and entirely non-directive.
+Do not echo the available actions. Do not hint at a goal. Do not resolve ambiguity—let it breathe.
 
 Your entire output will be parsed as JSON. Ensure perfect syntax and verify that json is valid, especially because of the quotes.

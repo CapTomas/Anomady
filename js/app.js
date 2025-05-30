@@ -407,7 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     clearGameStateInternal(themeIdToClear);
   }
-
+let currentAiPlaceholder = "";
   /**
    * Clears in-memory game state variables for a specific theme.
    */
@@ -420,6 +420,8 @@ document.addEventListener("DOMContentLoaded", () => {
       lastKnownGameStateIndicators = {};
       currentSuggestedActions = [];
       currentPanelStates = {};
+      currentAiPlaceholder = "";
+      if (playerActionInput) playerActionInput.placeholder = getUIText("placeholder_command");
       if (storyLog) storyLog.innerHTML = "";
       clearSuggestedActions();
       playerIdentifier = "";
@@ -1757,6 +1759,14 @@ document.addEventListener("DOMContentLoaded", () => {
             throw new Error("Invalid JSON structure from AI: missing or invalid core fields.");
           }
 
+          if (parsedAIResponse.input_placeholder && typeof parsedAIResponse.input_placeholder === 'string' && playerActionInput) {
+            currentAiPlaceholder = parsedAIResponse.input_placeholder.trim();
+            playerActionInput.placeholder = currentAiPlaceholder;
+          } else if (playerActionInput) {
+            currentAiPlaceholder = getUIText("placeholder_command");
+            playerActionInput.placeholder = currentAiPlaceholder;
+          }
+
           let gameIndicators = parsedAIResponse.game_state_indicators;
           if (typeof gameIndicators === 'undefined') {
             log(LOG_LEVEL_WARN, "AI response was missing 'game_state_indicators'. Defaulting to {}. Full AI response (snippet):", jsonStringFromAI.substring(0, 500));
@@ -1784,6 +1794,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (e) {
           log(LOG_LEVEL_ERROR, "Error processing/validating AI response object:", e.message, "Raw AI string (snippet):", jsonStringFromAI.substring(0, 500));
           addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Failed to process AI response: " + e.message }), "system");
+          if (playerActionInput) playerActionInput.placeholder = getUIText("placeholder_command");
           if (systemStatusIndicator) {
             systemStatusIndicator.textContent = getUIText("status_error");
             systemStatusIndicator.className = "status-indicator status-danger";
@@ -1795,11 +1806,13 @@ document.addEventListener("DOMContentLoaded", () => {
           responseData.promptFeedback.safetyRatings
             ?.map((r) => `${r.category}: ${r.probability}`)
             .join(", ") || "No details provided.";
+        if (playerActionInput) playerActionInput.placeholder = getUIText("placeholder_command");
         throw new Error(
           `Content blocked by API via proxy: ${responseData.promptFeedback.blockReason}. Safety Ratings: ${blockDetails}`
         );
       } else {
         log(LOG_LEVEL_WARN, "Unexpected response structure from proxy (no candidates or blockReason):", responseData);
+        if (playerActionInput) playerActionInput.placeholder = getUIText("placeholder_command");
         throw new Error("No valid candidate or text found in AI response from proxy.");
       }
     } catch (error) {
@@ -1808,6 +1821,7 @@ document.addEventListener("DOMContentLoaded", () => {
         getUIText("error_api_call_failed", { ERROR_MSG: error.message }),
         "system"
       );
+      if (playerActionInput) playerActionInput.placeholder = getUIText("placeholder_command");
       if (systemStatusIndicator) {
         systemStatusIndicator.textContent = getUIText("status_error");
         systemStatusIndicator.className = "status-indicator status-danger";
@@ -1849,6 +1863,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     updateDashboard({ [idKeyForDashboard]: playerIdentifier }, false);
+    if (playerActionInput) {
+      playerActionInput.placeholder = getUIText("placeholder_command");
+    }
     addMessageToLog(getUIText("connecting", { PLAYER_ID: playerIdentifier }), "system");
 
     gameHistory = [{ role: "user", parts: [{ text: `My identifier is ${playerIdentifier}. I am ready to start the game in ${getUIText(themeConfig?.name_key || "unknown_theme", {}, currentTheme)} theme.` }], }];
@@ -1971,6 +1988,11 @@ document.addEventListener("DOMContentLoaded", () => {
   async function changeThemeAndStart(newThemeId, forceNewGame = false) {
     const oldThemeId = currentTheme;
     const dataLoaded = await ensureThemeDataLoaded(newThemeId);
+
+    if (playerActionInput) {
+      playerActionInput.placeholder = getUIText("placeholder_command");
+      currentAiPlaceholder = getUIText("placeholder_command");
+    }
     if (!dataLoaded) {
       await showCustomModal({ type: "alert", titleKey: "alert_title_error", messageKey: "error_theme_data_load_failed", replacements: { THEME_ID: newThemeId }, });
       if (oldThemeId && ALL_THEMES_CONFIG[oldThemeId]) { currentTheme = oldThemeId; localStorage.setItem(CURRENT_THEME_STORAGE_KEY, currentTheme); }
@@ -2030,6 +2052,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       addMessageToLog(getUIText("system_session_resumed", { PLAYER_ID: playerIdentifier, THEME_NAME: newThemeDisplayName, }), "system");
       if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("system_status_online_short"); systemStatusIndicator.className = "status-indicator status-ok"; }
+      if (playerActionInput && currentAiPlaceholder) {
+          playerActionInput.placeholder = currentAiPlaceholder;
+      } else if (playerActionInput) {
+          playerActionInput.placeholder = getUIText("placeholder_command");
+      }
     } else {
       isInitialGameLoad = true;
       currentPromptType = "initial";
@@ -2051,7 +2078,10 @@ document.addEventListener("DOMContentLoaded", () => {
         playerIdentifierInputEl.value = "";
         playerIdentifierInputEl.placeholder = getUIText("placeholder_name_login");
       }
-
+      if (playerActionInput) {
+        playerActionInput.placeholder = getUIText("placeholder_command");
+        currentAiPlaceholder = getUIText("placeholder_command");
+      }
       if (nameInputSection) nameInputSection.style.display = "flex";
       if (actionInputSection) actionInputSection.style.display = "none";
       if (playerIdentifierInputEl && document.body.contains(playerIdentifierInputEl)) {
@@ -2107,6 +2137,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const specialPaths = ['/reset-password', '/email-confirmation-status'];
     const isOnSpecialPath = specialPaths.some(sp => currentPath.startsWith(sp));
 
+    if (playerActionInput) {
+      playerActionInput.placeholder = getUIText("placeholder_command");
+      currentAiPlaceholder = getUIText("placeholder_command");
+    }
     if (isOnSpecialPath) {
 
       let targetHref = '/';

@@ -55,7 +55,15 @@ Your response MUST be a single, perfectly structured JSON object as follows:
     // (string: boolean/string) Key-value pairs for game state flags.
     // Example: "omen_detected": false, "combat_active": false, "blight_flare_active": false, "activity_status": "Contemplating the dark portent and the price of knowledge."
     "omen_detected": false // Mandatory: reset the flag after the omen is handled.
-  }
+   },
+    "input_placeholder": "string (A short, context-aware, and subtle hint for the player's next input. Must be in ${currentNarrativeLanguage.toUpperCase()})"
 }
+
+**INPUT_PLACEHOLDER GUIDANCE:**
+Always provide a short, subtle input_placeholder string in the NARRATIVE LANGUAGE (${currentNarrativeLanguage.toUpperCase()}).
+This placeholder must not reference or suggest any specific action or path.
+It should evoke the inner state, sensory mood, or atmosphere of the scene without implying intent, decision, or direction.
+Keep it under 50 characters, emotionally or descriptively rich, and entirely non-directive.
+Do not echo the available actions. Do not hint at a goal. Do not resolve ambiguity—let it breathe.
 
 This is a moment to disturb, to intrigue, to foreshadow with chilling precision. The omen should be a memorable punctuation mark in the Warden's grim journey, a stark reminder that the world is deeper, darker, and more hostile to sanity than it often seems. Let the player feel the veil tear.

@@ -52,8 +52,10 @@ Your ENTIRE response MUST be a single, valid JSON object. No introductory text, 
     ],
     "game_state_indicators": {
         ${generated_game_state_indicators}
-    }
+    },
+    "input_placeholder": "string (A short, context-aware, and subtle hint for the player's next input. Must be in ${currentNarrativeLanguage.toUpperCase()})"
 }
+
 PLAYER'S PREVIOUS ACTION/SITUATION AND FULL GAME STATE (from previous AI responses) WILL BE PROVIDED IN THE HISTORY.
 Your response must continue the narrative based on the player's input and the current game state derived from that history.
 **CRUCIAL FOR `dashboard_updates`:**
@@ -69,5 +71,12 @@ If combat begins, set `combat_engaged: true` and provide initial enemy data in `
 *   Any NEW or CHANGED human-readable string values within the `dashboard_updates` object (this includes new/changed invented names, descriptions, objectives, statuses, and enemy intel if combat starts) MUST ALSO be in ${currentNarrativeLanguage.toUpperCase()}.
 *   The ONLY EXCEPTION is the `alertLevel` field, which MUST use the specific English phrases: 'Green', 'Yellow', or 'Red' if it is updated.
 This is a non-negotiable, critical requirement. Ensure originality and natural phrasing in the target language for all generated content.
+
+**INPUT_PLACEHOLDER GUIDANCE:**
+    Always provide a short, subtle input_placeholder string in the NARRATIVE LANGUAGE (${currentNarrativeLanguage.toUpperCase()}).
+This placeholder must not reference or suggest any specific action or path.
+It should evoke the inner state, sensory mood, or atmosphere of the scene without implying intent, decision, or direction.
+Keep it under 50 characters, emotionally or descriptively rich, and entirely non-directive.
+Do not echo the available actions. Do not hint at a goal. Do not resolve ambiguity—let it breathe.
 
 Your entire output will be parsed as JSON. Ensure perfect syntax and verify that json is valid, especially because of the quotes.

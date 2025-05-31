@@ -12,6 +12,7 @@ import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import gameStateRoutes from './routes/gamestates.js';
 import themeInteractionRoutes from './routes/themeInteractions.js';
+import worldShardRoutes from './routes/worldShards.js';
 import { protect } from './middleware/authMiddleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -261,6 +262,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/gamestates', gameStateRoutes);
 app.use('/api/v1/themes', themeInteractionRoutes);
+app.use('/api/v1', worldShardRoutes);
 
 app.get(/^\/(?!api\/)(?!.*\.\w{2,5}$).*$/, (req, res) => {
   logger.debug(`SPA Fallback: Serving index.html for GET ${req.path}`);

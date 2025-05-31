@@ -50,7 +50,7 @@ const validateGameStatePayload = (req, res, next) => {
 
 /**
  * @route   POST /api/v1/gamestates
- * @desc    Create or Update a game state. Handles Living Chronicle summarization.
+ * @desc    Create or Update a game state. Handles Living Chronicle summarization and World Shard unlocking.
  * @access  Private
  */
 router.post('/', protect, validateGameStatePayload, async (req, res) => {
@@ -58,6 +58,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
     theme_id, player_identifier, game_history: clientSentHistory,
     last_dashboard_updates, last_game_state_indicators, current_prompt_type,
     current_narrative_language, last_suggested_actions, panel_states,
+    new_persistent_lore_unlock,
   } = req.body;
   const userId = req.user.id;
   const determinedModelName = req.user.preferred_model_name || FREE_MODEL_NAME;
@@ -78,7 +79,6 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
       let finalCumulativePlayerSummary = existingGameState?.game_history_summary || "";
       let finalCurrentWorldLore = existingGameState?.game_history_lore;
 
-      // Initialize lore if it's missing or on new game start
       if (!finalCurrentWorldLore && (!existingGameState || clientSentHistory.length <= RECENT_INTERACTION_WINDOW_SIZE)) {
           finalCurrentWorldLore = await getResolvedBaseThemeLore(theme_id, current_narrative_language);
           logger.info(`[LivingChronicle] Initializing/Resetting world lore for user ${userId}, theme ${theme_id}.`);
@@ -98,7 +98,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
               finalCumulativePlayerSummary = "";
               finalCurrentWorldLore = await getResolvedBaseThemeLore(theme_id, current_narrative_language);
           }
-      } else { // No existing game state, or history is not an array (new game)
+      } else {
           finalGameHistoryForDB = clientSentHistory;
           finalCumulativePlayerSummary = "";
           if (!finalCurrentWorldLore) {
@@ -106,7 +106,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
           }
       }
 
-       const upsertedGameState = await tx.gameState.upsert({
+      const upsertedGameState = await tx.gameState.upsert({
         where: { userId_theme_id: { userId, theme_id } },
         update: {
           ...gameStateClientPayload,
@@ -123,6 +123,35 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
         },
       });
 
+      if (new_persistent_lore_unlock && typeof new_persistent_lore_unlock === 'object') {
+        const { key_suggestion, title, content, unlock_condition_description } = new_persistent_lore_unlock;
+
+        if (key_suggestion && title && content && unlock_condition_description) {
+          try {
+            await tx.userThemePersistedLore.create({
+              data: {
+                userId: userId,
+                themeId: theme_id,
+                loreFragmentKey: key_suggestion,
+                loreFragmentTitle: title,
+                loreFragmentContent: content,
+                unlockConditionDescription: unlock_condition_description,
+              }
+            });
+            logger.info(`[WorldShard] Successfully created new world shard via GameState save for user ${userId}, theme ${theme_id}, key '${key_suggestion}'`);
+          } catch (shardError) {
+            if (shardError.code === 'P2002') { // Prisma's unique constraint violation code
+              logger.warn(`[WorldShard] Failed to create shard for user ${userId}, theme ${theme_id}, key '${key_suggestion}' due to unique constraint (likely duplicate key from AI). Shard not created.`);
+            } else {
+              logger.error(`[WorldShard] Error creating new world shard during GameState save for user ${userId}, theme ${theme_id}, key '${key_suggestion}':`, shardError);
+              throw new Error(`Failed to create world shard: ${shardError.message}`);
+            }
+          }
+        } else {
+          logger.warn(`[WorldShard] Received 'new_persistent_lore_unlock' signal but required fields (key_suggestion, title, content, unlock_condition_description) were missing. User: ${userId}, Theme: ${theme_id}. Unlock data:`, new_persistent_lore_unlock);
+        }
+      }
+
       if (
         finalGameHistoryForDB && Array.isArray(finalGameHistoryForDB) &&
         finalGameHistoryForDB.length >= RAW_HISTORY_BUFFER_MAX_SIZE &&
@@ -133,7 +162,6 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
           data: { summarization_in_progress: true },
         });
 
-        // Fetch fresh base lore and theme name for the summarization process
         const baseLoreForSummarization = await getResolvedBaseThemeLore(theme_id, current_narrative_language);
         const themeNameForSummarization = await getResolvedThemeName(theme_id, current_narrative_language);
 
@@ -162,13 +190,24 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
         update: { is_playing: true, last_played_at: upsertedGameState.updated_at },
       });
 
-      return { gameState: { ...upsertedGameState, game_history_lore: finalCurrentWorldLore, game_history_summary: finalCumulativePlayerSummary }, interaction: upsertedInteraction };
+      return {
+        gameState: {
+            ...upsertedGameState,
+            game_history_lore: finalCurrentWorldLore,
+            game_history_summary: finalCumulativePlayerSummary
+        },
+        interaction: upsertedInteraction
+      };
     });
 
     logger.info(`GameState & UserThemeInteraction for user ${userId}, theme ${theme_id} saved/updated. Raw history length in DB: ${result.gameState.game_history.length}`);
     res.status(200).json({ message: 'Game state saved.', gameState: result.gameState });
+
   } catch (error) {
     logger.error(`Transaction error saving game state for user ${userId}, theme ${theme_id}:`, error);
+    if (error.message.startsWith('Failed to create world shard:')) {
+        return res.status(500).json({ error: { message: error.message, code: 'WORLD_SHARD_CREATION_FAILED_IN_TX' } });
+    }
     if (error.code === 'P2002' && error.meta?.target?.includes('userId_theme_id')) {
         return res.status(409).json({ error: { message: 'Conflict saving game state, likely a concurrent update. Please try again.', code: 'GAME_STATE_SAVE_CONFLICT' } });
     }

@@ -106,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sendActionButton = document.getElementById("send-action-button");
   let userHasManuallyScrolledLog = false;
   const AUTOSCROLL_THRESHOLD = 40;
+  let shapedThemeData = new Map();
 
   /**
    * Logs messages to the console based on the current log level.
@@ -219,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (themeGridContainer) themeGridContainer.style.pointerEvents = "auto";
     return true;
   }
-
+let _tempShardsForInitialPrompt = "[]";
   /**
    * Saves the current game state. If a user is logged in, it saves to the backend.
    * Otherwise, it does nothing (as localStorage persistence is being removed for game states).
@@ -256,7 +257,9 @@ document.addEventListener("DOMContentLoaded", () => {
       last_suggested_actions: currentSuggestedActions,
       panel_states: currentPanelStates,
       model_name_used: currentModelName,
+      new_persistent_lore_unlock: currentTurnUnlockData,
     };
+    currentTurnUnlockData = null;
 
     try {
       // showGlobalLoadingIndicator(true, "Saving progress...");
@@ -587,6 +590,12 @@ let currentAiPlaceholder = "";
     }
     const narrativeLangInstruction = NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[currentTheme]?.[currentNarrativeLanguage] || NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[DEFAULT_THEME_ID]?.[currentNarrativeLanguage] || NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[DEFAULT_THEME_ID]?.[DEFAULT_LANGUAGE] || `The narrative must be in ${currentNarrativeLanguage.toUpperCase()}.`;
     let processedPromptText = basePromptText;
+    if (basePromptKey === "master_initial") {
+        const shardsPayloadToInject = _tempShardsForInitialPrompt;
+        processedPromptText = processedPromptText.replace(/\$\{world_shards_json_payload\}/g, shardsPayloadToInject);
+        log(LOG_LEVEL_DEBUG, `Injecting world_shards_json_payload into master_initial. Length: ${shardsPayloadToInject.length}`);
+        _tempShardsForInitialPrompt = "[]";
+    }
     processedPromptText = processedPromptText.replace(/\$\{narrativeLanguageInstruction\}/g, narrativeLangInstruction);
     processedPromptText = processedPromptText.replace(/\$\{currentNameForPrompt\}/g, currentPlayerIdentifierParam || getUIText("unknown"));
     processedPromptText = processedPromptText.replace(/\$\{currentPlayerIdentifier\}/g, currentPlayerIdentifierParam || getUIText("unknown"));
@@ -740,21 +749,69 @@ let currentAiPlaceholder = "";
   /**
    * Adds a message to the story log.
    */
-  function addMessageToLog(text, sender) {
-    if (!storyLog) { log(LOG_LEVEL_DEBUG, `Message (${sender}): ${text} (storyLog element not found)`); return; }
-    if (sender === "player" && gameHistory.length > 0 && gameHistory[0].role === "user" && text === gameHistory[0].parts[0].text && text.startsWith(`My identifier is`)) return;
-    const msgDiv = document.createElement("div"); msgDiv.classList.add("message", `${sender}-message`);
+function addMessageToLog(text, senderTypes) {
+    if (!storyLog) {
+        log(LOG_LEVEL_DEBUG, `Message (${senderTypes}): ${text} (storyLog element not found)`);
+        return;
+    }
+
+    if (senderTypes.includes("player") && gameHistory.length > 0 &&
+        gameHistory[0].role === "user" &&
+        text === gameHistory[0].parts[0].text &&
+        text.startsWith(`My identifier is`)) {
+        return;
+    }
+
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("message");
+
+    const typesArray = senderTypes.split(" ").filter(t => t.trim() !== "");
+    let baseTypeApplied = false;
+
+    typesArray.forEach(type => {
+        msgDiv.classList.add(`${type}-message`);
+        if (!baseTypeApplied && (type === "gm" || type === "player" || type === "system")) {
+            baseTypeApplied = true;
+        }
+        if (type !== "gm" && type !== "player" && type !== "system") {
+            msgDiv.classList.add(type);
+        }
+    });
+
+    if (!baseTypeApplied && typesArray.length > 0) {
+    }
+
+
     const processedText = text.replace(/_([^_]+)_|\*([^*]+)\*/g, (match, p1, p2) => `<em>${p1 || p2}</em>`);
     const paragraphs = processedText.split(/\n\s*\n/).filter(p => p.trim() !== "");
-    if (paragraphs.length === 0 && processedText.trim() !== "") paragraphs.push(processedText.trim());
-    paragraphs.forEach(para => { const pElement = document.createElement("p"); pElement.innerHTML = para.replace(/\n/g, "<br>"); msgDiv.appendChild(pElement); });
-    const viewport = storyLog.parentElement; let shouldScroll = false;
-    if (viewport && storyLogViewport.style.display !== "none") {
-      if (!userHasManuallyScrolledLog) { shouldScroll = true; }
-      else { if (viewport.scrollHeight - viewport.clientHeight <= viewport.scrollTop + AUTOSCROLL_THRESHOLD) { shouldScroll = true; userHasManuallyScrolledLog = false; } }
+    if (paragraphs.length === 0 && processedText.trim() !== "") {
+        paragraphs.push(processedText.trim());
     }
-    storyLog.appendChild(msgDiv); if (shouldScroll && viewport) viewport.scrollTop = viewport.scrollHeight;
-  }
+
+    paragraphs.forEach(para => {
+        const pElement = document.createElement("p");
+        pElement.innerHTML = para.replace(/\n/g, "<br>");
+        msgDiv.appendChild(pElement);
+    });
+
+    const viewport = storyLog.parentElement;
+    let shouldScroll = false;
+    if (viewport && storyLogViewport.style.display !== "none") {
+        if (!userHasManuallyScrolledLog) {
+            shouldScroll = true;
+        } else {
+            if (viewport.scrollHeight - viewport.clientHeight <= viewport.scrollTop + AUTOSCROLL_THRESHOLD) {
+                shouldScroll = true;
+                userHasManuallyScrolledLog = false; // Reset if scrolling to bottom again
+            }
+        }
+    }
+
+    storyLog.appendChild(msgDiv);
+    if (shouldScroll && viewport) {
+        viewport.scrollTop = viewport.scrollHeight;
+    }
+}
 
   /**
    * Displays AI-suggested actions as clickable buttons.
@@ -765,20 +822,45 @@ let currentAiPlaceholder = "";
     }
     suggestedActionsWrapper.innerHTML = ""; currentSuggestedActions = [];
     if (actions && Array.isArray(actions) && actions.length > 0) {
-      actions.slice(0, 3).forEach(actionTxt => {
-        if (typeof actionTxt === "string" && actionTxt.trim() !== "") {
-          const btn = document.createElement("button"); btn.classList.add("ui-button"); btn.textContent = actionTxt;
-          btn.addEventListener("click", () => {
-            if (playerActionInput) {
-              playerActionInput.value = actionTxt; playerActionInput.focus();
-              playerActionInput.dispatchEvent(new Event("input", { bubbles: true })); autoGrowTextarea(playerActionInput);
+        actions.slice(0, 4).forEach(actionObjOrString => {
+            let actionTxt;
+            let isMullOver = false;
+            let shardDataForMullOver = null;
+
+            if (typeof actionObjOrString === 'string') {
+                actionTxt = actionObjOrString;
+            } else if (typeof actionObjOrString === 'object' && actionObjOrString.text) {
+                actionTxt = actionObjOrString.text;
+                isMullOver = actionObjOrString.isTemporaryMullOver === true;
+                shardDataForMullOver = actionObjOrString.shardData || null;
+            } else {
+                return;
             }
-          });
-          suggestedActionsWrapper.appendChild(btn); currentSuggestedActions.push(actionTxt);
-        }
-      });
+
+            if (actionTxt.trim() !== "") {
+                const btn = document.createElement("button");
+                btn.classList.add("ui-button");
+                if (isMullOver) btn.classList.add("mull-over-action");
+                btn.textContent = actionTxt;
+
+                btn.addEventListener("click", () => {
+                    if (playerActionInput) {
+                        if (isMullOver && shardDataForMullOver) {
+                            handleMullOverAction(shardDataForMullOver);
+                        } else {
+                            playerActionInput.value = actionTxt;
+                            playerActionInput.focus();
+                            playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
+                            autoGrowTextarea(playerActionInput);
+                        }
+                    }
+                });
+                suggestedActionsWrapper.appendChild(btn);
+                currentSuggestedActions.push(actionObjOrString);
+            }
+        });
     }
-  }
+}
 
   /**
    * Clears any displayed suggested actions.
@@ -1216,6 +1298,49 @@ let currentAiPlaceholder = "";
     modelToggleButton.setAttribute("aria-label", ariaLabel); modelToggleButton.title = ariaLabel;
   }
 
+  async function fetchShapedWorldStatus() {
+      shapedThemeData.clear();
+      if (!currentUser || !currentUser.token) {
+          log(LOG_LEVEL_INFO, "User not logged in, cannot fetch shaped world status from backend.");
+          THEMES_MANIFEST.filter(tm => tm.playable).forEach(themeMeta => {
+              shapedThemeData.set(themeMeta.id, { hasShards: false, activeShardCount: 0 });
+          });
+          return;
+      }
+
+      log(LOG_LEVEL_INFO, `Fetching shaped themes summary for user ${currentUser.email}`);
+      try {
+          const response = await _callApi(`/api/v1/users/me/shaped-themes-summary`, 'GET', null, currentUser.token);
+
+          if (response && response.shapedThemes && Array.isArray(response.shapedThemes)) {
+              response.shapedThemes.forEach(summary => {
+                  shapedThemeData.set(summary.themeId, {
+                      hasShards: summary.hasShards,
+                      activeShardCount: summary.activeShardCount || 0
+                  });
+              });
+
+              THEMES_MANIFEST.filter(tm => tm.playable).forEach(themeMeta => {
+                  if (!shapedThemeData.has(themeMeta.id)) {
+                      shapedThemeData.set(themeMeta.id, { hasShards: false, activeShardCount: 0 });
+                  }
+              });
+
+              log(LOG_LEVEL_INFO, "Shaped world status updated from summary endpoint:", Object.fromEntries(shapedThemeData));
+          } else {
+              log(LOG_LEVEL_WARN, "Unexpected response structure from shaped-themes-summary. Defaulting all themes to not shaped.", response);
+              THEMES_MANIFEST.filter(tm => tm.playable).forEach(themeMeta => {
+                  shapedThemeData.set(themeMeta.id, { hasShards: false, activeShardCount: 0 });
+              });
+          }
+      } catch (error) {
+          log(LOG_LEVEL_ERROR, `Error fetching shaped themes summary:`, error.message, error.code);
+          THEMES_MANIFEST.filter(tm => tm.playable).forEach(themeMeta => {
+              shapedThemeData.set(themeMeta.id, { hasShards: false, activeShardCount: 0 });
+          });
+      }
+  }
+
   /**
    * Loads user's theme interactions (playing/liked themes).
    * If logged in, fetches from the backend. Otherwise, initializes as empty.
@@ -1236,9 +1361,7 @@ let currentAiPlaceholder = "";
           playingThemes = [];
           likedThemes = [];
         }
-        // showGlobalLoadingIndicator(false);
       } catch (error) {
-        // showGlobalLoadingIndicator(false);
         log(LOG_LEVEL_ERROR, "Error fetching theme interactions from backend:", error.message, error.code);
         playingThemes = [];
         likedThemes = [];
@@ -1248,11 +1371,15 @@ let currentAiPlaceholder = "";
       playingThemes = [];
       likedThemes = [];
     }
+    await fetchShapedWorldStatus();
     updateTopbarThemeIcons();
-    if (document.body.classList.contains("landing-page-active") && currentLandingGridSelection) {
-        renderLandingPageActionButtons(currentLandingGridSelection);
+    if (document.body.classList.contains("landing-page-active")) {
+        renderThemeGrid();
+        if (currentLandingGridSelection) {
+             updateLandingPagePanels(currentLandingGridSelection, false);
+        }
     }
-  }
+}
 
   /**
    * Checks if a theme is in the 'playing' list.
@@ -1609,40 +1736,43 @@ let currentAiPlaceholder = "";
     }
     if (currentPromptType !== newPromptType) { currentPromptType = newPromptType; log(LOG_LEVEL_INFO, `Switched to prompt type: ${currentPromptType} (Priority: ${highestPriorityFound > -1 ? highestPriorityFound : "default"})`); }
   }
-
-  /**
-   * Calls the backend proxy to interact with the Gemini API.
-   */
-  async function callGeminiAPI(currentTurnHistory) {
+let currentTurnUnlockData = null;
+/**
+ * Calls the backend proxy to interact with the Gemini API for main game turns.
+ * Also handles signals for World Shard unlocks.
+ * @param {Array<Object>} currentTurnHistory - The game history for the current turn.
+ * @returns {Promise<string|null>} The narrative string from the AI, or null on failure.
+ */
+async function callGeminiAPI(currentTurnHistory) {
     setGMActivity(true);
-    clearSuggestedActions();
+    clearSuggestedActions(); // Clear previous suggestions before new AI call
+    currentTurnUnlockData = null; // Reset for the new turn
 
     const activePromptType =
       isInitialGameLoad ||
-        (currentTurnHistory.length === 1 &&
-          gameHistory[0].role === "user" &&
-          gameHistory[0].parts[0].text.includes("ready to start the game"))
-        ? "initial"
-        : currentPromptType;
+      (currentTurnHistory.length === 1 &&
+        gameHistory[0].role === "user" &&
+        gameHistory[0].parts[0].text.includes("ready to start the game")) // This check might need refinement
+      ? "initial"
+      : currentPromptType;
 
     const systemPromptText = getSystemPrompt(
       playerIdentifier,
       activePromptType
     );
 
-    log(LOG_LEVEL_DEBUG, "----- BEGIN SYSTEM PROMPT -----");
+    log(LOG_LEVEL_DEBUG, "----- BEGIN SYSTEM PROMPT for callGeminiAPI -----");
     log(LOG_LEVEL_DEBUG, `Using prompt type: ${activePromptType}`);
-
     log(LOG_LEVEL_DEBUG, "System Prompt Text (Snippet):", systemPromptText.substring(0, 300) + (systemPromptText.length > 300 ? "..." : ""));
     log(LOG_LEVEL_DEBUG, "----- END SYSTEM PROMPT -----");
 
     if (systemPromptText.startsWith('{"narrative": "SYSTEM ERROR:')) {
       try {
         const errorResponse = JSON.parse(systemPromptText);
-        addMessageToLog(errorResponse.narrative, "system");
+        addMessageToLog(errorResponse.narrative, "system-error");
         if (errorResponse.suggested_actions) displaySuggestedActions(errorResponse.suggested_actions);
       } catch (e) {
-        addMessageToLog(systemPromptText, "system-error");
+        addMessageToLog(systemPromptText, "system-error"); // Log raw if not parsable
         log(LOG_LEVEL_ERROR, "Failed to parse system error JSON from getSystemPrompt:", e, systemPromptText);
       }
       setGMActivity(false);
@@ -1650,7 +1780,7 @@ let currentAiPlaceholder = "";
     }
 
     const generationConfig = {
-      temperature: 0.7,
+      temperature: 0.7, // Adjust as per theme or general preference
       topP: 0.95,
       maxOutputTokens: 8192,
       responseMimeType: "application/json",
@@ -1670,15 +1800,9 @@ let currentAiPlaceholder = "";
       modelName: currentModelName,
     };
 
-    const requestHeaders = {
-      "Content-Type": "application/json",
-    };
-
+    const requestHeaders = { "Content-Type": "application/json" };
     if (currentUser && currentUser.token) {
       requestHeaders["Authorization"] = `Bearer ${currentUser.token}`;
-      log(LOG_LEVEL_DEBUG, "callGeminiAPI: Sending request with Authorization header.");
-    } else {
-      log(LOG_LEVEL_DEBUG, "callGeminiAPI: Sending request without Authorization header (no user/token).");
     }
 
     try {
@@ -1687,12 +1811,12 @@ let currentAiPlaceholder = "";
         headers: requestHeaders,
         body: JSON.stringify(payload),
       });
-      const responseData = await response.json();
+      const responseData = await response.json(); // Assume proxy always tries to return JSON
 
       if (!response.ok) {
         let errorDetails = responseData.error?.message || `Proxy API Error ${response.status}`;
-        if (responseData.error?.details) { errorDetails += ` Details: ${JSON.stringify(responseData.error.details)}`; }
-        else if (responseData.details) { errorDetails += ` Details: ${JSON.stringify(responseData.details)}`; }
+        if(responseData.error?.code) errorDetails += ` (Code: ${responseData.error.code})`;
+        log(LOG_LEVEL_ERROR, "Error from Gemini API via proxy:", errorDetails, responseData);
         throw new Error(errorDetails);
       }
 
@@ -1701,90 +1825,84 @@ let currentAiPlaceholder = "";
         let parsedAIResponse;
 
         try {
-
+          // Robust JSON parsing
           try {
             parsedAIResponse = JSON.parse(jsonStringFromAI);
           } catch (parseError) {
-            log(LOG_LEVEL_ERROR, "Initial JSON.parse failed. Raw AI response (snippet):", jsonStringFromAI.substring(0, 500), "Error:", parseError.message);
+            log(LOG_LEVEL_WARN, "Initial JSON.parse failed for AI response. Attempting cleanup. Raw (snippet):", jsonStringFromAI.substring(0, 300), "Error:", parseError.message);
             let cleanedJsonString = null;
             const markdownMatch = jsonStringFromAI.match(/```(?:json)?\s*([\s\S]*?)\s*```/s);
             if (markdownMatch && markdownMatch[1]) {
               cleanedJsonString = markdownMatch[1].trim();
-              log(LOG_LEVEL_DEBUG, "Extracted JSON from markdown block:", cleanedJsonString.substring(0, 300));
-            } else {
-              let openChar = ''; let closeChar = ''; let startIndex = -1;
+            } else { // Fallback: try to find first '{' and last '}'
               const firstBrace = jsonStringFromAI.indexOf("{");
-              const firstBracket = jsonStringFromAI.indexOf("[");
-              if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) { openChar = '{'; closeChar = '}'; startIndex = firstBrace; }
-              else if (firstBracket !== -1) { openChar = '['; closeChar = ']'; startIndex = firstBracket; }
-
-              if (startIndex !== -1) {
-                let balance = 0; let endIndex = -1;
-                for (let i = startIndex; i < jsonStringFromAI.length; i++) {
-                  if (jsonStringFromAI[i] === openChar) balance++;
-                  else if (jsonStringFromAI[i] === closeChar) {
-                    balance--;
-                    if (balance === 0) { endIndex = i; break; }
-                  }
-                }
-                if (endIndex !== -1) {
-                  cleanedJsonString = jsonStringFromAI.substring(startIndex, endIndex + 1);
-                  log(LOG_LEVEL_DEBUG, "Extracted JSON by balance counting:", cleanedJsonString.substring(0, 300));
-                } else { log(LOG_LEVEL_DEBUG, "Balance counting for JSON extraction failed."); }
-              } else { log(LOG_LEVEL_DEBUG, "No '{' or '[' found for balance counting extraction."); }
-            }
-
-            if (cleanedJsonString) {
-              try {
-                parsedAIResponse = JSON.parse(cleanedJsonString);
-                log(LOG_LEVEL_INFO, "Successfully parsed JSON after cleanup. Original parse error was:", parseError.message);
-              } catch (nestedParseError) {
-                log(LOG_LEVEL_ERROR, "Failed to parse cleaned JSON. Cleaned (snippet):", cleanedJsonString.substring(0, 500), "Nested error:", nestedParseError.message);
-                throw new Error(`Invalid JSON structure even after cleanup. Original: ${parseError.message}. Nested: ${nestedParseError.message}.`);
+              const lastBrace = jsonStringFromAI.lastIndexOf("}");
+              if (firstBrace !== -1 && lastBrace > firstBrace) {
+                cleanedJsonString = jsonStringFromAI.substring(firstBrace, lastBrace + 1);
               }
+            }
+            if (cleanedJsonString) {
+              parsedAIResponse = JSON.parse(cleanedJsonString);
+              log(LOG_LEVEL_INFO, "Successfully parsed JSON after cleanup.");
             } else {
-              log(LOG_LEVEL_ERROR, "Could not extract valid JSON after initial failure. Re-throwing original parse error.");
+              log(LOG_LEVEL_ERROR, "JSON cleanup failed. Re-throwing original parse error.");
               throw parseError;
             }
           }
 
-          if (
-            !parsedAIResponse ||
-            typeof parsedAIResponse.narrative !== "string" ||
-            typeof parsedAIResponse.dashboard_updates !== "object" ||
-            parsedAIResponse.dashboard_updates === null ||
-            !Array.isArray(parsedAIResponse.suggested_actions)
-          ) {
-            log(LOG_LEVEL_ERROR, "Parsed JSON is missing required core fields (narrative, dashboard_updates, suggested_actions) or they have wrong types/are null. Parsed object:", parsedAIResponse);
+          // Validate core fields from AI response
+          if (!parsedAIResponse || typeof parsedAIResponse.narrative !== "string" ||
+              typeof parsedAIResponse.dashboard_updates !== "object" || parsedAIResponse.dashboard_updates === null ||
+              !Array.isArray(parsedAIResponse.suggested_actions)) {
+            log(LOG_LEVEL_ERROR, "Parsed JSON from AI is missing required core fields or they have wrong types. Parsed:", parsedAIResponse);
             throw new Error("Invalid JSON structure from AI: missing or invalid core fields.");
           }
 
+          // Handle input placeholder
           if (parsedAIResponse.input_placeholder && typeof parsedAIResponse.input_placeholder === 'string' && playerActionInput) {
             currentAiPlaceholder = parsedAIResponse.input_placeholder.trim();
             playerActionInput.placeholder = currentAiPlaceholder;
-          } else if (playerActionInput) {
+          } else if (playerActionInput) { // Fallback if AI doesn't provide one
             currentAiPlaceholder = getUIText("placeholder_command");
             playerActionInput.placeholder = currentAiPlaceholder;
           }
 
-          let gameIndicators = parsedAIResponse.game_state_indicators;
-          if (typeof gameIndicators === 'undefined') {
-            log(LOG_LEVEL_WARN, "AI response was missing 'game_state_indicators'. Defaulting to {}. Full AI response (snippet):", jsonStringFromAI.substring(0, 500));
-            gameIndicators = {};
-          } else if (typeof gameIndicators !== 'object' || gameIndicators === null) {
-            log(LOG_LEVEL_WARN, `AI response had 'game_state_indicators' of wrong type (${typeof gameIndicators}) or was null. Defaulting to {}. Value:`, gameIndicators);
-            gameIndicators = {};
+          // --- World Shard Unlock Signal Handling ---
+          if (parsedAIResponse.new_persistent_lore_unlock && typeof parsedAIResponse.new_persistent_lore_unlock === 'object') {
+            const unlockData = parsedAIResponse.new_persistent_lore_unlock;
+            if (unlockData.title && unlockData.content && unlockData.key_suggestion && unlockData.unlock_condition_description) {
+                currentTurnUnlockData = { ...unlockData };
+                addMessageToLog(getUIText("notification_world_shard_unlocked", { TITLE: unlockData.title }), "system system-emphasized");
+                if (parsedAIResponse.suggested_actions && Array.isArray(parsedAIResponse.suggested_actions)) {
+                    const mullOverActionText = getUIText("action_mull_over_shard", { TITLE: unlockData.title });
+                    parsedAIResponse.suggested_actions.unshift({
+                        text: mullOverActionText,
+                        isTemporaryMullOver: true,
+                        shardDataForMullOver: { ...unlockData }
+                    });
+                }
+                log(LOG_LEVEL_INFO, "World Shard unlock signaled by AI:", unlockData.title);
+            } else {
+                log(LOG_LEVEL_WARN, "AI signaled 'new_persistent_lore_unlock' but essential data (key, title, content, desc) was missing.", unlockData);
+            }
           }
+          // --- End World Shard Unlock ---
 
-          gameHistory.push({
-            role: "model",
-            parts: [{ text: JSON.stringify(parsedAIResponse) }],
-          });
+          gameHistory.push({ role: "model", parts: [{ text: JSON.stringify(parsedAIResponse) }] });
           updateDashboard(parsedAIResponse.dashboard_updates);
           displaySuggestedActions(parsedAIResponse.suggested_actions);
+
+          let gameIndicators = parsedAIResponse.game_state_indicators;
+          if (typeof gameIndicators === 'undefined' || typeof gameIndicators !== 'object' || gameIndicators === null) {
+            log(LOG_LEVEL_WARN, "AI response 'game_state_indicators' was missing, undefined, or not an object. Defaulting to {}. Value:", gameIndicators, "Raw response snippet:", jsonStringFromAI.substring(0, 300));
+            gameIndicators = {}; // Ensure it's an object for handleGameStateIndicators
+          }
           handleGameStateIndicators(gameIndicators, isInitialGameLoad);
+
           if (isInitialGameLoad) isInitialGameLoad = false;
-          await saveGameState();
+
+          await saveGameState(); // saveGameState will pick up currentTurnUnlockData
+
           if (systemStatusIndicator) {
             systemStatusIndicator.textContent = getUIText("system_status_online_short");
             systemStatusIndicator.className = "status-indicator status-ok";
@@ -1792,8 +1910,8 @@ let currentAiPlaceholder = "";
           return parsedAIResponse.narrative;
 
         } catch (e) {
-          log(LOG_LEVEL_ERROR, "Error processing/validating AI response object:", e.message, "Raw AI string (snippet):", jsonStringFromAI.substring(0, 500));
-          addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Failed to process AI response: " + e.message }), "system");
+          log(LOG_LEVEL_ERROR, "Error processing/validating AI response object in callGeminiAPI:", e.message, "Raw AI string (snippet):", jsonStringFromAI.substring(0, 500));
+          addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Failed to process AI response: " + e.message }), "system-error");
           if (playerActionInput) playerActionInput.placeholder = getUIText("placeholder_command");
           if (systemStatusIndicator) {
             systemStatusIndicator.textContent = getUIText("status_error");
@@ -1802,25 +1920,18 @@ let currentAiPlaceholder = "";
           return null;
         }
       } else if (responseData.promptFeedback?.blockReason) {
-        const blockDetails =
-          responseData.promptFeedback.safetyRatings
-            ?.map((r) => `${r.category}: ${r.probability}`)
-            .join(", ") || "No details provided.";
+        const blockDetails = responseData.promptFeedback.safetyRatings?.map(r => `${r.category}: ${r.probability}`).join(", ") || "No details.";
+        log(LOG_LEVEL_WARN, "Content blocked by API (via proxy):", responseData.promptFeedback.blockReason, "Details:", blockDetails);
         if (playerActionInput) playerActionInput.placeholder = getUIText("placeholder_command");
-        throw new Error(
-          `Content blocked by API via proxy: ${responseData.promptFeedback.blockReason}. Safety Ratings: ${blockDetails}`
-        );
+        throw new Error(`Content blocked by AI: ${responseData.promptFeedback.blockReason}.`);
       } else {
         log(LOG_LEVEL_WARN, "Unexpected response structure from proxy (no candidates or blockReason):", responseData);
         if (playerActionInput) playerActionInput.placeholder = getUIText("placeholder_command");
         throw new Error("No valid candidate or text found in AI response from proxy.");
       }
     } catch (error) {
-      log(LOG_LEVEL_ERROR, "callGeminiAPI (proxy) failed:", error);
-      addMessageToLog(
-        getUIText("error_api_call_failed", { ERROR_MSG: error.message }),
-        "system"
-      );
+      log(LOG_LEVEL_ERROR, "callGeminiAPI failed:", error);
+      addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: error.message }), "system-error");
       if (playerActionInput) playerActionInput.placeholder = getUIText("placeholder_command");
       if (systemStatusIndicator) {
         systemStatusIndicator.textContent = getUIText("status_error");
@@ -1830,7 +1941,159 @@ let currentAiPlaceholder = "";
     } finally {
       setGMActivity(false);
     }
-  }
+}
+
+/**
+ * Handles the "Mull Over" temporary action selected by the player.
+ * This makes a separate, focused AI call for a deep dive on the unlocked shard.
+ * @param {object} shardData - The data of the shard to mull over.
+ */
+async function handleMullOverAction(shardData) {
+    if (!shardData || !shardData.title || !shardData.content) {
+        log(LOG_LEVEL_ERROR, "handleMullOverAction called with invalid shardData.", shardData);
+        return;
+    }
+    log(LOG_LEVEL_INFO, "Player chose to 'Mull Over' shard:", shardData.title);
+
+    // Store current suggested actions (excluding the "Mull Over" one itself) to restore them later.
+    const originalSuggestedActions = currentSuggestedActions.filter(
+        action => !(typeof action === 'object' && action.isTemporaryMullOver)
+    );
+    clearSuggestedActions(); // Clear UI while deep dive is processed
+
+    addMessageToLog(getUIText("action_mull_over_shard", { TITLE: shardData.title }), "player");
+
+    const tempSystemPromptText = getSystemPromptForDeepDive(shardData);
+
+    if (!tempSystemPromptText || tempSystemPromptText.startsWith('{"narrative": "SYSTEM ERROR:')) {
+        const errorMsg = tempSystemPromptText ?
+            (JSON.parse(tempSystemPromptText).narrative || "Failed to generate deep dive system prompt.") :
+            "Failed to generate deep dive system prompt due to missing template.";
+        log(LOG_LEVEL_ERROR, errorMsg);
+        addMessageToLog(errorMsg, "system-error");
+        displaySuggestedActions(originalSuggestedActions); // Restore previous actions on prompt error
+        return;
+    }
+
+    // For deep dive, history is usually not needed, context is in system prompt.
+    const deepDivePayload = {
+      contents: [],
+      generationConfig: { temperature: 0.65, topP: 0.95, maxOutputTokens: 1024, responseMimeType: "application/json" },
+      safetySettings: [ /* Standard safety settings, same as callGeminiAPI */
+        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
+      ],
+      systemInstruction: { parts: [{ text: tempSystemPromptText }] },
+      modelName: currentModelName, // Use the currently selected model
+    };
+
+    const requestHeaders = { "Content-Type": "application/json" };
+    if (currentUser && currentUser.token) {
+      requestHeaders["Authorization"] = `Bearer ${currentUser.token}`;
+    }
+
+    setGMActivity(true);
+    try {
+      const response = await fetch(PROXY_API_URL, {
+        method: "POST",
+        headers: requestHeaders,
+        body: JSON.stringify(deepDivePayload),
+      });
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        let errorDetails = responseData.error?.message || `Deep Dive API Error ${response.status}`;
+        if(responseData.error?.code) errorDetails += ` (Code: ${responseData.error.code})`;
+        throw new Error(errorDetails);
+      }
+
+      if (responseData.candidates && responseData.candidates[0]?.content?.parts?.[0]?.text) {
+        let jsonStringFromDeepDiveAI = responseData.candidates[0].content.parts[0].text;
+        let parsedDeepDiveResponse;
+        try {
+            // Robust JSON parsing for deep dive response
+            try {
+              parsedDeepDiveResponse = JSON.parse(jsonStringFromDeepDiveAI);
+            } catch (parseError) {
+              log(LOG_LEVEL_WARN, "Initial JSON.parse failed for Deep Dive. Attempting cleanup. Raw:", jsonStringFromDeepDiveAI.substring(0,200));
+              const markdownMatch = jsonStringFromDeepDiveAI.match(/```(?:json)?\s*([\s\S]*?)\s*```/s);
+              if (markdownMatch && markdownMatch[1]) {
+                parsedDeepDiveResponse = JSON.parse(markdownMatch[1].trim());
+              } else { throw parseError; }
+            }
+
+            if (parsedDeepDiveResponse && parsedDeepDiveResponse.deep_dive_narrative && typeof parsedDeepDiveResponse.deep_dive_narrative === 'string') {
+                addMessageToLog(parsedDeepDiveResponse.deep_dive_narrative, "gm");
+                // Add this special interaction to game history for context, not as a full turn.
+                gameHistory.push({
+                    role: "model", // Or a new role like "deep_dive_response"
+                    parts: [{ text: JSON.stringify({
+                        narrative: parsedDeepDiveResponse.deep_dive_narrative,
+                        isDeepDive: true,
+                        relatedShardTitle: shardData.title
+                    }) }]
+                });
+            } else {
+                throw new Error("Deep dive AI response missing 'deep_dive_narrative' field or invalid format.");
+            }
+        } catch (e) {
+            log(LOG_LEVEL_ERROR, "Error processing Deep Dive AI response object:", e.message, "Raw AI string:", jsonStringFromDeepDiveAI);
+            addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Failed to process deep dive reflection: " + e.message }), "system-error");
+        }
+      } else {
+        throw new Error("No valid candidate or text found in Deep Dive AI response.");
+      }
+    } catch (error) {
+      log(LOG_LEVEL_ERROR, "Deep Dive AI call failed:", error);
+      addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: error.message }), "system-error");
+    } finally {
+      setGMActivity(false);
+      // Restore original suggested actions (excluding "Mull Over") to allow player to continue main flow.
+      displaySuggestedActions(originalSuggestedActions);
+
+      await saveGameState(); // Save history including the deep dive.
+      if (playerActionInput && document.body.contains(playerActionInput)) playerActionInput.focus();
+    }
+}
+
+// New helper for deep dive system prompt
+function getSystemPromptForDeepDive(shardData) {
+    const themeConfig = ALL_THEMES_CONFIG[currentTheme];
+    let basePromptText = gamePrompts["master"]?.["master_lore_deep_dive"]; // Assuming master_lore_deep_dive is in "master" theme prompts
+    if (!basePromptText || basePromptText.startsWith("CRITICAL_ERROR:") || basePromptText.startsWith("FILE_NOT_FOUND")) {
+        log(LOG_LEVEL_ERROR, `master_lore_deep_dive.txt not found or invalid.`);
+        return `{"narrative": "SYSTEM ERROR: Deep dive prompt template missing."}`;
+    }
+
+    const narrativeLangInstruction = NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[currentTheme]?.[currentNarrativeLanguage] ||
+                                   NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[DEFAULT_THEME_ID]?.[currentNarrativeLanguage] ||
+                                   `The narrative must be in ${currentNarrativeLanguage.toUpperCase()}.`;
+
+    let processedPrompt = basePromptText;
+    processedPrompt = processedPrompt.replace(/\$\{theme_name\}/g, getUIText(themeConfig.name_key, {}, currentTheme));
+    processedPrompt = processedPrompt.replace(/\$\{currentNarrativeLanguage\.toUpperCase\(\)\}/g, currentNarrativeLanguage.toUpperCase());
+    processedPrompt = processedPrompt.replace(/\$\{lore_fragment_title\}/g, shardData.title);
+    processedPrompt = processedPrompt.replace(/\$\{lore_fragment_content\}/g, shardData.content);
+    processedPrompt = processedPrompt.replace(/\$\{game_history_lore\}/g, lastKnownEvolvedWorldLore || getUIText(themeConfig.lore_key, {}, currentTheme));
+
+    // For summary snippet, take the last user and model turn if available.
+    let summarySnippet = "No recent events available.";
+    if (gameHistory.length >= 2) {
+        const lastUserTurn = gameHistory[gameHistory.length - 2]; // Penultimate is user's choice of "Mull Over"
+        const secondLastModelTurn = gameHistory[gameHistory.length - 3]; // Model response before "Mull Over"
+        if (lastUserTurn && lastUserTurn.role === 'user' && secondLastModelTurn && secondLastModelTurn.role === 'model') {
+            try {
+                const modelResp = JSON.parse(secondLastModelTurn.parts[0].text);
+                summarySnippet = `Player: ${lastUserTurn.parts[0].text.substring(0,100)}...\nGM: ${modelResp.narrative.substring(0,150)}...`;
+            } catch (e) { /* ignore parse error for snippet */ }
+        }
+    }
+    processedPrompt = processedPrompt.replace(/\$\{game_history_summary_snippet\}/g, summarySnippet);
+
+    return processedPrompt;
+}
 
   /**
    * Starts the game session after the player enters their identifier (for anonymous play).
@@ -1899,24 +2162,48 @@ let currentAiPlaceholder = "";
   /**
    * Initiates a new game session, prompting for confirmation.
    */
-  async function startNewGameSession() {
-    if (!currentTheme && !currentLandingGridSelection) { await showCustomModal({ type: "alert", titleKey: "alert_title_notice", messageKey: "alert_select_theme_first", }); return; }
+async function startNewGameSession() {
+    if (!currentTheme && !currentLandingGridSelection) {
+        await showCustomModal({ type: "alert", titleKey: "alert_title_notice", messageKey: "alert_select_theme_first", });
+        return;
+    }
     const themeToStartNewGameIn = currentTheme || currentLandingGridSelection;
-    if (!themeToStartNewGameIn || !ALL_THEMES_CONFIG[themeToStartNewGameIn]) { await showCustomModal({ type: "alert", titleKey: "alert_title_error", messageKey: "alert_select_theme_first", }); return; }
+    if (!themeToStartNewGameIn || !ALL_THEMES_CONFIG[themeToStartNewGameIn]) {
+        await showCustomModal({ type: "alert", titleKey: "alert_title_error", messageKey: "alert_select_theme_first", });
+        return;
+    }
+
     const themeConfig = ALL_THEMES_CONFIG[themeToStartNewGameIn];
     const themeName = getUIText(themeConfig.name_key, {}, themeToStartNewGameIn);
     const confirmKey = `confirm_new_game_theme_${themeToStartNewGameIn}`;
     let messageToDisplayKey = (themeTextData[themeToStartNewGameIn]?.[currentAppLanguage]?.[confirmKey] || themeTextData[themeToStartNewGameIn]?.en?.[confirmKey]) ? confirmKey : "confirm_new_game_generic";
-    const userConfirmed = await showCustomModal({
-      type: "confirm", titleKey: "confirm_new_game_title", messageKey: messageToDisplayKey,
-      replacements: { THEME_NAME: themeName }, confirmTextKey: "modal_yes_button", cancelTextKey: "modal_no_button",
-      explicitThemeContext: messageToDisplayKey === confirmKey ? themeToStartNewGameIn : null,
+
+    const userConfirmedNewGame = await showCustomModal({
+        type: "confirm", titleKey: "confirm_new_game_title", messageKey: messageToDisplayKey,
+        replacements: { THEME_NAME: themeName }, confirmTextKey: "modal_yes_button", cancelTextKey: "modal_no_button",
+        explicitThemeContext: messageToDisplayKey === confirmKey ? themeToStartNewGameIn : null,
     });
-    if (userConfirmed) {
-      addMessageToLog(getUIText("system_new_game_initiated", { THEME_NAME: themeName }), "system");
-      await changeThemeAndStart(themeToStartNewGameIn, true);
+
+    if (userConfirmedNewGame) {
+        if (!document.body.classList.contains("landing-page-active")) {
+             addMessageToLog(getUIText("system_new_game_initiated", { THEME_NAME: themeName }), "system");
+        }
+        // Determine if an Evolved World should be used.
+        // Default to true if shards exist and are active. User can override by deactivating all shards in modal.
+        let useEvolvedWorldOnStart = false;
+        if (currentUser && currentUser.token) {
+            const themeStatus = shapedThemeData.get(themeToStartNewGameIn);
+            if (themeStatus && themeStatus.hasShards && themeStatus.activeShardCount > 0) {
+                useEvolvedWorldOnStart = true;
+                log(LOG_LEVEL_INFO, `Defaulting to Evolved World for ${themeToStartNewGameIn} as active shards exist.`);
+            } else {
+                log(LOG_LEVEL_INFO, `No active shards for ${themeToStartNewGameIn} or user not logged in. Starting Original World.`);
+            }
+        }
+
+        await changeThemeAndStart(themeToStartNewGameIn, true, useEvolvedWorldOnStart);
     }
-  }
+}
 
   /**
    * Generates the HTML for dashboard panels based on a theme's configuration.
@@ -1985,128 +2272,231 @@ let currentAiPlaceholder = "";
   /**
    * Changes the active game theme or starts a new game.
    */
-  async function changeThemeAndStart(newThemeId, forceNewGame = false) {
+async function changeThemeAndStart(newThemeId, forceNewGame = false, useEvolvedWorldForNew = false) {
+    log(LOG_LEVEL_INFO, `changeThemeAndStart called: newThemeId=${newThemeId}, forceNewGame=${forceNewGame}, useEvolvedWorldForNew=${useEvolvedWorldForNew}`);
     const oldThemeId = currentTheme;
+
+    // Ensure core data for the new theme is loaded
     const dataLoaded = await ensureThemeDataLoaded(newThemeId);
-
     if (playerActionInput) {
-      playerActionInput.placeholder = getUIText("placeholder_command");
-      currentAiPlaceholder = getUIText("placeholder_command");
-    }
-    if (!dataLoaded) {
-      await showCustomModal({ type: "alert", titleKey: "alert_title_error", messageKey: "error_theme_data_load_failed", replacements: { THEME_ID: newThemeId }, });
-      if (oldThemeId && ALL_THEMES_CONFIG[oldThemeId]) { currentTheme = oldThemeId; localStorage.setItem(CURRENT_THEME_STORAGE_KEY, currentTheme); }
-      else { switchToLandingView(); }
-      return;
+        playerActionInput.placeholder = getUIText("placeholder_command");
+        currentAiPlaceholder = getUIText("placeholder_command");
     }
 
-    if (newThemeId !== DEFAULT_THEME_ID && (!ALL_THEMES_CONFIG[DEFAULT_THEME_ID] || !themeTextData[DEFAULT_THEME_ID] || !PROMPT_URLS_BY_THEME[DEFAULT_THEME_ID])) {
-      await ensureThemeDataLoaded(DEFAULT_THEME_ID);
+    if (!dataLoaded) {
+        log(LOG_LEVEL_ERROR, `Critical data for theme ${newThemeId} failed to load.`);
+        await showCustomModal({
+            type: "alert",
+            titleKey: "alert_title_error",
+            messageKey: "error_theme_data_load_failed",
+            replacements: { THEME_ID: newThemeId },
+        });
+        // Attempt to revert to old theme if possible, otherwise go to landing
+        if (oldThemeId && ALL_THEMES_CONFIG[oldThemeId]) {
+            currentTheme = oldThemeId; // Revert
+            localStorage.setItem(CURRENT_THEME_STORAGE_KEY, currentTheme);
+            // Potentially re-render UI for oldThemeId or simply switch to landing
+            switchToLandingView();
+        } else {
+            switchToLandingView();
+        }
+        return;
     }
+
+    // Ensure master prompts (especially master_lore_deep_dive) are available if not already loaded.
+    // This assumes "master" is a theme entry in THEMES_MANIFEST used for shared prompts.
+    if (!gamePrompts["master"] || !gamePrompts["master"]["master_lore_deep_dive"]) {
+        const masterThemeEntry = THEMES_MANIFEST.find(t => t.id === "master"); // "master" should be a defined theme ID
+        if (masterThemeEntry) {
+            await ensureThemeDataLoaded("master"); // Load its config, texts, prompt-config
+            await loadAllPromptsForTheme("master"); // Load its actual prompt files
+            if (!gamePrompts["master"]?.["master_lore_deep_dive"]) {
+                 log(LOG_LEVEL_WARN, "master_lore_deep_dive.txt still not found after explicit load attempt for 'master' theme.");
+            }
+        } else {
+            log(LOG_LEVEL_WARN, "'master' theme not found in THEMES_MANIFEST, cannot load master_lore_deep_dive.txt.");
+        }
+    }
+
+    // Ensure default theme prompts are loaded if the new theme is not the default one
+    // (getSystemPrompt has fallbacks to DEFAULT_THEME_ID's master prompts)
+    if (newThemeId !== DEFAULT_THEME_ID) {
+        await ensureThemeDataLoaded(DEFAULT_THEME_ID); // Config, texts, prompt-config
+        await loadAllPromptsForTheme(DEFAULT_THEME_ID); // Actual prompt files
+    }
+
 
     const themeWasAlreadyPlaying = isThemePlaying(newThemeId);
+
+    // If trying to switch to the same theme and not forcing a new game, just ensure view is correct.
     if (oldThemeId === newThemeId && !forceNewGame) {
-      if (storyLogViewport && storyLogViewport.style.display === "none") {
-        switchToGameView(newThemeId); displaySuggestedActions(currentSuggestedActions);
-        if (playerActionInput && actionInputSection && actionInputSection.style.display !== "none" && document.body.contains(playerActionInput)) { playerActionInput.focus(); }
-      }
-      return;
+        if (storyLogViewport && storyLogViewport.style.display === "none") { // Means we are on landing page
+            switchToGameView(newThemeId); // Switch view
+            displaySuggestedActions(currentSuggestedActions); // Restore suggestions
+            if (playerActionInput && actionInputSection && actionInputSection.style.display !== "none" && document.body.contains(playerActionInput)) {
+                playerActionInput.focus();
+            }
+        }
+        log(LOG_LEVEL_INFO, `Theme ${newThemeId} is already active and not forcing new game. View ensured.`);
+        return;
     }
 
-    currentTheme = newThemeId; localStorage.setItem(CURRENT_THEME_STORAGE_KEY, currentTheme);
+    currentTheme = newThemeId;
+    localStorage.setItem(CURRENT_THEME_STORAGE_KEY, currentTheme);
+
     if (forceNewGame || !themeWasAlreadyPlaying) {
-      addPlayingTheme(newThemeId);
+        await addPlayingTheme(newThemeId); // Updates local list and potentially backend
     }
 
+    // Always clear local in-memory state for the new/switched theme if it's a new game or different theme
     if (oldThemeId !== newThemeId || forceNewGame) {
         clearGameStateInternal(currentTheme);
     }
 
-    switchToGameView(currentTheme);
-    generatePanelsForTheme(currentTheme);
-    setAppLanguageAndThemeUI(currentAppLanguage, currentTheme);
+    switchToGameView(currentTheme);     // Updates body classes, hides landing elements, shows game elements
+    generatePanelsForTheme(currentTheme); // Rebuilds dashboard panels for the new theme
+    setAppLanguageAndThemeUI(currentAppLanguage, currentTheme); // Applies translations and default texts
 
     const promptsLoadedSuccessfully = await loadAllPromptsForTheme(currentTheme);
     if (!promptsLoadedSuccessfully) {
-      addMessageToLog(getUIText("error_load_prompts_critical", { THEME: currentTheme }), "system-error");
-      if (startGameButton) startGameButton.disabled = true;
-      switchToLandingView();
-      return;
+        addMessageToLog(getUIText("error_load_prompts_critical", { THEME: currentTheme }), "system-error");
+        if (startGameButton) startGameButton.disabled = true;
+        switchToLandingView(); // Revert to landing if critical prompts fail
+        return;
     }
     if (startGameButton) startGameButton.disabled = false;
+    updateTopbarThemeIcons(); // Reflect playing/liked status changes
 
-    updateTopbarThemeIcons();
     const newThemeDisplayName = ALL_THEMES_CONFIG[newThemeId] ? getUIText(ALL_THEMES_CONFIG[newThemeId].name_key, {}, newThemeId) : newThemeId;
 
-    const successfullyLoadedExistingGame = !forceNewGame && await loadGameState(currentTheme);
+    if (forceNewGame) {
+        log(LOG_LEVEL_INFO, `Starting new game for theme: ${newThemeId}. Evolved world: ${useEvolvedWorldForNew}`);
+        isInitialGameLoad = true;
+        currentPromptType = "initial"; // Critical for getSystemPrompt
+        currentPanelStates = {};
+        currentSuggestedActions = [];
+        lastKnownDashboardUpdates = {};
+        lastKnownGameStateIndicators = {};
+        lastKnownCumulativePlayerSummary = "";
+        lastKnownEvolvedWorldLore = "";
 
-    if (successfullyLoadedExistingGame) {
-      // Game state loaded and resumed successfully
-      isInitialGameLoad = false;
-      initializeCollapsiblePanelBoxes(currentTheme);
-      displaySuggestedActions(currentSuggestedActions);
-
-      if (nameInputSection) nameInputSection.style.display = "none";
-      if (actionInputSection) actionInputSection.style.display = "flex";
-      if (playerActionInput && document.body.contains(playerActionInput)) playerActionInput.focus();
-
-      addMessageToLog(getUIText("system_session_resumed", { PLAYER_ID: playerIdentifier, THEME_NAME: newThemeDisplayName, }), "system");
-      if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("system_status_online_short"); systemStatusIndicator.className = "status-indicator status-ok"; }
-      if (playerActionInput && currentAiPlaceholder) {
-          playerActionInput.placeholder = currentAiPlaceholder;
-      } else if (playerActionInput) {
-          playerActionInput.placeholder = getUIText("placeholder_command");
-      }
-    } else {
-      isInitialGameLoad = true;
-      currentPromptType = "initial";
-      currentPanelStates = {};
-      currentSuggestedActions = [];
-      lastKnownDashboardUpdates = {};
-      lastKnownGameStateIndicators = {};
-      lastKnownCumulativePlayerSummary = "";
-      lastKnownEvolvedWorldLore = "";
-
-      initializeDashboardDefaultTexts();
-      initializeCollapsiblePanelBoxes(currentTheme);
-      displaySuggestedActions(currentSuggestedActions);
-
-      if (storyLog) storyLog.innerHTML = "";
-
-      playerIdentifier = "";
-      if (playerIdentifierInputEl) {
-        playerIdentifierInputEl.value = "";
-        playerIdentifierInputEl.placeholder = getUIText("placeholder_name_login");
-      }
-      if (playerActionInput) {
-        playerActionInput.placeholder = getUIText("placeholder_command");
-        currentAiPlaceholder = getUIText("placeholder_command");
-      }
-      if (nameInputSection) nameInputSection.style.display = "flex";
-      if (actionInputSection) actionInputSection.style.display = "none";
-      if (playerIdentifierInputEl && document.body.contains(playerIdentifierInputEl)) {
-        playerIdentifierInputEl.focus();
-      }
-
-      if (systemStatusIndicator) {
-        systemStatusIndicator.textContent = getUIText("standby");
-        systemStatusIndicator.className = "status-indicator status-warning";
-      }
-
-      if (oldThemeId !== newThemeId || forceNewGame) {
-        addMessageToLog(getUIText("system_theme_set_generic", { THEME_NAME: newThemeDisplayName, }), "system");
-        if (forceNewGame) {
-          addMessageToLog(getUIText("system_new_game_initiated", { THEME_NAME: newThemeDisplayName, }), "system");
+        // --- Fetch and prepare World Shards for the initial prompt if starting an Evolved World ---
+        _tempShardsForInitialPrompt = "[]"; // Reset/default before potential fetch
+        if (useEvolvedWorldForNew && currentUser && currentUser.token) {
+            log(LOG_LEVEL_INFO, `Preparing Evolved World for new game in ${newThemeId}. Fetching active shards.`);
+            try {
+                const shardsResponse = await _callApi(`/api/v1/themes/${newThemeId}/worldshards`, 'GET', null, currentUser.token);
+                if (shardsResponse && shardsResponse.worldShards) {
+                    const activeShards = shardsResponse.worldShards
+                        .filter(s => s.isActiveForNewGames)
+                        .map(s => ({ // Map to only essential fields for the prompt
+                            loreFragmentKey: s.loreFragmentKey,
+                            loreFragmentTitle: s.loreFragmentTitle,
+                            loreFragmentContent: s.loreFragmentContent,
+                            unlockConditionDescription: s.unlockConditionDescription
+                        }));
+                    if (activeShards.length > 0) {
+                        _tempShardsForInitialPrompt = JSON.stringify(activeShards);
+                        log(LOG_LEVEL_DEBUG, `Fetched ${activeShards.length} active shards for initial prompt of ${newThemeId}. Payload snippet: ${_tempShardsForInitialPrompt.substring(0,100)}...`);
+                    } else {
+                        log(LOG_LEVEL_INFO, `Evolved world chosen for ${newThemeId}, but no active shards found. Proceeding as original world.`);
+                    }
+                } else {
+                     log(LOG_LEVEL_WARN, `No worldShards array in response for ${newThemeId} when fetching for Evolved World.`);
+                }
+            } catch (error) {
+                log(LOG_LEVEL_ERROR, `Failed to fetch world shards for new Evolved game in ${newThemeId}. Starting with original world.`, error);
+                addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Could not load World Fragments for new game." }), "system-error");
+                 _tempShardsForInitialPrompt = "[]"; // Ensure it's default on error
+            }
+        } else if (useEvolvedWorldForNew) {
+            log(LOG_LEVEL_INFO, `Evolved world chosen for ${newThemeId}, but user not logged in. Proceeding as original world.`);
+            _tempShardsForInitialPrompt = "[]";
         }
-      }
+        // --- End shard fetching for new game ---
+
+        initializeDashboardDefaultTexts(); // Sets UI to default values for the theme
+        initializeCollapsiblePanelBoxes(currentTheme); // Sets up panel expand/collapse behavior
+        displaySuggestedActions([]); // No suggestions at the very start of a new game before identifier
+        if (storyLog) storyLog.innerHTML = ""; // Clear log for new game
+
+        playerIdentifier = ""; // Player needs to enter identifier for a new game
+        if (playerIdentifierInputEl) {
+            playerIdentifierInputEl.value = "";
+            playerIdentifierInputEl.placeholder = getUIText("placeholder_name_login");
+        }
+        if (playerActionInput) {
+            playerActionInput.placeholder = getUIText("placeholder_command");
+            currentAiPlaceholder = getUIText("placeholder_command");
+        }
+
+        // Configure UI for identifier input
+        if (nameInputSection) nameInputSection.style.display = "flex";
+        if (actionInputSection) actionInputSection.style.display = "none";
+        if (playerIdentifierInputEl && document.body.contains(playerIdentifierInputEl)) {
+            playerIdentifierInputEl.focus();
+        }
+        if (systemStatusIndicator) {
+            systemStatusIndicator.textContent = getUIText("standby");
+            systemStatusIndicator.className = "status-indicator status-warning"; // Or "status-info"
+        }
+
+        // Add system message about new game/theme, but only if not starting from landing page directly into a game
+        if (!document.body.classList.contains("initial-state")) { // 'initial-state' might be set when first loading into landing
+             if (oldThemeId !== newThemeId || forceNewGame) { // If it's genuinely a new game start action
+                 addMessageToLog(getUIText("system_theme_set_generic", { THEME_NAME: newThemeDisplayName }), "system");
+             }
+        }
+        log(LOG_LEVEL_INFO, `UI configured for new game in theme ${newThemeId}. Awaiting player identifier.`);
+
+    } else if (await loadGameState(currentTheme)) { // Resuming existing game (forceNewGame is false)
+        log(LOG_LEVEL_INFO, `Resuming existing game for theme: ${newThemeId}`);
+        isInitialGameLoad = false; // Not a new game load
+        initializeCollapsiblePanelBoxes(currentTheme); // Restores panel states from loaded data
+        displaySuggestedActions(currentSuggestedActions); // Restore last suggestions
+
+        if (nameInputSection) nameInputSection.style.display = "none";
+        if (actionInputSection) actionInputSection.style.display = "flex";
+        if (playerActionInput && document.body.contains(playerActionInput)) {
+             playerActionInput.placeholder = currentAiPlaceholder || getUIText("placeholder_command");
+             playerActionInput.focus();
+        }
+
+        addMessageToLog(getUIText("system_session_resumed", { PLAYER_ID: playerIdentifier, THEME_NAME: newThemeDisplayName }), "system");
+        if (systemStatusIndicator) {
+            systemStatusIndicator.textContent = getUIText("system_status_online_short");
+            systemStatusIndicator.className = "status-indicator status-ok";
+        }
+    } else { // Failed to load existing game state, or no state found, and not forcing new game explicitly
+        log(LOG_LEVEL_WARN, `No existing game state to resume for ${newThemeId}, and not forced new. Starting fresh (original world).`);
+        // This path implies a fresh start, similar to forceNewGame but without the explicit "Evolved" choice path.
+        // Effectively, it's an original world start.
+        isInitialGameLoad = true;
+        currentPromptType = "initial";
+        _tempShardsForInitialPrompt = "[]"; // Ensure it's default for an original world start
+
+        initializeDashboardDefaultTexts();
+        initializeCollapsiblePanelBoxes(currentTheme);
+        displaySuggestedActions([]);
+        if (storyLog) storyLog.innerHTML = "";
+        playerIdentifier = "";
+        if (playerIdentifierInputEl) { /* ... reset as in forceNewGame ... */ }
+        if (nameInputSection) nameInputSection.style.display = "flex";
+        if (actionInputSection) actionInputSection.style.display = "none";
+        if (playerIdentifierInputEl && document.body.contains(playerIdentifierInputEl)) playerIdentifierInputEl.focus();
+        if (systemStatusIndicator) { /* ... set to standby ... */ }
+        addMessageToLog(getUIText("system_theme_set_generic", { THEME_NAME: newThemeDisplayName }), "system");
     }
 
+    // Ensure scroll indicators are updated after UI changes
     requestAnimationFrame(() => {
-      if (leftPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('left', leftPanel);
-      if (rightPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('right', rightPanel);
+        if (leftPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('left', leftPanel);
+        if (rightPanel && !document.body.classList.contains("landing-page-active")) updateScrollIndicatorStateForPanel('right', rightPanel);
     });
+
     if (startGameButton) startGameButton.textContent = getUIText("button_access_systems");
-  }
+    log(LOG_LEVEL_INFO, `changeThemeAndStart completed for theme: ${newThemeId}`);
+}
 
   /**
    * Initializes click/keyboard listeners for a panel's header (specific to landing page panels).
@@ -2126,60 +2516,72 @@ let currentAiPlaceholder = "";
   /**
    * Switches the UI to the landing page view.
    */
-  function switchToLandingView() {
+  async function switchToLandingView() { // Make it async
     log(LOG_LEVEL_INFO, "Switching to landing view.");
+
+    if (currentTheme) { // If a game was active
+        log(LOG_LEVEL_DEBUG, `switchToLandingView: Game was active for theme ${currentTheme}. Saving its state.`);
+        await saveGameState(); // Save the state of the game being exited
+    }
 
     const currentPath = window.location.pathname;
     const currentSearch = window.location.search;
     const currentParams = new URLSearchParams(currentSearch);
     const actionParamValue = currentParams.get('action');
-
     const specialPaths = ['/reset-password', '/email-confirmation-status'];
     const isOnSpecialPath = specialPaths.some(sp => currentPath.startsWith(sp));
 
+    if (newGameButton) {
+        newGameButton.textContent = getUIText("button_new_game");
+        newGameButton.title = getUIText("aria_label_new_game");
+    }
     if (playerActionInput) {
       playerActionInput.placeholder = getUIText("placeholder_command");
       currentAiPlaceholder = getUIText("placeholder_command");
     }
-    if (isOnSpecialPath) {
 
+    if (isOnSpecialPath) {
       let targetHref = '/';
       if (actionParamValue === 'showLogin') {
         targetHref = '/?action=showLogin';
       }
       log(LOG_LEVEL_DEBUG, `switchToLandingView: On special path ${currentPath}. Forcing full navigation to ${targetHref}.`);
-      window.location.href = targetHref;
-      return;
+      window.location.href = targetHref; // This will cause a page reload, re-running initializeApp
+      return; // Stop further execution as page will reload
     }
 
     let targetUrl = '/';
     if (actionParamValue === 'showLogin') {
       targetUrl = '/?action=showLogin';
     }
-
     if (currentPath + currentSearch !== targetUrl) {
-      if (!currentPath.startsWith('/api/')) {
+      if (!currentPath.startsWith('/api/')) { // Avoid messing with API calls if any were in progress (though unlikely here)
         history.pushState(null, '', targetUrl);
         log(LOG_LEVEL_DEBUG, `switchToLandingView: URL changed to ${targetUrl} from ${currentPath + currentSearch}`);
       }
     }
 
-    // --- Original rest of switchToLandingView logic ---
     Object.keys(outOfViewTrackedElements).forEach(side => { outOfViewTrackedElements[side].up.clear(); outOfViewTrackedElements[side].down.clear(); });
     [leftPanelScrollUp, leftPanelScrollDown, rightPanelScrollUp, rightPanelScrollDown].forEach(indicator => { if (indicator) indicator.style.display = 'none'; });
+
     currentTheme = null;
     localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+
     document.body.classList.add("landing-page-active");
     document.body.classList.remove(...Array.from(document.body.classList).filter(cn => cn.startsWith("theme-") && cn !== "theme-landing"));
     if (!document.body.classList.contains("theme-landing")) document.body.classList.add("theme-landing");
+
     if (storyLogViewport) storyLogViewport.style.display = "none";
     if (suggestedActionsWrapper) suggestedActionsWrapper.style.display = "none";
     if (playerInputControlPanel) playerInputControlPanel.style.display = "none";
     if (nameInputSection) nameInputSection.style.display = "none";
     if (actionInputSection) actionInputSection.style.display = "none";
+
     if (leftPanel) { Array.from(leftPanel.children).filter(el => el.id !== "landing-theme-description-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
     if (rightPanel) { Array.from(rightPanel.children).filter(el => el.id !== "landing-theme-details-container" && !el.classList.contains('scroll-indicator')).forEach(el => el.remove()); }
+
     if (themeGridContainer) themeGridContainer.style.display = "grid";
+
     if (landingThemeDescriptionContainer) {
       landingThemeDescriptionContainer.style.display = "flex";
       if (leftPanel && !leftPanel.contains(landingThemeDescriptionContainer)) {
@@ -2194,28 +2596,38 @@ let currentAiPlaceholder = "";
         if (scrollIndicatorDown) { rightPanel.insertBefore(landingThemeDetailsContainer, scrollIndicatorDown); } else { rightPanel.appendChild(landingThemeDetailsContainer); }
       }
     }
+
     if (landingThemeLoreText) landingThemeLoreText.textContent = getUIText("landing_select_theme_prompt_lore");
     if (landingThemeInfoContent) landingThemeInfoContent.innerHTML = `<p>${getUIText("landing_select_theme_prompt_details")}</p>`;
     if (landingThemeActions) { landingThemeActions.style.display = "none"; landingThemeActions.innerHTML = ""; }
+
     const descTitle = landingThemeDescriptionContainer?.querySelector(".panel-box-title");
     if (descTitle) descTitle.textContent = getUIText("landing_theme_description_title");
     const detailsTitle = landingThemeDetailsContainer?.querySelector(".panel-box-title");
     if (detailsTitle) detailsTitle.textContent = getUIText("landing_theme_info_title");
+
     const lorePanelBox = landingThemeDescriptionContainer?.querySelector(".panel-box");
     if (lorePanelBox) { if (!lorePanelBox.id) lorePanelBox.id = "landing-lore-panel-box"; animatePanelBox(lorePanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDescriptionContainer); }
     const detailsPanelBox = landingThemeDetailsContainer?.querySelector(".panel-box");
     if (detailsPanelBox) { if (!detailsPanelBox.id) detailsPanelBox.id = "landing-details-panel-box"; animatePanelBox(detailsPanelBox.id, true, false, true); initializeSpecificPanelHeader(landingThemeDetailsContainer); }
+
     currentLandingGridSelection = localStorage.getItem(LANDING_SELECTED_GRID_THEME_KEY);
-    renderThemeGrid();
+
+    // --- MODIFICATION FOR ISSUE 1 ---
+    // Fetch latest interactions and shard status BEFORE rendering grid and panels
+    await loadUserThemeInteractions();
+    // --- END MODIFICATION FOR ISSUE 1 ---
+
+    renderThemeGrid(); // This will now use up-to-date shapedThemeData
     if (currentLandingGridSelection && ALL_THEMES_CONFIG[currentLandingGridSelection]) {
-      updateLandingPagePanels(currentLandingGridSelection, false);
+      updateLandingPagePanels(currentLandingGridSelection, false); // This will also use up-to-date data
       const selectedBtn = themeGridContainer?.querySelector(`.theme-grid-icon[data-theme="${currentLandingGridSelection}"]`);
       if (selectedBtn) selectedBtn.classList.add("active");
     }
-    if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("standby"); systemStatusIndicator.className = "status-indicator status-ok"; }
-    updateTopbarThemeIcons();
 
-    setAppLanguageAndThemeUI(currentAppLanguage, null);
+    if (systemStatusIndicator) { systemStatusIndicator.textContent = getUIText("standby"); systemStatusIndicator.className = "status-indicator status-ok"; } // "standby" but ok for landing
+    updateTopbarThemeIcons(); // Uses playing/liked themes
+    setAppLanguageAndThemeUI(currentAppLanguage, null); // Set global UI texts
   }
 
   /**
@@ -2227,6 +2639,12 @@ let currentAiPlaceholder = "";
     document.body.classList.remove("landing-page-active", "theme-landing");
     document.body.classList.remove(...Array.from(document.body.classList).filter(cn => cn.startsWith("theme-") && cn !== `theme-${themeId}`));
     if (!document.body.classList.contains(`theme-${themeId}`)) document.body.classList.add(`theme-${themeId}`);
+    if (newGameButton) {
+      const themeConfig = ALL_THEMES_CONFIG[themeId];
+      const newGameTermKey = themeConfig?.new_game_button_text_key || "button_new_game";
+      newGameButton.textContent = getUIText(newGameTermKey, {}, themeId);
+      newGameButton.title = getUIText("aria_label_new_game");
+    }
     if (themeGridContainer) themeGridContainer.style.display = "none";
     if (landingThemeDescriptionContainer) landingThemeDescriptionContainer.style.display = "none";
     if (landingThemeDetailsContainer) landingThemeDetailsContainer.style.display = "none";
@@ -2254,6 +2672,16 @@ let currentAiPlaceholder = "";
       const altTextKey = `theme_icon_alt_text_default_${themeConfig.id}`; img.alt = getUIText(altTextKey, {}, themeConfig.id) || themeFullName;
       const nameSpan = document.createElement("span"); nameSpan.classList.add("theme-grid-icon-name");
       const themeShortName = getUIText(themeConfig.name_short_key || themeConfig.name_key, {}, themeConfig.id); nameSpan.textContent = themeShortName;
+      const themeStatus = shapedThemeData.get(themeConfig.id);
+      const isShaped = themeStatus && themeStatus.hasShards;
+
+      if (isShaped) {
+          button.classList.add("theme-grid-icon-shaped");
+          const shardIndicator = document.createElement("div");
+          shardIndicator.classList.add("shard-indicator-overlay");
+          shardIndicator.title = getUIText("tooltip_shaped_world", { ACTIVE_SHARDS: themeStatus.activeShardCount });
+          button.appendChild(shardIndicator);
+      }
       button.appendChild(img); button.appendChild(nameSpan);
       button.addEventListener("click", () => handleThemeGridIconClick(themeConfig.id));
       themeGridContainer.appendChild(button);
@@ -2336,7 +2764,219 @@ let currentAiPlaceholder = "";
       likeButton.classList.add("disabled"); likeButton.disabled = true;
     }
     landingThemeActions.appendChild(chooseButton); landingThemeActions.appendChild(likeButton);
+    const themeStatus = shapedThemeData.get(themeId);
+    if (currentUser && themeStatus && themeStatus.hasShards) {
+        const configureShardsButton = document.createElement("button");
+        configureShardsButton.id = "configure-shards-button";
+        configureShardsButton.classList.add("ui-button");
+        configureShardsButton.textContent = getUIText("button_configure_shards");
+        configureShardsButton.addEventListener("click", () => showConfigureShardsModal(themeId));
+        landingThemeActions.appendChild(configureShardsButton);
+    }
   }
+
+async function showConfigureShardsModal(themeId) {
+    if (!currentUser || !currentUser.token) return;
+
+    let currentShards = [];
+    const themeConfig = ALL_THEMES_CONFIG[themeId];
+    const themeDisplayName = themeConfig ? getUIText(themeConfig.name_key, {}, themeId) : themeId;
+
+    const modalContentContainer = document.createElement('div');
+    modalContentContainer.className = 'configure-shards-modal-content';
+
+    const renderShardList = () => {
+        modalContentContainer.innerHTML = ''; // Clear previous content
+
+        if (currentShards.length === 0) {
+            const noShardsP = document.createElement('p');
+            noShardsP.textContent = getUIText("modal_shards_none_found"); // New text
+            modalContentContainer.appendChild(noShardsP);
+            return;
+        }
+
+        const list = document.createElement('ul');
+        list.className = 'shard-list';
+        currentShards.sort((a, b) => new Date(a.unlockedAt) - new Date(b.unlockedAt));
+
+        currentShards.forEach(shard => {
+            const listItem = document.createElement('li');
+            listItem.className = 'shard-item';
+            listItem.dataset.shardId = shard.id;
+
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'shard-title';
+            titleDiv.textContent = shard.loreFragmentTitle;
+            if (!shard.isActiveForNewGames) {
+                titleDiv.style.textDecoration = 'line-through';
+                titleDiv.style.opacity = '0.6';
+            }
+
+            const unlockDescDiv = document.createElement('div');
+            unlockDescDiv.className = 'shard-unlock-desc';
+            unlockDescDiv.textContent = `(${getUIText("shard_unlock_condition_prefix")} ${shard.unlockConditionDescription})`; // New text
+
+            const controlsDiv = document.createElement('div');
+            controlsDiv.className = 'shard-controls';
+
+            const toggleLabel = document.createElement('label');
+            toggleLabel.className = 'shard-toggle-label';
+            const toggleInput = document.createElement('input');
+            toggleInput.type = 'checkbox';
+            toggleInput.checked = shard.isActiveForNewGames;
+            toggleInput.addEventListener('change', async (e) => {
+                try {
+                    await _callApi(`/api/v1/worldshards/${shard.id}/status`, 'PUT', { isActiveForNewGames: e.target.checked }, currentUser.token);
+                    shard.isActiveForNewGames = e.target.checked; // Optimistic update
+                    if (!shard.isActiveForNewGames) {
+                        titleDiv.style.textDecoration = 'line-through';
+                        titleDiv.style.opacity = '0.6';
+                    } else {
+                        titleDiv.style.textDecoration = 'none';
+                        titleDiv.style.opacity = '1';
+                    }
+                    await fetchShapedWorldStatus(); // Update overall counts for landing page indicators
+                    renderThemeGrid(); // Re-render grid if on landing page
+                    const activeGridButton = document.querySelector(`.theme-grid-icon[data-theme="${themeId}"]`);
+                    if(activeGridButton) activeGridButton.click(); // Re-select to update panel
+                } catch (error) {
+                    log(LOG_LEVEL_ERROR, "Failed to update shard status", error);
+                    e.target.checked = !e.target.checked; // Revert on error
+                     if (shard.isActiveForNewGames) { // Re-apply style based on reverted state
+                        titleDiv.style.textDecoration = 'line-through';
+                        titleDiv.style.opacity = '0.6';
+                    } else {
+                        titleDiv.style.textDecoration = 'none';
+                        titleDiv.style.opacity = '1';
+                    }
+                    showCustomModal({ type: "alert", titleKey: "alert_title_error", messageText: error.message || getUIText("error_api_call_failed") });
+                }
+            });
+            toggleLabel.appendChild(toggleInput);
+            toggleLabel.appendChild(document.createTextNode(` ${getUIText("shard_active_toggle_label")}`)); // New text
+
+            const shatterButton = document.createElement('button');
+            shatterButton.className = 'ui-button danger small shard-shatter-button'; // New CSS needed
+            shatterButton.textContent = getUIText("button_shatter_shard"); // New text
+            shatterButton.title = getUIText("tooltip_shatter_shard"); // New text
+            shatterButton.addEventListener('click', async () => {
+                const confirmed = await showCustomModal({
+                    type: "confirm",
+                    titleKey: "confirm_shatter_shard_title", // New text
+                    messageText: getUIText("confirm_shatter_shard_message", { SHARD_TITLE: shard.loreFragmentTitle }), // New text
+                    confirmTextKey: "modal_confirm_button",
+                    cancelTextKey: "modal_cancel_button"
+                });
+                if (confirmed) {
+                    try {
+                        await _callApi(`/api/v1/worldshards/${shard.id}`, 'DELETE', null, currentUser.token);
+                        currentShards = currentShards.filter(s => s.id !== shard.id);
+                        await fetchShapedWorldStatus(); // Update overall counts
+                        renderShardList(); // Re-render list in modal
+                        renderThemeGrid(); // Re-render grid if on landing page
+                        const activeGridButton = document.querySelector(`.theme-grid-icon[data-theme="${themeId}"]`);
+                        if(activeGridButton) activeGridButton.click(); // Re-select to update panel
+                    } catch (error) {
+                        log(LOG_LEVEL_ERROR, "Failed to shatter shard", error);
+                        showCustomModal({ type: "alert", titleKey: "alert_title_error", messageText: error.message || getUIText("error_api_call_failed") });
+                    }
+                }
+            });
+
+            controlsDiv.appendChild(toggleLabel);
+            controlsDiv.appendChild(shatterButton);
+
+            listItem.appendChild(titleDiv);
+            listItem.appendChild(unlockDescDiv);
+            listItem.appendChild(controlsDiv);
+            list.appendChild(listItem);
+        });
+        modalContentContainer.appendChild(list);
+    };
+
+    const bulkActionHandler = async (actionType) => {
+        let confirmNeeded = true;
+        let titleKey = "";
+        let messageKey = "";
+        let apiAction = async () => {};
+
+        if (actionType === 'activateAll') {
+            apiAction = async () => {
+                for (const shard of currentShards) {
+                    if (!shard.isActiveForNewGames) {
+                        await _callApi(`/api/v1/worldshards/${shard.id}/status`, 'PUT', { isActiveForNewGames: true }, currentUser.token);
+                        shard.isActiveForNewGames = true;
+                    }
+                }
+            };
+            confirmNeeded = false; // Maybe no confirm for activate all
+        } else if (actionType === 'deactivateAll') {
+             apiAction = async () => {
+                for (const shard of currentShards) {
+                    if (shard.isActiveForNewGames) {
+                       await _callApi(`/api/v1/worldshards/${shard.id}/status`, 'PUT', { isActiveForNewGames: false }, currentUser.token);
+                       shard.isActiveForNewGames = false;
+                    }
+                }
+            };
+            confirmNeeded = false; // Maybe no confirm for deactivate all
+        } else if (actionType === 'resetAll') {
+            titleKey = "confirm_reset_world_title"; // New text
+            messageKey = "confirm_reset_world_message"; // New text
+            apiAction = async () => {
+                await _callApi(`/api/v1/themes/${themeId}/worldshards/reset`, 'DELETE', null, currentUser.token);
+                currentShards = [];
+            };
+        }
+
+        if (confirmNeeded) {
+            const confirmed = await showCustomModal({
+                type: "confirm", titleKey, messageKey,
+                replacements: { THEME_NAME: themeDisplayName },
+                confirmTextKey: "modal_confirm_button", cancelTextKey: "modal_cancel_button"
+            });
+            if (!confirmed) return;
+        }
+
+        try {
+            await apiAction();
+            await fetchShapedWorldStatus(); // Update overall counts
+            renderShardList(); // Re-render list
+            renderThemeGrid(); // Re-render grid if on landing page
+            const activeGridButton = document.querySelector(`.theme-grid-icon[data-theme="${themeId}"]`);
+            if(activeGridButton) activeGridButton.click(); // Re-select to update panel
+        } catch (error) {
+            log(LOG_LEVEL_ERROR, `Failed to ${actionType} shards`, error);
+            showCustomModal({ type: "alert", titleKey: "alert_title_error", messageText: error.message || getUIText("error_api_call_failed") });
+        }
+    };
+
+    const modalCustomActions = [
+        { textKey: "button_activate_all_shards", className: "ui-button small", onClick: () => bulkActionHandler('activateAll') }, // New text
+        { textKey: "button_deactivate_all_shards", className: "ui-button small", onClick: () => bulkActionHandler('deactivateAll') }, // New text
+        { textKey: "button_reset_world_shards", className: "ui-button danger small", onClick: () => bulkActionHandler('resetAll') }, // New text
+        { textKey: "modal_ok_button", className: "ui-button primary", onClick: () => hideCustomModal() }
+    ];
+
+    showCustomModal({
+        type: "alert", // Using alert type as a base for custom content
+        titleKey: "modal_title_manage_shards", // New text
+        replacements: { THEME_NAME: themeDisplayName },
+        htmlContent: modalContentContainer,
+        customActions: modalCustomActions
+    });
+
+    // Initial fetch and render
+    try {
+        const response = await _callApi(`/api/v1/themes/${themeId}/worldshards`, 'GET', null, currentUser.token);
+        currentShards = response.worldShards || [];
+        renderShardList();
+    } catch (error) {
+        log(LOG_LEVEL_ERROR, "Failed to fetch initial shards for modal", error);
+        modalContentContainer.innerHTML = `<p style="color:var(--color-status-critical-text);">${getUIText("error_api_call_failed", { ERROR_MSG: error.message })}</p>`;
+    }
+}
+
 
   /**
    * Handles the "Choose this theme" button click on the landing page.

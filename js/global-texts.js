@@ -1,8 +1,9 @@
 // --- UI Text Data (Localization) ---
 const globalTextData = {
+    // --- Global UI & System Messages ---
     global: {
         en: {
-            // General Status & UI
+            // --- General Status & UI ---
             "toggle_language_aria": "Switch language",
             "system_status_online_short": "System Online",
             "system_processing_short": "Processing...",
@@ -24,7 +25,6 @@ const globalTextData = {
             "error_reconstruct_story": "Error: Could not reconstruct part of the story.",
             "error_load_prompt_file": "SYSTEM ERROR: Could not load prompt: {THEME}/{PROMPT_NAME}.",
             "error_no_prompts_for_theme":"SYSTEM ERROR: Prompts for theme \"{THEME}\" are not configured.",
-            "error_api_call_failed":"SYSTEM ERROR: {ERROR_MSG}",
             "alert_identifier_required": "Please enter your identifier (name/name).",
             "error_session_init_failed": "Failed to initialize session. Please check panel and try again.",
             "error_load_prompts_critical": "CRITICAL: Essential game prompts for theme \"{THEME}\" failed to load. Cannot continue.",
@@ -34,7 +34,7 @@ const globalTextData = {
             "error_initial_theme_data_load_failed": "Error: Failed to load initial data for one or more themes. Some themes may not be available.",
             "error_theme_data_load_failed": "Error: Failed to load required data for theme {THEME_ID}. This theme cannot be started.",
 
-            // Buttons & Actions
+            // --- Buttons & Actions ---
             "button_new_game": "New Game",
             "aria_label_new_game": "Start a new game",
             "close_theme_button_aria_label": "Close {THEME_NAME} session",
@@ -51,7 +51,7 @@ const globalTextData = {
             "alert_title_notice": "Notice",
             "confirm_new_game_title": "Confirm New Game",
 
-            // Modal
+            // --- Modal Dialogs ---
             "modal_ok_button": "OK",
             "modal_confirm_button": "Confirm",
             "modal_cancel_button": "Cancel",
@@ -61,7 +61,7 @@ const globalTextData = {
             "modal_default_title_confirm": "Confirmation",
             "modal_default_title_prompt": "Input Required",
 
-            // Confirmations & Alerts
+            // --- Confirmations & Alerts (General) ---
             "confirm_new_game_generic": "Start new game in {THEME_NAME}? Progress in this theme will be lost.",
             "alert_api_key_required":"Gemini API Key is required. Please refresh and provide a key.",
             "prompt_enter_api_key": "Welcome! Please enter your Google Gemini API Key:",
@@ -71,7 +71,7 @@ const globalTextData = {
             "alert_level_3_display_default": "Condition High",
             "alert_level_4_display_default": "Condition Critical",
 
-            // Model Toggle
+            // --- AI Model Toggle ---
             "label_toggle_model": "AI Model",
             "aria_label_toggle_model_generic": "Toggle AI Model",
             "button_toggle_to_free": "Use Free Model",
@@ -81,23 +81,19 @@ const globalTextData = {
             "system_model_set_paid": "System: Switched to Paid AI Model ({MODEL_NAME}).",
             "system_model_set_free": "System: Switched to Free AI Model ({MODEL_NAME}).",
 
-            // Language & System Messages
+            // --- Language & System Messages (Core Game/Session) ---
             "system_lang_set_en": "System: UI & Narrative set to ENGLISH.",
             "system_lang_set_cs": "System: UI & Narrative set to CZECH.",
             "system_session_resumed": "Welcome back, {PLAYER_ID}! Session resumed for {THEME_NAME}.",
             "system_theme_set_generic": "System: {THEME_NAME} scenario activated.",
             "system_new_game_initiated": "System: New {THEME_NAME} game sequence initiated.",
 
-            // Login & Registration
+            // --- Authentication (Login, Registration, Profile, Password Management) ---
+            // ------ Login & Registration ------
             "button_login": "Login",
             "aria_label_login": "Log into your account",
             "button_register": "Register",
             "aria_label_register": "Create a new account",
-            "button_logout": "Logout",
-            "aria_label_logout": "Log out of your account",
-            "button_user_profile": "Profile",
-            "aria_label_user_profile": "View your profile",
-
             "modal_title_login": "Login to Anomady",
             "modal_title_register": "Create Anomady Account",
             "label_email": "Email Address",
@@ -105,29 +101,39 @@ const globalTextData = {
             "label_password": "Password",
             "placeholder_password": "Enter your password",
             "placeholder_password_register": "Choose a strong password (min. 8 chars)",
-
             "alert_registration_success_title": "Registration Successful",
             "alert_registration_success_check_email_message": "Your account has been created! A confirmation link has been sent to {USER_EMAIL}. Please click the link in the email to confirm your account before logging in.",
             "alert_login_failed_title": "Login Failed",
             "alert_invalid_email_format": "Please enter a valid email address.",
             "alert_fill_required_fields": "Please fill in all required fields.",
             "error_api_call_failed": "Operation failed: {ERROR_MSG}",
+            "modal_switch_to_register": "Don't have an account? Register",
+            "modal_switch_to_login": "Already have an account? Login",
 
+            // ------ Session Management & Logout ------
+            "button_logout": "Logout",
+            "aria_label_logout": "Log out of your account",
             "system_logged_out": "System: You have been logged out.",
             "system_session_restored": "System: Welcome back, {USER_EMAIL}! Your session has been restored.",
             "system_token_expired_logged_out": "System: Your session has expired. Please log in again.",
-            "modal_switch_to_register": "Don't have an account? Register",
-            "modal_switch_to_login": "Already have an account? Login",
+
+            // ------ User Profile ------
+            "button_user_profile": "Profile",
+            "aria_label_user_profile": "View your profile",
             "modal_title_user_profile": "User Profile",
             "label_profile_email": "Email:",
             "label_profile_joined_date": "Joined:",
             "label_profile_app_language": "App Language:",
             "label_profile_narrative_language": "Narrative Language:",
             "label_profile_model_preference": "AI Model:",
-            "button_profile_logout": "Logout",
+            "button_profile_logout": "Logout", // Logout button within profile
             "button_profile_change_password": "Change Password",
             "text_password_change_soon": "(Password change coming soon)",
             "label_profile_preferences_title": "Preferences",
+            "profile_email_confirmed_status": "Confirmed",
+            "profile_email_unconfirmed_status": "Not Confirmed (Resend)",
+
+            // ------ Password Management (Change & Reset) ------
             "modal_title_change_password": "Change Password",
             "label_current_password": "Current Password",
             "placeholder_current_password": "Enter your current password",
@@ -140,6 +146,17 @@ const globalTextData = {
             "alert_passwords_do_not_match": "New passwords do not match. Please try again.",
             "alert_new_password_too_short": "New password must be at least 8 characters long.",
             "alert_new_password_same_as_old": "New password cannot be the same as the current password.",
+            "button_forgot_password": "Forgot Password?",
+            "modal_title_forgot_password": "Forgot Your Password?",
+            "button_send_reset_link": "Send Reset Link",
+            "alert_reset_link_sent_title": "Reset Link Sent",
+            "alert_reset_link_sent_message": "If an account with that email exists, a password reset link has been sent. Please check your inbox (and spam folder).",
+            "modal_title_reset_password": "Reset Your Password",
+            "button_reset_password": "Reset Password",
+            "alert_password_reset_success_title": "Password Reset Successful",
+            "text_try_request_again": "Please try requesting a new reset link.",
+
+            // ------ Email Confirmation ------
             "email_confirmation_status_page_title": "Email Confirmation",
             "email_confirmation_success": "Your email address has been successfully confirmed! You can now log in.",
             "email_confirmation_invalid_token": "The confirmation link is invalid or has expired. Please try registering again or request a new confirmation email.",
@@ -152,22 +169,34 @@ const globalTextData = {
             "button_resend_confirmation_email": "Resend Confirmation Email",
             "alert_confirmation_email_resent_title": "Email Sent",
             "alert_confirmation_email_resent_message": "A new confirmation email has been sent to your address. Please check your inbox.",
-            "profile_email_confirmed_status": "Confirmed",
-            "profile_email_unconfirmed_status": "Not Confirmed (Resend)",
-            "button_forgot_password": "Forgot Password?",
-            "modal_title_forgot_password": "Forgot Your Password?",
-            "button_send_reset_link": "Send Reset Link",
-            "alert_reset_link_sent_title": "Reset Link Sent",
-            "alert_reset_link_sent_message": "If an account with that email exists, a password reset link has been sent. Please check your inbox (and spam folder).",
-            "modal_title_reset_password": "Reset Your Password",
-            "button_reset_password": "Reset Password",
-            "alert_password_reset_success_title": "Password Reset Successful",
-            "text_try_request_again": "Please try requesting a new reset link.",
             "modal_title_email_not_confirmed": "Email Not Confirmed",
             "message_email_not_confirmed_instruction": "Your email address {USER_EMAIL} is not yet confirmed. Please check your inbox (and spam folder) for the confirmation link, or click the button below to resend it.",
+
+            // --- World Fragments (Shards Management) ---
+            "tooltip_shaped_world": "This world has been shaped by your actions ({ACTIVE_SHARDS} active fragments).",
+            "button_configure_shards": "Configure World Fragments",
+            "modal_title_manage_shards": "Manage World Fragments for {THEME_NAME}",
+            "modal_shards_none_found": "No World Fragments unlocked for this theme yet.",
+            "shard_unlock_condition_prefix": "Unlocked by:",
+            "shard_active_toggle_label": "Active for New Expeditions",
+            "button_shatter_shard": "Shatter",
+            "tooltip_shatter_shard": "Permanently remove this World Fragment and its influence.",
+            "confirm_shatter_shard_title": "Shatter World Fragment?",
+            "confirm_shatter_shard_message": "Are you sure you want to permanently shatter the fragment titled '{SHARD_TITLE}'? This cannot be undone.",
+            "button_activate_all_shards": "Activate All",
+            "button_deactivate_all_shards": "Deactivate All",
+            "button_reset_world_shards": "Reset to Original",
+            "confirm_reset_world_title": "Reset World to Original State?",
+            "confirm_reset_world_message": "This will shatter ALL unlocked World Fragments for {THEME_NAME}, resetting its lore to the original state for future expeditions. This action cannot be undone. Are you sure?",
+            "title_choose_world_type": "Begin New Expedition",
+            "message_choose_world_type": "This world has been shaped by your past actions. How would you like to proceed?",
+            "button_evolved_world": "Evolved World (Uses Fragments)",
+            "button_original_world": "Original World (Pristine)",
+            "notification_world_shard_unlocked": "WORLD FRAGMENT UNLOCKED: '{TITLE}'... This truth will now resonate through your chronicles...",
+            "action_mull_over_shard": "'{TITLE}'"
         },
         cs: {
-            // General Status & UI
+            // --- General Status & UI ---
             "toggle_language_aria": "Přepnout jazyk",
             "system_status_online_short": "Systém Online",
             "system_processing_short": "Zpracovávám...",
@@ -189,7 +218,6 @@ const globalTextData = {
             "error_reconstruct_story": "Chyba: Nelze rekonstruovat část příběhu.",
             "error_load_prompt_file": "SYSTÉMOVÁ CHYBA: Nelze načíst skript: {THEME}/{PROMPT_NAME}.",
             "error_no_prompts_for_theme":"SYSTÉMOVÁ CHYBA: Skripty pro téma \"{THEME}\" nejsou nakonfigurovány.",
-            "error_api_call_failed":"SYSTÉMOVÁ CHYBA: {ERROR_MSG}",
             "alert_identifier_required": "Zadejte prosím svůj identifikátor (jméno/volací znak).",
             "error_session_init_failed": "Nepodařilo se inicializovat relaci. Zkontrolujte konzoli a zkuste to znovu.",
             "error_load_prompts_critical": "KRITICKÉ: Nepodařilo se načíst základní herní skripty pro téma \"{THEME}\". Nelze pokračovat.",
@@ -199,7 +227,7 @@ const globalTextData = {
             "error_initial_theme_data_load_failed": "Chyba: Nepodařilo se načíst počáteční data pro jedno či více témat. Některá témata nemusí být dostupná.",
             "error_theme_data_load_failed": "Chyba: Nepodařilo se načíst požadovaná data pro téma {THEME_ID}. Toto téma nelze spustit.",
 
-            // Buttons & Actions
+            // --- Buttons & Actions ---
             "button_new_game": "Nová Hra",
             "aria_label_new_game": "Začít novou hru",
             "close_theme_button_aria_label": "Zavřít relaci {THEME_NAME}",
@@ -216,7 +244,7 @@ const globalTextData = {
             "alert_title_notice": "Upozornění",
             "confirm_new_game_title": "Potvrdit Novou Hru",
 
-            // Modal
+            // --- Modal Dialogs ---
             "modal_ok_button": "OK",
             "modal_confirm_button": "Potvrdit",
             "modal_cancel_button": "Zrušit",
@@ -226,7 +254,7 @@ const globalTextData = {
             "modal_default_title_confirm": "Potvrzení",
             "modal_default_title_prompt": "Vyžadován vstup",
 
-            // Confirmations & Alerts
+            // --- Confirmations & Alerts (General) ---
             "confirm_new_game_generic": "Začít novou hru v {THEME_NAME}? Postup v tomto tématu bude ztracen.",
             "alert_api_key_required":"Je vyžadován Gemini API klíč. Obnovte stránku a zadejte klíč.",
             "prompt_enter_api_key": "Vítejte! Zadejte prosím svůj Google Gemini API klíč:",
@@ -236,7 +264,7 @@ const globalTextData = {
             "alert_level_3_display_default": "Stav Vysoký",
             "alert_level_4_display_default": "Stav Kritický",
 
-            // Model Toggle
+            // --- AI Model Toggle ---
             "label_toggle_model": "AI Model",
             "aria_label_toggle_model_generic": "Přepnout AI Model",
             "button_toggle_to_free": "Použít Model Zdarma",
@@ -246,23 +274,19 @@ const globalTextData = {
             "system_model_set_paid": "Systém: Přepnuto na Placený AI Model ({MODEL_NAME}).",
             "system_model_set_free": "Systém: Přepnuto na Model Zdarma ({MODEL_NAME}).",
 
-            // Language & System Messages
+            // --- Language & System Messages (Core Game/Session) ---
             "system_lang_set_en": "Systém: UI a Příběh nastaveny na ANGLIČTINU.",
             "system_lang_set_cs": "Systém: UI a Příběh nastaveny na ČEŠTINU.",
             "system_session_resumed": "Vítejte zpět, {PLAYER_ID}! Relace obnovena pro {THEME_NAME}.",
             "system_theme_set_generic": "Systém: Scénář {THEME_NAME} aktivován.",
             "system_new_game_initiated": "Systém: Zahájena sekvence nové hry ({THEME_NAME}).",
 
-            // Login & Registration
+            // --- Authentication (Login, Registration, Profile, Password Management) ---
+            // ------ Login & Registration ------
             "button_login": "Přihlásit se",
             "aria_label_login": "Přihlásit se k vašemu účtu",
             "button_register": "Registrovat",
             "aria_label_register": "Vytvořit nový účet",
-            "button_logout": "Odhlásit se",
-            "aria_label_logout": "Odhlásit se z vašeho účtu",
-            "button_user_profile": "Profil",
-            "aria_label_user_profile": "Zobrazit váš profil",
-
             "modal_title_login": "Přihlášení do Anomady",
             "modal_title_register": "Vytvořit Anomady Účet",
             "label_email": "E-mailová Adresa",
@@ -270,19 +294,25 @@ const globalTextData = {
             "label_password": "Heslo",
             "placeholder_password": "Zadejte své heslo",
             "placeholder_password_register": "Zvolte silné heslo (min. 8 znaků)",
-
             "alert_registration_success_title": "Registrace Úspěšná",
             "alert_registration_success_check_email_message": "Váš účet byl vytvořen! Na adresu {USER_EMAIL} byl odeslán potvrzovací odkaz. Prosím, klikněte na odkaz v e-mailu pro potvrzení vašeho účtu před přihlášením.",
             "alert_login_failed_title": "Přihlášení Selhalo",
             "alert_invalid_email_format": "Zadejte prosím platnou e-mailovou adresu.",
             "alert_fill_required_fields": "Vyplňte prosím všechna povinná pole.",
             "error_api_call_failed": "Operace selhala: {ERROR_MSG}",
+            "modal_switch_to_register": "Nemáte účet? Registrovat se",
+            "modal_switch_to_login": "Již máte účet? Přihlásit se",
 
+            // ------ Session Management & Logout ------
+            "button_logout": "Odhlásit se",
+            "aria_label_logout": "Odhlásit se z vašeho účtu",
             "system_logged_out": "Systém: Byli jste odhlášeni.",
             "system_session_restored": "Systém: Vítejte zpět, {USER_EMAIL}! Vaše relace byla obnovena.",
             "system_token_expired_logged_out": "Systém: Platnost vaší relace vypršela. Přihlaste se prosím znovu.",
-            "modal_switch_to_register": "Nemáte účet? Registrovat se",
-            "modal_switch_to_login": "Již máte účet? Přihlásit se",
+
+            // ------ User Profile ------
+            "button_user_profile": "Profil",
+            "aria_label_user_profile": "Zobrazit váš profil",
             "modal_title_user_profile": "Uživatelský Profil",
             "label_profile_email": "E-mail:",
             "label_profile_joined_date": "Registrován:",
@@ -293,6 +323,10 @@ const globalTextData = {
             "button_profile_change_password": "Změnit Heslo",
             "text_password_change_soon": "(Změna hesla bude brzy dostupná)",
             "label_profile_preferences_title": "Předvolby",
+            "profile_email_confirmed_status": "Potvrzeno",
+            "profile_email_unconfirmed_status": "Nepotvrzeno (Odeslat znovu)",
+
+            // ------ Password Management (Change & Reset) ------
             "modal_title_change_password": "Změnit Heslo",
             "label_current_password": "Současné Heslo",
             "placeholder_current_password": "Zadejte své současné heslo",
@@ -305,6 +339,17 @@ const globalTextData = {
             "alert_passwords_do_not_match": "Nová hesla se neshodují. Zkuste to prosím znovu.",
             "alert_new_password_too_short": "Nové heslo musí mít alespoň 8 znaků.",
             "alert_new_password_same_as_old": "Nové heslo nemůže být stejné jako současné heslo.",
+            "button_forgot_password": "Zapomenuté Heslo?",
+            "modal_title_forgot_password": "Zapomněli Jste Heslo?",
+            "button_send_reset_link": "Odeslat Odkaz pro Obnovu",
+            "alert_reset_link_sent_title": "Odkaz pro Obnovu Odeslán",
+            "alert_reset_link_sent_message": "Pokud účet s tímto e-mailem existuje, byl odeslán odkaz pro obnovu hesla. Zkontrolujte prosím svou příchozí poštu (i spam).",
+            "modal_title_reset_password": "Obnovit Heslo",
+            "button_reset_password": "Obnovit Heslo",
+            "alert_password_reset_success_title": "Heslo Úspěšně Obnoveno",
+            "text_try_request_again": "Zkuste prosím požádat o nový odkaz pro obnovu.",
+
+            // ------ Email Confirmation ------
             "email_confirmation_status_page_title": "Potvrzení E-mailu",
             "email_confirmation_success": "Vaše e-mailová adresa byla úspěšně potvrzena! Nyní se můžete přihlásit.",
             "email_confirmation_invalid_token": "Potvrzovací odkaz je neplatný nebo vypršel. Zkuste se prosím zaregistrovat znovu nebo požádejte o nový potvrzovací e-mail.",
@@ -317,24 +362,37 @@ const globalTextData = {
             "button_resend_confirmation_email": "Znovu Odeslat Potvrzovací E-mail",
             "alert_confirmation_email_resent_title": "E-mail Odeslán",
             "alert_confirmation_email_resent_message": "Na vaši adresu byl odeslán nový potvrzovací e-mail. Zkontrolujte prosím svou schránku.",
-            "profile_email_confirmed_status": "Potvrzeno",
-            "profile_email_unconfirmed_status": "Nepotvrzeno (Odeslat znovu)",
-            "button_forgot_password": "Zapomenuté Heslo?",
-            "modal_title_forgot_password": "Zapomněli Jste Heslo?",
-            "button_send_reset_link": "Odeslat Odkaz pro Obnovu",
-            "alert_reset_link_sent_title": "Odkaz pro Obnovu Odeslán",
-            "alert_reset_link_sent_message": "Pokud účet s tímto e-mailem existuje, byl odeslán odkaz pro obnovu hesla. Zkontrolujte prosím svou příchozí poštu (i spam).",
-            "modal_title_reset_password": "Obnovit Heslo",
-            "button_reset_password": "Obnovit Heslo",
-            "alert_password_reset_success_title": "Heslo Úspěšně Obnoveno",
-            "text_try_request_again": "Zkuste prosím požádat o nový odkaz pro obnovu.",
             "modal_title_email_not_confirmed": "E-mail Není Potvrzen",
             "message_email_not_confirmed_instruction": "Vaše e-mailová adresa {USER_EMAIL} ještě není potvrzena. Zkontrolujte prosím svou doručenou poštu (i složku se spamem) pro potvrzovací odkaz, nebo klikněte na tlačítko níže pro jeho opětovné zaslání.",
+
+            // --- World Fragments (Shards Management) ---
+            "tooltip_shaped_world": "Tento svět byl utvářen tvými činy ({ACTIVE_SHARDS} aktivních fragmentů).",
+            "button_configure_shards": "Nastavit fragmenty světa",
+            "modal_title_manage_shards": "Spravovat Fragmenty Světa pro {THEME_NAME}",
+            "modal_shards_none_found": "Pro toto téma zatím nebyly odemčeny žádné fragmenty světa.",
+            "shard_unlock_condition_prefix": "Odemčeno:",
+            "shard_active_toggle_label": "Aktivní pro Nové Výpravy",
+            "button_shatter_shard": "Roztříštit",
+            "tooltip_shatter_shard": "Trvale odstranit tento fragment světa a jeho vliv.",
+            "confirm_shatter_shard_title": "Roztříštit Fragment Světa?",
+            "confirm_shatter_shard_message": "Opravdu chcete trvale roztříštit fragment s názvem '{SHARD_TITLE}'? Tuto akci nelze vrátit.",
+            "button_activate_all_shards": "Aktivovat Vše",
+            "button_deactivate_all_shards": "Deaktivovat Vše",
+            "button_reset_world_shards": "Obnovit Původní Stav",
+            "confirm_reset_world_title": "Obnovit Svět do Původního Stavu?",
+            "confirm_reset_world_message": "Tímto roztříštíte VŠECHNY odemčené fragmenty světa pro {THEME_NAME} a obnovíte jeho historii do původního stavu pro budoucí výpravy. Tuto akci nelze vrátit. Jste si jisti?",
+            "title_choose_world_type": "Zahájit Novou Výpravu",
+            "message_choose_world_type": "Tento svět byl utvářen tvými minulými činy. Jak si přeješ pokračovat?",
+            "button_evolved_world": "Rozvinutý Svět (Použije Fragmenty)",
+            "button_original_world": "Původní Svět (Nedotčený)",
+            "notification_world_shard_unlocked": "ODEMČEN FRAGMENT SVĚTA: '{TITLE}'... Tato pravda bude nyní rezonovat tvými kronikami...",
+            "action_mull_over_shard": "'{TITLE}'"
         }
     },
+    // --- Landing Page Specific Text ---
     landing: {
         en: {
-            // Generic Landing Page UI
+            // --- Generic Landing Page UI ---
             "landing_theme_description_title": "World Lore",
             "landing_theme_info_title": "Scenario Briefing",
             "landing_select_theme_prompt_lore": "Select a scenario from the grid to view its background.",
@@ -350,7 +408,7 @@ const globalTextData = {
             "toggle_language": "English"
         },
         cs: {
-            // Generic Landing Page UI
+            // --- Generic Landing Page UI ---
             "landing_theme_description_title": "Dějiny světa",
             "landing_theme_info_title": "Přehled Scénáře",
             "landing_select_theme_prompt_lore": "Vyberte scénář pro zobrazení jeho dějin.",

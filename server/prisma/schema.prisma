@@ -1,3 +1,4 @@
+// server/prisma/schema.prisma
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -26,6 +27,7 @@ model User {
   password_reset_expires_at      DateTime?
   gameStates                     GameState[]
   themeInteractions              UserThemeInteraction[]
+  persistedLore                  UserThemePersistedLore[]
 }
 
 model GameState {
@@ -78,4 +80,24 @@ model UserThemeInteraction {
   @@unique([userId, theme_id])
   @@index([userId])
   @@index([theme_id])
+}
+
+// New Model for World Shards
+model UserThemePersistedLore {
+  id                          String    @id @default(cuid())
+  user                        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                      String    @map("user_id")
+  themeId                     String    @map("theme_id")
+  loreFragmentKey             String    @map("lore_fragment_key") // Key for this specific lore fragment, suggested by AI
+  loreFragmentTitle           String    @map("lore_fragment_title")
+  loreFragmentContent         String    @db.Text @map("lore_fragment_content")
+  unlockConditionDescription  String    @db.Text @map("unlock_condition_description")
+  unlockedAt                  DateTime  @default(now()) @map("unlocked_at")
+  isActiveForNewGames         Boolean   @default(true) @map("is_active_for_new_games")
+
+  @@unique([userId, themeId, loreFragmentKey], name: "UserThemeLoreFragmentKeyUnique")
+  @@index([userId])
+  @@index([themeId])
+  @@index([userId, themeId]) // For fetching all shards for a user/theme
+  @@map("user_theme_persisted_lore") // Explicit table name
 }

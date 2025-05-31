@@ -37,7 +37,24 @@ YOUR IMMEDIATE TASK - BREATHE UNHOLY LIFE INTO THE UNCANNY:
     *   `blight_flare_active`: (boolean) Set to `true` IF the omen itself *is* or *triggers* an immediate Blight surge (e.g., the omen is a physical manifestation of Blight), otherwise maintain previous state.
     *   `activity_status`: (string, translated) MUST mirror the Warden's shaken state from `dashboard_updates.activity_status`.
     *   Other indicators (`combat_active`, `rare_trophy_claimed`) persist unless this omen *directly and narratively* resolves or changes them (e.g., an omen reveals a hidden trophy, or an omen IS the direct precursor to an unavoidable ambush if `combat_active` becomes true).
-
+PERSISTENT LORE UNLOCK (WORLD SHARD) ---
+Based on the player's actions and the current narrative developments THIS TURN:
+ - If the player has achieved something truly significant (e.g., solved a major mystery, defeated a pivotal foe, made a world-altering discovery, completed an epic quest arc):
+   - You MAY include a "new_persistent_lore_unlock" object in your JSON response.
+   - This object represents a "World Shard" – a piece of lore that becomes a persistent part of THIS PLAYER'S understanding of the world for THIS THEME, potentially influencing future playthroughs.
+   - CRITERIA FOR UNLOCKING:
+     - Avoid unlocking shards for trivial actions. It must be a *memorable, impactful achievement*.
+     - The information in the shard should be a *significant revelation, a deep truth, or a fundamental alteration/addition* to the known lore.
+     - The shard should feel like a reward for deep engagement or skillful play.
+     - Do NOT unlock shards too frequently. They should be very rare and momentous.
+   - If you decide to unlock a shard, structure the "new_persistent_lore_unlock" object as follows:
+     "new_persistent_lore_unlock": {
+       "key_suggestion": "string (A concise, unique-as-possible, snake_case key for this lore fragment)",
+       "title": "string (A compelling, in-universe title for this lore fragment, in ${currentNarrativeLanguage.toUpperCase()})",
+       "content": "string (The actual text of the lore fragment, 1-2 paragraphs, detailing the revelation or new piece of information. This is what becomes persistent. In ${currentNarrativeLanguage.toUpperCase()})",
+       "unlock_condition_description": "string (A brief, past-tense description of how the player unlocked this specific shard THIS TURN In ${currentNarrativeLanguage.toUpperCase()})"
+     }
+   - If no such significant achievement occurred this turn, OMIT the "new_persistent_lore_unlock" key entirely from your JSON response.
 RESPONSE FORMAT:
 Your response MUST be a single, perfectly structured JSON object as follows:
 {
@@ -56,7 +73,8 @@ Your response MUST be a single, perfectly structured JSON object as follows:
     // Example: "omen_detected": false, "combat_active": false, "blight_flare_active": false, "activity_status": "Contemplating the dark portent and the price of knowledge."
     "omen_detected": false // Mandatory: reset the flag after the omen is handled.
    },
-    "input_placeholder": "string (A short, context-aware, and subtle hint for the player's next input. Must be in ${currentNarrativeLanguage.toUpperCase()})"
+    "input_placeholder": "string (A short, context-aware, and subtle hint for the player's next input. Must be in ${currentNarrativeLanguage.toUpperCase()})",
+    "new_persistent_lore_unlock": { ... } // OPTIONAL: Include ONLY IF a shard is unlocked this turn
 }
 
 **INPUT_PLACEHOLDER GUIDANCE:**

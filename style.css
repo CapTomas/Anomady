@@ -815,7 +815,8 @@ background-color: var(--color-bg-content-view)
 	aspect-ratio: 1 / 1;
 	min-height: var(--theme-grid-icon-size);
 	max-width: var(--theme-grid-icon-max-width);
-	overflow: hidden
+	overflow: hidden;
+	position: relative;
 }
 .theme-grid-icon img {
 	width: var(--theme-grid-icon-image-size) !important;
@@ -852,6 +853,118 @@ background-color: var(--color-bg-content-view)
 .theme-grid-icon.active img {
 	opacity: 1
 }
+.message.system-emphasized { background-color: rgba(var(--color-accent-teal-rgb), 0.1); color: var(--color-accent-teal); border: 1px solid var(--color-accent-teal); font-weight: var(--font-weight-medium); }
+.ui-button.mull-over-action { background-color: rgba(var(--color-accent-violet-rgb), 0.2); border-color: var(--color-accent-violet); }
+.ui-button.mull-over-action:hover { background-color: rgba(var(--color-accent-violet-rgb), 0.3); }
+.shard-indicator-overlay {
+    position: absolute;
+    top: 8px; /* Adjust as needed */
+    right: 8px; /* Adjust as needed */
+    width: 18px; /* Adjust as needed */
+    height: 18px; /* Adjust as needed */
+    background-image: url('images/app/icon_world_shard.svg'); /* Create this SVG icon */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    /* Optional: add a subtle background or border to make it pop */
+    /* background-color: rgba(var(--color-accent-teal-rgb), 0.2); */
+    /* border: 1px solid var(--color-accent-teal); */
+    pointer-events: none;
+    opacity: 0.85;
+    transition: opacity var(--transition-fast);
+}
+.theme-grid-icon-shaped:hover .shard-indicator-overlay {
+    opacity: 1;
+}
+.configure-shards-modal-content {
+    max-height: 60vh; /* Or adjust as needed */
+    overflow-y: auto;
+    text-align: left;
+    padding-right: var(--spacing-sm); /* For scrollbar */
+}
+
+.shard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.shard-item {
+    background-color: var(--color-bg-panel);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border: 1px solid var(--color-bg-input-field);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.shard-item:last-child {
+    margin-bottom: 0;
+}
+
+.shard-title {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-base);
+}
+
+.shard-unlock-desc {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    font-style: italic;
+}
+
+.shard-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-sm);
+    gap: var(--spacing-sm);
+}
+
+.shard-toggle-label {
+    display: flex;
+    align-items: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+
+.shard-toggle-label input[type="checkbox"] {
+    margin-right: var(--spacing-sm);
+    accent-color: var(--color-accent-teal);
+    width: 16px;
+    height: 16px;
+}
+
+.ui-button.small { /* For modal action buttons if needed */
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+}
+
+.ui-button.danger.small {
+    background-color: var(--color-meter-low); /* Or a less intense red for modal */
+    color: var(--color-text-on-primary-button);
+}
+.ui-button.danger.small:hover {
+    background-color: var(--color-meter-critical);
+}
+
+.shard-shatter-button { /* Specific styling for shatter button in list */
+    background-color: transparent;
+    border: 1px solid var(--color-text-muted);
+    color: var(--color-text-muted);
+    padding: 3px 8px;
+    font-size: var(--font-size-xs);
+}
+.shard-shatter-button:hover {
+    background-color: rgba(var(--color-accent-red-rgb), 0.2);
+    border-color: var(--color-meter-critical);
+    color: var(--color-meter-critical);
+}
 #story-log-viewport {
 	flex-grow: 1;
 	overflow-y: auto;
@@ -868,6 +981,25 @@ background-color: var(--color-bg-content-view)
 	opacity: 0;
 	transform: translateY(10px);
 	animation: fadeInMessage 0.3s ease-out forwards
+}
+#story-log .message.system-message.system-emphasized {
+    background-color: rgba(var(--color-accent-teal-rgb), 0.1);
+    color: var(--color-accent-teal);
+    border: 1px solid var(--color-accent-teal);
+    font-weight: var(--font-weight-medium);
+}
+
+#story-log .message.system-message.system-emphasized {
+    background-color: rgba(var(--color-accent-teal-rgb), 0.1);
+    color: var(--color-accent-teal);
+    border: 1px solid var(--color-accent-teal);
+    font-weight: var(--font-weight-medium);
+}
+#story-log .message.system-emphasized {
+    background-color: rgba(var(--color-accent-teal-rgb), 0.1);
+    color: var(--color-accent-teal);
+    border: 1px solid var(--color-accent-teal);
+    font-weight: var(--font-weight-medium);
 }
 @keyframes fadeInMessage {
 	to {

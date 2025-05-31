@@ -11,6 +11,7 @@
   "category_key": "theme_category_grim_warden",
   "style_key": "theme_style_grim_warden",
   "naming_convention": "entity",
+  "new_game_button_text_key": "button_new_expedition_grim_warden",
   "dashboard_config_ref": "grim_warden",
   "dashboard_config": {
     "left_panel": [

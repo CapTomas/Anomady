@@ -27,6 +27,25 @@ The story unfolds continuously. Player input drives the narrative. Always conclu
 SUMMARY OF KEY PAST PLAYER EVENTS:
 ${game_history_summary}
 
+PERSISTENT LORE UNLOCK (WORLD SHARD) ---
+Based on the player's actions and the current narrative developments THIS TURN:
+ - If the player has achieved something truly significant (e.g., solved a major mystery, defeated a pivotal foe, made a world-altering discovery, completed an epic quest arc):
+   - You MAY include a "new_persistent_lore_unlock" object in your JSON response.
+   - This object represents a "World Shard" – a piece of lore that becomes a persistent part of THIS PLAYER'S understanding of the world for THIS THEME, potentially influencing future playthroughs.
+   - CRITERIA FOR UNLOCKING:
+     - Avoid unlocking shards for trivial actions. It must be a *memorable, impactful achievement*.
+     - The information in the shard should be a *significant revelation, a deep truth, or a fundamental alteration/addition* to the known lore.
+     - The shard should feel like a reward for deep engagement or skillful play.
+     - Do NOT unlock shards too frequently. They should be very rare and momentous.
+   - If you decide to unlock a shard, structure the "new_persistent_lore_unlock" object as follows:
+     "new_persistent_lore_unlock": {
+       "key_suggestion": "string (A concise, unique-as-possible, snake_case key for this lore fragment)",
+       "title": "string (A compelling, in-universe title for this lore fragment, in ${currentNarrativeLanguage.toUpperCase()})",
+       "content": "string (The actual text of the lore fragment, 1-2 paragraphs, detailing the revelation or new piece of information. This is what becomes persistent. In ${currentNarrativeLanguage.toUpperCase()})",
+       "unlock_condition_description": "string (A brief, past-tense description of how the player unlocked this specific shard THIS TURN In ${currentNarrativeLanguage.toUpperCase()})"
+     }
+   - If no such significant achievement occurred this turn, OMIT the "new_persistent_lore_unlock" key entirely from your JSON response.
+
 JSON OUTPUT (MANDATORY):
 Your ENTIRE response MUST be a single, valid JSON object. No introductory text, explanations, or any characters outside this JSON structure are permitted.
 
@@ -53,7 +72,9 @@ Your ENTIRE response MUST be a single, valid JSON object. No introductory text, 
     "game_state_indicators": {
         ${generated_game_state_indicators}
     },
-    "input_placeholder": "string (A short, context-aware, and subtle hint for the player's next input. Must be in ${currentNarrativeLanguage.toUpperCase()})"
+    "input_placeholder": "string (A short, context-aware, and subtle hint for the player's next input. Must be in ${currentNarrativeLanguage.toUpperCase()})",
+    "new_persistent_lore_unlock": { ... } // OPTIONAL: Include ONLY IF a shard is unlocked this turn
+
 }
 
 PLAYER'S PREVIOUS ACTION/SITUATION AND FULL GAME STATE (from previous AI responses) WILL BE PROVIDED IN THE HISTORY.

@@ -9,7 +9,6 @@ const router = express.Router();
 const SALT_ROUNDS = 10;
 
 // --- Preference Endpoints ---
-
 /**
  * @route   GET /api/v1/users/me/preferences
  * @desc    Fetch current user's preferences
@@ -40,7 +39,6 @@ router.get('/me/preferences', protect, async (req, res) => {
 router.put('/me/preferences', protect, async (req, res) => {
   const { preferred_app_language, preferred_narrative_language, preferred_model_name } = req.body;
   const userId = req.user.id;
-
   const allowedLanguages = ['en', 'cs'];
   const baseAllowedModels = ['gemini-1.5-flash-latest', 'gemini-1.5-pro-latest'];
   const allowedModels = [...new Set([
@@ -50,21 +48,18 @@ router.put('/me/preferences', protect, async (req, res) => {
   ].filter(Boolean))]; // Filter out undefined/null and ensure uniqueness
 
   const updateData = {};
-
   if (preferred_app_language !== undefined) {
     if (!allowedLanguages.includes(preferred_app_language)) {
       return res.status(400).json({ error: { message: `Invalid preferred_app_language. Allowed: ${allowedLanguages.join(', ')}`, code: 'INVALID_PREFERENCE_VALUE' } });
     }
     updateData.preferred_app_language = preferred_app_language;
   }
-
   if (preferred_narrative_language !== undefined) {
     if (!allowedLanguages.includes(preferred_narrative_language)) {
       return res.status(400).json({ error: { message: `Invalid preferred_narrative_language. Allowed: ${allowedLanguages.join(', ')}`, code: 'INVALID_PREFERENCE_VALUE' } });
     }
     updateData.preferred_narrative_language = preferred_narrative_language;
   }
-
   if (preferred_model_name !== undefined) {
     if (!allowedModels.includes(preferred_model_name)) {
       return res.status(400).json({ error: { message: `Invalid preferred_model_name. Allowed models: ${allowedModels.join(', ')}`, code: 'INVALID_PREFERENCE_VALUE' }});
@@ -119,7 +114,6 @@ router.put('/me/password', protect, async (req, res) => {
       }
     });
   }
-
   if (newPassword.length < 8) {
     logger.warn(`Password change attempt for user ID ${userId} with weak new password.`);
     return res.status(400).json({
@@ -129,7 +123,6 @@ router.put('/me/password', protect, async (req, res) => {
       }
     });
   }
-
   if (currentPassword === newPassword) {
     logger.warn(`Password change attempt for user ID ${userId} where new password is same as current.`);
     return res.status(400).json({
@@ -152,7 +145,6 @@ router.put('/me/password', protect, async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(currentPassword, userWithPassword.password_hash);
-
     if (!isMatch) {
       logger.info(`Password change attempt for user ID ${userId} with incorrect current password.`);
       return res.status(401).json({
@@ -172,11 +164,9 @@ router.put('/me/password', protect, async (req, res) => {
     });
 
     logger.info(`Password changed successfully for user: ${req.user.email} (ID: ${userId})`);
-
     res.status(200).json({
       message: 'Password changed successfully.'
     });
-
   } catch (error) {
     logger.error(`Error during password change for user ID ${userId}:`, {
       message: error.message,
@@ -188,6 +178,54 @@ router.put('/me/password', protect, async (req, res) => {
         code: 'INTERNAL_SERVER_ERROR'
       }
     });
+  }
+});
+
+/**
+ * @route   GET /api/v1/users/me/shaped-themes-summary
+ * @desc    Fetch a summary of themes for which the user has World Shards, including counts of active shards.
+ * @access  Private
+ */
+router.get('/me/shaped-themes-summary', protect, async (req, res) => {
+  const userId = req.user.id;
+  logger.info(`Fetching shaped themes summary for user ${userId}`);
+  try {
+    const shardSummary = await prisma.userThemePersistedLore.groupBy({
+      by: ['themeId'],
+      where: {
+        userId: userId,
+      },
+      _count: {
+        id: true,
+      },
+    });
+    const themesWithActiveShards = await prisma.userThemePersistedLore.groupBy({
+        by: ['themeId'],
+        where: {
+            userId: userId,
+            isActiveForNewGames: true,
+        },
+        _count: {
+            isActiveForNewGames: true
+        }
+    });
+
+    const activeCountsMap = new Map(themesWithActiveShards.map(item => [item.themeId, item._count.isActiveForNewGames]));
+
+    const result = shardSummary.map(theme => ({
+      themeId: theme.themeId,
+      hasShards: theme._count.id > 0,
+      totalShardCount: theme._count.id,
+      activeShardCount: activeCountsMap.get(theme.themeId) || 0,
+    }));
+
+    res.status(200).json({
+      message: 'Shaped themes summary fetched successfully.',
+      shapedThemes: result,
+    });
+  } catch (error) {
+    logger.error(`Error fetching shaped themes summary for user ${userId}:`, error);
+    res.status(500).json({ error: { message: 'Failed to fetch shaped themes summary.', code: 'SHAPED_THEMES_SUMMARY_FETCH_ERROR' } });
   }
 });
 

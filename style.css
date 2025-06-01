@@ -1046,6 +1046,60 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 		transform: translateY(0)
 }
 }
+/* Loading Indicator Styles */
+.loading-indicator-message {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-xl) var(--spacing-lg) 0 var(--spacing-lg); /* Adjusted padding: no bottom padding as it's just dots */
+    border-radius: var(--radius-md);
+    background-color: transparent;
+    color: var(--color-text-muted);
+    width: fit-content;
+    max-width: 90%; /* Consistent with gm-message */
+    margin-left: 0; /* Align to the left */
+    margin-right: auto; /* Pushes it to the left */
+    margin-bottom: var(--spacing-lg); /* Add some space below it before next message appears */
+    opacity: 0; /* Start hidden */
+    animation: fadeInMessage 0.3s ease-out 0.25s forwards; /* fadeIn after 0.25s delay */
+}
+
+.dots-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    background-color: var(--color-text-primary);
+    border-radius: 50%;
+    animation: jump 1.4s infinite ease-in-out;
+}
+
+.dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes jump {
+    0%, 80%, 100% {
+        transform: translateY(0);
+        opacity: 0.5;
+    }
+    40% {
+        transform: translateY(-8px);
+        opacity: 0.9;
+    }
+}
 #story-log .gm-message {
 	color: var(--color-text-primary);
 	margin-right: auto

@@ -13,6 +13,7 @@ import * as authService from '../services/authService.js';
 import * as dom from '../ui/domElements.js';
 import * as uiUtils from '../ui/uiUtils.js';
 import * as storyLogManager from '../ui/storyLogManager.js';
+import { showLoadingIndicator, removeLoadingIndicator } from '../ui/storyLogManager.js';
 import * as suggestedActionsManager from '../ui/suggestedActionsManager.js';
 import * as dashboardManager from '../ui/dashboardManager.js';
 import * as modalManager from '../ui/modalManager.js';
@@ -324,9 +325,12 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
     }
     uiUtils.setGMActivityIndicator(true);
     suggestedActionsManager.clearSuggestedActions(); // Clear previous suggestions
+    storyLogManager.showLoadingIndicator(); // Show loading indicator
 
     try {
         const narrative = await aiService.processAiTurn(actionText, worldShardsPayloadForInitialTurn);
+        storyLogManager.removeLoadingIndicator(); // Remove indicator as soon as AI responds
+
         if (narrative) {
             storyLogManager.addMessageToLog(narrative, "gm");
             dashboardManager.updateDashboard(state.getLastKnownDashboardUpdates());
@@ -336,11 +340,13 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
                 dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder() || localizationService.getUIText("placeholder_command");
             }
         } else {
+            if (dom.playerActionInput && !state.getCurrentAiPlaceholder()) {
+                 dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_command");
+            }
         }
-
-
         await authService.saveCurrentGameState();
     } catch (error) {
+        storyLogManager.removeLoadingIndicator(); // Also remove indicator on error
         log(LOG_LEVEL_ERROR, "Error during AI turn processing in gameController:", error.message, error);
         storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: error.message }), "system-error");
         if (dom.playerActionInput) dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_command");

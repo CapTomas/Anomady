@@ -143,3 +143,52 @@ export function clearStoryLogDOM() {
     }
     resetManualScrollFlag();
 }
+
+const LOADING_INDICATOR_ID = "story-log-loading-indicator";
+
+/**
+ * Shows a loading indicator in the story log.
+ * Removes any existing indicator before adding a new one.
+ */
+export function showLoadingIndicator() {
+    if (!storyLog || !storyLogViewport) {
+        log(LOG_LEVEL_WARN, "Story log or viewport element not found. Cannot show loading indicator.");
+        return;
+    }
+
+    removeLoadingIndicator(); // Ensure no duplicates
+
+    const indicatorDiv = document.createElement("div");
+    indicatorDiv.id = LOADING_INDICATOR_ID;
+    indicatorDiv.classList.add("loading-indicator-message");
+
+    const dotsContainer = document.createElement("div");
+    dotsContainer.classList.add("dots-container");
+
+    for (let i = 0; i < 3; i++) {
+        const dotSpan = document.createElement("span");
+        dotSpan.classList.add("dot");
+        dotsContainer.appendChild(dotSpan);
+    }
+
+    indicatorDiv.appendChild(dotsContainer);
+    storyLog.appendChild(indicatorDiv);
+
+    // Scroll to the bottom to make the indicator visible
+    // Use requestAnimationFrame to ensure the element is rendered before scrolling
+    requestAnimationFrame(() => {
+        storyLogViewport.scrollTop = storyLogViewport.scrollHeight;
+    });
+    log(LOG_LEVEL_DEBUG, "Loading indicator shown in story log.");
+}
+
+/**
+ * Removes the loading indicator from the story log, if present.
+ */
+export function removeLoadingIndicator() {
+    const existingIndicator = document.getElementById(LOADING_INDICATOR_ID);
+    if (existingIndicator && storyLog && storyLog.contains(existingIndicator)) {
+        storyLog.removeChild(existingIndicator);
+        log(LOG_LEVEL_DEBUG, "Loading indicator removed from story log.");
+    }
+}

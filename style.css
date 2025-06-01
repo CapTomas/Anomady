@@ -384,6 +384,7 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	justify-content: space-between;
 	align-items: center;
 	padding: var(--spacing-lg);
+	border-radius: var(--radius-md);
 	cursor: pointer;
 	transition: background-color var(--transition-fast);
 	user-select: none

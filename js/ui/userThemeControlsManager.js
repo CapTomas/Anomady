@@ -78,55 +78,55 @@ function _createThemeTopbarIconElement(themeId, type) {
         return null;
     }
     const isCurrentlyActiveGameTheme = getStateCurrentTheme() === themeId;
+
     const button = document.createElement("button");
     button.classList.add("theme-button");
-    if (isCurrentlyActiveGameTheme) {
-            button.classList.add("active");
-        }
+    if (type === "playing" && isCurrentlyActiveGameTheme) {
+        button.classList.add("active");
+    }
     button.dataset.theme = themeId;
-    button.dataset.interactionType = type;
+    button.dataset.interactionType = type; // 'playing' or 'liked'
 
     const themeNameText = getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeId });
-    let ariaLabelValue = themeNameText; // Default aria-label
+    let ariaLabelValue = themeNameText;
     let tooltipKeyForAttach;
-    let tooltipReplacementsForAttach = {};
-    let statusTextForAriaDisplay = "";
+    let tooltipReplacementsForAttach = { THEME_NAME: themeNameText };
 
     if (type === "playing") {
-        statusTextForAriaDisplay = getUIText("theme_icon_alt_text_playing");
-        tooltipKeyForAttach = themeConfig.name_key; // Tooltip shows theme name
+        ariaLabelValue = `${themeNameText} (${getUIText("theme_icon_alt_text_playing")})`;
+        tooltipKeyForAttach = "tooltip_theme_playing";
     } else if (type === "liked") {
-        statusTextForAriaDisplay = getUIText("theme_icon_alt_text_liked");
-        tooltipKeyForAttach = themeConfig.name_key; // Tooltip also shows theme name
-    }
-
-    if (statusTextForAriaDisplay) {
-        ariaLabelValue = `${themeNameText} (${statusTextForAriaDisplay})`;
+        ariaLabelValue = `${themeNameText} (${getUIText("theme_icon_alt_text_liked")})`;
+        tooltipKeyForAttach = "tooltip_theme_liked";
+    } else { // Should not happen
+        tooltipKeyForAttach = themeConfig.name_key;
     }
 
     button.setAttribute("aria-label", ariaLabelValue);
-    if (tooltipKeyForAttach) {
-        attachTooltip(button, tooltipKeyForAttach, tooltipReplacementsForAttach, { explicitThemeContext: themeId });
-    }
+    button.removeAttribute('title'); // Remove old title before attaching custom tooltip
+    attachTooltip(button, tooltipKeyForAttach, tooltipReplacementsForAttach, { explicitThemeContext: themeId });
 
     const img = document.createElement("img");
     img.src = themeConfig.icon;
-    img.alt = ""; // Decorative, title on button is sufficient
-
+    img.alt = ""; // Decorative, as button has aria-label
     button.appendChild(img);
 
-    const closeBtn = document.createElement("button");
-    closeBtn.classList.add("theme-button-close");
-    closeBtn.innerHTML = "×";
-    const closeButtonAriaLabelKey = "close_theme_button_aria_label";
-    const closeButtonAriaLabelText = getUIText(closeButtonAriaLabelKey, { THEME_NAME: themeNameText });
-    closeBtn.setAttribute("aria-label", closeButtonAriaLabelText);
-    closeBtn.removeAttribute('title');
-    closeBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        handleCloseThemeIconClick(themeId, type);
-    });
-    button.appendChild(closeBtn);
+    // Only add close button for "playing" type icons
+    if (type === "playing") {
+        const closeBtn = document.createElement("button");
+        closeBtn.classList.add("theme-button-close");
+        closeBtn.innerHTML = "×";
+        const closeButtonAriaLabelKey = "close_theme_button_aria_label";
+        const closeButtonAriaLabelText = getUIText(closeButtonAriaLabelKey, { THEME_NAME: themeNameText });
+        closeBtn.setAttribute("aria-label", closeButtonAriaLabelText);
+        closeBtn.removeAttribute('title');
+
+        closeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            handleCloseThemeIconClick(themeId, type); // type will be 'playing'
+        });
+        button.appendChild(closeBtn);
+    }
 
     button.addEventListener("click", () => handleThemeIconClick(themeId));
     return button;
@@ -145,24 +145,36 @@ export function updateTopbarThemeIcons() {
 
     const playing = getPlayingThemes();
     const liked = getLikedThemes();
-
-    playing.forEach(themeId => {
-        const icon = _createThemeTopbarIconElement(themeId, "playing");
-        if (icon) playingThemesContainer.appendChild(icon);
-    });
+    const currentActiveGameTheme = getStateCurrentTheme();
 
     liked.forEach(themeId => {
-        if (!playing.includes(themeId)) { // Only show in liked if not already in playing
-            const icon = _createThemeTopbarIconElement(themeId, "liked");
-            if (icon) likedThemesContainer.appendChild(icon);
+        const icon = _createThemeTopbarIconElement(themeId, "liked"); // Type "liked" means no '×'
+        if (icon) {
+            if (themeId === currentActiveGameTheme) {
+                icon.classList.add("active");
+            }
+            likedThemesContainer.appendChild(icon);
+        }
+    });
+    playing.forEach(themeId => {
+        if (!liked.includes(themeId)) {
+            const icon = _createThemeTopbarIconElement(themeId, "playing");
+            if (icon) {
+                playingThemesContainer.appendChild(icon);
+            }
         }
     });
 
-    const hasPlaying = playingThemesContainer.children.length > 0;
-    const hasLikedOnly = likedThemesContainer.children.length > 0;
-    likedThemesSeparator.style.display = (hasPlaying && hasLikedOnly) ? "block" : "none";
+    const hasPlayingIcons = playingThemesContainer.children.length > 0;
+    const hasLikedIcons = likedThemesContainer.children.length > 0;
 
-    log(LOG_LEVEL_DEBUG, "Top bar theme icons updated.");
+    if (hasLikedIcons) {
+        likedThemesSeparator.style.display = "block";
+    } else {
+        likedThemesSeparator.style.display = "none";
+    }
+
+    log(LOG_LEVEL_DEBUG, "Top bar theme icons updated. Liked themes now exclusively in 'Liked' section.");
 }
 
 /**

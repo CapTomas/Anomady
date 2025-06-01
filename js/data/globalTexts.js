@@ -54,6 +54,8 @@ export const globalTextData = {
             "alert_title_error": "Error",
             "alert_title_notice": "Notice",
             "confirm_new_game_title": "Confirm New Game",
+            "tooltip_theme_playing": "{THEME_NAME}",
+            "tooltip_theme_liked": "{THEME_NAME}",
             // --- Modal Dialogs ---
             "modal_ok_button": "OK",
             "modal_confirm_button": "Confirm",
@@ -239,6 +241,8 @@ export const globalTextData = {
             "alert_title_error": "Chyba",
             "alert_title_notice": "Upozornění",
             "confirm_new_game_title": "Potvrdit Novou Hru",
+            "tooltip_theme_playing": "{THEME_NAME}",
+            "tooltip_theme_liked": "{THEME_NAME}",
             // --- Modal Dialogs ---
             "modal_ok_button": "OK",
             "modal_confirm_button": "Potvrdit",

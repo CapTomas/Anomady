@@ -329,7 +329,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 process.on('uncaughtException', (error) => {
-  logger.fatal('Uncaught Exception. Shutting down application:', error);
+  logger.error('Uncaught Exception. Shutting down application:', error);
   process.exit(1);
 });
 
@@ -345,9 +345,9 @@ const server = app.listen(PORT, () => {
 
 server.on('error', (error) => {
   if (error.code === 'EADDRINUSE') {
-    logger.fatal(`❌ Port ${PORT} is already in use.`);
+    logger.error(`❌ Port ${PORT} is already in use.`);
   } else {
-    logger.fatal('❌ Server startup error:', error);
+    logger.error('❌ Server startup error:', error);
   }
   process.exit(1);
 });

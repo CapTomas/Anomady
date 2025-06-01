@@ -187,7 +187,9 @@ export const globalTextData = {
             "button_evolved_world": "Evolved World (Uses Fragments)",
             "button_original_world": "Original World (Pristine)",
             "notification_world_shard_unlocked": "WORLD FRAGMENT UNLOCKED: '{TITLE}'... This truth will now resonate through your chronicles...",
-            "action_mull_over_shard": "'{TITLE}'"
+            "action_mull_over_shard": "'{TITLE}'",
+            "tooltip_configure_fragments": "Configure World Fragments",
+            "tooltip_no_fragments_to_configure": "No World Fragments unlocked for this theme.",
         },
         cs: {
             // --- General Status & UI ---
@@ -366,10 +368,12 @@ export const globalTextData = {
             "confirm_reset_world_message": "Tímto roztříštíte VŠECHNY odemčené fragmenty světa pro {THEME_NAME} a obnovíte jeho historii do původního stavu pro budoucí výpravy. Tuto akci nelze vrátit. Jste si jisti?",
             "title_choose_world_type": "Zahájit Novou Výpravu",
             "message_choose_world_type": "Tento svět byl utvářen tvými minulými činy. Jak si přeješ pokračovat?",
-            "button_evolved_world": "Rozvinutý Svět (Použije Fragmenty)",
+            "button_evolved_world": "Rozvinutý Svět (Fragmenty)",
             "button_original_world": "Původní Svět (Nedotčený)",
             "notification_world_shard_unlocked": "ODEMČEN FRAGMENT SVĚTA: '{TITLE}'... Tato pravda bude nyní rezonovat tvými kronikami...",
-            "action_mull_over_shard": "'{TITLE}'"
+            "action_mull_over_shard": "'{TITLE}'",
+            "tooltip_configure_fragments": "Nastavit fragmenty světa",
+            "tooltip_no_fragments_to_configure": "Pro toto téma nejsou odemčeny žádné fragmenty světa.",
         }
     },
     // --- Landing Page Specific Text ---

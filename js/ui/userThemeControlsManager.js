@@ -79,9 +79,9 @@ function _createThemeTopbarIconElement(themeId, type) {
     const isCurrentlyActiveGameTheme = getStateCurrentTheme() === themeId;
     const button = document.createElement("button");
     button.classList.add("theme-button");
-    if (isCurrentlyActiveGameTheme && type === 'playing') {
-        button.classList.add("active");
-    }
+    if (isCurrentlyActiveGameTheme) {
+            button.classList.add("active");
+        }
     button.dataset.theme = themeId;
     button.dataset.interactionType = type;
 

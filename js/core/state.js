@@ -36,6 +36,7 @@ let _currentLandingGridSelection = localStorage.getItem(LANDING_SELECTED_GRID_TH
 let _isInitialGameLoad = true;
 let _currentAiPlaceholder = ""; // Placeholder text for AI input
 let _currentTurnUnlockData = null; // Data for a world shard unlocked in the current turn
+let _currentNewGameSettings = null; // Stores settings for a new game, e.g., { useEvolvedWorld: boolean }
 
 // --- Getters and Setters ---
 
@@ -175,6 +176,14 @@ export const setCurrentTurnUnlockData = (data) => {
     _currentTurnUnlockData = data;
 };
 
+export const getCurrentNewGameSettings = () => _currentNewGameSettings;
+export const setCurrentNewGameSettings = (settings) => {
+    _currentNewGameSettings = settings;
+};
+export const clearCurrentNewGameSettings = () => {
+    _currentNewGameSettings = null;
+};
+
 /**
  * Clears all non-persistent game-specific state variables.
  * User preferences and auth state are not cleared here.
@@ -192,4 +201,5 @@ export const clearVolatileGameState = () => {
     _currentTurnUnlockData = null;
     _currentPanelStates = {};
     _lastKnownCumulativePlayerSummary = "";
+    clearCurrentNewGameSettings();
 };

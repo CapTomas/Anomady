@@ -174,6 +174,8 @@ async function initializeApp() {
         modalManager, // For showing auth forms
         gameController // For actions like switching to landing on logout
     });
+    dashboardManager.initDashboardManagerScrollEvents();
+
 
     // modalManager itself doesn't have complex dependencies for its own init
     // Its functions will use localizationService.getUIText which is globally available.
@@ -218,15 +220,6 @@ async function initializeApp() {
     window.addEventListener('popstate', async (event) => {
         log(LOG_LEVEL_INFO, "Popstate event detected. Re-evaluating view.", event.state);
         await handleUrlChangeOrInitialLoad();
-    });
-    // Scroll listener for side panels (dashboardManager now handles this internally via refreshScrollTrackingForSidebar)
-    [dom.leftPanel, dom.rightPanel].forEach(panel => {
-        if (panel) {
-            panel.addEventListener('scroll', () => {
-                const panelSide = panel.id === 'left-panel' ? 'left' : 'right';
-                dashboardManager.updateScrollIndicators(panelSide);
-            }, { passive: true });
-        }
     });
 
 

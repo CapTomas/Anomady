@@ -25,8 +25,135 @@ import {
 import { SCROLL_INDICATOR_TOLERANCE } from '../core/config.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
 
+/**
+ * Initializes scroll event listeners for the dashboard side panels.
+ * This should be called once when the application sets up UI managers.
+ */
+export function initDashboardManagerScrollEvents() {
+    [leftPanel, rightPanel].forEach(panel => {
+        if (panel) {
+            panel.addEventListener('scroll', () => {
+                const panelSide = panel.id === 'left-panel' ? 'left' : 'right';
+                _handleSidebarScroll(panelSide);
+            }, { passive: true });
+        }
+    });
+    log(LOG_LEVEL_DEBUG, "DashboardManager scroll event listeners initialized.");
+}
+
+/**
+ * Handles scroll events on sidebars to update visibility of changed items and their indicators.
+ * @param {'left' | 'right'} panelSide - The sidebar that was scrolled.
+ * @private
+ */
+function _handleSidebarScroll(panelSide) {
+    if (document.body.classList.contains("landing-page-active")) {
+        // No scroll indicator logic on landing page for changed items
+        const upIndicator = panelSide === 'left' ? leftPanelScrollIndicatorUp : rightPanelScrollIndicatorUp;
+        const downIndicator = panelSide === 'left' ? leftPanelScrollIndicatorDown : rightPanelScrollIndicatorDown;
+        if (upIndicator) upIndicator.style.display = 'none';
+        if (downIndicator) downIndicator.style.display = 'none';
+        return;
+    }
+
+    const sidebar = panelSide === 'left' ? leftPanel : rightPanel;
+    if (!sidebar) return;
+
+    let itemsMadeVisible = false;
+
+    _recentlyChangedOutOfViewItems[panelSide].up.forEach(itemId => {
+        const itemElement = document.getElementById(itemId);
+        if (itemElement) {
+            const sidebarRect = sidebar.getBoundingClientRect();
+            const itemRect = itemElement.getBoundingClientRect();
+            if (itemRect.top >= sidebarRect.top - SCROLL_INDICATOR_TOLERANCE) { // Item is now visible or below top edge
+                _recentlyChangedOutOfViewItems[panelSide].up.delete(itemId);
+                itemsMadeVisible = true;
+            }
+        } else {
+            _recentlyChangedOutOfViewItems[panelSide].up.delete(itemId); // Element not found, remove
+            itemsMadeVisible = true;
+        }
+    });
+
+    _recentlyChangedOutOfViewItems[panelSide].down.forEach(itemId => {
+        const itemElement = document.getElementById(itemId);
+        if (itemElement) {
+            const sidebarRect = sidebar.getBoundingClientRect();
+            const itemRect = itemElement.getBoundingClientRect();
+            if (itemRect.bottom <= sidebarRect.bottom + SCROLL_INDICATOR_TOLERANCE) { // Item is now visible or above bottom edge
+                _recentlyChangedOutOfViewItems[panelSide].down.delete(itemId);
+                itemsMadeVisible = true;
+            }
+        } else {
+            _recentlyChangedOutOfViewItems[panelSide].down.delete(itemId); // Element not found, remove
+            itemsMadeVisible = true;
+        }
+    });
+
+    if (itemsMadeVisible) {
+        updateScrollIndicators(panelSide);
+    }
+}
+
+/**
+ * Adds a recently changed item to scroll tracking if it's out of view.
+ * @param {HTMLElement} itemContainer - The container element of the changed item (e.g., .info-item).
+ * @param {'left' | 'right'} panelSide - Which sidebar the item belongs to.
+ * @private
+ */
+function _addChangedItemToScrollTracking(itemContainer, panelSide) {
+    if (!itemContainer || !itemContainer.id || document.body.classList.contains("landing-page-active")) {
+        return;
+    }
+
+    const parentSidebar = panelSide === 'left' ? leftPanel : rightPanel;
+    if (!parentSidebar || !parentSidebar.contains(itemContainer)) return;
+
+    const sidebarRect = parentSidebar.getBoundingClientRect();
+    const elRect = itemContainer.getBoundingClientRect();
+
+    let changed = false;
+
+    // Check if element is scrolled out of view upwards
+    if (elRect.bottom < sidebarRect.top + SCROLL_INDICATOR_TOLERANCE) { // Entirely above viewport
+        _recentlyChangedOutOfViewItems[panelSide].down.delete(itemContainer.id); // Not below
+        if (!_recentlyChangedOutOfViewItems[panelSide].up.has(itemContainer.id)) {
+            _recentlyChangedOutOfViewItems[panelSide].up.add(itemContainer.id);
+            changed = true;
+        }
+    }
+    // Check if element is scrolled out of view downwards
+    else if (elRect.top > sidebarRect.bottom - SCROLL_INDICATOR_TOLERANCE) { // Entirely below viewport
+        _recentlyChangedOutOfViewItems[panelSide].up.delete(itemContainer.id); // Not above
+        if (!_recentlyChangedOutOfViewItems[panelSide].down.has(itemContainer.id)) {
+            _recentlyChangedOutOfViewItems[panelSide].down.add(itemContainer.id);
+            changed = true;
+        }
+    }
+    // If it became visible or was already visible
+    else {
+        if (_recentlyChangedOutOfViewItems[panelSide].up.delete(itemContainer.id)) changed = true;
+        if (_recentlyChangedOutOfViewItems[panelSide].down.delete(itemContainer.id)) changed = true;
+    }
+
+    if (changed) {
+        updateScrollIndicators(panelSide);
+    }
+}
+
 // --- Internal State for Scroll Indicators ---
-const _outOfViewTrackedElements = {
+/**
+ * @property {object} _recentlyChangedOutOfViewItems - Tracks items that recently changed and are out of view.
+ * @property {object} _recentlyChangedOutOfViewItems.left - Tracking for the left panel.
+ * @property {Set<string>} _recentlyChangedOutOfViewItems.left.up - Item IDs out of view upwards in left panel.
+ * @property {Set<string>} _recentlyChangedOutOfViewItems.left.down - Item IDs out of view downwards in left panel.
+ * @property {object} _recentlyChangedOutOfViewItems.right - Tracking for the right panel.
+ * @property {Set<string>} _recentlyChangedOutOfViewItems.right.up - Item IDs out of view upwards in right panel.
+ * @property {Set<string>} _recentlyChangedOutOfViewItems.right.down - Item IDs out of view downwards in right panel.
+ * @private
+ */
+const _recentlyChangedOutOfViewItems = {
     left: { up: new Set(), down: new Set() },
     right: { up: new Set(), down: new Set() }
 };
@@ -116,8 +243,10 @@ export function generatePanelsForTheme(themeId) {
 
         // Clear scroll tracking for this side
         const panelSideStr = panelContainer === leftPanel ? 'left' : 'right';
-        _outOfViewTrackedElements[panelSideStr].up.clear();
-        _outOfViewTrackedElements[panelSideStr].down.clear();
+        if (_recentlyChangedOutOfViewItems[panelSideStr]) {
+            _recentlyChangedOutOfViewItems[panelSideStr].up.clear();
+            _recentlyChangedOutOfViewItems[panelSideStr].down.clear();
+        }
 
         const scrollIndicatorDown = panelContainer.querySelector('.scroll-indicator-down');
 
@@ -259,18 +388,27 @@ export function initializeCollapsiblePanelBoxes(themeId) {
         }
 
         // Determine initial expansion state: from saved state or config default
-        let initialExpandState = getPanelState(panelConfig.id); // From state.js
-        let isRestoringThisPanelState = initialExpandState !== undefined;
+        // Determine initial expansion state
+        let initialExpandState = getPanelState(panelConfig.id); // Attempt to get from saved user state for this panel
+        const isRestoringThisPanelSpecificSavedState = initialExpandState !== undefined;
 
-        if (initialExpandState === undefined) { // Not in saved state, use config default
-            initialExpandState = panelConfig.type === "hidden_until_active" ? false : (panelConfig.initial_expanded || false);
-            isRestoringThisPanelState = false; // Not "restoring" if it's from config default
+        if (!isRestoringThisPanelSpecificSavedState) {
+            const isGameViewCurrentlyActive = !document.body.classList.contains("landing-page-active");
+
+            if (panelConfig.type === "collapsible" && isGameViewCurrentlyActive) {
+                initialExpandState = true;
+            } else if (panelConfig.type === "hidden_until_active") {
+                initialExpandState = panelConfig.initial_expanded || false;
+            } else {
+                initialExpandState = panelConfig.initial_expanded || false;
+            }
         }
+        const isRestoringStateForAnimate = true;
 
 
         if (panelConfig.type === "static") { // Always expanded, not collapsible
             panelBox.style.display = "flex"; panelBox.style.opacity = "1";
-            animatePanelExpansion(panelConfig.id, true, false, true); // true for shouldExpand, true for isRestoringState (to avoid panel state save)
+            animatePanelExpansion(panelConfig.id, true, false, isRestoringStateForAnimate);
         } else if (panelConfig.type === "hidden_until_active") {
             const contentEl = panelBox.querySelector('.panel-box-content');
             // Initial visual setup based on initialExpandState for hidden_until_active
@@ -305,7 +443,7 @@ export function initializeCollapsiblePanelBoxes(themeId) {
                  panelBox.style.opacity = "1";
                  // If it should be visible AND expanded, call animate (handles already expanded case gracefully)
                  if (initialExpandState) {
-                     animatePanelExpansion(panelConfig.id, true, true, isRestoringThisPanelState);
+                     animatePanelExpansion(panelConfig.id, true, true, isRestoringStateForAnimate);
                  }
             } else {
                  panelBox.style.display = "none";
@@ -313,17 +451,23 @@ export function initializeCollapsiblePanelBoxes(themeId) {
             }
         } else { // Standard collapsible
             panelBox.style.display = "flex"; panelBox.style.opacity = "1";
-            const delay = panelConfig.boot_delay && !isRestoringThisPanelState ? panelConfig.boot_delay : 0;
+            const delay = panelConfig.boot_delay && !isRestoringThisPanelSpecificSavedState ? panelConfig.boot_delay : 0;
             setTimeout(() => {
-                animatePanelExpansion(panelConfig.id, initialExpandState, false, isRestoringThisPanelState);
+                animatePanelExpansion(panelConfig.id, initialExpandState, false, isRestoringStateForAnimate);
             }, delay);
         }
     });
     log(LOG_LEVEL_INFO, `Collapsible panel boxes initialized for theme: ${themeId}`);
     // Initial scroll indicator update after panels are set up
     requestAnimationFrame(() => {
-        if (leftPanel) updateScrollIndicators('left');
-        if (rightPanel) updateScrollIndicators('right');
+        if (leftPanel && !document.body.classList.contains("landing-page-active")) {
+            _handleSidebarScroll('left'); // Evaluate visibility first
+            updateScrollIndicators('left');
+        }
+        if (rightPanel && !document.body.classList.contains("landing-page-active")) {
+            _handleSidebarScroll('right'); // Evaluate visibility first
+            updateScrollIndicators('right');
+        }
     });
 }
 
@@ -355,23 +499,51 @@ export function animatePanelExpansion(panelBoxId, shouldExpand, manageVisibility
             if (manageVisibilityViaDisplay) box.style.opacity = "1"; // Fade in
             header.setAttribute("aria-expanded", "true");
             content.setAttribute("aria-hidden", "false");
-            content.style.maxHeight = content.scrollHeight + "px";
+
+            // Set max-height for animation based on current scrollHeight
+            const targetAnimationHeight = content.scrollHeight + "px";
+            content.style.maxHeight = targetAnimationHeight;
             content.style.opacity = "1";
-            content.style.paddingTop = ''; // Reset to CSS default
-            content.style.paddingBottom = ''; // Reset to CSS default
+            content.style.paddingTop = '';
+            content.style.paddingBottom = '';
 
             // If expanding and not restoring state, remove recent update indicator from header
             if (!isRestoringState && !wasExpanded && header.classList.contains('has-recent-update')) {
                 header.classList.remove('has-recent-update');
             }
-            // If expanding and not restoring state, remove indicators from items within this panel
-            if (!isRestoringState && !wasExpanded) {
-                 const infoItems = box.querySelectorAll('.info-item.has-recent-update, .info-item-meter.has-recent-update');
-                 infoItems.forEach(itemContainer => itemContainer.classList.remove('has-recent-update'));
-            }
 
-            const panelSide = leftPanel && leftPanel.contains(box) ? 'left' : (rightPanel && rightPanel.contains(box) ? 'right' : null);
-            if (panelSide) _checkAndTrackElementVisibility(box, panelSide);
+                const panelSide = leftPanel && leftPanel.contains(box) ? 'left' : (rightPanel && rightPanel.contains(box) ? 'right' : null);
+
+                const onExpansionTransitionEnd = (event) => {
+                    if (event.target === content && event.propertyName === 'max-height') {
+                        content.removeEventListener("transitionend", onExpansionTransitionEnd);
+                        if (!document.body.classList.contains("landing-page-active")) {
+                            content.style.maxHeight = ''; // Allow natural height after animation
+                        }
+                        if (panelSide) {
+                            // Check items within this panel if they were tracked for scroll indicators
+                            _handleSidebarScroll(panelSide);
+                        }
+                    }
+                };
+                content.addEventListener("transitionend", onExpansionTransitionEnd);
+
+                // Fallback to ensure maxHeight is cleared if transitionend doesn't fire correctly
+                const transitionDurationMs = parseFloat(getComputedStyle(content).transitionDuration) * 1000 || 300;
+                setTimeout(() => {
+                    if (box.classList.contains("is-expanded") &&
+                        !document.body.classList.contains("landing-page-active") &&
+                        content.style.maxHeight !== '' // Check if it's still set to a pixel value
+                    ) {
+                        content.style.maxHeight = '';
+                    }
+                    content.removeEventListener("transitionend", onExpansionTransitionEnd); // Clean up listener
+                    if (panelSide) {
+                        _handleSidebarScroll(panelSide); // Re-evaluate scroll state
+                    }
+                }, transitionDurationMs + 100);
+
+                if (panelSide) _handleSidebarScroll(panelSide);
         });
     } else { // Collapse
         box.classList.remove("is-expanded");
@@ -379,29 +551,36 @@ export function animatePanelExpansion(panelBoxId, shouldExpand, manageVisibility
         content.setAttribute("aria-hidden", "true");
         content.style.maxHeight = "0";
         content.style.opacity = "0";
-        content.style.paddingTop = '0'; // Collapse padding
-        content.style.paddingBottom = '0'; // Collapse padding
+        content.style.paddingTop = '0';
+        content.style.paddingBottom = '0';
 
         if (manageVisibilityViaDisplay) {
-            // Wait for transition to finish before setting display:none
             const onTransitionEnd = (event) => {
-                if (event.target === content && !box.classList.contains("is-expanded")) { // Check if it's still collapsed
+                if (event.target === content && !box.classList.contains("is-expanded")) {
                     box.style.display = "none";
                     content.removeEventListener("transitionend", onTransitionEnd);
                 }
             };
             content.addEventListener("transitionend", onTransitionEnd);
-            // Fallback timeout in case transitionend doesn't fire as expected
             const duration = parseFloat(getComputedStyle(content).transitionDuration) * 1000 || 300;
             setTimeout(() => {
                  if (!box.classList.contains("is-expanded")) box.style.display = "none";
-            }, duration + 50); // Slightly longer than transition
+            }, duration + 50);
         }
 
         const panelSide = leftPanel && leftPanel.contains(box) ? 'left' : (rightPanel && rightPanel.contains(box) ? 'right' : null);
-        if (panelSide) _checkAndTrackElementVisibility(box, panelSide);
+        if (panelSide) {
+            // If collapsing, remove all its items from scroll tracking
+            const itemsInPanel = box.querySelectorAll('.info-item, .info-item-meter');
+            itemsInPanel.forEach(itemEl => {
+                if (itemEl.id) {
+                    _recentlyChangedOutOfViewItems[panelSide].up.delete(itemEl.id);
+                    _recentlyChangedOutOfViewItems[panelSide].down.delete(itemEl.id);
+                }
+            });
+            updateScrollIndicators(panelSide); // Update indicators as items are no longer relevant
+        }
     }
-    // Update panel state in global state unless just restoring
     if (!isRestoringState) {
         setPanelState(panelBoxId, shouldExpand);
     }
@@ -467,18 +646,32 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
         }
     }
 
-    // If an item inside a collapsed panel is updated, mark the panel header
-    if (itemContainer) {
-        const parentPanelBox = itemContainer.closest('.panel-box.collapsible');
-        if (parentPanelBox && !parentPanelBox.classList.contains('is-expanded') && highlight) {
-            const header = parentPanelBox.querySelector('.panel-box-header');
-            if (header && !header.classList.contains('has-recent-update')) { // Avoid adding class multiple times
-                header.classList.add('has-recent-update');
+    // If an item inside a collapsible panel is updated, ensure the panel expands.
+    if (itemContainer && highlight) {
+        const parentPanelBox = itemContainer.closest('.panel-box');
+        if (parentPanelBox && parentPanelBox.classList.contains('collapsible')) {
+            if (!parentPanelBox.classList.contains('is-expanded')) {
+                log(LOG_LEVEL_DEBUG, `Item ${itemId} updated in collapsed panel ${parentPanelBox.id}. Auto-expanding.`);
+                animatePanelExpansion(parentPanelBox.id, true, false, false);
             }
         }
-        // Check and update scroll indicator if item is now out of view
-        const panelSide = leftPanel.contains(itemContainer) ? 'left' : (rightPanel.contains(itemContainer) ? 'right' : null);
-        if (panelSide) _checkAndTrackElementVisibility(itemContainer, panelSide);
+    }
+    // If an item inside a collapsible panel is updated, ensure the panel expands.
+    if (itemContainer && highlight) { // Existing logic for panel expansion
+        const parentPanelBox = itemContainer.closest('.panel-box');
+        if (parentPanelBox && parentPanelBox.classList.contains('collapsible')) {
+            if (!parentPanelBox.classList.contains('is-expanded')) {
+                log(LOG_LEVEL_DEBUG, `Item ${itemId} updated in collapsed panel ${parentPanelBox.id}. Auto-expanding.`);
+                animatePanelExpansion(parentPanelBox.id, true, false, false);
+            }
+        }
+        // New logic: Track changed item for scroll indicators if panel is expanded and in game view
+        if (parentPanelBox && parentPanelBox.classList.contains('is-expanded') && !document.body.classList.contains("landing-page-active")) {
+            const panelSide = leftPanel.contains(itemContainer) ? 'left' : (rightPanel.contains(itemContainer) ? 'right' : null);
+            if (panelSide) {
+                _addChangedItemToScrollTracking(itemContainer, panelSide);
+            }
+        }
     }
 }
 /**
@@ -654,128 +847,58 @@ export function updateStatusLevelDisplay(valueElement, newValue, levelMappingsCo
 // --- Scroll Indicators ---
 
 /**
- * Checks if an element is out of view within its sidebar and updates tracking.
- * @param {HTMLElement} elementToCheck - The dashboard element (panel box or item container).
- * @param {'left' | 'right'} panelSide - Which sidebar the element belongs to.
- * @private
- */
-function _checkAndTrackElementVisibility(elementToCheck, panelSide) {
-    if (!elementToCheck || !elementToCheck.id) return;
-
-    const parentSidebar = panelSide === 'left' ? leftPanel : rightPanel;
-    if (!parentSidebar || !parentSidebar.contains(elementToCheck)) return; // Element not in the specified sidebar
-
-    // If the element is a panel box and it's collapsed, it's not "visually out of view" for scrolling purposes
-    // unless the header itself is out of view.
-    // For items *within* a collapsed panel, they are not considered for scroll indicators.
-    if (elementToCheck.classList.contains('panel-box') && !elementToCheck.classList.contains('is-expanded')) {
-        let changed = false;
-        // If it was previously tracked as out of view (e.g. it was expanded and scrolled), remove it.
-        if (_outOfViewTrackedElements[panelSide].up.delete(elementToCheck.id)) changed = true;
-        if (_outOfViewTrackedElements[panelSide].down.delete(elementToCheck.id)) changed = true;
-        if (changed) updateScrollIndicators(panelSide);
-        return;
-    }
-
-    requestAnimationFrame(() => { // Ensure layout is stable
-        const sidebarRect = parentSidebar.getBoundingClientRect();
-        const elRect = elementToCheck.getBoundingClientRect();
-        let changedInTracking = false;
-
-        // Check if element is scrolled out of view upwards
-        const isOutOfViewUpwards = elRect.top < sidebarRect.top - SCROLL_INDICATOR_TOLERANCE;
-        if (isOutOfViewUpwards) {
-            if (!_outOfViewTrackedElements[panelSide].up.has(elementToCheck.id)) {
-                _outOfViewTrackedElements[panelSide].up.add(elementToCheck.id);
-                changedInTracking = true;
-            }
-        } else {
-            if (_outOfViewTrackedElements[panelSide].up.delete(elementToCheck.id)) {
-                changedInTracking = true;
-            }
-        }
-
-        // Check if element is scrolled out of view downwards
-        const isOutOfViewDownwards = elRect.bottom > sidebarRect.bottom + SCROLL_INDICATOR_TOLERANCE;
-        if (isOutOfViewDownwards) {
-            if (!_outOfViewTrackedElements[panelSide].down.has(elementToCheck.id)) {
-                _outOfViewTrackedElements[panelSide].down.add(elementToCheck.id);
-                changedInTracking = true;
-            }
-        } else {
-            if (_outOfViewTrackedElements[panelSide].down.delete(elementToCheck.id)) {
-                changedInTracking = true;
-            }
-        }
-
-        if (changedInTracking) {
-            updateScrollIndicators(panelSide);
-        }
-    });
-}
-
-
-/**
- * Updates the visibility of scroll indicators for a given panel side.
+ * Updates the visibility of scroll indicators for a given panel side based on recently changed items.
  * @param {'left' | 'right'} panelSide - The side of the panel.
  */
 export function updateScrollIndicators(panelSide) {
     const panelElement = panelSide === 'left' ? leftPanel : rightPanel;
-
-    // If on landing page, or panel element doesn't exist, hide indicators
-    if (!panelElement || document.body.classList.contains("landing-page-active")) {
-        const indicatorsToHide = panelSide === 'left' ?
-            [leftPanelScrollIndicatorUp, leftPanelScrollIndicatorDown] :
-            [rightPanelScrollIndicatorUp, rightPanelScrollIndicatorDown];
-        indicatorsToHide.forEach(ind => { if (ind) ind.style.display = 'none'; });
-        return;
-    }
-
     const upIndicator = panelSide === 'left' ? leftPanelScrollIndicatorUp : rightPanelScrollIndicatorUp;
     const downIndicator = panelSide === 'left' ? leftPanelScrollIndicatorDown : rightPanelScrollIndicatorDown;
 
-    if (!upIndicator || !downIndicator) {
-        log(LOG_LEVEL_WARN, `Scroll indicators for ${panelSide} panel not found in DOM.`);
+    if (!panelElement) {
+        log(LOG_LEVEL_DEBUG, `Panel element for ${panelSide} side not found. Cannot update scroll indicators.`);
+        if (upIndicator) upIndicator.style.display = 'none';
+        if (downIndicator) downIndicator.style.display = 'none';
         return;
     }
 
-    const needsUpIndicator = _outOfViewTrackedElements[panelSide].up.size > 0;
-    const needsDownIndicator = _outOfViewTrackedElements[panelSide].down.size > 0;
+    if (document.body.classList.contains("landing-page-active")) {
+        if (upIndicator) upIndicator.style.display = 'none';
+        if (downIndicator) downIndicator.style.display = 'none';
+        return;
+    }
 
-    upIndicator.style.display = needsUpIndicator ? 'flex' : 'none';
-    downIndicator.style.display = needsDownIndicator ? 'flex' : 'none';
-    log(LOG_LEVEL_DEBUG, `Scroll indicators for ${panelSide} updated: UP=${needsUpIndicator}, DOWN=${needsDownIndicator}`);
+    // Ensure indicators exist before trying to use them
+    if (!upIndicator || !downIndicator) {
+        log(LOG_LEVEL_WARN, `Scroll indicators for ${panelSide} panel not found in DOM. Cannot display indicators.`);
+        return;
+    }
+
+    const isScrollable = panelElement.scrollHeight > panelElement.clientHeight + SCROLL_INDICATOR_TOLERANCE;
+    const showUpForChange = _recentlyChangedOutOfViewItems[panelSide].up.size > 0;
+    const showDownForChange = _recentlyChangedOutOfViewItems[panelSide].down.size > 0;
+
+    const canScrollUp = panelElement.scrollTop > SCROLL_INDICATOR_TOLERANCE;
+    const canScrollDown = panelElement.scrollHeight > panelElement.scrollTop + panelElement.clientHeight + SCROLL_INDICATOR_TOLERANCE;
+
+    upIndicator.style.display = isScrollable && showUpForChange && canScrollUp ? 'flex' : 'none';
+    downIndicator.style.display = isScrollable && showDownForChange && canScrollDown ? 'flex' : 'none';
+
+    log(LOG_LEVEL_DEBUG, `Scroll indicators for ${panelSide} updated: Scrollable=${isScrollable}, UpChange=${showUpForChange}, DownChange=${showDownForChange}, CanScrollUp=${canScrollUp}, CanScrollDown=${canScrollDown}`);
 }
 
 /**
- * Triggers a re-check of all visible items/panels in a sidebar for scroll tracking.
- * Useful after panel expansions/collapses or significant content changes.
- * @param {'left' | 'right'} panelSide - The side of the panel.
+ * Clears all tracked recently changed items for scroll indicators.
+ * Typically called when the view changes significantly (e.g., theme switch, to landing).
  */
-export function refreshScrollTrackingForSidebar(panelSide) {
-    const sidebarElement = panelSide === 'left' ? leftPanel : rightPanel;
-    if (!sidebarElement) return;
-
-    _outOfViewTrackedElements[panelSide].up.clear();
-    _outOfViewTrackedElements[panelSide].down.clear();
-
-    const panelBoxes = sidebarElement.querySelectorAll('.panel-box');
-    panelBoxes.forEach(box => {
-        // Only track visibility for boxes that are not part of landing page placeholders
-        if (box.closest('#landing-theme-description-container') || box.closest('#landing-theme-details-container')) {
-            return;
-        }
-
-        // If the box itself is visible (not display:none due to hidden_until_active logic)
-        if (window.getComputedStyle(box).display !== 'none') {
-            _checkAndTrackElementVisibility(box, panelSide); // Check the panel box itself
-            if (box.classList.contains('is-expanded')) { // If expanded, check its items
-                const items = box.querySelectorAll('.info-item, .info-item-meter');
-                items.forEach(item => _checkAndTrackElementVisibility(item, panelSide));
-            }
-        }
-    });
-    updateScrollIndicators(panelSide); // Update indicators based on new tracking
+export function clearAllChangedItemScrollTracking() {
+    _recentlyChangedOutOfViewItems.left.up.clear();
+    _recentlyChangedOutOfViewItems.left.down.clear();
+    _recentlyChangedOutOfViewItems.right.up.clear();
+    _recentlyChangedOutOfViewItems.right.down.clear();
+    updateScrollIndicators('left');
+    updateScrollIndicators('right');
+    log(LOG_LEVEL_DEBUG, "All changed item scroll tracking cleared.");
 }
 
 /**
@@ -797,12 +920,8 @@ export function resetDashboardUI(themeId) {
     });
 
     // 2. Reset internal scroll tracking state
-    Object.keys(_outOfViewTrackedElements).forEach(side => {
-        _outOfViewTrackedElements[side].up.clear();
-        _outOfViewTrackedElements[side].down.clear();
-    });
-    updateScrollIndicators('left'); // Hide any lingering indicators
-    updateScrollIndicators('right');
+    clearAllChangedItemScrollTracking();
+
     log(LOG_LEVEL_DEBUG, "Dashboard scroll tracking state reset.");
 
     // 3. Generate the new panel structure, initialize default texts, and setup collapsible behavior.

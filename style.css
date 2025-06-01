@@ -404,6 +404,10 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 	padding-bottom: var(--spacing-lg);
 	overflow-y: auto
 }
+body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
+    max-height: none;
+    overflow-y: hidden;
+}
 .info-item,.info-item-meter {
 	margin-bottom: var(--spacing-md);
 	position: relative
@@ -474,6 +478,37 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,bod
 }
 .like-theme-button.disabled .like-icon {
     background-color: var(--color-bg-content-view)
+}
+/* Styles for the new Shard Icon Button on Landing Page */
+.configure-shards-button img.shard-icon {
+	width: calc(var(--font-size-lg) * 1.2); /* Similar to like-icon */
+	height: calc(var(--font-size-lg) * 1.2);
+	transition: transform 0.2s ease;
+}
+
+.configure-shards-button:hover img.shard-icon {
+	transform: scale(1.1);
+}
+
+.configure-shards-button.disabled img.shard-icon {
+    opacity: 0.5; /* Visually indicate disabled state for the icon */
+    cursor: not-allowed;
+}
+
+/* Ensure the button takes up appropriate space and aligns with other action buttons */
+#landing-theme-actions .configure-shards-button {
+    padding: var(--spacing-sm); /* Adjust padding if needed to match other icon buttons */
+    /* Add any specific alignment or sizing if it doesn't match like-button */
+}
+
+/* Ensure disabled icon button has consistent styling */
+.ui-button.icon-button.configure-shards-button.disabled {
+    background-color: transparent; /* Match other disabled icon buttons */
+    cursor: not-allowed;
+}
+
+.ui-button.icon-button.configure-shards-button.disabled:hover img.shard-icon {
+    transform: none; /* No hover effect for disabled icon */
 }
 #like-theme-button.ui-button.icon-button.liketheme-button.disabled {
 background-color: var(--color-bg-content-view)

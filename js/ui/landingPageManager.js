@@ -170,13 +170,13 @@ export async function switchToLandingView() {
     setGMActivityIndicator(false);
 
     // Fetch user theme interactions (playing/liked) AND then fetch shaped world status
-    if (_userThemeControlsManagerRef && typeof _userThemeControlsManagerRef.loadUserThemeInteractions === 'function') {
-        await _userThemeControlsManagerRef.loadUserThemeInteractions();
+    if (_userThemeControlsManagerRef && typeof _userThemeControlsManagerRef.updateTopbarThemeIcons === 'function') {
+        _userThemeControlsManagerRef.updateTopbarThemeIcons();
     } else {
-        log(LOG_LEVEL_WARN, "UserThemeControlsManager or loadUserThemeInteractions not available. Top bar and like states may not be fresh.");
+        log(LOG_LEVEL_WARN, "UserThemeControlsManager or updateTopbarThemeIcons not available. Top bar icons might not reflect current state.");
     }
 
-    await fetchShapedWorldStatusAndUpdateGrid(); // This will call renderThemeGrid and update panels
+    await fetchShapedWorldStatusAndUpdateGrid();
 
     // After grid is rendered, if there's a saved selection, ensure it's visually marked
     const savedSelection = getCurrentLandingGridSelection();
@@ -243,9 +243,8 @@ export async function renderThemeGrid() {
         nameSpan.textContent = getUIText(themeShortNameKey, {}, { explicitThemeContext: themeConfig.id, viewContext: 'landing' });
 
         const themeStatus = shapedData.get(themeConfig.id);
-        const isShaped = themeStatus && themeStatus.hasShards && themeStatus.activeShardCount > 0;
-
-        if (isShaped) {
+        const hasAnyShards = themeStatus && themeStatus.hasShards;
+        if (hasAnyShards) {
             button.classList.add("theme-grid-icon-shaped");
             const shardIndicator = document.createElement("div");
             shardIndicator.classList.add("shard-indicator-overlay");
@@ -381,22 +380,43 @@ export function renderLandingPageActionButtons(themeId) {
         landingThemeActions.appendChild(likeButton);
     }
 
-    const currentUser = getCurrentUser(); // Need user for shard check
+    const currentUser = getCurrentUser();
     const themeStatus = getShapedThemeData().get(themeId);
 
-    if (currentUser && // Check if user is logged in
-        _gameControllerRef &&
-        typeof _gameControllerRef.showConfigureShardsModal === 'function' &&
-        themeStatus && themeStatus.hasShards && themeStatus.activeShardCount > 0) {
-        const configureShardsButton = document.createElement("button");
-        configureShardsButton.id = "configure-shards-button";
-        configureShardsButton.classList.add("ui-button");
-        configureShardsButton.textContent = getUIText("button_configure_shards", {}, { viewContext: 'landing' });
-        configureShardsButton.addEventListener("click", () => {
+    const configureShardsIconButton = document.createElement("button");
+    configureShardsIconButton.id = "configure-shards-icon-button";
+    configureShardsIconButton.classList.add("ui-button", "icon-button", "configure-shards-button");
+
+    const shardIconImg = document.createElement("img");
+    shardIconImg.classList.add("shard-icon");
+
+    let shardIconSrc = "images/app/icon_world_shard_empty.svg"; // Default to empty
+    let shardTooltipKey = "tooltip_no_fragments_to_configure";
+    let canConfigureShards = false;
+
+    if (currentUser && themeStatus && themeStatus.hasShards) {
+        shardIconSrc = "images/app/icon_world_shard.svg"; // Filled icon
+        shardTooltipKey = "tooltip_configure_fragments";
+        canConfigureShards = true;
+    }
+
+    shardIconImg.src = shardIconSrc;
+    const shardAltText = getUIText(shardTooltipKey, {}, { viewContext: 'landing' });
+    shardIconImg.alt = shardAltText;
+    configureShardsIconButton.title = shardAltText;
+    configureShardsIconButton.setAttribute("aria-label", shardAltText);
+    configureShardsIconButton.appendChild(shardIconImg);
+
+    if (canConfigureShards && _gameControllerRef && typeof _gameControllerRef.showConfigureShardsModal === 'function') {
+        configureShardsIconButton.disabled = false;
+        configureShardsIconButton.addEventListener("click", () => {
             _gameControllerRef.showConfigureShardsModal(themeId);
         });
-        landingThemeActions.appendChild(configureShardsButton);
+    } else {
+        configureShardsIconButton.disabled = true;
+        configureShardsIconButton.classList.add("disabled");
     }
+    landingThemeActions.appendChild(configureShardsIconButton);
 }
 
 /**

@@ -46,32 +46,32 @@ export function initGameController(dependencies) {
 
 /**
  * Internal helper to set up UI for a new game after theme selection and world type choice.
+ * This function prepares the environment for the player to enter their identifier.
  * @param {string} themeId - The ID of the theme to start.
- * @param {boolean} useEvolvedWorld - Whether to use the player's active world shards.
  * @private
  */
-async function _setupNewGameEnvironment(themeId, useEvolvedWorld) {
-    log(LOG_LEVEL_INFO, `Setting up new game environment for theme: ${themeId}, Evolved: ${useEvolvedWorld}`);
+async function _setupNewGameEnvironment(themeId) {
+    log(LOG_LEVEL_INFO, `Setting up new game environment for theme: ${themeId}. Player will be prompted for identifier.`);
 
     // 1. Set current theme and clear all volatile *data* state first
     state.setCurrentTheme(themeId);
-    state.clearVolatileGameState();
+    state.clearVolatileGameState(); // This now also clears currentNewGameSettings by default
     state.setIsInitialGameLoad(true);
     state.setCurrentPromptType("initial");
 
     // 2. Explicitly reset/clear the DOM elements managed by UI managers
     log(LOG_LEVEL_DEBUG, "Clearing UI components for new game environment...");
-    suggestedActionsManager.clearSuggestedActions();
+    storyLogManager.clearStoryLogDOM();
     suggestedActionsManager.clearSuggestedActions();
     dashboardManager.resetDashboardUI(themeId);
 
     // 3. Switch the main view to game mode (hides landing, shows game containers)
     landingPageManager.switchToGameView(themeId);
 
-    // 5. Handle World Shards for initial prompt (aiService will fetch if needed for "initial" prompt type)
-    log(LOG_LEVEL_DEBUG, `World Shards for initial prompt (if any) will be handled by aiService for theme: ${themeId}, Evolved: ${useEvolvedWorld}`);
+    // 4. World Shards context for initial prompt will be passed via initial player action.
+    // The 'useEvolvedWorld' decision is stored in state.currentNewGameSettings by initiateNewGameSessionFlow.
 
-    // 6. Update "playing" status for the theme
+    // 5. Update "playing" status for the theme
     if (_userThemeControlsManagerRef && typeof _userThemeControlsManagerRef.setThemeAsPlaying === 'function') {
         await _userThemeControlsManagerRef.setThemeAsPlaying(themeId);
     } else {
@@ -82,35 +82,18 @@ async function _setupNewGameEnvironment(themeId, useEvolvedWorld) {
         ? localizationService.getUIText(themeService.getThemeConfig(themeId).name_key, {}, { explicitThemeContext: themeId })
         : themeId;
 
-    // 7. Setup UI for player identifier input (if anonymous) or proceed with logged-in user
-    const currentUser = state.getCurrentUser();
-    if (currentUser) {
-        state.setPlayerIdentifier(currentUser.email);
-        if (dom.nameInputSection) dom.nameInputSection.style.display = "none";
-        if (dom.actionInputSection) dom.actionInputSection.style.display = "flex";
-        if (dom.playerActionInput) {
-            dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_command");
-            state.setCurrentAiPlaceholder(dom.playerActionInput.placeholder);
-            dom.playerActionInput.focus();
-        }
-        storyLogManager.addMessageToLog(localizationService.getUIText("system_theme_set_generic", { THEME_NAME: themeDisplayName }), "system");
-        storyLogManager.addMessageToLog(localizationService.getUIText("connecting", { PLAYER_ID: currentUser.email }), "system");
-
-        const initialActionText = `Start game as ${currentUser.email}. Theme: ${themeDisplayName}. Evolved World: ${useEvolvedWorld}.`;
-        state.addTurnToGameHistory({ role: "user", parts: [{ text: initialActionText }]});
-        await processPlayerAction(initialActionText, true);
-    } else {
-        state.setPlayerIdentifier("");
-        if (dom.nameInputSection) dom.nameInputSection.style.display = "flex";
-        if (dom.actionInputSection) dom.actionInputSection.style.display = "none";
-        if (dom.playerIdentifierInput) {
-            dom.playerIdentifierInput.value = "";
-            dom.playerIdentifierInput.placeholder = localizationService.getUIText("placeholder_name_login");
-            dom.playerIdentifierInput.focus();
-        }
-        storyLogManager.addMessageToLog(localizationService.getUIText("system_theme_set_generic", { THEME_NAME: themeDisplayName }), "system");
-        log(LOG_LEVEL_INFO, `UI configured for new game in theme ${themeId}. Awaiting player identifier for anonymous user.`);
+    // 6. Always setup UI for player identifier input.
+    state.setPlayerIdentifier(""); // Ensure no old identifier is lingering
+    if (dom.nameInputSection) dom.nameInputSection.style.display = "flex";
+    if (dom.actionInputSection) dom.actionInputSection.style.display = "none";
+    if (dom.playerIdentifierInput) {
+        dom.playerIdentifierInput.value = "";
+        dom.playerIdentifierInput.placeholder = localizationService.getUIText("placeholder_name_login");
+        dom.playerIdentifierInput.focus();
     }
+    storyLogManager.addMessageToLog(localizationService.getUIText("system_theme_set_generic", { THEME_NAME: themeDisplayName }), "system");
+    storyLogManager.addMessageToLog(localizationService.getUIText("alert_identifier_required"), "system"); // Inform user
+    log(LOG_LEVEL_INFO, `UI configured for new game in theme ${themeId}. Awaiting player identifier input.`);
 }
 
 /**
@@ -119,10 +102,17 @@ async function _setupNewGameEnvironment(themeId, useEvolvedWorld) {
  */
 export async function handleIdentifierSubmission(identifier) {
     log(LOG_LEVEL_INFO, `Player identifier submitted: ${identifier}`);
+    if (!identifier || identifier.trim() === "") {
+        storyLogManager.addMessageToLog(localizationService.getUIText("alert_identifier_required"), "system-error");
+        if (dom.playerIdentifierInput) dom.playerIdentifierInput.focus();
+        return;
+    }
+
     state.setPlayerIdentifier(identifier);
 
     if (dom.nameInputSection) dom.nameInputSection.style.display = "none";
     if (dom.actionInputSection) dom.actionInputSection.style.display = "flex";
+
     if (dom.playerActionInput) {
         dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_command");
         state.setCurrentAiPlaceholder(dom.playerActionInput.placeholder);
@@ -130,9 +120,23 @@ export async function handleIdentifierSubmission(identifier) {
     }
 
     storyLogManager.addMessageToLog(localizationService.getUIText("connecting", { PLAYER_ID: identifier }), "system");
-    const themeDisplayName = state.getCurrentTheme() ? localizationService.getUIText(themeService.getThemeConfig(state.getCurrentTheme()).name_key, {}, { explicitThemeContext: state.getCurrentTheme() }) : "Unknown Theme";
-    const initialActionText = `Start game as ${identifier}. Theme: ${themeDisplayName}.`;
-    state.addTurnToGameHistory({ role: "user", parts: [{ text: initialActionText }]});
+
+    const currentThemeId = state.getCurrentTheme();
+    const themeDisplayName = currentThemeId
+        ? (themeService.getThemeConfig(currentThemeId)?.name_key
+            ? localizationService.getUIText(themeService.getThemeConfig(currentThemeId).name_key, {}, { explicitThemeContext: currentThemeId })
+            : currentThemeId)
+        : "Unknown Theme";
+
+    const newGameSettings = state.getCurrentNewGameSettings();
+    const useEvolvedWorld = newGameSettings ? newGameSettings.useEvolvedWorld : false;
+
+    const initialActionText = `Start game as "${identifier}". Theme: ${themeDisplayName}. Evolved World: ${useEvolvedWorld}.`;
+    state.addTurnToGameHistory({ role: "user", parts: [{ text: initialActionText }] });
+
+    // Clear the new game settings from state now that they've been used
+    state.clearCurrentNewGameSettings();
+
     await processPlayerAction(initialActionText, true); // true for isGameStartingAction
 }
 
@@ -167,12 +171,13 @@ export async function initiateNewGameSessionFlow(themeId) {
             return; // Abort starting new game
         }
         useEvolvedWorld = choice; // true if "Evolved World" (confirm) was clicked, false for "Original World" (cancel)
-    } else {
+        } else {
         log(LOG_LEVEL_INFO, `No active shards for theme ${themeId}, or user not logged in. Starting Original World by default.`);
         useEvolvedWorld = false;
     }
+    state.setCurrentNewGameSettings({ useEvolvedWorld });
 
-    await _setupNewGameEnvironment(themeId, useEvolvedWorld);
+    await _setupNewGameEnvironment(themeId);
 }
 
 /**
@@ -203,8 +208,12 @@ export async function resumeGameSession(themeId) {
     if (currentUser && currentUser.token) {
         try {
             const loadedState = await apiService.loadGameState(currentUser.token, themeId);
-            state.setPlayerIdentifier(loadedState.player_identifier || currentUser.email); // Fallback to email
-            state.setGameHistory(loadedState.game_history || []);
+            if (!loadedState.player_identifier) {
+                log(LOG_LEVEL_WARN, `Loaded game state for theme ${themeId} is missing player_identifier. Attempting to use user email as fallback for resume.`);
+                 state.setPlayerIdentifier(currentUser.email);
+            } else {
+                state.setPlayerIdentifier(loadedState.player_identifier);
+            }            state.setGameHistory(loadedState.game_history || []);
             state.setLastKnownDashboardUpdates(loadedState.last_dashboard_updates || {});
             state.setLastKnownGameStateIndicators(loadedState.last_game_state_indicators || {});
             state.setCurrentPromptType(loadedState.current_prompt_type || "default");
@@ -255,6 +264,9 @@ export async function resumeGameSession(themeId) {
 
 
         } catch (error) {
+            if (_userThemeControlsManagerRef) {
+                _userThemeControlsManagerRef.updateTopbarThemeIcons();
+            }
             if (error.status === 404 && error.code === 'GAME_STATE_NOT_FOUND') {
                 log(LOG_LEVEL_INFO, `No game state found on backend for theme '${themeId}'. Starting new game flow.`);
                 await initiateNewGameSessionFlow(themeId); // This will set up a new game
@@ -349,6 +361,9 @@ export async function changeActiveTheme(newThemeId, forceNewGame = false) {
                  dom.playerActionInput.focus();
             }
         }
+        if (_userThemeControlsManagerRef) {
+            _userThemeControlsManagerRef.updateTopbarThemeIcons();
+        }
         return;
     }
 
@@ -373,13 +388,19 @@ export async function changeActiveTheme(newThemeId, forceNewGame = false) {
     // }
 
     // Logic for starting new or resuming will handle state.setCurrentTheme and UI updates
-    if (forceNewGame) {
-        await initiateNewGameSessionFlow(newThemeId); // This handles setting up new game env
-    } else {
-        await resumeGameSession(newThemeId); // This handles loading existing or starting new if not found
+    try {
+        if (forceNewGame) {
+            await initiateNewGameSessionFlow(newThemeId); // This handles setting up new game env
+        } else {
+            await resumeGameSession(newThemeId); // This handles loading existing or starting new if not found
+        }
+    } finally {
+        if (_userThemeControlsManagerRef) {
+            log(LOG_LEVEL_DEBUG, `changeActiveTheme finally: Updating topbar icons. Current theme in state: ${state.getCurrentTheme()}`);
+            _userThemeControlsManagerRef.updateTopbarThemeIcons();
+        }
     }
 }
-
 /**
  * Handles changes in game state indicators received from the AI.
  * This function is responsible for updating UI based on these flags,
@@ -488,6 +509,10 @@ export async function switchToLanding() {
     state.setIsInitialGameLoad(true);
     state.setCurrentLandingGridSelection(null);
     await landingPageManager.switchToLandingView();
+    if (_userThemeControlsManagerRef) {
+        log(LOG_LEVEL_DEBUG, `switchToLanding: Updating topbar icons. Current theme in state: ${state.getCurrentTheme()}`);
+        _userThemeControlsManagerRef.updateTopbarThemeIcons();
+    }
     log(LOG_LEVEL_INFO, "Switched to landing view. Game state cleared for any previous session.");
 }
 

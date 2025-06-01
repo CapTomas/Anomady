@@ -220,6 +220,13 @@ export function applyGlobalUITranslations() {
             if (selectedTheme) {
                 // Re-render panels with new language
                 _landingPageManagerRef.updateLandingPagePanelsWithThemeInfo(selectedTheme, false);
+                // Re-apply .active class to the grid item as renderThemeGrid recreates the buttons
+                if (themeGridContainer) { // Check if themeGridContainer is available from domElements
+                    const selectedBtn = themeGridContainer.querySelector(`.theme-grid-icon[data-theme="${selectedTheme}"]`);
+                    if (selectedBtn) {
+                        selectedBtn.classList.add("active");
+                    }
+                }
             } else {
                 // Reset landing panel placeholder texts
                 if (landingThemeLoreText) setText(landingThemeLoreText, "landing_select_theme_prompt_lore", {}, { viewContext: 'landing' });
@@ -228,14 +235,8 @@ export function applyGlobalUITranslations() {
         }
     } else if (getCurrentTheme()) { // Game view is active
         if (_dashboardManagerRef) {
-            // Dashboard manager should re-render its static labels or re-initialize defaults
-            // This assumes dashboardManager.generatePanelsForTheme also applies localized texts
-            // or a specific function like initializeDashboardDefaultTexts is available.
-            // For now, let's re-generate and initialize. This might be heavy.
-            // A more granular update within dashboardManager might be better.
              _dashboardManagerRef.generatePanelsForTheme(getCurrentTheme());
              _dashboardManagerRef.initializeCollapsiblePanelBoxes(getCurrentTheme()); // Re-apply logic for expansion state
-             // Re-apply last known dynamic updates because generate/init would reset them
              const lastUpdates = _dashboardManagerRef.getLastKnownDashboardUpdatesForTranslationsReapply // This function would need to exist in dashboardManager
                                  ? _dashboardManagerRef.getLastKnownDashboardUpdatesForTranslationsReapply()
                                  : {};

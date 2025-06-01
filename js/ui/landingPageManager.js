@@ -178,13 +178,6 @@ export async function switchToLandingView() {
     }
 
     await fetchShapedWorldStatusAndUpdateGrid();
-
-    // After grid is rendered, if there's a saved selection, ensure it's visually marked
-    const savedSelection = getCurrentLandingGridSelection();
-    if (savedSelection && themeGridContainer) {
-        const selectedBtn = themeGridContainer.querySelector(`.theme-grid-icon[data-theme="${savedSelection}"]`);
-        if (selectedBtn) selectedBtn.classList.add("active");
-    }
 }
 
 /**

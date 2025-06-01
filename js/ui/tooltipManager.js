@@ -40,7 +40,7 @@ function _createTooltipElement() {
     tooltipElement.style.visibility = 'hidden';
     tooltipElement.style.transition = `opacity ${FADE_DURATION}ms ease-out, visibility 0s linear ${FADE_DURATION}ms`;
     tooltipElement.style.pointerEvents = 'none';
-    tooltipElement.style.maxWidth = '300px';
+    tooltipElement.style.maxWidth = '800px';
     tooltipElement.style.textAlign = 'center';
     document.body.appendChild(tooltipElement);
     log(LOG_LEVEL_DEBUG, "Custom tooltip element created and appended to body.");

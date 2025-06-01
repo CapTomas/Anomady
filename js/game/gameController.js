@@ -150,33 +150,15 @@ export async function initiateNewGameSessionFlow(themeId) {
     const themeStatus = currentUser ? state.getShapedThemeData().get(themeId) : null;
     let useEvolvedWorld = false;
 
-    const themeConfig = themeService.getThemeConfig(themeId);
-    const themeNameForModal = themeConfig?.name_key
-        ? localizationService.getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeId })
-        : themeId;
-
-    // Only ask about Evolved World if user is logged in and has active shards for this theme
     if (currentUser && themeStatus && themeStatus.hasShards && themeStatus.activeShardCount > 0) {
-        const choice = await modalManager.showCustomModal({
-            type: "confirm",
-            titleKey: "title_choose_world_type",
-            messageKey: "message_choose_world_type",
-            confirmTextKey: "button_evolved_world",
-            cancelTextKey: "button_original_world",
-            replacements: { THEME_NAME: themeNameForModal } // No explicit theme context for modal buttons
-        });
-
-        if (choice === null) { // User cancelled the modal (e.g., pressed Esc or closed it)
-            log(LOG_LEVEL_INFO, "New game world type selection cancelled by user.");
-            return; // Abort starting new game
-        }
-        useEvolvedWorld = choice; // true if "Evolved World" (confirm) was clicked, false for "Original World" (cancel)
-        } else {
-        log(LOG_LEVEL_INFO, `No active shards for theme ${themeId}, or user not logged in. Starting Original World by default.`);
+        useEvolvedWorld = true;
+        log(LOG_LEVEL_INFO, `User has ${themeStatus.activeShardCount} active shards for theme ${themeId}. Starting Evolved World by default.`);
+    } else {
         useEvolvedWorld = false;
+        log(LOG_LEVEL_INFO, `No active shards for theme ${themeId}, or user not logged in/no shards. Starting Original World by default.`);
     }
-    state.setCurrentNewGameSettings({ useEvolvedWorld });
 
+    state.setCurrentNewGameSettings({ useEvolvedWorld });
     await _setupNewGameEnvironment(themeId);
 }
 
@@ -295,45 +277,69 @@ export async function resumeGameSession(themeId) {
 export async function processPlayerAction(actionText, isGameStartingAction = false) {
     log(LOG_LEVEL_INFO, `Processing player action: "${actionText.substring(0,50)}..."`);
 
+    let worldShardsPayloadForInitialTurn = "[]"; // Default
+
+    if (isGameStartingAction) {
+        const newGameSettings = state.getCurrentNewGameSettings();
+        if (newGameSettings && newGameSettings.useEvolvedWorld) {
+            const currentUser = state.getCurrentUser();
+            const currentThemeId = state.getCurrentTheme();
+            if (currentUser && currentUser.token && currentThemeId) {
+                try {
+                    log(LOG_LEVEL_DEBUG, `Fetching active world shards for initial turn. Theme: ${currentThemeId}`);
+                    const shardsResponse = await apiService.fetchWorldShards(currentUser.token, currentThemeId);
+                    if (shardsResponse && shardsResponse.worldShards) {
+                        const activeShardsForPrompt = shardsResponse.worldShards
+                            .filter(shard => shard.isActiveForNewGames)
+                            .map(shard => ({ // Map to the format expected by the AI prompt
+                                loreFragmentKey: shard.loreFragmentKey,
+                                loreFragmentTitle: shard.loreFragmentTitle,
+                                loreFragmentContent: shard.loreFragmentContent,
+                                unlockConditionDescription: shard.unlockConditionDescription
+                            }));
+                        if (activeShardsForPrompt.length > 0) {
+                            worldShardsPayloadForInitialTurn = JSON.stringify(activeShardsForPrompt);
+                            log(LOG_LEVEL_INFO, `Prepared ${activeShardsForPrompt.length} active shards for initial prompt.`);
+                        } else {
+                            log(LOG_LEVEL_INFO, "Evolved World selected, but no active shards found. Proceeding with empty shard payload.");
+                        }
+                    }
+                } catch (error) {
+                    log(LOG_LEVEL_ERROR, "Failed to fetch world shards for initial turn:", error);
+                }
+            } else {
+                 log(LOG_LEVEL_INFO, "Evolved World selected, but user not logged in or no theme ID. Proceeding with empty shard payload.");
+            }
+        }
+    }
+
     if (!isGameStartingAction) {
         storyLogManager.addMessageToLog(actionText, "player");
         state.addTurnToGameHistory({ role: "user", parts: [{ text: actionText }] });
-
         if (dom.playerActionInput) {
             dom.playerActionInput.value = "";
             dom.playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
             uiUtils.autoGrowTextarea(dom.playerActionInput);
         }
     }
-    // If it *is* the game starting action, game history was already updated by the caller (_setupNewGameEnvironment or handleIdentifierSubmission)
-
     uiUtils.setGMActivityIndicator(true);
     suggestedActionsManager.clearSuggestedActions(); // Clear previous suggestions
 
     try {
-        // worldShardsPayloadForInitial is now handled internally by aiService.getSystemPrompt
-        const narrative = await aiService.processAiTurn(actionText);
-
+        const narrative = await aiService.processAiTurn(actionText, worldShardsPayloadForInitialTurn);
         if (narrative) {
             storyLogManager.addMessageToLog(narrative, "gm");
-            // dashboardManager.updateDashboard is the function that should exist
             dashboardManager.updateDashboard(state.getLastKnownDashboardUpdates());
             suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
-            handleGameStateIndicatorsChange(state.getLastKnownGameStateIndicators()); // Pass the new indicators
+            handleGameStateIndicatorsChange(state.getLastKnownGameStateIndicators());
             if (dom.playerActionInput) {
                 dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder() || localizationService.getUIText("placeholder_command");
             }
         } else {
-            storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: "AI interaction failed." }), "system-error");
         }
 
-        // This was already done in _setupNewGameEnvironment or handleIdentifierSubmission for the initial turn.
-        // For subsequent turns, isInitialGameLoad should already be false.
-        if (isGameStartingAction && state.getIsInitialGameLoad()) {
-            state.setIsInitialGameLoad(false);
-        }
 
-        await authService.saveCurrentGameState(); // authService now handles constructing payload
+        await authService.saveCurrentGameState();
     } catch (error) {
         log(LOG_LEVEL_ERROR, "Error during AI turn processing in gameController:", error.message, error);
         storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: error.message }), "system-error");
@@ -512,7 +518,6 @@ export async function switchToLanding() {
     storyLogManager.clearStoryLogDOM();
     state.setCurrentTheme(null);
     state.setIsInitialGameLoad(true);
-    state.setCurrentLandingGridSelection(null);
     await landingPageManager.switchToLandingView();
     if (_userThemeControlsManagerRef) {
         log(LOG_LEVEL_DEBUG, `switchToLanding: Updating topbar icons. Current theme in state: ${state.getCurrentTheme()}`);

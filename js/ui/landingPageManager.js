@@ -316,58 +316,85 @@ export function renderLandingPageActionButtons(themeId) {
         log(LOG_LEVEL_WARN, "Landing theme actions container not found.");
         return;
     }
-    landingThemeActions.innerHTML = "";
+    landingThemeActions.innerHTML = ""; // Clear previous buttons
+    // Change flex direction for landingThemeActions to stack Continue button above others
+    landingThemeActions.style.flexDirection = 'column';
+    landingThemeActions.style.gap = 'var(--spacing-sm)';
 
     const themeConfig = getThemeConfig(themeId);
     const themeManifestEntry = THEMES_MANIFEST.find(t => t.id === themeId);
-
     if (!themeConfig || !themeManifestEntry) {
         log(LOG_LEVEL_ERROR, `Cannot render landing actions: Config or manifest entry missing for ${themeId}.`);
         return;
     }
 
-    const chooseButton = document.createElement("button");
-    chooseButton.id = "choose-theme-button";
-    chooseButton.classList.add("ui-button");
+    const isThemePlayed = getPlayingThemes().includes(themeId);
+    const currentUser = getCurrentUser();
+
+    // 1. "Continue Expedition" button (if applicable)
+    if (isThemePlayed && themeManifestEntry.playable) {
+        const continueButton = document.createElement("button");
+        continueButton.id = "continue-theme-button";
+        continueButton.classList.add("ui-button", "primary", "full-width-action"); // New class for full width
+        continueButton.textContent = getUIText("button_continue_game", {}, { explicitThemeContext: themeId, viewContext: 'landing' });
+        continueButton.addEventListener("click", () => {
+            if (_gameControllerRef && typeof _gameControllerRef.changeActiveTheme === 'function') {
+                // false for forceNewGame, true for tryResume
+                _gameControllerRef.changeActiveTheme(themeId, false);
+            } else {
+                log(LOG_LEVEL_ERROR, "GameController reference or changeActiveTheme method not available for continue button.");
+            }
+        });
+        landingThemeActions.appendChild(continueButton);
+    }
+
+    // 2. Container for "New Game", "Like", and "Configure Shards" icon buttons
+    const standardActionsRow = document.createElement('div');
+    standardActionsRow.className = 'landing-actions-row'; // For styling this row
+
+    // "New Game" button
+    const newGameButton = document.createElement("button");
+    newGameButton.id = "choose-theme-button"; // Existing ID, now clearly "New Game"
+    newGameButton.classList.add("ui-button");
     if (themeManifestEntry.playable) {
-        chooseButton.classList.add("primary");
-        const chooseButtonTextKey = themeConfig.new_game_button_text_key || "landing_choose_theme_button";
-        chooseButton.textContent = getUIText(chooseButtonTextKey, {}, { explicitThemeContext: themeId, viewContext: 'landing' });
-        chooseButton.addEventListener("click", () => {
+        // If "Continue" button is present, "New Game" is not primary. Otherwise, it is.
+        if (!isThemePlayed) {
+            newGameButton.classList.add("primary");
+        }
+        const newGameButtonTextKey = themeConfig.new_game_button_text_key || "landing_choose_theme_button";
+        newGameButton.textContent = getUIText(newGameButtonTextKey, {}, { explicitThemeContext: themeId, viewContext: 'landing' });
+        newGameButton.addEventListener("click", () => {
             if (_gameControllerRef && typeof _gameControllerRef.initiateNewGameSessionFlow === 'function') {
                 _gameControllerRef.initiateNewGameSessionFlow(themeId);
             } else {
-                log(LOG_LEVEL_ERROR, "GameController reference or initiateNewGameSessionFlow method not available for choose button.");
+                log(LOG_LEVEL_ERROR, "GameController reference or initiateNewGameSessionFlow method not available for new game button.");
             }
         });
-        chooseButton.disabled = false;
+        newGameButton.disabled = false;
     } else {
-        chooseButton.classList.add("disabled");
-        chooseButton.textContent = getUIText("coming_soon_button", {}, { viewContext: 'landing' });
-        chooseButton.disabled = true;
+        newGameButton.classList.add("disabled");
+        newGameButton.textContent = getUIText("coming_soon_button", {}, { viewContext: 'landing' });
+        newGameButton.disabled = true;
     }
-    landingThemeActions.appendChild(chooseButton);
+    standardActionsRow.appendChild(newGameButton);
 
+    // "Like" button
     if (_userThemeControlsManagerRef && typeof _userThemeControlsManagerRef.handleLikeThemeOnLandingClick === 'function') {
         const likeButton = document.createElement("button");
-        likeButton.id = "like-theme-button"; // Ensure this ID is unique if multiple instances could exist, or handle differently
+        likeButton.id = "like-theme-button";
         likeButton.classList.add("ui-button", "icon-button", "like-theme-button");
-
         if (themeManifestEntry.playable) {
             const isCurrentlyLiked = getLikedThemes().includes(themeId);
             const likeIconSrc = isCurrentlyLiked ? "images/app/icon_heart_filled.svg" : "images/app/icon_heart_empty.svg";
             const likeAltTextKey = isCurrentlyLiked ? "aria_label_unlike_theme" : "aria_label_like_theme";
             const likeAltText = getUIText(likeAltTextKey, {}, { viewContext: 'landing' });
-
             likeButton.innerHTML = `<img src="${likeIconSrc}" alt="${likeAltText}" class="like-icon">`;
             likeButton.setAttribute("aria-label", likeAltText);
             likeButton.title = likeAltText;
             if (isCurrentlyLiked) likeButton.classList.add("liked");
-
             likeButton.addEventListener("click", () => {
                  _userThemeControlsManagerRef.handleLikeThemeOnLandingClick(themeId, likeButton);
-                 // Re-render action buttons to reflect the new like state
-                 renderLandingPageActionButtons(themeId);
+                 renderLandingPageActionButtons(themeId); // Re-render to update button state
             });
             likeButton.disabled = false;
         } else {
@@ -377,25 +404,22 @@ export function renderLandingPageActionButtons(themeId) {
             likeButton.classList.add("disabled");
             likeButton.disabled = true;
         }
-        landingThemeActions.appendChild(likeButton);
+        standardActionsRow.appendChild(likeButton);
     }
 
-    const currentUser = getCurrentUser();
+    // "Configure Shards" icon button
     const themeStatus = getShapedThemeData().get(themeId);
-
     const configureShardsIconButton = document.createElement("button");
     configureShardsIconButton.id = "configure-shards-icon-button";
     configureShardsIconButton.classList.add("ui-button", "icon-button", "configure-shards-button");
-
     const shardIconImg = document.createElement("img");
     shardIconImg.classList.add("shard-icon");
-
-    let shardIconSrc = "images/app/icon_world_shard_empty.svg"; // Default to empty
+    let shardIconSrc = "images/app/icon_world_shard_empty.svg";
     let shardTooltipKey = "tooltip_no_fragments_to_configure";
     let canConfigureShards = false;
 
     if (currentUser && themeStatus && themeStatus.hasShards) {
-        shardIconSrc = "images/app/icon_world_shard.svg"; // Filled icon
+        shardIconSrc = "images/app/icon_world_shard.svg";
         shardTooltipKey = "tooltip_configure_fragments";
         canConfigureShards = true;
     }
@@ -416,7 +440,9 @@ export function renderLandingPageActionButtons(themeId) {
         configureShardsIconButton.disabled = true;
         configureShardsIconButton.classList.add("disabled");
     }
-    landingThemeActions.appendChild(configureShardsIconButton);
+    standardActionsRow.appendChild(configureShardsIconButton);
+
+    landingThemeActions.appendChild(standardActionsRow);
 }
 
 /**

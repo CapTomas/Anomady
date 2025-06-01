@@ -24,6 +24,8 @@ import { log, LOG_LEVEL_INFO, LOG_LEVEL_DEBUG, LOG_LEVEL_ERROR, LOG_LEVEL_WARN }
 let _authService = null;
 let _modalManager = null;
 let _gameControllerRef = null; // For actions like switching to landing view on logout
+let _userThemeControlsManagerRef = null;
+let _landingPageManagerRef = null;
 /**
  * Initializes the AuthUiManager with necessary dependencies.
  * @param {object} dependencies - Object containing references to other modules.
@@ -39,7 +41,9 @@ export function initAuthUiManager(dependencies) {
     _authService = dependencies.authService;
     _modalManager = dependencies.modalManager;
     _gameControllerRef = dependencies.gameController;
-    log(LOG_LEVEL_INFO, "AuthUiManager initialized.");
+    _userThemeControlsManagerRef = dependencies.userThemeControlsManager;
+    _landingPageManagerRef = dependencies.landingPageManager;
+    log(LOG_LEVEL_INFO, "AuthUiManager initialized with all dependencies.");
 }
 
 /**
@@ -109,10 +113,27 @@ export function showAuthModal(initialMode = 'login') {
                 const { authEmail, authPassword } = formData;
                 try {
                     if (isLogin) {
+                        const themeActiveBeforeLogin = state.getCurrentTheme(); // CAPTURE THEME STATE BEFORE LOGIN changes it
+
                         const userData = await _authService.handleLogin(authEmail, authPassword);
-                        // handleLogin in authService updates state and local storage
+                        // handleLogin in authService updates state and local storage (and clears theme for anon users)
                         updateAuthUIState(); // Reflect logged-in state immediately
-                        // Caller (app.js) will handle further UI changes like loading user themes/games
+
+                        // After login, trigger data fetching and UI updates for the new user
+                        if (_userThemeControlsManagerRef && _landingPageManagerRef) {
+                           log(LOG_LEVEL_INFO, "Login successful, fetching user-specific theme data and updating UI.");
+                           await _userThemeControlsManagerRef.loadUserThemeInteractions();
+                           await _landingPageManagerRef.fetchShapedWorldStatusAndUpdateGrid();
+                        } else {
+                            log(LOG_LEVEL_WARN, "User theme controls or landing page manager not available in authUiManager to refresh after login.");
+                        }
+
+                        // If a theme was active (anonymous game) before login, switch to landing page.
+                        // Now themeActiveBeforeLogin correctly holds the theme ID if one was active.
+                        if (themeActiveBeforeLogin && _gameControllerRef && typeof _gameControllerRef.switchToLanding === 'function') {
+                            log(LOG_LEVEL_INFO, `User logged in while anonymous game for theme '${themeActiveBeforeLogin}' was active. Switching to landing page.`);
+                            await _gameControllerRef.switchToLanding();
+                        }
                         return { success: true, data: userData }; // Modal will close
                     } else { // register
                         const defaultPreferences = {

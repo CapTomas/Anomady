@@ -17,6 +17,7 @@ import { getUIText } from '../services/localizationService.js';
 import { log, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
 import { getCurrentTheme } from '../core/state.js'; // To pass theme context for localization
 
+let _activeOverlayClickListener = null;
 let currentModalResolve = null;
 const customModalFormContainer = document.createElement('div'); // Dynamically added/removed
 customModalFormContainer.id = 'custom-modal-form-container';
@@ -27,25 +28,43 @@ customModalFormContainer.id = 'custom-modal-form-container';
  */
 export function hideCustomModal() {
     if (customModalOverlay) {
-        customModalOverlay.classList.remove("active");
-        // Clear dynamic content
-        if (customModalInput) customModalInput.value = "";
-        if (customModalInputContainer) customModalInputContainer.style.display = "none";
+        // 1. Clear all dynamic content from the modal structure first.
+        if (customModalTitle) customModalTitle.textContent = "";
+        if (customModalMessage) customModalMessage.innerHTML = ""; // Clears message, and form/input containers if they are children
+        if (customModalActions) customModalActions.innerHTML = "";
 
-        customModalFormContainer.innerHTML = ""; // Clear dynamically added form fields
-        if (customModalMessage && customModalMessage.contains(customModalFormContainer)) {
-            customModalMessage.removeChild(customModalFormContainer);
+        // Explicitly reset standalone prompt input value
+        if (customModalInput) customModalInput.value = "";
+
+        // Ensure input container and form container are handled if they were not children of customModalMessage
+        if (customModalInputContainer && customModalInputContainer.style.display !== "none") {
+            if (!customModalMessage || !customModalMessage.contains(customModalInputContainer)) {
+                customModalInputContainer.style.display = "none";
+            }
         }
-        if (customModalMessage && customModalInputContainer && customModalMessage.contains(customModalInputContainer)) {
-            customModalMessage.removeChild(customModalInputContainer); // Ensure input is removed if it was added
+        if (customModalFormContainer && customModalFormContainer.innerHTML !== "") {
+            if (!customModalMessage || !customModalMessage.contains(customModalFormContainer)) {
+                 customModalFormContainer.innerHTML = "";
+            }
         }
-        // Clear any persistent error messages
+        // Clear any persistent error messages that might have been added to customModalMessage
         const errorDisplay = customModalMessage ? customModalMessage.querySelector('.modal-error-display') : null;
         if (errorDisplay) errorDisplay.remove();
 
-        log(LOG_LEVEL_DEBUG, "Custom modal hidden.");
+
+        // 2. Remove the overlay click listener.
+        if (_activeOverlayClickListener) {
+            customModalOverlay.removeEventListener('click', _activeOverlayClickListener);
+            _activeOverlayClickListener = null;
+        }
+
+        // 3. Now that the modal is visually empty and listeners are cleaned, start the fade-out.
+        customModalOverlay.classList.remove("active");
+
+        log(LOG_LEVEL_DEBUG, "Custom modal content cleared, event listener removed, and fade-out initiated.");
     }
-    currentModalResolve = null; // Clear any pending promise resolver
+    // 4. Clear any pending promise resolver.
+    currentModalResolve = null;
 }
 
 /**
@@ -297,16 +316,42 @@ export function showCustomModal(options) {
         }
 
         customModalOverlay.classList.add("active");
+
+        // Add click listener to overlay for "click outside to close"
+        if (_activeOverlayClickListener) { // Remove any old listener first
+            customModalOverlay.removeEventListener('click', _activeOverlayClickListener);
+        }
+        _activeOverlayClickListener = (event) => {
+            if (event.target === customModalOverlay) {
+                log(LOG_LEVEL_DEBUG, "Modal overlay clicked, attempting to close modal.");
+                if (currentModalResolve) {
+                    // For all modal types, an overlay click should generally signify a dismissal without explicit choice.
+                    // We resolve with `null`.
+                    // Specific wrappers (like showGenericConfirmModal) or direct callers can interpret `null`
+                    // as a cancellation or negative response if appropriate for their context.
+                    // For example, showGenericConfirmModal converts a null result to `false`.
+                    // gameController.initiateNewGameSessionFlow specifically checks for `null` to abort.
+                    currentModalResolve(null);
+                }
+                hideCustomModal();
+            }
+        };
+        customModalOverlay.addEventListener('click', _activeOverlayClickListener);
+
         // Focus logic
         if ((type === "form" || (formFields && formFields.length > 0)) && customModalFormContainer.querySelector('input:not([type=hidden])')) {
             setTimeout(() => {
                 const firstInput = customModalFormContainer.querySelector('input:not([type=hidden])');
-                if (firstInput) firstInput.focus();
+                if (firstInput && document.body.contains(firstInput)) firstInput.focus();
             }, 50);
         } else if (type === "prompt" && customModalInput) {
-            setTimeout(() => customModalInput.focus(), 50);
-        } else if (customModalActions.firstChild && customModalActions.firstChild.focus) {
-             setTimeout(() => customModalActions.firstChild.focus(), 50); // Focus first button as fallback
+            setTimeout(() => {
+                if(document.body.contains(customModalInput)) customModalInput.focus();
+            }, 50);
+        } else if (customModalActions.firstChild && typeof customModalActions.firstChild.focus === 'function') {
+             setTimeout(() => {
+                if(document.body.contains(customModalActions.firstChild)) customModalActions.firstChild.focus();
+             }, 50); // Focus first button as fallback
         }
     });
 }

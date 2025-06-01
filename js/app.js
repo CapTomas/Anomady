@@ -172,7 +172,9 @@ async function initializeApp() {
     authUiManager.initAuthUiManager({
         authService, // For performing auth actions
         modalManager, // For showing auth forms
-        gameController // For actions like switching to landing on logout
+        gameController, // For actions like switching to landing on logout
+        userThemeControlsManager, // For updating top bar icons after login
+        landingPageManager // For updating landing page (e.g., shard icons) after login
     });
     dashboardManager.initDashboardManagerScrollEvents();
 

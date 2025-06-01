@@ -226,10 +226,17 @@ export async function resumeGameSession(themeId) {
             state.setLastKnownEvolvedWorldLore(loadedState.game_history_lore || "");
 
             storyLogManager.clearStoryLogDOM();
-            state.getGameHistory().forEach((turn) => {
-                if (turn.role === "user") {
-                    storyLogManager.addMessageToLog(turn.parts[0].text, "player");
-                } else if (turn.role === "model") {
+                state.getGameHistory().forEach((turn, index) => { // Added index
+                    if (turn.role === "user") {
+                        // Suppress the specific "Start game as..." message if it's the first user turn being replayed from history.
+                        const textToLog = turn.parts[0].text;
+                        const isLikelyInitialSystemAction = textToLog.startsWith("Start game as ") && textToLog.includes(". Theme: ") && textToLog.includes(". Evolved World: ");
+                        if (index === 0 && isLikelyInitialSystemAction) {
+                            log(LOG_LEVEL_DEBUG, "Suppressing initial 'Start game as...' message display during game resume.");
+                        } else {
+                            storyLogManager.addMessageToLog(textToLog, "player");
+                        }
+                    } else if (turn.role === "model") {
                     try {
                         const modelResponse = JSON.parse(turn.parts[0].text);
                         storyLogManager.addMessageToLog(modelResponse.narrative, "gm");
@@ -257,10 +264,8 @@ export async function resumeGameSession(themeId) {
                 dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder();
                 dom.playerActionInput.focus();
             }
-             const themeDisplayName = themeService.getThemeConfig(themeId)?.name_key
-                ? localizationService.getUIText(themeService.getThemeConfig(themeId).name_key, {}, { explicitThemeContext: themeId })
-                : themeId;
-            storyLogManager.addMessageToLog(localizationService.getUIText("system_session_resumed", { PLAYER_ID: state.getPlayerIdentifier(), THEME_NAME: themeDisplayName }), "system");
+            log(LOG_LEVEL_INFO, `Session resumed for player ${state.getPlayerIdentifier()}, theme ${themeId}. "Welcome back" message suppressed.`);
+
 
 
         } catch (error) {

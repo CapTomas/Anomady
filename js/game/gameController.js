@@ -145,21 +145,76 @@ export async function handleIdentifierSubmission(identifier) {
  * Initializes a new game session after user confirmation and world type selection.
  * @param {string} themeId - The ID of the theme to start.
  */
+/**
+ * Initializes a new game session after user confirmation and world type selection.
+ * @param {string} themeId - The ID of the theme to start.
+ */
 export async function initiateNewGameSessionFlow(themeId) {
     log(LOG_LEVEL_INFO, `Initiating new game session flow for theme: ${themeId}`);
     const currentUser = state.getCurrentUser();
-    const themeStatus = currentUser ? state.getShapedThemeData().get(themeId) : null;
-    let useEvolvedWorld = false;
+    const themeConfig = themeService.getThemeConfig(themeId);
+    const themeDisplayName = themeConfig?.name_key
+        ? localizationService.getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeId })
+        : themeId;
 
-    if (currentUser && themeStatus && themeStatus.hasShards && themeStatus.activeShardCount > 0) {
-        useEvolvedWorld = true;
-        log(LOG_LEVEL_INFO, `User has ${themeStatus.activeShardCount} active shards for theme ${themeId}. Starting Evolved World by default.`);
-    } else {
-        useEvolvedWorld = false;
-        log(LOG_LEVEL_INFO, `No active shards for theme ${themeId}, or user not logged in/no shards. Starting Original World by default.`);
+    // Determine if confirmation is needed
+    let needsConfirmation = false;
+    if (currentUser && state.getPlayingThemes().includes(themeId)) {
+        // Logged-in user has a saved/playing state for this theme
+        needsConfirmation = true;
+    } else if (!currentUser && state.getCurrentTheme() === themeId && state.getGameHistory().length > 0) {
+        // Anonymous user has active progress in this specific theme
+        needsConfirmation = true;
     }
 
+    if (needsConfirmation) {
+        const themeSpecificMessageKey = `confirm_new_game_message_${themeId.toLowerCase()}`;
+        let messageKeyToUse = themeSpecificMessageKey;
+
+        const testThemeMessage = localizationService.getUIText(themeSpecificMessageKey, { THEME_NAME: themeDisplayName }, { explicitThemeContext: themeId });
+        if (testThemeMessage === themeSpecificMessageKey) { // Key not found in theme's texts.json
+             messageKeyToUse = "confirm_new_game_message_theme"; // Fallback to global
+        }
+
+
+        const confirmed = await modalManager.showGenericConfirmModal({
+            titleKey: "confirm_new_game_title_theme",
+            messageKey: messageKeyToUse,
+            replacements: { THEME_NAME: themeDisplayName },
+            explicitThemeContext: themeId
+        });
+
+        if (!confirmed) {
+            log(LOG_LEVEL_INFO, "User cancelled starting new game.");
+            return;
+        }
+        log(LOG_LEVEL_INFO, "User confirmed starting new game. Proceeding to delete old state if any.");
+    }
+    if (currentUser && currentUser.token) {
+        try {
+            log(LOG_LEVEL_DEBUG, `New game flow for logged-in user. Attempting to delete any existing game state for theme ${themeId}.`);
+            await apiService.deleteGameState(currentUser.token, themeId);
+            log(LOG_LEVEL_INFO, `Existing game state for theme ${themeId} (if any) deleted from backend.`);
+        } catch (error) {
+            if (error.status === 404 && error.code === 'GAME_STATE_NOT_FOUND_FOR_DELETE') {
+                log(LOG_LEVEL_INFO, `No existing game state found on backend for theme ${themeId} to delete. Proceeding with new game.`);
+            } else {
+                log(LOG_LEVEL_WARN, `Could not delete existing game state for theme ${themeId} on backend. Proceeding with new game, but an old save might persist:`, error.message);
+            }
+        }
+    }
+
+    const themeStatus = currentUser ? state.getShapedThemeData().get(themeId) : null;
+    let useEvolvedWorld = false;
+    if (currentUser && themeStatus && themeStatus.hasShards && themeStatus.activeShardCount > 0) {
+        log(LOG_LEVEL_INFO, `User has ${themeStatus.activeShardCount} active shards for theme ${themeId}. Setting up Evolved World.`);
+        useEvolvedWorld = true;
+    } else {
+        log(LOG_LEVEL_INFO, `No active shards for theme ${themeId}, or user not logged in/no shards. Setting up Original World.`);
+        useEvolvedWorld = false;
+    }
     state.setCurrentNewGameSettings({ useEvolvedWorld });
+
     await _setupNewGameEnvironment(themeId);
 }
 

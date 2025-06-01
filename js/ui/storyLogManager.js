@@ -7,6 +7,7 @@ import { storyLog, storyLogViewport } from './domElements.js';
 import { formatDynamicText } from './uiUtils.js'; // For text formatting like italics
 import { AUTOSCROLL_THRESHOLD } from '../core/config.js';
 import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARN } from '../core/logger.js';
+import { addTurnToGameHistory as stateAddTurnToGameHistory } from '../core/state.js';
 import { getCurrentUser, getPlayerIdentifier } from '../core/state.js';
 
 let userHasManuallyScrolledLog = false;

@@ -54,6 +54,8 @@ export const globalTextData = {
             "alert_title_error": "Error",
             "alert_title_notice": "Notice",
             "confirm_new_game_title": "Confirm New Game",
+            "confirm_new_game_title_theme": "Confirm New Game",
+            "confirm_new_game_message_theme": "Starting a new game in {THEME_NAME} will end your current story. Any unsaved progress and your existing saved state for this theme will be permanently lost. Are you sure you wish to begin anew?",
             "tooltip_theme_playing": "{THEME_NAME}",
             "tooltip_theme_liked": "{THEME_NAME}",
             // --- Modal Dialogs ---
@@ -241,6 +243,8 @@ export const globalTextData = {
             "alert_title_error": "Chyba",
             "alert_title_notice": "Upozornění",
             "confirm_new_game_title": "Potvrdit Novou Hru",
+            "confirm_new_game_title_theme": "Potvrdit novou hru",
+            "confirm_new_game_message_theme": "Zahájením nové hry v {THEME_NAME} ukončíte svůj současný příběh. Veškerý neuložený postup a váš stávající uložený stav pro toto téma budou trvale ztraceny. Opravdu si přejete začít znovu?",
             "tooltip_theme_playing": "{THEME_NAME}",
             "tooltip_theme_liked": "{THEME_NAME}",
             // --- Modal Dialogs ---

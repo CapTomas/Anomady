@@ -10,6 +10,7 @@ import { getUIText } from '../services/localizationService.js';
 import { showCustomModal, hideCustomModal, displayModalError } from './modalManager.js';
 import { getThemeConfig } from '../services/themeService.js'; // To get theme display name
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_DEBUG } from '../core/logger.js';
+import { attachTooltip } from './tooltipManager.js';
 
 // Dependencies to be injected if this manager needs to trigger updates elsewhere
 let _landingPageManagerRef = null;
@@ -129,7 +130,8 @@ export async function showConfigureShardsModal(themeId) {
             const shatterButton = document.createElement('button');
             shatterButton.className = 'ui-button danger small shard-shatter-button';
             shatterButton.textContent = getUIText("button_shatter_shard");
-            shatterButton.title = getUIText("tooltip_shatter_shard");
+            const shatterTooltipKey = "tooltip_shatter_shard";
+            attachTooltip(shatterButton, shatterTooltipKey);
             shatterButton.addEventListener('click', async () => {
                 const confirmed = await showGenericConfirmModal({
                     titleKey: "confirm_shatter_shard_title",

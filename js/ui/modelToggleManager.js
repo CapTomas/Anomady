@@ -18,6 +18,7 @@ import {
 import { getUIText } from '../services/localizationService.js';
 import * as authService from '../services/authService.js'; // For updating user preferences
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_DEBUG } from '../core/logger.js';
+import { attachTooltip } from './tooltipManager.js';
 
 // Optional dependency for logging model changes to the story log
 let _storyLogManagerRef = null;
@@ -54,7 +55,8 @@ export function updateModelToggleButtonAppearance() {
     modelToggleButton.textContent = getUIText(buttonTextKey, { MODEL_NAME: currentModel });
     const ariaLabelText = getUIText(ariaLabelKey, { MODEL_NAME: currentModel });
     modelToggleButton.setAttribute("aria-label", ariaLabelText);
-    modelToggleButton.title = ariaLabelText; // Tooltip
+    modelToggleButton.removeAttribute('title');
+    attachTooltip(modelToggleButton, ariaLabelKey, { MODEL_NAME: currentModel });
 
     log(LOG_LEVEL_DEBUG, `Model toggle button appearance updated. Current model: ${currentModel}`);
 }

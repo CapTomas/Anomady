@@ -41,7 +41,7 @@ export const globalTextData = {
             // --- Buttons & Actions ---
             "button_new_game": "New Game",
             "aria_label_new_game": "Start a new game",
-            "close_theme_button_aria_label": "Close {THEME_NAME} session",
+            "close_theme_button_aria_label": "Close",
             "theme_icon_alt_text_playing": "Playing",
             "theme_icon_alt_text_liked": "Favorite",
             "placeholder_name_login": "Enter Identifier...",
@@ -226,7 +226,7 @@ export const globalTextData = {
             // --- Buttons & Actions ---
             "button_new_game": "Nová Hra",
             "aria_label_new_game": "Začít novou hru",
-            "close_theme_button_aria_label": "Zavřít relaci {THEME_NAME}",
+            "close_theme_button_aria_label": "Zavřít",
             "theme_icon_alt_text_playing": "Hraje se",
             "theme_icon_alt_text_liked": "Oblíbené",
             "placeholder_name_login": "Zadejte identifikátor...",

@@ -22,6 +22,7 @@ import { getThemeConfig } from '../services/themeService.js';
 import { getUIText } from '../services/localizationService.js';
 import * as apiService from '../core/apiService.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_DEBUG, LOG_LEVEL_WARN } from '../core/logger.js';
+import { attachTooltip } from './tooltipManager.js';
 
 // Dependencies to be injected by app.js or a higher-level orchestrator
 let _gameControllerRef = null;
@@ -86,11 +87,27 @@ function _createThemeTopbarIconElement(themeId, type) {
     button.dataset.interactionType = type;
 
     const themeNameText = getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeId });
-    let statusText = "";
-    if (type === "playing") statusText = getUIText("theme_icon_alt_text_playing");
-    else if (type === "liked") statusText = getUIText("theme_icon_alt_text_liked");
-    button.title = `${themeNameText}${statusText ? ` (${statusText})` : ""}`;
-    button.setAttribute("aria-label", button.title);
+    let ariaLabelValue = themeNameText; // Default aria-label
+    let tooltipKeyForAttach;
+    let tooltipReplacementsForAttach = {};
+    let statusTextForAriaDisplay = "";
+
+    if (type === "playing") {
+        statusTextForAriaDisplay = getUIText("theme_icon_alt_text_playing");
+        tooltipKeyForAttach = themeConfig.name_key; // Tooltip shows theme name
+    } else if (type === "liked") {
+        statusTextForAriaDisplay = getUIText("theme_icon_alt_text_liked");
+        tooltipKeyForAttach = themeConfig.name_key; // Tooltip also shows theme name
+    }
+
+    if (statusTextForAriaDisplay) {
+        ariaLabelValue = `${themeNameText} (${statusTextForAriaDisplay})`;
+    }
+
+    button.setAttribute("aria-label", ariaLabelValue);
+    if (tooltipKeyForAttach) {
+        attachTooltip(button, tooltipKeyForAttach, tooltipReplacementsForAttach, { explicitThemeContext: themeId });
+    }
 
     const img = document.createElement("img");
     img.src = themeConfig.icon;
@@ -101,8 +118,10 @@ function _createThemeTopbarIconElement(themeId, type) {
     const closeBtn = document.createElement("button");
     closeBtn.classList.add("theme-button-close");
     closeBtn.innerHTML = "×";
-    closeBtn.title = getUIText("close_theme_button_aria_label", { THEME_NAME: themeNameText });
-    closeBtn.setAttribute("aria-label", closeBtn.title);
+    const closeButtonAriaLabelKey = "close_theme_button_aria_label";
+    const closeButtonAriaLabelText = getUIText(closeButtonAriaLabelKey, { THEME_NAME: themeNameText });
+    closeBtn.setAttribute("aria-label", closeButtonAriaLabelText);
+    closeBtn.removeAttribute('title');
     closeBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         handleCloseThemeIconClick(themeId, type);
@@ -207,34 +226,61 @@ export async function handleLikeThemeOnLandingClick(themeId, likeButtonElement) 
 
 /**
  * Handles closing a theme via its top bar icon's close button.
- * Removes it from "playing" and "liked" lists.
+ * Removes it from "playing" and "liked" lists based on the icon type.
  * @param {string} themeId - The ID of the theme to close.
  * @param {'playing'|'liked'} interactionType - The type of icon that was closed.
  */
 export async function handleCloseThemeIconClick(themeId, interactionType) {
     log(LOG_LEVEL_INFO, `Close icon clicked for theme ${themeId} (type: ${interactionType})`);
     const wasCurrentlyPlayingGame = getStateCurrentTheme() === themeId;
+    let payload = {};
+    let apiSuccess = true; // Assume success for optimistic updates if no API call needed / user not logged in
 
-    const payload = { is_playing: false, is_liked: false }; // Assume we remove from both
-
-    // Optimistically update local state
-    const newPlaying = getPlayingThemes().filter(id => id !== themeId);
-    setPlayingThemes(newPlaying);
-    const newLiked = getLikedThemes().filter(id => id !== themeId);
-    setLikedThemes(newLiked);
-
-    const apiSuccess = await _updateThemeInteractionOnBackend(themeId, payload);
-
-    if (!apiSuccess) {
-        // Revert state if API failed (complex, as it involves two lists)
-        // For simplicity now, we'll leave the optimistic update, but log error.
-        // A robust solution might re-fetch interactions or use a more complex revert.
-        log(LOG_LEVEL_ERROR, `API update failed on closing ${themeId}. Local state might be temporarily inconsistent with backend.`);
+    if (interactionType === "playing") {
+        // Remove from playing list, keep liked status
+        const playing = getPlayingThemes();
+        if (playing.includes(themeId)) {
+            setPlayingThemes(playing.filter(id => id !== themeId));
+        }
+        payload = { is_playing: false };
+        // is_liked status is intentionally not sent to preserve it
+    } else if (interactionType === "liked") {
+        // Remove from liked list
+        const liked = getLikedThemes();
+        if (liked.includes(themeId)) {
+            setLikedThemes(liked.filter(id => id !== themeId));
+        }
+        payload = { is_liked: false };
+        // is_playing status is intentionally not sent (should be false anyway for a purely liked icon)
+    } else {
+        log(LOG_LEVEL_WARN, `Unknown interactionType '${interactionType}' in handleCloseThemeIconClick for theme ${themeId}. No action taken.`);
+        return; // Should not happen with current UI
     }
 
-    updateTopbarThemeIcons(); // Update UI immediately
+    // Update backend if user is logged in
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser.token) {
+        apiSuccess = await _updateThemeInteractionOnBackend(themeId, payload);
+        if (!apiSuccess) {
+            log(LOG_LEVEL_ERROR, `API update failed on closing ${themeId}. Local state might be temporarily inconsistent with backend.`);
+            // Revert optimistic UI changes if API fails.
+            // This is complex because we'd need to know the original state of both playing and liked.
+            // For now, we'll rely on a full refresh from loadUserThemeInteractions() if critical.
+            // Simple revert for the specific list modified:
+            if (interactionType === "playing" && !getPlayingThemes().includes(themeId)) {
+                setPlayingThemes([...getPlayingThemes(), themeId]);
+            } else if (interactionType === "liked" && !getLikedThemes().includes(themeId)) {
+                setLikedThemes([...getLikedThemes(), themeId]);
+            }
+        }
+    }
 
-    if (wasCurrentlyPlayingGame) {
+    updateTopbarThemeIcons(); // Update UI immediately based on (potentially optimistic) local state
+
+    if (wasCurrentlyPlayingGame && interactionType === "playing") {
+        // Only switch to landing if the *active game* was closed.
+        // If a non-active "playing" icon was closed (e.g., from a multi-session feature not yet implemented),
+        // or a "liked" icon was closed, it shouldn't force a switch from the current game.
         log(LOG_LEVEL_INFO, `Closed active game theme ${themeId}. Switching to landing view.`);
         if (_gameControllerRef && typeof _gameControllerRef.switchToLanding === 'function') {
             await _gameControllerRef.switchToLanding();
@@ -242,6 +288,7 @@ export async function handleCloseThemeIconClick(themeId, interactionType) {
             log(LOG_LEVEL_ERROR, "GameController or switchToLanding method not available for redirect.");
         }
     } else if (document.body.classList.contains('landing-page-active') && getCurrentLandingGridSelection() === themeId) {
+        // If on landing page and the closed theme was the selected one, refresh its action buttons
         if (_landingPageManagerRef && typeof _landingPageManagerRef.renderLandingPageActionButtons === 'function') {
             _landingPageManagerRef.renderLandingPageActionButtons(themeId);
         }

@@ -28,6 +28,8 @@ import * as modelToggleManager from './ui/modelToggleManager.js';
 import * as languageManager from './ui/languageManager.js';
 import * as dashboardManager from './ui/dashboardManager.js'; // For languageManager dependency
 import * as worldShardsModalManager from './ui/worldShardsModalManager.js';
+import * as tooltipManager from './ui/tooltipManager.js';
+
 
 
 // --- Game Orchestration ---
@@ -177,6 +179,7 @@ async function initializeApp() {
         landingPageManager // For updating landing page (e.g., shard icons) after login
     });
     dashboardManager.initDashboardManagerScrollEvents();
+    tooltipManager.initTooltipManager();
 
 
     // modalManager itself doesn't have complex dependencies for its own init

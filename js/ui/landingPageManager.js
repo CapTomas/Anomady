@@ -39,6 +39,7 @@ import * as apiService from '../core/apiService.js';
 import { THEMES_MANIFEST } from '../data/themesManifest.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
 import { formatDynamicText, setGMActivityIndicator } from './uiUtils.js';
+import { attachTooltip } from './tooltipManager.js';
 import { animatePanelExpansion } from './dashboardManager.js';
 
 // Dependencies to be injected by app.js or a higher-level orchestrator
@@ -227,10 +228,10 @@ export async function renderThemeGrid() {
         const button = document.createElement("button");
         button.classList.add("theme-grid-icon");
         button.dataset.theme = themeConfig.id;
-
-        const themeFullName = getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeConfig.id, viewContext: 'landing' });
-        button.title = themeFullName;
-        button.setAttribute("aria-label", themeFullName);
+        const themeFullNameKey = themeConfig.name_key;
+        const themeFullNameText = getUIText(themeFullNameKey, {}, { explicitThemeContext: themeConfig.id, viewContext: 'landing' });
+        button.setAttribute("aria-label", themeFullNameText);
+        button.removeAttribute('title');
 
         const img = document.createElement("img");
         img.src = themeConfig.icon;
@@ -248,7 +249,8 @@ export async function renderThemeGrid() {
             button.classList.add("theme-grid-icon-shaped");
             const shardIndicator = document.createElement("div");
             shardIndicator.classList.add("shard-indicator-overlay");
-            shardIndicator.title = getUIText("tooltip_shaped_world", { ACTIVE_SHARDS: themeStatus.activeShardCount }, { viewContext: 'landing' });
+            const shardTooltipKey = "tooltip_shaped_world";
+            attachTooltip(shardIndicator, shardTooltipKey, { ACTIVE_SHARDS: themeStatus.activeShardCount }, { viewContext: 'landing' });
             button.appendChild(shardIndicator);
         }
 
@@ -390,7 +392,7 @@ export function renderLandingPageActionButtons(themeId) {
             const likeAltText = getUIText(likeAltTextKey, {}, { viewContext: 'landing' });
             likeButton.innerHTML = `<img src="${likeIconSrc}" alt="${likeAltText}" class="like-icon">`;
             likeButton.setAttribute("aria-label", likeAltText);
-            likeButton.title = likeAltText;
+            attachTooltip(likeButton, likeAltTextKey, {}, { viewContext: 'landing' });
             if (isCurrentlyLiked) likeButton.classList.add("liked");
             likeButton.addEventListener("click", () => {
                  _userThemeControlsManagerRef.handleLikeThemeOnLandingClick(themeId, likeButton);
@@ -400,7 +402,7 @@ export function renderLandingPageActionButtons(themeId) {
         } else {
             likeButton.innerHTML = `<img src="images/app/icon_heart_disabled.svg" alt="${getUIText("aria_label_like_theme", {}, { viewContext: 'landing' })}" class="like-icon">`;
             likeButton.setAttribute("aria-label", getUIText("aria_label_like_theme", {}, { viewContext: 'landing' }));
-            likeButton.title = getUIText("coming_soon_button", {}, { viewContext: 'landing' });
+            attachTooltip(likeButton, "coming_soon_button", {}, { viewContext: 'landing' });
             likeButton.classList.add("disabled");
             likeButton.disabled = true;
         }
@@ -427,8 +429,8 @@ export function renderLandingPageActionButtons(themeId) {
     shardIconImg.src = shardIconSrc;
     const shardAltText = getUIText(shardTooltipKey, {}, { viewContext: 'landing' });
     shardIconImg.alt = shardAltText;
-    configureShardsIconButton.title = shardAltText;
     configureShardsIconButton.setAttribute("aria-label", shardAltText);
+    attachTooltip(configureShardsIconButton, shardTooltipKey, {}, { viewContext: 'landing' });
     configureShardsIconButton.appendChild(shardIconImg);
 
     if (canConfigureShards && _gameControllerRef && typeof _gameControllerRef.showConfigureShardsModal === 'function') {

@@ -40,6 +40,7 @@ import * as authService from '../services/authService.js';
 import * // For model toggle button text update
     as modelToggleManager from './modelToggleManager.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_DEBUG } from '../core/logger.js';
+import { attachTooltip } from './tooltipManager.js';
 
 // Dependencies to be injected by app.js or a higher-level orchestrator
 let _storyLogManagerRef = null;
@@ -83,9 +84,10 @@ export function updateLanguageToggleButtonAppearance() {
     const buttonText = getUIText('toggle_language', {}, { viewContext: 'landing', explicitLangForTextItself: otherLang });
 
     languageToggleButton.textContent = buttonText;
-    const ariaLabel = getUIText("toggle_language_aria", {}, { viewContext: 'global' });
-    languageToggleButton.setAttribute("aria-label", ariaLabel);
-    languageToggleButton.title = ariaLabel;
+    const ariaLabelKey = "toggle_language_aria";
+    const ariaLabelText = getUIText(ariaLabelKey, {}, { viewContext: 'global' });
+    languageToggleButton.setAttribute("aria-label", ariaLabelText);
+    attachTooltip(languageToggleButton, ariaLabelKey, {}, { viewContext: 'global' });
 
     log(LOG_LEVEL_DEBUG, `Language toggle button appearance updated. Current app lang: ${currentLang}, button shows: ${buttonText}`);
 }
@@ -190,7 +192,11 @@ export function applyGlobalUITranslations() {
         const key = element.dataset.langKeyAria;
         const viewContext = element.closest('.landing-page-active') ? 'landing' : 'global';
         const explicitThemeContext = element.dataset.themeContext || (viewContext === 'game' ? getCurrentTheme() : null);
-        setAttr(element, 'aria-label', key, {}, { explicitThemeContext, viewContext });
+
+        const ariaText = getUIText(key, {}, { explicitThemeContext, viewContext });
+        element.setAttribute('aria-label', ariaText);
+        element.removeAttribute('title');
+        attachTooltip(element, key, {}, { explicitThemeContext, viewContext });
     });
 
 

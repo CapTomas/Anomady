@@ -113,29 +113,26 @@ export function showAuthModal(initialMode = 'login') {
                 const { authEmail, authPassword } = formData;
                 try {
                     if (isLogin) {
-                        const themeActiveBeforeLogin = state.getCurrentTheme(); // CAPTURE THEME STATE BEFORE LOGIN changes it
+                            const themeActiveBeforeLogin = state.getCurrentTheme(); // CAPTURE THEME STATE BEFORE LOGIN changes it
 
-                        const userData = await _authService.handleLogin(authEmail, authPassword);
-                        // handleLogin in authService updates state and local storage (and clears theme for anon users)
-                        updateAuthUIState(); // Reflect logged-in state immediately
+                            const userData = await _authService.handleLogin(authEmail, authPassword);
+                            // handleLogin in authService updates state and local storage (and clears theme for anon users)
+                            updateAuthUIState(); // Reflect logged-in state immediately
 
-                        // After login, trigger data fetching and UI updates for the new user
-                        if (_userThemeControlsManagerRef && _landingPageManagerRef) {
-                           log(LOG_LEVEL_INFO, "Login successful, fetching user-specific theme data and updating UI.");
-                           await _userThemeControlsManagerRef.loadUserThemeInteractions();
-                           await _landingPageManagerRef.fetchShapedWorldStatusAndUpdateGrid();
-                        } else {
-                            log(LOG_LEVEL_WARN, "User theme controls or landing page manager not available in authUiManager to refresh after login.");
-                        }
+                            // After login, trigger data fetching and UI updates for the new user.
+                            // The actual switch to landing (if needed) will happen in the .then() block after modal closes.
+                            if (_userThemeControlsManagerRef && _landingPageManagerRef) {
+                            log(LOG_LEVEL_INFO, "Login successful, fetching user-specific theme data and updating UI (pre-landing switch).");
+                            await _userThemeControlsManagerRef.loadUserThemeInteractions();
+                            await _landingPageManagerRef.fetchShapedWorldStatusAndUpdateGrid();
+                            } else {
+                                log(LOG_LEVEL_WARN, "User theme controls or landing page manager not available in authUiManager to refresh after login.");
+                            }
 
-                        // If a theme was active (anonymous game) before login, switch to landing page.
-                        // Now themeActiveBeforeLogin correctly holds the theme ID if one was active.
-                        if (themeActiveBeforeLogin && _gameControllerRef && typeof _gameControllerRef.switchToLanding === 'function') {
-                            log(LOG_LEVEL_INFO, `User logged in while anonymous game for theme '${themeActiveBeforeLogin}' was active. Switching to landing page.`);
-                            await _gameControllerRef.switchToLanding();
-                        }
-                        return { success: true, data: userData }; // Modal will close
-                    } else { // register
+                            // Pass themeActiveBeforeLogin along so the .then() block can use it
+                            const resultData = { ...userData, themeActiveBeforeLoginIfAnon: themeActiveBeforeLogin };
+                            return { success: true, data: resultData }; // Modal will close
+                        } else {// register
                         const defaultPreferences = {
                             appLanguage: state.getCurrentAppLanguage(),
                             narrativeLanguage: state.getCurrentNarrativeLanguage(),
@@ -156,22 +153,31 @@ export function showAuthModal(initialMode = 'login') {
                     throw error; // Re-throw for modalManager to display error within the form
                 }
             },
-        }).then(result => {
-            // This .then is after showCustomModal's promise resolves
-            if (result && result.success && result.actionAfterClose === 'showRegistrationSuccessAlert') {
-                const registeredEmail = result.data?.user?.email || '';
-                _modalManager.showCustomModal({
-                    type: "alert",
-                    titleKey: "alert_registration_success_title",
-                    messageKey: "alert_registration_success_check_email_message",
-                    replacements: { USER_EMAIL: registeredEmail },
-                });
-            } else if (result && result.success && currentAuthMode === 'login') {
-                // Login success: modal closed, UI updated by updateAuthUIState earlier.
-                // Further actions like fetching themes will be triggered by app.js or gameController.
-                log(LOG_LEVEL_INFO, "Login successful through modal.");
-            }
-        }).catch(error => {
+        }).then(async result => { // Make the .then callback async
+                if (result && result.success) {
+                    if (result.actionAfterClose === 'showRegistrationSuccessAlert') {
+                        const registeredEmail = result.data?.user?.email || '';
+                        _modalManager.showCustomModal({
+                            type: "alert",
+                            titleKey: "alert_registration_success_title",
+                            messageKey: "alert_registration_success_check_email_message",
+                            replacements: { USER_EMAIL: registeredEmail },
+                        });
+                    } else if (currentAuthMode === 'login') {
+                        log(LOG_LEVEL_INFO, "Login successful through modal. Checking if landing page switch is needed.");
+                        const themeWasActive = result.data?.themeActiveBeforeLoginIfAnon;
+                        if (themeWasActive && _gameControllerRef && typeof _gameControllerRef.switchToLanding === 'function') {
+                            log(LOG_LEVEL_INFO, `AuthUiManager (post-modal): Anonymous game for theme '${themeWasActive}' was active. Switching to landing page.`);
+                            await _gameControllerRef.switchToLanding();
+                        } else {
+                            if (document.body.classList.contains('landing-page-active') && _landingPageManagerRef) {
+                            log(LOG_LEVEL_DEBUG, "AuthUiManager (post-modal): Already on landing or no anon game was active. Ensuring landing page data is fresh.");
+                            await _landingPageManagerRef.fetchShapedWorldStatusAndUpdateGrid();
+                            }
+                        }
+                    }
+                }
+            }).catch(error => {
             if (error && error.handledByCaller) {
                 log(LOG_LEVEL_DEBUG, "Auth modal submission flow diverted (e.g., email not confirmed).");
             } else {

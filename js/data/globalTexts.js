@@ -1,5 +1,10 @@
-// --- UI Text Data (Localization) ---
-const globalTextData = {
+// js/data/globalTexts.js
+/**
+ * @file Stores the globalTextData object for UI localization.
+ * This data is used by the localizationService.
+ */
+
+export const globalTextData = {
     // --- Global UI & System Messages ---
     global: {
         en: {
@@ -30,10 +35,9 @@ const globalTextData = {
             "error_load_prompts_critical": "CRITICAL: Essential game prompts for theme \"{THEME}\" failed to load. Cannot continue.",
             "error_resume_failed_prompts": "Error resuming session: Failed to load essential prompts for theme {THEME}.",
             "error_dashboard_config_missing": "Error: Dashboard configuration is missing for this theme.",
-            "error_critical_manifest_missing": "CRITICAL: Theme manifest (themes-manifest.js) is missing or empty. Application cannot start.",
+            "error_critical_manifest_missing": "CRITICAL: Theme manifest (themesManifest.js) is missing or empty. Application cannot start.",
             "error_initial_theme_data_load_failed": "Error: Failed to load initial data for one or more themes. Some themes may not be available.",
             "error_theme_data_load_failed": "Error: Failed to load required data for theme {THEME_ID}. This theme cannot be started.",
-
             // --- Buttons & Actions ---
             "button_new_game": "New Game",
             "aria_label_new_game": "Start a new game",
@@ -50,7 +54,6 @@ const globalTextData = {
             "alert_title_error": "Error",
             "alert_title_notice": "Notice",
             "confirm_new_game_title": "Confirm New Game",
-
             // --- Modal Dialogs ---
             "modal_ok_button": "OK",
             "modal_confirm_button": "Confirm",
@@ -60,7 +63,6 @@ const globalTextData = {
             "modal_default_title_alert": "Alert",
             "modal_default_title_confirm": "Confirmation",
             "modal_default_title_prompt": "Input Required",
-
             // --- Confirmations & Alerts (General) ---
             "confirm_new_game_generic": "Start new game in {THEME_NAME}? Progress in this theme will be lost.",
             "alert_api_key_required":"Gemini API Key is required. Please refresh and provide a key.",
@@ -70,7 +72,6 @@ const globalTextData = {
             "alert_level_2_display_default": "Condition Elevated",
             "alert_level_3_display_default": "Condition High",
             "alert_level_4_display_default": "Condition Critical",
-
             // --- AI Model Toggle ---
             "label_toggle_model": "AI Model",
             "aria_label_toggle_model_generic": "Toggle AI Model",
@@ -80,14 +81,12 @@ const globalTextData = {
             "aria_label_current_model_free": "Currently using Free AI Model. Switch to Paid Model.",
             "system_model_set_paid": "System: Switched to Paid AI Model ({MODEL_NAME}).",
             "system_model_set_free": "System: Switched to Free AI Model ({MODEL_NAME}).",
-
             // --- Language & System Messages (Core Game/Session) ---
             "system_lang_set_en": "System: UI & Narrative set to ENGLISH.",
             "system_lang_set_cs": "System: UI & Narrative set to CZECH.",
             "system_session_resumed": "Welcome back, {PLAYER_ID}! Session resumed for {THEME_NAME}.",
             "system_theme_set_generic": "System: {THEME_NAME} scenario activated.",
             "system_new_game_initiated": "System: New {THEME_NAME} game sequence initiated.",
-
             // --- Authentication (Login, Registration, Profile, Password Management) ---
             // ------ Login & Registration ------
             "button_login": "Login",
@@ -109,14 +108,12 @@ const globalTextData = {
             "error_api_call_failed": "Operation failed: {ERROR_MSG}",
             "modal_switch_to_register": "Don't have an account? Register",
             "modal_switch_to_login": "Already have an account? Login",
-
             // ------ Session Management & Logout ------
             "button_logout": "Logout",
             "aria_label_logout": "Log out of your account",
             "system_logged_out": "System: You have been logged out.",
             "system_session_restored": "System: Welcome back, {USER_EMAIL}! Your session has been restored.",
             "system_token_expired_logged_out": "System: Your session has expired. Please log in again.",
-
             // ------ User Profile ------
             "button_user_profile": "Profile",
             "aria_label_user_profile": "View your profile",
@@ -132,7 +129,6 @@ const globalTextData = {
             "label_profile_preferences_title": "Preferences",
             "profile_email_confirmed_status": "Confirmed",
             "profile_email_unconfirmed_status": "Not Confirmed (Resend)",
-
             // ------ Password Management (Change & Reset) ------
             "modal_title_change_password": "Change Password",
             "label_current_password": "Current Password",
@@ -155,7 +151,6 @@ const globalTextData = {
             "button_reset_password": "Reset Password",
             "alert_password_reset_success_title": "Password Reset Successful",
             "text_try_request_again": "Please try requesting a new reset link.",
-
             // ------ Email Confirmation ------
             "email_confirmation_status_page_title": "Email Confirmation",
             "email_confirmation_success": "Your email address has been successfully confirmed! You can now log in.",
@@ -171,7 +166,6 @@ const globalTextData = {
             "alert_confirmation_email_resent_message": "A new confirmation email has been sent to your address. Please check your inbox.",
             "modal_title_email_not_confirmed": "Email Not Confirmed",
             "message_email_not_confirmed_instruction": "Your email address {USER_EMAIL} is not yet confirmed. Please check your inbox (and spam folder) for the confirmation link, or click the button below to resend it.",
-
             // --- World Fragments (Shards Management) ---
             "tooltip_shaped_world": "This world has been shaped by your actions ({ACTIVE_SHARDS} active fragments).",
             "button_configure_shards": "Configure World Fragments",
@@ -223,10 +217,9 @@ const globalTextData = {
             "error_load_prompts_critical": "KRITICKÉ: Nepodařilo se načíst základní herní skripty pro téma \"{THEME}\". Nelze pokračovat.",
             "error_resume_failed_prompts": "Chyba obnovení relace: Nepodařilo se načíst základní skripty pro téma {THEME}.",
             "error_dashboard_config_missing": "Chyba: Chybí konfigurace panelu pro toto téma.",
-            "error_critical_manifest_missing": "KRITICKÉ: Manifest témat (themes-manifest.js) chybí nebo je prázdný. Aplikaci nelze spustit.",
+            "error_critical_manifest_missing": "KRITICKÉ: Manifest témat (themesManifest.js) chybí nebo je prázdný. Aplikaci nelze spustit.",
             "error_initial_theme_data_load_failed": "Chyba: Nepodařilo se načíst počáteční data pro jedno či více témat. Některá témata nemusí být dostupná.",
             "error_theme_data_load_failed": "Chyba: Nepodařilo se načíst požadovaná data pro téma {THEME_ID}. Toto téma nelze spustit.",
-
             // --- Buttons & Actions ---
             "button_new_game": "Nová Hra",
             "aria_label_new_game": "Začít novou hru",
@@ -243,7 +236,6 @@ const globalTextData = {
             "alert_title_error": "Chyba",
             "alert_title_notice": "Upozornění",
             "confirm_new_game_title": "Potvrdit Novou Hru",
-
             // --- Modal Dialogs ---
             "modal_ok_button": "OK",
             "modal_confirm_button": "Potvrdit",
@@ -253,7 +245,6 @@ const globalTextData = {
             "modal_default_title_alert": "Upozornění",
             "modal_default_title_confirm": "Potvrzení",
             "modal_default_title_prompt": "Vyžadován vstup",
-
             // --- Confirmations & Alerts (General) ---
             "confirm_new_game_generic": "Začít novou hru v {THEME_NAME}? Postup v tomto tématu bude ztracen.",
             "alert_api_key_required":"Je vyžadován Gemini API klíč. Obnovte stránku a zadejte klíč.",
@@ -263,7 +254,6 @@ const globalTextData = {
             "alert_level_2_display_default": "Stav Zvýšený",
             "alert_level_3_display_default": "Stav Vysoký",
             "alert_level_4_display_default": "Stav Kritický",
-
             // --- AI Model Toggle ---
             "label_toggle_model": "AI Model",
             "aria_label_toggle_model_generic": "Přepnout AI Model",
@@ -273,14 +263,12 @@ const globalTextData = {
             "aria_label_current_model_free": "Používáte Model Zdarma. Přepnout na Placený Model.",
             "system_model_set_paid": "Systém: Přepnuto na Placený AI Model ({MODEL_NAME}).",
             "system_model_set_free": "Systém: Přepnuto na Model Zdarma ({MODEL_NAME}).",
-
             // --- Language & System Messages (Core Game/Session) ---
             "system_lang_set_en": "Systém: UI a Příběh nastaveny na ANGLIČTINU.",
             "system_lang_set_cs": "Systém: UI a Příběh nastaveny na ČEŠTINU.",
             "system_session_resumed": "Vítejte zpět, {PLAYER_ID}! Relace obnovena pro {THEME_NAME}.",
             "system_theme_set_generic": "Systém: Scénář {THEME_NAME} aktivován.",
             "system_new_game_initiated": "Systém: Zahájena sekvence nové hry ({THEME_NAME}).",
-
             // --- Authentication (Login, Registration, Profile, Password Management) ---
             // ------ Login & Registration ------
             "button_login": "Přihlásit se",
@@ -302,14 +290,12 @@ const globalTextData = {
             "error_api_call_failed": "Operace selhala: {ERROR_MSG}",
             "modal_switch_to_register": "Nemáte účet? Registrovat se",
             "modal_switch_to_login": "Již máte účet? Přihlásit se",
-
             // ------ Session Management & Logout ------
             "button_logout": "Odhlásit se",
             "aria_label_logout": "Odhlásit se z vašeho účtu",
             "system_logged_out": "Systém: Byli jste odhlášeni.",
             "system_session_restored": "Systém: Vítejte zpět, {USER_EMAIL}! Vaše relace byla obnovena.",
             "system_token_expired_logged_out": "Systém: Platnost vaší relace vypršela. Přihlaste se prosím znovu.",
-
             // ------ User Profile ------
             "button_user_profile": "Profil",
             "aria_label_user_profile": "Zobrazit váš profil",
@@ -325,7 +311,6 @@ const globalTextData = {
             "label_profile_preferences_title": "Předvolby",
             "profile_email_confirmed_status": "Potvrzeno",
             "profile_email_unconfirmed_status": "Nepotvrzeno (Odeslat znovu)",
-
             // ------ Password Management (Change & Reset) ------
             "modal_title_change_password": "Změnit Heslo",
             "label_current_password": "Současné Heslo",
@@ -348,7 +333,6 @@ const globalTextData = {
             "button_reset_password": "Obnovit Heslo",
             "alert_password_reset_success_title": "Heslo Úspěšně Obnoveno",
             "text_try_request_again": "Zkuste prosím požádat o nový odkaz pro obnovu.",
-
             // ------ Email Confirmation ------
             "email_confirmation_status_page_title": "Potvrzení E-mailu",
             "email_confirmation_success": "Vaše e-mailová adresa byla úspěšně potvrzena! Nyní se můžete přihlásit.",
@@ -364,7 +348,6 @@ const globalTextData = {
             "alert_confirmation_email_resent_message": "Na vaši adresu byl odeslán nový potvrzovací e-mail. Zkontrolujte prosím svou schránku.",
             "modal_title_email_not_confirmed": "E-mail Není Potvrzen",
             "message_email_not_confirmed_instruction": "Vaše e-mailová adresa {USER_EMAIL} ještě není potvrzena. Zkontrolujte prosím svou doručenou poštu (i složku se spamem) pro potvrzovací odkaz, nebo klikněte na tlačítko níže pro jeho opětovné zaslání.",
-
             // --- World Fragments (Shards Management) ---
             "tooltip_shaped_world": "Tento svět byl utvářen tvými činy ({ACTIVE_SHARDS} aktivních fragmentů).",
             "button_configure_shards": "Nastavit fragmenty světa",
@@ -405,7 +388,7 @@ const globalTextData = {
             "alert_select_theme_first": "Please select a theme scenario from the grid first.",
             "aria_label_like_theme": "Add to Favorites",
             "aria_label_unlike_theme": "Remove from Favorites",
-            "toggle_language": "English"
+            "toggle_language": "Česky" // Text of button when current app lang is EN (to switch TO CS)
         },
         cs: {
             // --- Generic Landing Page UI ---
@@ -421,7 +404,7 @@ const globalTextData = {
             "alert_select_theme_first": "Prosím, nejprve vyberte tématický scénář z mřížky.",
             "aria_label_like_theme": "Přidat k oblíbeným",
             "aria_label_unlike_theme": "Odebrat z oblíbených",
-            "toggle_language": "Česky"
+            "toggle_language": "English" // Text of button when current app lang is CS (to switch TO EN)
         }
     }
 };

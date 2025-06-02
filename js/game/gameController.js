@@ -18,15 +18,9 @@ import * as suggestedActionsManager from '../ui/suggestedActionsManager.js';
 import * as dashboardManager from '../ui/dashboardManager.js';
 import * as modalManager from '../ui/modalManager.js';
 import * as landingPageManager from '../ui/landingPageManager.js';
-// authUiManager is not directly called by gameController, but by app.js/event listeners
-// import * as authUiManager from '../ui/authUiManager.js';
 import * as worldShardsModalManager from '../ui/worldShardsModalManager.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
 
-// Module-level variable to hold shard payload for the initial game turn
-// This variable is now primarily managed and set within aiService.getSystemPrompt
-// and used by aiService.processAiTurn. GameController doesn't need to manage it directly.
-// let _worldShardsPayloadForInitialTurn = "[]"; // Removed from here
 
 // Dependencies to be injected by app.js
 let _userThemeControlsManagerRef = null;
@@ -117,6 +111,8 @@ export async function handleIdentifierSubmission(identifier) {
     if (dom.playerActionInput) {
         dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_command");
         state.setCurrentAiPlaceholder(dom.playerActionInput.placeholder);
+        dom.playerActionInput.value = "";
+        dom.playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
         dom.playerActionInput.focus();
     }
 
@@ -310,6 +306,8 @@ export async function resumeGameSession(themeId) {
             if (dom.actionInputSection) dom.actionInputSection.style.display = "flex";
             if (dom.playerActionInput) {
                 dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder();
+                dom.playerActionInput.value = "";
+                dom.playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
                 dom.playerActionInput.focus();
             }
             log(LOG_LEVEL_INFO, `Session resumed for player ${state.getPlayerIdentifier()}, theme ${themeId}. "Welcome back" message suppressed.`);
@@ -385,7 +383,6 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
         if (dom.playerActionInput) {
             dom.playerActionInput.value = "";
             dom.playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
-            uiUtils.autoGrowTextarea(dom.playerActionInput);
         }
     }
     uiUtils.setGMActivityIndicator(true);

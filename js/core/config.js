@@ -36,3 +36,4 @@ export const FREE_MODEL_NAME = "gemini-1.5-flash-latest";
 
 // --- Game Logic Constants ---
 export const RECENT_INTERACTION_WINDOW_SIZE = 10; // Number of recent turns to consider for certain operations or display
+export const MAX_PLAYER_ACTION_INPUT_LENGTH = 600;

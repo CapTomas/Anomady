@@ -13,6 +13,8 @@ import {
     // Note: suggestedActionsWrapper is not directly manipulated here for disabling,
     // individual buttons inside it are.
 } from './domElements.js';
+import { MAX_PLAYER_ACTION_INPUT_LENGTH } from '../core/config.js';
+import { playerActionCharCounter } from './domElements.js';
 import { updateDashboardItemMetaEntry } from '../core/state.js';
 import { log, LOG_LEVEL_DEBUG } from '../core/logger.js';
 
@@ -136,4 +138,39 @@ export function setGMActivityIndicator(isProcessing) {
     if (!isProcessing && actionInputSection && actionInputSection.style.display !== "none" && playerActionInput && document.body.contains(playerActionInput)) {
         playerActionInput.focus();
     }
+}
+
+/**
+ * Handles input events on the player action textarea.
+ * Updates the character counter, enforces the MAX_PLAYER_ACTION_INPUT_LENGTH by truncating from the end
+ * (keeping the beginning of pasted text if it exceeds the limit), and calls autoGrowTextarea.
+ * The `maxlength` attribute on the textarea itself will prevent typing beyond the limit.
+ * This handler primarily deals with pastes and counter updates.
+ * @param {Event} event - The input event.
+ */
+export function handlePlayerActionInput(event) {
+    const textareaElement = event.target;
+    if (!textareaElement || !playerActionCharCounter) return;
+
+    let currentValue = textareaElement.value;
+
+    // If `maxlength` is properly set, this condition should mostly handle pastes
+    // that might momentarily exceed the limit before `maxlength` truncates.
+    if (currentValue.length > MAX_PLAYER_ACTION_INPUT_LENGTH) {
+        textareaElement.value = currentValue.slice(0, MAX_PLAYER_ACTION_INPUT_LENGTH);
+        currentValue = textareaElement.value; // Update currentValue after truncation
+    }
+
+    const currentLength = currentValue.length;
+    playerActionCharCounter.textContent = `${currentLength}/${MAX_PLAYER_ACTION_INPUT_LENGTH}`;
+
+    if (currentLength >= MAX_PLAYER_ACTION_INPUT_LENGTH) {
+        playerActionCharCounter.style.color = 'var(--color-meter-critical)';
+    } else if (currentLength >= MAX_PLAYER_ACTION_INPUT_LENGTH * 0.9) {
+        playerActionCharCounter.style.color = 'var(--color-meter-low)';
+    } else {
+        playerActionCharCounter.style.color = 'var(--color-text-muted)';
+    }
+
+    autoGrowTextarea(textareaElement);
 }

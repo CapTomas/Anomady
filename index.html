@@ -72,8 +72,11 @@
                             data-lang-key="button_access_systems">Begin</button>
                     </div>
                     <div id="action-input-section" class="input-group" style="display:none;">
-                        <textarea id="player-action-input" data-lang-key-placeholder="placeholder_command"
-                            placeholder="Enter command or response..." rows="1"></textarea>
+                        <div class="textarea-with-counter-wrapper">
+                            <textarea id="player-action-input" data-lang-key-placeholder="placeholder_command"
+                                placeholder="Enter command or response..." rows="1"></textarea>
+                            <div id="player-action-char-counter" class="char-counter">0/600</div>
+                        </div>
                         <button id="send-action-button" class="ui-button primary"
                             data-lang-key="button_execute_command">Send</button>
                     </div>

@@ -8,6 +8,7 @@
 // --- Core Application Logic & Services ---
 import * as state from './core/state.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG, setLogLevel as setCoreLogLevel } from './core/logger.js';
+import { MAX_PLAYER_ACTION_INPUT_LENGTH } from './core/config.js';
 // apiService is used by other services, not directly by app.js typically
 
 // --- Business Logic Services ---
@@ -211,7 +212,9 @@ async function initializeApp() {
             if (e.key === "Enter") gameController.handleIdentifierSubmission(dom.playerIdentifierInput.value);
         });
     }
-    if (dom.sendActionButton && dom.playerActionInput) {
+if (dom.sendActionButton && dom.playerActionInput) {
+        dom.playerActionInput.setAttribute('maxlength', MAX_PLAYER_ACTION_INPUT_LENGTH);
+
         dom.sendActionButton.addEventListener("click", () => gameController.processPlayerAction(dom.playerActionInput.value));
         dom.playerActionInput.addEventListener("keypress", (e) => {
             if (e.key === "Enter" && !e.shiftKey) {
@@ -219,7 +222,8 @@ async function initializeApp() {
                 gameController.processPlayerAction(dom.playerActionInput.value);
             }
         });
-        dom.playerActionInput.addEventListener("input", () => uiUtils.autoGrowTextarea(dom.playerActionInput));
+        dom.playerActionInput.addEventListener("input", uiUtils.handlePlayerActionInput);
+        uiUtils.handlePlayerActionInput({ target: dom.playerActionInput });
     }
 
     window.addEventListener('popstate', async (event) => {

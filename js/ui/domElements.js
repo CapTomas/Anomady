@@ -56,6 +56,8 @@ export const startGameButton = document.getElementById("start-game-button");
 export const actionInputSection = document.getElementById("action-input-section");
 export const playerActionInput = document.getElementById("player-action-input");
 export const sendActionButton = document.getElementById("send-action-button");
+export const playerActionCharCounter = document.getElementById("player-action-char-counter");
+
 
 // Footer
 export const applicationFooter = document.getElementById("application-footer");

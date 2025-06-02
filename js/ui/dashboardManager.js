@@ -20,7 +20,9 @@ import {
     setPanelState,
     getCurrentTheme,
     getLastKnownDashboardUpdates,
-    getLastKnownGameStateIndicators // Added for completeness, though not directly used in this file's primary functions
+    getLastKnownGameStateIndicators, // Added for completeness, though not directly used in this file's primary functions
+    updateDashboardItemMetaEntry,
+    getDashboardItemMeta
 } from '../core/state.js';
 import { SCROLL_INDICATOR_TOLERANCE } from '../core/config.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
@@ -507,12 +509,22 @@ export function animatePanelExpansion(panelBoxId, shouldExpand, manageVisibility
             content.style.paddingTop = '';
             content.style.paddingBottom = '';
 
-            // If expanding and not restoring state, remove recent update indicator from header
             if (!isRestoringState && !wasExpanded && header.classList.contains('has-recent-update')) {
                 header.classList.remove('has-recent-update');
             }
+            if (shouldExpand && !isRestoringState && !wasExpanded) {
+                const itemsInPanel = content.querySelectorAll('.info-item.has-recent-update, .info-item-meter.has-recent-update');
+                itemsInPanel.forEach(itemEl => {
+                    const itemId = itemEl.id.replace('info-item-container-', '');
+                    if (itemId) {
+                        itemEl.classList.remove('has-recent-update');
+                        updateDashboardItemMetaEntry(itemId, { hasRecentUpdate: false });
+                        log(LOG_LEVEL_DEBUG, `Cleared 'has-recent-update' (dot) for item ${itemId} in panel ${panelBoxId} due to panel expansion.`);
+                    }
+                });
+            }
 
-                const panelSide = leftPanel && leftPanel.contains(box) ? 'left' : (rightPanel && rightPanel.contains(box) ? 'right' : null);
+            const panelSide = leftPanel && leftPanel.contains(box) ? 'left' : (rightPanel && rightPanel.contains(box) ? 'right' : null);
 
                 const onExpansionTransitionEnd = (event) => {
                     if (event.target === content && event.propertyName === 'max-height') {
@@ -938,4 +950,50 @@ export function getLastKnownDashboardUpdatesForTranslationsReapply() {
     // This should ideally get it from state.js to ensure consistency.
     // Assuming state.js exports getLastKnownDashboardUpdates()
     return getLastKnownDashboardUpdates();
+}
+
+/**
+ * Applies persisted dashboard item metadata (e.g., 'has-recent-update' dots) to the UI.
+ * This is typically called after the dashboard is generated, when resuming a game.
+ */
+export function applyPersistedItemMeta() {
+    const itemMetaState = getDashboardItemMeta(); // Renamed from itemMeta to avoid conflict
+    if (!itemMetaState || Object.keys(itemMetaState).length === 0) {
+        log(LOG_LEVEL_DEBUG, "No persisted dashboard item metadata to apply.");
+        return;
+    }
+
+    log(LOG_LEVEL_INFO, "Applying persisted dashboard item metadata to UI elements.");
+    for (const itemId in itemMetaState) {
+        if (Object.prototype.hasOwnProperty.call(itemMetaState, itemId)) {
+            const meta = itemMetaState[itemId];
+            const itemContainer = document.getElementById(`info-item-container-${itemId}`);
+
+            if (itemContainer) {
+                if (meta && meta.hasRecentUpdate === true) {
+                    itemContainer.classList.add('has-recent-update');
+                    log(LOG_LEVEL_DEBUG, `Applied 'has-recent-update' to item: ${itemId}`);
+                } else {
+                    // Ensure the class is removed if state says it shouldn't be there
+                    // This handles cases where UI might be out of sync before this function runs
+                    itemContainer.classList.remove('has-recent-update');
+                    // No log needed for removal unless debugging specific issues with dots not clearing
+                }
+            } else {
+                log(LOG_LEVEL_WARN, `Item container 'info-item-container-${itemId}' not found in DOM. Cannot apply persisted meta.`);
+            }
+        }
+    }
+}
+
+/**
+ * Clears the 'has-recent-update' class (visual dot) from all dashboard item DOM elements.
+ * This is typically called before applying new updates for a turn.
+ */
+export function clearAllDashboardItemDotClasses() {
+    const allItems = document.querySelectorAll('.info-item.has-recent-update, .info-item-meter.has-recent-update');
+    allItems.forEach(itemEl => {
+        itemEl.classList.remove('has-recent-update');
+    });
+    log(LOG_LEVEL_DEBUG, "Cleared 'has-recent-update' class from all dashboard DOM elements.");
 }

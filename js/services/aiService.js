@@ -262,8 +262,15 @@ export function getSystemPromptForDeepDive(shardData) {
  */
 export async function processAiTurn(playerActionText, worldShardsPayloadForInitial = "[]") {
     log(LOG_LEVEL_INFO, `Processing AI turn. Player action text already in history: "${playerActionText.substring(0,50)}..."`);
+    const fullHistory = getGameHistory();
+    const historyForAI = fullHistory
+        .filter(turn => turn.role === 'user' || turn.role === 'model')
+        .map(turn => ({
+            role: turn.role,
+            parts: turn.parts.map(part => ({ text: part.text }))
+        }))
+        .slice(-RECENT_INTERACTION_WINDOW_SIZE);
 
-    const historyForAI = getGameHistory().slice(-RECENT_INTERACTION_WINDOW_SIZE); // Get latest history from state
     const systemPromptText = getSystemPrompt(worldShardsPayloadForInitial);
 
     if (systemPromptText.startsWith('{"narrative": "SYSTEM ERROR:')) {

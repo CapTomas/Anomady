@@ -37,6 +37,7 @@ let _isInitialGameLoad = true;
 let _currentAiPlaceholder = ""; // Placeholder text for AI input
 let _currentTurnUnlockData = null; // Data for a world shard unlocked in the current turn
 let _currentNewGameSettings = null; // Stores settings for a new game, e.g., { useEvolvedWorld: boolean }
+let _dashboardItemMeta = {}; // Stores UI-specific metadata for dashboard items, e.g., { itemId: { hasRecentUpdate: true } }
 
 // --- Getters and Setters ---
 
@@ -183,6 +184,27 @@ export const setCurrentNewGameSettings = (settings) => {
 export const clearCurrentNewGameSettings = () => {
     _currentNewGameSettings = null;
 };
+export const getDashboardItemMeta = () => _dashboardItemMeta;
+export const setDashboardItemMeta = (meta) => {
+    _dashboardItemMeta = typeof meta === 'object' && meta !== null ? meta : {};
+};
+export const updateDashboardItemMetaEntry = (itemId, itemMeta) => {
+    if (typeof itemMeta === 'object' && itemMeta !== null) {
+        _dashboardItemMeta[itemId] = { ..._dashboardItemMeta[itemId], ...itemMeta };
+    } else if (itemMeta === null) { // Allows deleting an entry
+        delete _dashboardItemMeta[itemId];
+    }
+};
+export const clearDashboardItemMeta = () => {
+    _dashboardItemMeta = {};
+};
+export const resetAllDashboardItemRecentUpdates = () => {
+    for (const itemId in _dashboardItemMeta) {
+        if (Object.prototype.hasOwnProperty.call(_dashboardItemMeta, itemId) && _dashboardItemMeta[itemId]) {
+            _dashboardItemMeta[itemId].hasRecentUpdate = false;
+        }
+    }
+};
 
 /**
  * Clears all non-persistent game-specific state variables.
@@ -202,4 +224,5 @@ export const clearVolatileGameState = () => {
     _currentPanelStates = {};
     _lastKnownCumulativePlayerSummary = "";
     clearCurrentNewGameSettings();
+    _dashboardItemMeta = {};
 };

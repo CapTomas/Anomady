@@ -259,6 +259,7 @@ export async function resumeGameSession(themeId) {
             state.setCurrentSuggestedActions(loadedState.last_suggested_actions || []);
             state.setCurrentPanelStates(loadedState.panel_states || {});
             state.setCurrentAiPlaceholder(loadedState.input_placeholder || localizationService.getUIText("placeholder_command"));
+            state.setDashboardItemMeta(loadedState.dashboard_item_meta || {});
             // For Living Chronicle features
             state.setLastKnownCumulativePlayerSummary(loadedState.game_history_summary || "");
             state.setLastKnownEvolvedWorldLore(loadedState.game_history_lore || "");
@@ -285,14 +286,23 @@ export async function resumeGameSession(themeId) {
                         log(LOG_LEVEL_ERROR, "Error parsing model response from loaded history:", e, turn.parts[0].text);
                         storyLogManager.addMessageToLog(localizationService.getUIText("error_reconstruct_story"), "system-error");
                     }
+                } else if (turn.role === "system") {
+                    const systemMessageText = turn.parts[0]?.text;
+                    const systemMessageSenderTypes = turn.parts[0]?.senderTypes;
+                    if (systemMessageText && systemMessageSenderTypes) {
+                        storyLogManager.addMessageToLog(systemMessageText, systemMessageSenderTypes);
+                        log(LOG_LEVEL_DEBUG, `Replayed system message from history: (${systemMessageSenderTypes}) "${systemMessageText.substring(0,30)}..."`);
+                    } else {
+                        log(LOG_LEVEL_WARN, "Found system message in history with incomplete data (missing text or senderTypes):", turn);
+                    }
                 }
             });
 
             dashboardManager.updateDashboard(state.getLastKnownDashboardUpdates(), false); // Apply loaded updates without highlight
             // initializeCollapsiblePanelBoxes is now part of generatePanelsForTheme
             handleGameStateIndicatorsChange(state.getLastKnownGameStateIndicators(), true); // true for isInitialBoot
+            dashboardManager.applyPersistedItemMeta(); // Apply dots after values are set
             suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
-
             state.setIsInitialGameLoad(false);
             log(LOG_LEVEL_INFO, `Game state for theme '${themeId}' loaded and UI restored.`);
 
@@ -380,8 +390,11 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
     }
     uiUtils.setGMActivityIndicator(true);
     suggestedActionsManager.clearSuggestedActions(); // Clear previous suggestions
-    storyLogManager.showLoadingIndicator(); // Show loading indicator
 
+    state.resetAllDashboardItemRecentUpdates();
+    dashboardManager.clearAllDashboardItemDotClasses();
+
+    storyLogManager.showLoadingIndicator(); // Show loading indicator
     try {
         const narrative = await aiService.processAiTurn(actionText, worldShardsPayloadForInitialTurn);
         storyLogManager.removeLoadingIndicator(); // Remove indicator as soon as AI responds

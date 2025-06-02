@@ -20,6 +20,7 @@ const validateGameStatePayload = (req, res, next) => {
     theme_id, player_identifier, game_history,
     last_dashboard_updates, last_game_state_indicators, current_prompt_type,
     current_narrative_language, last_suggested_actions, panel_states,
+    dashboard_item_meta,
   } = req.body;
   const errors = [];
   if (!theme_id || typeof theme_id !== 'string' || theme_id.trim() === '') { errors.push('theme_id is required and must be a non-empty string.'); }
@@ -31,6 +32,7 @@ const validateGameStatePayload = (req, res, next) => {
   if (!current_narrative_language || typeof current_narrative_language !== 'string' || current_narrative_language.trim() === '') { errors.push('current_narrative_language is required and must be a non-empty string.'); }
   if (typeof last_suggested_actions === 'undefined' || !Array.isArray(last_suggested_actions)) { errors.push('last_suggested_actions is required and must be an array.'); }
   if (typeof panel_states === 'undefined' || typeof panel_states !== 'object' || panel_states === null) { errors.push('panel_states is required and must be an object.'); }
+  if (req.body.dashboard_item_meta !== undefined && (typeof req.body.dashboard_item_meta !== 'object' || req.body.dashboard_item_meta === null)) { errors.push('dashboard_item_meta must be an object if provided.'); }
   if (game_history && Array.isArray(game_history)) {
     for (const turn of game_history) {
       if (typeof turn !== 'object' || turn === null || !turn.role || !turn.parts || !Array.isArray(turn.parts)) {
@@ -67,6 +69,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
     player_identifier, last_dashboard_updates, last_game_state_indicators,
     current_prompt_type, current_narrative_language, last_suggested_actions,
     panel_states, model_name_used: determinedModelName,
+    dashboard_item_meta: req.body.dashboard_item_meta || {},
   };
 
   try {
@@ -113,6 +116,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
           game_history: finalGameHistoryForDB,
           game_history_summary: finalCumulativePlayerSummary,
           game_history_lore: finalCurrentWorldLore,
+          dashboard_item_meta: gameStateClientPayload.dashboard_item_meta,
         },
         create: {
           userId, theme_id, ...gameStateClientPayload,
@@ -120,6 +124,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
           game_history_summary: finalCumulativePlayerSummary,
           game_history_lore: finalCurrentWorldLore,
           summarization_in_progress: false,
+          dashboard_item_meta: gameStateClientPayload.dashboard_item_meta,
         },
       });
 

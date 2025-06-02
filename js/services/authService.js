@@ -30,6 +30,7 @@ import {
     getCurrentModelName as getStateCurrentModelName,
     getCurrentTurnUnlockData,
     setCurrentTurnUnlockData,
+    getDashboardItemMeta,
 } from '../core/state.js';
 import {
     JWT_STORAGE_KEY,
@@ -386,6 +387,7 @@ export async function saveCurrentGameState() {
         panel_states: getCurrentPanelStates(),
         model_name_used: getStateCurrentModelName(),
         new_persistent_lore_unlock: turnUnlockData, // Include the unlock data
+        dashboard_item_meta: getDashboardItemMeta(), // Added to save dashboard UI state
     };
 
     // Reset currentTurnUnlockData in state after it's been included in the payload

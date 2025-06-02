@@ -68,7 +68,6 @@ export function addMessageToLog(text, senderTypes) {
 
     const viewport = storyLogViewport; // Use the direct reference
     let shouldScroll = false;
-
     if (viewport && viewport.style.display !== "none") {
         if (!userHasManuallyScrolledLog) {
             shouldScroll = true;
@@ -82,9 +81,20 @@ export function addMessageToLog(text, senderTypes) {
     }
 
     storyLog.appendChild(msgDiv);
+    const isSystemMessage = typesArray.some(type => type.startsWith("system"));
+    if (isSystemMessage) {
+        try {
+            stateAddTurnToGameHistory({
+                role: "system",
+                parts: [{ text: text, senderTypes: senderTypes }]
+            });
+            log(LOG_LEVEL_DEBUG, `System message added to game history: (${senderTypes}) "${text.substring(0,30)}..."`);
+        } catch (error) {
+            log(LOG_LEVEL_ERROR, "Failed to add system message to game history:", error);
+        }
+    }
 
     if (shouldScroll && viewport) {
-        // Ensure the new message is fully rendered before scrolling
         requestAnimationFrame(() => {
             viewport.scrollTop = viewport.scrollHeight;
         });

@@ -13,32 +13,51 @@ import {
     // Note: suggestedActionsWrapper is not directly manipulated here for disabling,
     // individual buttons inside it are.
 } from './domElements.js';
+import { updateDashboardItemMetaEntry } from '../core/state.js';
+import { log, LOG_LEVEL_DEBUG } from '../core/logger.js';
 
 /**
  * Briefly highlights a UI element that has been updated and adds a persistent
  * 'has-recent-update' class to its container for dot indicators.
+ * Updates the central state for dashboard item metadata.
  * @param {HTMLElement} element - The element (or its value part) that was updated.
  */
 export function highlightElementUpdate(element) {
     if (!element) return;
-
     let textValueElement = null;
     let containerElement = null;
+    let itemId = null; // To store the actual item ID
 
+    // Determine the container and the specific text element being updated
     if (element.classList.contains("value") || element.classList.contains("value-overlay")) {
         textValueElement = element;
         containerElement = element.closest('.info-item, .info-item-meter');
+        // Extract itemId if containerElement is found
+        if (containerElement && containerElement.id && containerElement.id.startsWith('info-item-container-')) {
+            itemId = containerElement.id.substring('info-item-container-'.length);
+        }
     } else if (element.classList.contains("info-item") || element.classList.contains("info-item-meter")) {
-        textValueElement = element.querySelector(".value, .value-overlay");
+        // This case means the element passed is the container itself
         containerElement = element;
+        textValueElement = element.querySelector(".value, .value-overlay");
+        // Extract itemId
+        if (containerElement.id && containerElement.id.startsWith('info-item-container-')) {
+            itemId = containerElement.id.substring('info-item-container-'.length);
+        }
     }
 
-    if (containerElement) {
-        containerElement.classList.add('has-recent-update');
-        // The dot indicator will be visible due to CSS based on 'has-recent-update'.
-        // The 'has-recent-update' class should be removed by dashboardManager when it deems the update "seen" or stale.
+    if (containerElement && itemId) {
+        const alreadyHasDot = containerElement.classList.contains('has-recent-update');
+        // Add the class for the visual dot indicator if not already present
+        if (!alreadyHasDot) {
+            containerElement.classList.add('has-recent-update');
+            // Update the central state to reflect this change
+            updateDashboardItemMetaEntry(itemId, { hasRecentUpdate: true });
+            log(LOG_LEVEL_DEBUG, `Item ${itemId} marked with has-recent-update (dot visible) and state updated.`);
+        }
     }
 
+    // Handle the temporary visual flash on the text value itself
     if (textValueElement) {
         textValueElement.classList.add("value-updated");
         setTimeout(() => {

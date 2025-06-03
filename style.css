@@ -352,7 +352,6 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 .ui-button:disabled,
 .ui-button:disabled:hover,
 .ui-button:disabled:active {
-	background-color: var(--color-text-muted) !important;
 	color: var(--color-bg-input-field) !important;
 	opacity: 0.5;
 	cursor:not-allowed;

@@ -28,6 +28,7 @@ model User {
   gameStates                     GameState[]
   themeInteractions              UserThemeInteraction[]
   persistedLore                  UserThemePersistedLore[]
+  themeProgresses                UserThemeProgress[] // Add this line
 }
 
 model GameState {
@@ -101,4 +102,25 @@ model UserThemePersistedLore {
   @@index([themeId])
   @@index([userId, themeId]) // For fetching all shards for a user/theme
   @@map("user_theme_persisted_lore") // Explicit table name
+}
+
+model UserThemeProgress {
+  id                  String   @id @default(cuid())
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId              String   @map("user_id")
+  themeId             String   @map("theme_id")
+  level               Int      @default(1)
+  currentXP           Int      @default(0) @map("current_xp")
+  maxIntegrityBonus   Int      @default(0) @map("max_integrity_bonus")
+  maxWillpowerBonus   Int      @default(0) @map("max_willpower_bonus")
+  aptitudeBonus       Int      @default(0) @map("aptitude_bonus")
+  resilienceBonus     Int      @default(0) @map("resilience_bonus")
+  acquiredTraitKeys   Json     @default("[]") @map("acquired_trait_keys")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, themeId])
+  @@index([userId])
+  @@index([themeId])
+  @@map("user_theme_progress")
 }

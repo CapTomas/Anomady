@@ -1,6 +1,7 @@
-creation
+creation/
 condensed-repository.txt
-.repomix
+.repomix/
+curl_tests/
 # Node.js
 node_modules/
 npm-debug.log*

@@ -7,7 +7,6 @@ import { generatePlayerSummarySnippet, evolveWorldLore } from '../utils/aiHelper
 import { getResolvedBaseThemeLore, getResolvedThemeName } from '../utils/themeDataManager.js';
 
 const router = express.Router();
-
 // --- Constants for Living Chronicle ---
 const RECENT_INTERACTION_WINDOW_SIZE = 10; // For sending to main AI
 const RAW_HISTORY_BUFFER_MAX_SIZE = 25;    // Max raw turns in DB before summarization
@@ -20,7 +19,7 @@ const validateGameStatePayload = (req, res, next) => {
     theme_id, player_identifier, game_history,
     last_dashboard_updates, last_game_state_indicators, current_prompt_type,
     current_narrative_language, last_suggested_actions, panel_states,
-    dashboard_item_meta,
+    dashboard_item_meta, xp_awarded_this_turn, user_theme_progress, is_boon_selection_pending,
   } = req.body;
   const errors = [];
   if (!theme_id || typeof theme_id !== 'string' || theme_id.trim() === '') { errors.push('theme_id is required and must be a non-empty string.'); }
@@ -33,6 +32,32 @@ const validateGameStatePayload = (req, res, next) => {
   if (typeof last_suggested_actions === 'undefined' || !Array.isArray(last_suggested_actions)) { errors.push('last_suggested_actions is required and must be an array.'); }
   if (typeof panel_states === 'undefined' || typeof panel_states !== 'object' || panel_states === null) { errors.push('panel_states is required and must be an object.'); }
   if (req.body.dashboard_item_meta !== undefined && (typeof req.body.dashboard_item_meta !== 'object' || req.body.dashboard_item_meta === null)) { errors.push('dashboard_item_meta must be an object if provided.'); }
+  if (xp_awarded_this_turn !== undefined && (typeof xp_awarded_this_turn !== 'number' || xp_awarded_this_turn < 0)) {
+    errors.push('xp_awarded_this_turn must be a non-negative number if provided.');
+  }
+  if (user_theme_progress !== undefined) {
+    if (typeof user_theme_progress !== 'object' || user_theme_progress === null) {
+      errors.push('user_theme_progress must be an object if provided.');
+    } else {
+      if (user_theme_progress.level !== undefined && (typeof user_theme_progress.level !== 'number' || user_theme_progress.level < 1)) {
+        errors.push('user_theme_progress.level must be a positive number if present.');
+      }
+      if (user_theme_progress.currentXP !== undefined && (typeof user_theme_progress.currentXP !== 'number' || user_theme_progress.currentXP < 0)) {
+        errors.push('user_theme_progress.currentXP must be a non-negative number if present.');
+      }
+      if (user_theme_progress.acquiredTraitKeys !== undefined && !Array.isArray(user_theme_progress.acquiredTraitKeys)) {
+        errors.push('user_theme_progress.acquiredTraitKeys must be an array if present.');
+      }
+      // Optional: validate other bonus fields (maxIntegrityBonus etc.) if strictness is needed
+    }
+  } else {
+    // If user_theme_progress is not provided at all, xp_awarded_this_turn becomes critical for any XP update.
+    // This path is mostly for backward compatibility or if the client specifically wants to only send XP delta.
+    // However, the primary flow will now involve sending the full user_theme_progress object.
+  }
+  if (typeof is_boon_selection_pending === 'undefined' || typeof is_boon_selection_pending !== 'boolean') {
+    errors.push('is_boon_selection_pending is required and must be a boolean.');
+  }
   if (game_history && Array.isArray(game_history)) {
     for (const turn of game_history) {
       if (typeof turn !== 'object' || turn === null || !turn.role || !turn.parts || !Array.isArray(turn.parts)) {
@@ -52,7 +77,7 @@ const validateGameStatePayload = (req, res, next) => {
 
 /**
  * @route   POST /api/v1/gamestates
- * @desc    Create or Update a game state. Handles Living Chronicle summarization and World Shard unlocking.
+ * @desc    Create or Update a game state. Handles Living Chronicle summarization, World Shard unlocking, and XP processing.
  * @access  Private
  */
 router.post('/', protect, validateGameStatePayload, async (req, res) => {
@@ -60,7 +85,9 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
     theme_id, player_identifier, game_history: clientSentHistory,
     last_dashboard_updates, last_game_state_indicators, current_prompt_type,
     current_narrative_language, last_suggested_actions, panel_states,
-    new_persistent_lore_unlock,
+    new_persistent_lore_unlock, xp_awarded_this_turn, // xp_awarded_this_turn is kept for logging/other potential uses
+    user_theme_progress: clientUserThemeProgress, // New field
+    is_boon_selection_pending,
   } = req.body;
   const userId = req.user.id;
   const determinedModelName = req.user.preferred_model_name || FREE_MODEL_NAME;
@@ -70,6 +97,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
     current_prompt_type, current_narrative_language, last_suggested_actions,
     panel_states, model_name_used: determinedModelName,
     dashboard_item_meta: req.body.dashboard_item_meta || {},
+    is_boon_selection_pending, // Add the new field here
   };
 
   try {
@@ -117,6 +145,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
           game_history_summary: finalCumulativePlayerSummary,
           game_history_lore: finalCurrentWorldLore,
           dashboard_item_meta: gameStateClientPayload.dashboard_item_meta,
+          is_boon_selection_pending: gameStateClientPayload.is_boon_selection_pending, // Persist this flag
         },
         create: {
           userId, theme_id, ...gameStateClientPayload,
@@ -125,12 +154,80 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
           game_history_lore: finalCurrentWorldLore,
           summarization_in_progress: false,
           dashboard_item_meta: gameStateClientPayload.dashboard_item_meta,
+          is_boon_selection_pending: gameStateClientPayload.is_boon_selection_pending, // Persist this flag
         },
       });
 
+      // Handle XP awarded this turn
+        if (clientUserThemeProgress && typeof clientUserThemeProgress === 'object') {
+        const acquiredTraitKeysForDB = Array.isArray(clientUserThemeProgress.acquiredTraitKeys)
+                                         ? clientUserThemeProgress.acquiredTraitKeys
+                                         : [];
+        await tx.userThemeProgress.upsert({
+          where: { userId_themeId: { userId: userId, themeId: theme_id } },
+          create: {
+            userId: userId,
+            themeId: theme_id,
+            level: clientUserThemeProgress.level || 1,
+            currentXP: clientUserThemeProgress.currentXP || 0,
+            maxIntegrityBonus: clientUserThemeProgress.maxIntegrityBonus || 0,
+            maxWillpowerBonus: clientUserThemeProgress.maxWillpowerBonus || 0,
+            aptitudeBonus: clientUserThemeProgress.aptitudeBonus || 0,
+            resilienceBonus: clientUserThemeProgress.resilienceBonus || 0,
+            acquiredTraitKeys: acquiredTraitKeysForDB,
+          },
+          update: {
+            level: clientUserThemeProgress.level,
+            currentXP: clientUserThemeProgress.currentXP,
+            // Bonuses (maxIntegrityBonus, etc.) are primarily updated via the Boon endpoint.
+            // acquiredTraitKeys are also primarily updated via Boons but can be persisted here if client state changes.
+            acquiredTraitKeys: acquiredTraitKeysForDB,
+          },
+        });
+        logger.info(`[UserThemeProgress] Upserted for user ${userId}, theme ${theme_id} using full client payload: Level ${clientUserThemeProgress.level}, XP ${clientUserThemeProgress.currentXP}.`);
+      } else if (xp_awarded_this_turn !== undefined && typeof xp_awarded_this_turn === 'number' && xp_awarded_this_turn > 0) {
+        // Fallback for older clients or if full progress object isn't sent, only increment XP.
+        logger.warn(`[UserThemeProgress] clientUserThemeProgress payload missing. Using xp_awarded_this_turn (${xp_awarded_this_turn}) to increment XP only for user ${userId}, theme ${theme_id}. Level will not be updated by this save.`);
+        await tx.userThemeProgress.upsert({
+            where: { userId_themeId: { userId: userId, themeId: theme_id } },
+            create: {
+                userId: userId,
+                themeId: theme_id,
+                currentXP: xp_awarded_this_turn,
+                level: 1, // Default level on creation
+            },
+            update: {
+                currentXP: {
+                    increment: xp_awarded_this_turn,
+                },
+            },
+        });
+      } else {
+        // Ensure a default UserThemeProgress record exists if it's the very first save for this user/theme and no XP was awarded.
+        const existingProgress = await tx.userThemeProgress.findUnique({
+          where: { userId_themeId: { userId: userId, themeId: theme_id } }
+        });
+        if (!existingProgress) {
+          await tx.userThemeProgress.create({
+            data: {
+              userId: userId,
+              themeId: theme_id,
+              level: 1,
+              currentXP: 0,
+              maxIntegrityBonus: 0,
+              maxWillpowerBonus: 0,
+              aptitudeBonus: 0,
+              resilienceBonus: 0,
+              acquiredTraitKeys: [],
+            }
+          });
+          logger.info(`[UserThemeProgress] Initialized default progress for user ${userId}, theme ${theme_id} as no client data or XP delta was provided.`);
+        }
+      }
+
+      // Handle World Shard Unlocking
       if (new_persistent_lore_unlock && typeof new_persistent_lore_unlock === 'object') {
         const { key_suggestion, title, content, unlock_condition_description } = new_persistent_lore_unlock;
-
         if (key_suggestion && title && content && unlock_condition_description) {
           try {
             await tx.userThemePersistedLore.create({
@@ -145,7 +242,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
             });
             logger.info(`[WorldShard] Successfully created new world shard via GameState save for user ${userId}, theme ${theme_id}, key '${key_suggestion}'`);
           } catch (shardError) {
-            if (shardError.code === 'P2002') { // Prisma's unique constraint violation code
+            if (shardError.code === 'P2002') {
               logger.warn(`[WorldShard] Failed to create shard for user ${userId}, theme ${theme_id}, key '${key_suggestion}' due to unique constraint (likely duplicate key from AI). Shard not created.`);
             } else {
               logger.error(`[WorldShard] Error creating new world shard during GameState save for user ${userId}, theme ${theme_id}, key '${key_suggestion}':`, shardError);
@@ -157,6 +254,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
         }
       }
 
+      // Handle Living Chronicle Summarization
       if (
         finalGameHistoryForDB && Array.isArray(finalGameHistoryForDB) &&
         finalGameHistoryForDB.length >= RAW_HISTORY_BUFFER_MAX_SIZE &&
@@ -166,10 +264,8 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
           where: { id: upsertedGameState.id },
           data: { summarization_in_progress: true },
         });
-
         const baseLoreForSummarization = await getResolvedBaseThemeLore(theme_id, current_narrative_language);
         const themeNameForSummarization = await getResolvedThemeName(theme_id, current_narrative_language);
-
         processSummarization(
             upsertedGameState.id, userId, theme_id,
             [...finalGameHistoryForDB],
@@ -213,7 +309,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
     if (error.message.startsWith('Failed to create world shard:')) {
         return res.status(500).json({ error: { message: error.message, code: 'WORLD_SHARD_CREATION_FAILED_IN_TX' } });
     }
-    if (error.code === 'P2002' && error.meta?.target?.includes('userId_theme_id')) {
+    if (error.code === 'P2002' && error.meta?.target?.includes('userId_theme_id')) { // Assuming this is for GameState unique constraint
         return res.status(409).json({ error: { message: 'Conflict saving game state, likely a concurrent update. Please try again.', code: 'GAME_STATE_SAVE_CONFLICT' } });
     }
     res.status(500).json({ error: { message: 'Failed to save game state due to a server error.', code: 'GAME_STATE_SAVE_TRANSACTION_ERROR' } });
@@ -226,7 +322,6 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
  */
 async function processSummarization(gameStateId, userIdForLog, theme_id, rawHistoryForSummarization, currentSummary, currentDbLore, narrativeLanguage, baseThemeLore, themeNameForPrompt) {
     logger.info(`[LivingChronicle] Starting summarization for gsID ${gameStateId}, user ${userIdForLog}, theme ${theme_id}. History chunk size: ${SUMMARIZATION_CHUNK_SIZE}`);
-
     const historyChunkToProcess = rawHistoryForSummarization.slice(0, SUMMARIZATION_CHUNK_SIZE);
     const remainingRawHistoryForDB = rawHistoryForSummarization.slice(SUMMARIZATION_CHUNK_SIZE);
 
@@ -274,7 +369,7 @@ async function processSummarization(gameStateId, userIdForLog, theme_id, rawHist
 
 /**
  * @route   GET /api/v1/gamestates/:themeId
- * @desc    Get the game state, including evolved lore and summary.
+ * @desc    Get the game state, including evolved lore, summary, and user theme progress.
  * @access  Private
  */
 router.get('/:themeId', protect, async (req, res) => {
@@ -290,12 +385,23 @@ router.get('/:themeId', protect, async (req, res) => {
       where: { userId_theme_id: { userId: userId, theme_id: themeId } },
     });
 
+    let userThemeProgress = await prisma.userThemeProgress.findUnique({
+        where: {
+            userId_themeId: {
+                userId: userId,
+                themeId: themeId
+            }
+        }
+    });
+
     if (!gameState) {
       logger.info(`No game state found for user ${userId}, theme ${themeId}.`);
       const baseLore = await getResolvedBaseThemeLore(themeId, req.user.preferred_narrative_language || 'en');
+      // If no game state, but progress exists, return progress. Client handles if it's a truly "new" game.
       return res.status(404).json({
         error: { message: 'Game state not found for this theme.', code: 'GAME_STATE_NOT_FOUND' },
-        new_game_context: { base_lore: baseLore }
+        new_game_context: { base_lore: baseLore },
+        userThemeProgress: userThemeProgress // Return progress even if no game state for a fresh start
       });
     }
 
@@ -314,7 +420,9 @@ router.get('/:themeId', protect, async (req, res) => {
         ...gameState,
         game_history: clientGameHistory,
         game_history_lore: effectiveEvolvedLore,
+        userThemeProgress: userThemeProgress // Include UserThemeProgress in the response
     });
+
   } catch (error) {
     logger.error(`Error retrieving game state for user ${userId}, theme ${themeId}:`, error);
     res.status(500).json({ error: { message: 'Failed to retrieve game state.', code: 'GAME_STATE_RETRIEVAL_ERROR' } });
@@ -339,7 +447,7 @@ router.delete('/:themeId', protect, async (req, res) => {
 
       if (!existingGameState) {
         const notFoundError = new Error('GameState not found for deletion.');
-        notFoundError.code = 'P2025';
+        notFoundError.code = 'P2025'; // Prisma error code for record not found
         throw notFoundError;
       }
 
@@ -347,10 +455,18 @@ router.delete('/:themeId', protect, async (req, res) => {
         where: { userId_theme_id: { userId: userId, theme_id: themeId } },
       });
 
+      // Optionally, decide if deleting game state should also delete UserThemeProgress
+      // For now, let's keep UserThemeProgress, as it represents persistent character growth.
+      // If UserThemeProgress should be deleted too, add:
+      // await tx.userThemeProgress.deleteMany({
+      //   where: { userId: userId, theme_id: themeId },
+      // });
+
       await tx.userThemeInteraction.updateMany({
         where: { userId: userId, theme_id: themeId },
-        data: { is_playing: false },
+        data: { is_playing: false }, // Mark as not currently playing
       });
+
       return { success: true };
     });
 
@@ -359,7 +475,7 @@ router.delete('/:themeId', protect, async (req, res) => {
         res.status(200).json({ message: 'Game state deleted successfully.' });
     }
   } catch (error) {
-    if (error.code === 'P2025') {
+    if (error.code === 'P2025') { // Record to delete not found
         logger.info(`Attempt to delete non-existent game state for user ${userId}, theme ${themeId}.`);
         return res.status(404).json({ error: { message: 'Game state not found, nothing to delete.', code: 'GAME_STATE_NOT_FOUND_FOR_DELETE' } });
     }

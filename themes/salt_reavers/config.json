@@ -11,6 +11,12 @@
   "category_key": "theme_category_salt_reavers",
   "style_key": "theme_style_salt_reavers",
   "naming_convention": "entity",
+  "base_attributes": {
+    "integrity": 100,
+    "willpower": 50,
+    "aptitude": 50,
+    "resilience": 50
+  },
   "dashboard_config_ref": "salt_reavers",
   "dashboard_config": {
     "left_panel": [

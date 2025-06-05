@@ -129,7 +129,6 @@ export function showCustomModal(options) {
             inputPlaceholderKey, defaultValue = '', explicitThemeContext = null,
             onSubmit, customActions
         } = options;
-
         if (!customModalOverlay || !customModalTitle || !customModalMessage || !customModalActions) {
             log(LOG_LEVEL_ERROR, "Custom modal core DOM elements not found! Cannot display modal.");
             if (currentModalResolve) currentModalResolve(type === 'prompt' ? null : (type === 'confirm' || type === 'form') ? false : null);
@@ -137,21 +136,102 @@ export function showCustomModal(options) {
         }
 
         const modalThemeContext = explicitThemeContext || getCurrentTheme();
+        let confirmBtnRef = null; // A reference to the confirm button that the handler can use
+
+        // Determine the default confirm button text key based on modal type
+        let defaultConfirmKey = "modal_ok_button";
+        if (type === "confirm" || type === "form") defaultConfirmKey = "modal_confirm_button";
+        else if (type === "prompt") defaultConfirmKey = "modal_confirm_button"; // "OK" or "Submit"
+
+        // This handler contains all the logic for confirming the modal, so it can be called by a button click or an Enter key press.
+        const handleConfirm = async () => {
+            let modalShouldClose = true;
+            let resolveValue;
+            if (type === "form" || (formFields && formFields.length > 0)) {
+                const formData = {};
+                let firstInvalidField = null;
+                let isValid = true;
+                // Clear previous form errors
+                customModalFormContainer.querySelectorAll('.modal-error-display').forEach(el => el.remove());
+                formFields.forEach(field => {
+                    const inputElement = customModalFormContainer.querySelector(`#${field.id}`);
+                    if (inputElement) {
+                        formData[field.id] = inputElement.value;
+                        if (field.required && !inputElement.value.trim()) {
+                            isValid = false;
+                            if (!firstInvalidField) firstInvalidField = inputElement;
+                        }
+                        if (field.type === 'email' && inputElement.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputElement.value.trim())) {
+                            isValid = false;
+                            if (!firstInvalidField) firstInvalidField = inputElement;
+                            displayModalError(getUIText("alert_invalid_email_format"), inputElement.parentElement);
+                        }
+                    }
+                });
+                if (!isValid) {
+                    if (firstInvalidField) firstInvalidField.focus();
+                    log(LOG_LEVEL_WARN, "Modal form validation failed.");
+                    if (!customModalFormContainer.querySelector('.modal-error-display[data-general-error="true"]')) { // Avoid duplicate general errors
+                       const generalErrorContainer = customModalFormContainer.closest('.modal-box').querySelector('.modal-message') || customModalFormContainer;
+                       displayModalError(getUIText("alert_fill_required_fields"), generalErrorContainer);
+                    }
+                    return; // Don't proceed
+                }
+                if (onSubmit) {
+                    try {
+                        if (confirmBtnRef) {
+                            confirmBtnRef.disabled = true;
+                            confirmBtnRef.textContent = getUIText("system_processing_short"); // Loading state
+                        }
+                        const resultFromOnSubmit = await onSubmit(formData);
+                        if (typeof resultFromOnSubmit === 'object' && resultFromOnSubmit !== null) {
+                            resolveValue = resultFromOnSubmit;
+                            if (resultFromOnSubmit.keepOpen === true) {
+                                modalShouldClose = false;
+                            }
+                        } else { // For simpler onSubmit that just returns true/false or data
+                            resolveValue = { success: resultFromOnSubmit !== false, data: resultFromOnSubmit };
+                        }
+                    } catch (error) {
+                        log(LOG_LEVEL_ERROR, "Error in modal onSubmit:", error);
+                        displayModalError(error.message || getUIText("error_api_call_failed", { ERROR_MSG: "Operation failed" }), customModalFormContainer);
+                        modalShouldClose = false; // Keep open on error from onSubmit
+                        resolveValue = { success: false, error: error };
+                    } finally {
+                        if (confirmBtnRef && document.body.contains(confirmBtnRef)) { // Check if button is still in DOM
+                            confirmBtnRef.disabled = false;
+                            confirmBtnRef.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, { explicitThemeContext: modalThemeContext });
+                        }
+                    }
+                } else {
+                    resolveValue = formData; // Resolve with form data if no onSubmit
+                }
+            } else if (type === "prompt" && customModalInput) {
+                resolveValue = customModalInput.value;
+            } else if (type === "confirm") {
+                resolveValue = true;
+            } else { // alert
+                resolveValue = null;
+            }
+            if (currentModalResolve) {
+                currentModalResolve(resolveValue);
+            }
+            if (modalShouldClose) {
+                hideCustomModal();
+            }
+        };
 
         customModalTitle.textContent = getUIText(titleKey || `modal_default_title_${type}`, replacements, { explicitThemeContext: modalThemeContext });
-
         // Clear previous content
         customModalMessage.innerHTML = "";
         customModalFormContainer.innerHTML = "";
         if (customModalInputContainer) customModalInputContainer.style.display = "none";
-
 
         if (messageKey) {
             const staticMessageP = document.createElement('p');
             staticMessageP.innerHTML = getUIText(messageKey, replacements, { explicitThemeContext: modalThemeContext }).replace(/\n/g, "<br>");
             customModalMessage.appendChild(staticMessageP);
         }
-
         if (htmlContent) {
             if (typeof htmlContent === 'string') {
                 customModalMessage.insertAdjacentHTML('beforeend', htmlContent);
@@ -165,12 +245,10 @@ export function showCustomModal(options) {
             formFields.forEach(field => {
                 const fieldGroup = document.createElement('div');
                 fieldGroup.classList.add('modal-form-group');
-
                 const label = document.createElement('label');
                 label.htmlFor = field.id;
                 label.textContent = getUIText(field.labelKey, {}, { explicitThemeContext: modalThemeContext });
                 fieldGroup.appendChild(label);
-
                 const input = document.createElement('input');
                 input.type = field.type || 'text';
                 input.id = field.id;
@@ -179,6 +257,12 @@ export function showCustomModal(options) {
                 if (field.value) input.value = field.value;
                 if (field.required) input.required = true;
                 input.classList.add('modal-input');
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleConfirm();
+                    }
+                });
                 fieldGroup.appendChild(input);
                 customModalFormContainer.appendChild(fieldGroup);
             });
@@ -188,12 +272,16 @@ export function showCustomModal(options) {
                 customModalMessage.appendChild(customModalInputContainer);
                 customModalInput.value = defaultValue;
                 customModalInput.placeholder = inputPlaceholderKey ? getUIText(inputPlaceholderKey, {}, { explicitThemeContext: modalThemeContext }) : "";
-                setTimeout(() => customModalInput.focus(), 50); // Focus after modal is visible
+                customModalInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleConfirm();
+                    }
+                });
             }
         }
 
         customModalActions.innerHTML = ""; // Clear previous actions
-
         if (customActions && Array.isArray(customActions) && customActions.length > 0) {
             customActions.forEach(actionConfig => {
                 const btn = document.createElement("button");
@@ -215,92 +303,9 @@ export function showCustomModal(options) {
             // Default button logic
             const confirmBtn = document.createElement("button");
             confirmBtn.classList.add("ui-button", "primary");
-            let defaultConfirmKey = "modal_ok_button";
-            if (type === "confirm" || type === "form") defaultConfirmKey = "modal_confirm_button";
-            else if (type === "prompt") defaultConfirmKey = "modal_confirm_button"; // "OK" or "Submit"
             confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, { explicitThemeContext: modalThemeContext });
-
-            confirmBtn.addEventListener("click", async () => {
-                let modalShouldClose = true;
-                let resolveValue;
-
-                if (type === "form" || (formFields && formFields.length > 0)) {
-                    const formData = {};
-                    let firstInvalidField = null;
-                    let isValid = true;
-
-                    // Clear previous form errors
-                    customModalFormContainer.querySelectorAll('.modal-error-display').forEach(el => el.remove());
-
-                    formFields.forEach(field => {
-                        const inputElement = customModalFormContainer.querySelector(`#${field.id}`);
-                        if (inputElement) {
-                            formData[field.id] = inputElement.value;
-                            if (field.required && !inputElement.value.trim()) {
-                                isValid = false;
-                                if (!firstInvalidField) firstInvalidField = inputElement;
-                            }
-                            if (field.type === 'email' && inputElement.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputElement.value.trim())) {
-                                isValid = false;
-                                if (!firstInvalidField) firstInvalidField = inputElement;
-                                displayModalError(getUIText("alert_invalid_email_format"), inputElement.parentElement);
-                            }
-                        }
-                    });
-
-                    if (!isValid) {
-                        if (firstInvalidField) firstInvalidField.focus();
-                        log(LOG_LEVEL_WARN, "Modal form validation failed.");
-                        if (!customModalFormContainer.querySelector('.modal-error-display[data-general-error="true"]')) { // Avoid duplicate general errors
-                           const generalErrorContainer = customModalFormContainer.closest('.modal-box').querySelector('.modal-message') || customModalFormContainer;
-                           displayModalError(getUIText("alert_fill_required_fields"), generalErrorContainer);
-                        }
-                        return; // Don't proceed
-                    }
-
-                    if (onSubmit) {
-                        try {
-                            confirmBtn.disabled = true;
-                            confirmBtn.textContent = getUIText("system_processing_short"); // Loading state
-                            const resultFromOnSubmit = await onSubmit(formData);
-
-                            if (typeof resultFromOnSubmit === 'object' && resultFromOnSubmit !== null) {
-                                resolveValue = resultFromOnSubmit;
-                                if (resultFromOnSubmit.keepOpen === true) {
-                                    modalShouldClose = false;
-                                }
-                            } else { // For simpler onSubmit that just returns true/false or data
-                                resolveValue = { success: resultFromOnSubmit !== false, data: resultFromOnSubmit };
-                            }
-                        } catch (error) {
-                            log(LOG_LEVEL_ERROR, "Error in modal onSubmit:", error);
-                            displayModalError(error.message || getUIText("error_api_call_failed", { ERROR_MSG: "Operation failed" }), customModalFormContainer);
-                            modalShouldClose = false; // Keep open on error from onSubmit
-                            resolveValue = { success: false, error: error };
-                        } finally {
-                            if (document.body.contains(confirmBtn)) { // Check if button is still in DOM
-                                confirmBtn.disabled = false;
-                                confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, { explicitThemeContext: modalThemeContext });
-                            }
-                        }
-                    } else {
-                        resolveValue = formData; // Resolve with form data if no onSubmit
-                    }
-                } else if (type === "prompt" && customModalInput) {
-                    resolveValue = customModalInput.value;
-                } else if (type === "confirm") {
-                    resolveValue = true;
-                } else { // alert
-                    resolveValue = null;
-                }
-
-                if (currentModalResolve) {
-                    currentModalResolve(resolveValue);
-                }
-                if (modalShouldClose) {
-                    hideCustomModal();
-                }
-            });
+            confirmBtnRef = confirmBtn; // Assign the created button to the reference
+            confirmBtn.addEventListener("click", handleConfirm);
             customModalActions.appendChild(confirmBtn);
 
             if (type === "confirm" || type === "prompt" || type === "form" || (formFields && formFields.length > 0)) {
@@ -316,7 +321,6 @@ export function showCustomModal(options) {
         }
 
         customModalOverlay.classList.add("active");
-
         // Add click listener to overlay for "click outside to close"
         if (_activeOverlayClickListener) { // Remove any old listener first
             customModalOverlay.removeEventListener('click', _activeOverlayClickListener);
@@ -325,12 +329,6 @@ export function showCustomModal(options) {
             if (event.target === customModalOverlay) {
                 log(LOG_LEVEL_DEBUG, "Modal overlay clicked, attempting to close modal.");
                 if (currentModalResolve) {
-                    // For all modal types, an overlay click should generally signify a dismissal without explicit choice.
-                    // We resolve with `null`.
-                    // Specific wrappers (like showGenericConfirmModal) or direct callers can interpret `null`
-                    // as a cancellation or negative response if appropriate for their context.
-                    // For example, showGenericConfirmModal converts a null result to `false`.
-                    // gameController.initiateNewGameSessionFlow specifically checks for `null` to abort.
                     currentModalResolve(null);
                 }
                 hideCustomModal();

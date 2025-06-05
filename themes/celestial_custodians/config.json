@@ -11,6 +11,12 @@
   "category_key": "theme_category_celestial_custodians",
   "style_key": "theme_style_celestial_custodians",
   "naming_convention": "asset",
+  "base_attributes": {
+    "integrity": 100,
+    "willpower": 50,
+    "aptitude": 50,
+    "resilience": 50
+  },
   "dashboard_config_ref": "celestial_custodians",
   "dashboard_config": {
     "left_panel": [

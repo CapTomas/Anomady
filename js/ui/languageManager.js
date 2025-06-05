@@ -41,6 +41,7 @@ import * // For model toggle button text update
     as modelToggleManager from './modelToggleManager.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_DEBUG } from '../core/logger.js';
 import { attachTooltip } from './tooltipManager.js';
+import * as characterPanelManager from './characterPanelManager.js';
 
 // Dependencies to be injected by app.js or a higher-level orchestrator
 let _storyLogManagerRef = null;
@@ -274,6 +275,8 @@ export function applyGlobalUITranslations() {
             setText(newGameButton, newGameTermKey, {}, { explicitThemeContext: getCurrentTheme() });
         }
     }
-
+    if (characterPanelManager && typeof characterPanelManager.retranslateCharacterPanelLabels === 'function') {
+        characterPanelManager.retranslateCharacterPanelLabels();
+    }
     log(LOG_LEVEL_INFO, "Global UI translations applied.");
 }

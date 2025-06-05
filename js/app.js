@@ -27,7 +27,9 @@ import * as userThemeControlsManager from './ui/userThemeControlsManager.js';
 import * as authUiManager from './ui/authUiManager.js';
 import * as modelToggleManager from './ui/modelToggleManager.js';
 import * as languageManager from './ui/languageManager.js';
+import * as suggestedActionsManager from './ui/suggestedActionsManager.js';
 import * as dashboardManager from './ui/dashboardManager.js'; // For languageManager dependency
+import * as characterPanelManager from './ui/characterPanelManager.js';
 import * as worldShardsModalManager from './ui/worldShardsModalManager.js';
 import * as tooltipManager from './ui/tooltipManager.js';
 
@@ -152,6 +154,7 @@ async function initializeApp() {
     // 3. Initialize UI Managers and Game Controller with dependencies
     // Order can matter here if managers call each other during init.
     // Simple managers first.
+    suggestedActionsManager.initSuggestedActionsManager({ gameController });
     storyLogManager.initStoryLogScrollHandling();
     modelToggleManager.initModelToggleManager({ storyLogManager });
 
@@ -180,6 +183,7 @@ async function initializeApp() {
         landingPageManager // For updating landing page (e.g., shard icons) after login
     });
     dashboardManager.initDashboardManagerScrollEvents();
+    characterPanelManager.initCharacterPanelManager();
     tooltipManager.initTooltipManager();
 
 

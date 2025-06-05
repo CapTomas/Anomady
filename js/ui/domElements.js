@@ -70,4 +70,18 @@ export const customModalMessage = document.getElementById("custom-modal-message"
 export const customModalInputContainer = document.getElementById("custom-modal-input-container");
 export const customModalInput = document.getElementById("custom-modal-input");
 export const customModalActions = document.getElementById("custom-modal-actions");
+// --- Character Progression Panel Elements ---
+export const characterProgressionPanel = document.getElementById("character-progression-panel");
+export const charPanelIdentifier = document.getElementById("char-panel-identifier");
+export const charPanelLevel = document.getElementById("char-panel-level");
+export const charPanelIntegrityMeter = document.getElementById("char-panel-integrity-meter");
+export const charPanelIntegrityValue = document.getElementById("char-panel-integrity-value");
+export const charPanelWillpowerMeter = document.getElementById("char-panel-willpower-meter");
+export const charPanelWillpowerValue = document.getElementById("char-panel-willpower-value");
+export const charPanelAptitudeValue = document.getElementById("char-panel-aptitude-value");
+export const charPanelResilienceValue = document.getElementById("char-panel-resilience-value");
+// --- XP Bar Elements ---
+export const xpBarContainer = document.getElementById("xp-bar-container");
+export const xpBarFill = document.getElementById("xp-bar-fill");
+export const xpBarText = document.getElementById("xp-bar-text");
 // Note: customModalFormContainer is created dynamically by modalManager.js if needed for forms.

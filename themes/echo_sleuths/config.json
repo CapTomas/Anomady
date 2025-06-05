@@ -11,6 +11,12 @@
   "category_key": "theme_category_echo_sleuths",
   "style_key": "theme_style_echo_sleuths",
   "naming_convention": "entity",
+  "base_attributes": {
+    "integrity": 100,
+    "willpower": 50,
+    "aptitude": 50,
+    "resilience": 50
+  },
   "dashboard_config_ref": "echo_sleuths",
   "dashboard_config": {
     "left_panel": [

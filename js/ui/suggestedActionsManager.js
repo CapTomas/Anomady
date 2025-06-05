@@ -7,6 +7,19 @@ import { setCurrentSuggestedActions } from '../core/state.js';
 import { autoGrowTextarea } from './uiUtils.js';
 import { handleMullOverShardAction } from '../services/aiService.js';
 import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_WARN, LOG_LEVEL_ERROR } from '../core/logger.js';
+let _gameControllerRef = null;
+
+/**
+ * Initializes the SuggestedActionsManager with optional dependencies.
+ * @param {object} [dependencies={}] - Optional dependencies.
+ * @param {object} [dependencies.gameController] - Reference to gameController.
+ */
+export function initSuggestedActionsManager(dependencies = {}) {
+    if (dependencies.gameController) {
+        _gameControllerRef = dependencies.gameController;
+    }
+    log(LOG_LEVEL_DEBUG, "SuggestedActionsManager initialized.");
+}
 
 const MAX_SUGGESTED_ACTIONS = 3; // Consistent with prompt file requests (2-3 actions)
 
@@ -56,21 +69,30 @@ export function displaySuggestedActions(actions) {
                 btn.textContent = actionText;
 
                 btn.addEventListener("click", () => {
-                    if (isMullOver && shardDataForMullOver) {
+                    if (actionObjOrString.isBoonChoice) {
+                        if (_gameControllerRef && typeof _gameControllerRef.processPlayerAction === 'function') {
+                            _gameControllerRef.processPlayerAction(actionText); // actionText is boonChoice.text
+                        } else {
+                            log(LOG_LEVEL_ERROR, "GameController not available in SuggestedActionsManager to process Boon choice. Falling back to input population.");
+                            if (playerActionInput) { // Fallback behavior
+                                playerActionInput.value = actionText;
+                                playerActionInput.focus();
+                                playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
+                                autoGrowTextarea(playerActionInput);
+                            }
+                        }
+                    } else if (isMullOver && shardDataForMullOver) {
                         log(LOG_LEVEL_DEBUG, "Mull Over Shard action clicked:", shardDataForMullOver.title);
-                        // aiService.handleMullOverShardAction will manage the AI call and subsequent UI updates via state
                         handleMullOverShardAction(shardDataForMullOver)
                             .catch(err => {
                                 log(LOG_LEVEL_ERROR, "Error handling Mull Over Shard action from suggestedActionsManager:", err);
-                                // Potentially display an error to the user through a generic modal or system message
                             });
                     } else {
                         if (playerActionInput) {
                             playerActionInput.value = actionText;
                             playerActionInput.focus();
-                            // Dispatch input event for any listeners (e.g., auto-grow in uiUtils)
                             playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
-                            autoGrowTextarea(playerActionInput); // Ensure textarea resizes
+                            autoGrowTextarea(playerActionInput);
                         } else {
                             log(LOG_LEVEL_WARN, "Player action input element not found for suggested action.");
                         }

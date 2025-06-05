@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npx browser-sync start --proxy 'localhost:3000' --files '../style.css, ../index.html, ../js/**/*.js' --reload-delay 100"
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
@@ -23,6 +23,7 @@
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
+    "browser-sync": "^3.0.4",
     "prisma": "^6.8.2"
   }
 }

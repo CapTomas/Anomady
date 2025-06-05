@@ -4,6 +4,7 @@
  * @file Manages the central, in-memory application state.
  * Provides explicit getter/setter functions for state variables.
  */
+import { getThemeConfig } from '../services/themeService.js';
 
 import {
     DEFAULT_LANGUAGE,
@@ -38,9 +39,75 @@ let _currentAiPlaceholder = ""; // Placeholder text for AI input
 let _currentTurnUnlockData = null; // Data for a world shard unlocked in the current turn
 let _currentNewGameSettings = null; // Stores settings for a new game, e.g., { useEvolvedWorld: boolean }
 let _dashboardItemMeta = {}; // Stores UI-specific metadata for dashboard items, e.g., { itemId: { hasRecentUpdate: true } }
-
+let _currentUserThemeProgress = null; // Stores the UserThemeProgress object for the current theme
+let _currentRunStats = { // Ephemeral stats for the current game run
+    currentIntegrity: 0,
+    currentWillpower: 0,
+    // Strain and Conditions will be added in Phase 3
+};
+let _currentTurnXPAwarded = 0;
+let _isBoonSelectionPending = false;
 // --- Getters and Setters ---
+export const getCurrentUserThemeProgress = () => _currentUserThemeProgress;
+export const setCurrentUserThemeProgress = (progress) => {
+    _currentUserThemeProgress = progress;
+};
 
+export const getCurrentRunStats = () => _currentRunStats;
+export const setCurrentRunStats = (stats) => {
+    _currentRunStats = { ..._currentRunStats, ...stats };
+};
+export const updateCurrentRunStat = (statName, value) => {
+    if (Object.prototype.hasOwnProperty.call(_currentRunStats, statName)) {
+        _currentRunStats[statName] = value;
+    } else {
+        // console.warn(`Attempted to update unknown run stat: ${statName}`);
+        // For future flexibility, allow adding new stats dynamically if needed,
+        // though primary stats like currentIntegrity/Willpower should be predefined.
+        _currentRunStats[statName] = value;
+    }
+};
+
+
+export const getIsBoonSelectionPending = () => _isBoonSelectionPending;
+export const setIsBoonSelectionPending = (isPending) => {
+    _isBoonSelectionPending = !!isPending;
+};
+// --- Player Progression Getters ---
+export const getPlayerLevel = () => _currentUserThemeProgress ? _currentUserThemeProgress.level : 1;
+
+export const getEffectiveMaxIntegrity = () => {
+    const baseIntegrity = getThemeConfig(getCurrentTheme())?.base_attributes?.integrity || 100;
+    const bonusIntegrity = _currentUserThemeProgress?.maxIntegrityBonus || 0;
+    return baseIntegrity + bonusIntegrity;
+};
+
+export const getEffectiveMaxWillpower = () => {
+    const baseWillpower = getThemeConfig(getCurrentTheme())?.base_attributes?.willpower || 50;
+    const bonusWillpower = _currentUserThemeProgress?.maxWillpowerBonus || 0;
+    return baseWillpower + bonusWillpower;
+};
+
+export const getEffectiveAptitude = () => {
+    const baseAptitude = getThemeConfig(getCurrentTheme())?.base_attributes?.aptitude || 50;
+    const bonusAptitude = _currentUserThemeProgress?.aptitudeBonus || 0;
+    return baseAptitude + bonusAptitude;
+};
+
+export const getEffectiveResilience = () => {
+    const baseResilience = getThemeConfig(getCurrentTheme())?.base_attributes?.resilience || 50;
+    const bonusResilience = _currentUserThemeProgress?.resilienceBonus || 0;
+    return baseResilience + bonusResilience;
+};
+
+export const getAcquiredTraitKeys = () => {
+    // Ensure it always returns an array, even if null/undefined in raw progress object.
+    return Array.isArray(_currentUserThemeProgress?.acquiredTraitKeys) ? _currentUserThemeProgress.acquiredTraitKeys : [];
+};
+export const getCurrentTurnXPAwarded = () => _currentTurnXPAwarded;
+export const setCurrentTurnXPAwarded = (xp) => {
+    _currentTurnXPAwarded = xp;
+};
 export const getCurrentTheme = () => _currentTheme;
 export const setCurrentTheme = (themeId) => {
     _currentTheme = themeId;
@@ -217,12 +284,20 @@ export const clearVolatileGameState = () => {
     _lastKnownDashboardUpdates = {};
     _lastKnownGameStateIndicators = {};
     _currentSuggestedActions = [];
-
     _isInitialGameLoad = true;
     _currentAiPlaceholder = "";
     _currentTurnUnlockData = null;
     _currentPanelStates = {};
     _lastKnownCumulativePlayerSummary = "";
+    _lastKnownEvolvedWorldLore = "";
+    _currentTurnXPAwarded = 0;
+    _currentUserThemeProgress = null;
+    _currentRunStats = {
+        currentIntegrity: 0,
+        currentWillpower: 0,
+    };
+    _isBoonSelectionPending = false;
+
     clearCurrentNewGameSettings();
     _dashboardItemMeta = {};
 };

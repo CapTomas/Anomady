@@ -181,6 +181,27 @@ export const resetWorldShardsForTheme = (token, themeId) => {
 export const fetchShapedThemesSummary = (token) => {
     return _callApi('/api/v1/users/me/shaped-themes-summary', 'GET', null, token);
 };
+// --- User Theme Progress Endpoint ---
+/**
+ * Fetches the user's persistent progress for a specific theme.
+ * @param {string} token - The JWT token for authentication.
+ * @param {string} themeId - The ID of the theme.
+ * @returns {Promise<object>} The user's theme progress data.
+ */
+export const fetchUserThemeProgress = (token, themeId) => {
+    return _callApi(`/api/v1/users/me/themes/${themeId}/progress`, 'GET', null, token);
+};
+
+/**
+ * Applies a selected Boon to the user's theme progress.
+ * @param {string} token - The JWT token for authentication.
+ * @param {string} themeId - The ID of the theme.
+ * @param {object} boonPayload - The details of the boon to apply (e.g., { boonType: "MAX_ATTRIBUTE_INCREASE", targetAttribute: "maxIntegrityBonus", value: 10 }).
+ * @returns {Promise<object>} The API response containing the updated UserThemeProgress.
+ */
+export const applyBoonSelection = (token, themeId, boonPayload) => {
+    return _callApi(`/api/v1/users/me/themes/${themeId}/boon`, 'POST', boonPayload, token);
+};
 
 // --- AI Proxy Endpoint ---
 /**

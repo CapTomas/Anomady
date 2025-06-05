@@ -627,17 +627,14 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
     const itemContainer = document.getElementById(`info-item-container-${itemId}`); // The parent div of label & value/meter
 
     if (itemConfig.type === "meter") {
-        if (valueElement || meterBarElement) { // One of them must exist for a meter
+        if (valueElement || meterBarElement) {
             const statusTextId = itemConfig.status_text_id;
-            // Get the status text from the last known complete dashboard updates,
-            // as the `newValue` here is only for the meter's percentage.
             const newStatusText = statusTextId ? getLastKnownDashboardUpdates()[statusTextId] : undefined;
             setMeterValue(meterBarElement, valueElement, String(newValue), itemConfig, highlight, newStatusText);
         }
     } else if (itemConfig.type === "status_level") {
-        if (valueElement && itemConfig.level_mappings) {
-            updateStatusLevelDisplay(valueElement, String(newValue), itemConfig.level_mappings, currentThemeId, highlight);
-        }
+        // Pass the full itemConfig to updateStatusLevelDisplay
+        updateStatusLevelDisplay(valueElement, String(newValue), itemConfig, currentThemeId, highlight);
     } else if (itemConfig.type === "text" || itemConfig.type === "text_long") {
         if (valueElement) {
             const suffix = itemConfig.suffix || "";
@@ -717,52 +714,58 @@ export function updateDashboard(updatesFromAI, highlightChanges = true) {
  */
 export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = true, explicitStatusText = undefined) {
     let updatedOccurred = false;
-    const meterType = itemConfig.meter_type; // e.g., "health", "shields", "conceptual_cohesion"
-
-    if (!barEl && !textEl) return; // Nothing to update
+    const meterType = itemConfig.meter_type;
+    if (!barEl && !textEl) return;
 
     let finalPct = 0;
-    let newContentForTextEl = ""; // Initialize
-
+    let newContentForTextEl = "";
     const parsedPct = parseInt(newPctStr, 10);
 
     if (!isNaN(parsedPct)) {
         finalPct = Math.max(0, Math.min(100, parsedPct));
     } else {
-        // Handle non-numeric strings like "---", "N/A", "Unknown"
         const naText = getUIText("not_available_short");
         const unknownText = getUIText("unknown");
         if (newPctStr === "---" || newPctStr === naText || String(newPctStr).toLowerCase() === unknownText.toLowerCase()) {
-            newContentForTextEl = newPctStr; // Use the special string directly
-            // finalPct remains 0, bar will be empty
+            newContentForTextEl = newPctStr;
         } else {
-            // Default for unparsable strings that aren't special markers
             finalPct = (meterType === "shields" || meterType === "conceptual_cohesion" || meterType === "monster_defense" || meterType === "mana") ? 0 : 100;
         }
     }
 
-    // Determine status text for display (e.g., "Online: 75%", "Wounded: 50%")
+    if (itemConfig.maps_to_run_stat && !isNaN(parsedPct)) {
+        // If the item maps to a run stat (e.g., currentIntegrity), update the state.
+        // Ensure we're passing the numerical value, not the percentage string.
+        // The 'value' for IG/WP is the actual current value, not a percentage.
+        // If the meter represents a percentage of a max value, this needs careful handling.
+        // For now, assume `newPctStr` IS the new value for IG/WP if maps_to_run_stat is set.
+        // This implies AI might return "80" for an Integrity of 80, not "80%".
+        // If AI returns a percentage, we'd need to calculate based on max values.
+        // Based on feature description, IG/WP are direct values.
+        const numericValue = parseInt(newPctStr, 10); // Re-parse to ensure it's the number for the stat
+        if (!isNaN(numericValue)) {
+            state.updateCurrentRunStat(itemConfig.maps_to_run_stat, numericValue);
+            log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to ${numericValue} via dashboard meter update for item '${itemConfig.id}'.`);
+            updatedOccurred = true; // Mark update for highlight even if text/bar didn't change visually but state did
+        }
+    }
+
     let statusTextToUse = explicitStatusText;
     if (itemConfig.status_text_id && explicitStatusText === undefined) {
-        // If explicitStatusText is not provided, try to get it from last known dashboard updates
         statusTextToUse = getLastKnownDashboardUpdates()[itemConfig.status_text_id];
     }
 
-
-    // Construct the display text
     if (meterType === "shields" || meterType === "conceptual_cohesion" || meterType === "monster_defense" || meterType === "monster_health") {
         const statusForDisplay = statusTextToUse || (finalPct > 0 ? getUIText("online") : getUIText("offline"));
         newContentForTextEl = `${statusForDisplay}: ${finalPct}%`;
-        // Ensure "Offline" status if percentage is 0, unless statusText already indicates something like "Destroyed"
         if (finalPct === 0 && statusForDisplay.toLowerCase() !== getUIText("offline").toLowerCase() && statusForDisplay.toLowerCase() !== (getUIText(itemConfig.default_status_key, {}, {explicitThemeContext: getCurrentTheme()}) || '').toLowerCase()) {
              newContentForTextEl = `${getUIText("offline")}: ${finalPct}%`;
         }
     } else if ((meterType === "mana" || meterType === "stamina") && statusTextToUse) {
         newContentForTextEl = `${statusTextToUse}: ${finalPct}%`;
-    } else { // Default to just percentage if no specific status text logic
+    } else {
         newContentForTextEl = (newContentForTextEl === "" && !isNaN(parsedPct)) ? `${finalPct}%` : newContentForTextEl || `${finalPct}%`;
     }
-
 
     if (textEl && textEl.textContent !== newContentForTextEl) {
         textEl.textContent = newContentForTextEl;
@@ -774,14 +777,10 @@ export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = 
             barEl.style.width = `${finalPct}%`;
             updatedOccurred = true;
         }
-
-        // Update bar classes for color coding
         const currentClasses = Array.from(barEl.classList).filter(cls => cls.startsWith("meter-") && cls !== "meter-bar");
         let newBarClasses = [];
-
         const isOfflineStatus = (meterType === "shields" || meterType === "conceptual_cohesion" || meterType === "monster_defense") &&
                           (statusTextToUse && statusTextToUse.toLowerCase() === getUIText("offline").toLowerCase());
-
         if (isOfflineStatus || newContentForTextEl === getUIText("not_available_short") || newContentForTextEl === getUIText("unknown") || newContentForTextEl === "---") {
             newBarClasses.push("meter-offline");
         } else {
@@ -790,22 +789,20 @@ export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = 
             else if (finalPct <= 50) newBarClasses.push("meter-medium");
             else {
                 newBarClasses.push("meter-full");
-                // Add specific "ok" state classes if needed for certain meter types
-                if (meterType === "health") newBarClasses.push("meter-ok-health"); // Example
+                if (meterType === "health") newBarClasses.push("meter-ok-health");
                 else if (meterType === "shields" || itemConfig.meter_type === "enemy_shields") newBarClasses.push("meter-ok-shield");
                 else if (meterType === "fuel") newBarClasses.push("meter-ok-fuel");
                 else if (meterType === "stamina") newBarClasses.push("meter-ok-stamina");
                 else if (meterType === "mana") newBarClasses.push("meter-ok-mana");
             }
         }
-
         let classesChanged = newBarClasses.length !== currentClasses.length || !newBarClasses.every(cls => currentClasses.includes(cls));
         if (classesChanged) {
             currentClasses.forEach(cls => barEl.classList.remove(cls));
             newBarClasses.forEach(cls => barEl.classList.add(cls));
             updatedOccurred = true;
         }
-        if (!barEl.classList.contains("meter-bar")) barEl.classList.add("meter-bar"); // Ensure base class
+        if (!barEl.classList.contains("meter-bar")) barEl.classList.add("meter-bar");
     }
 
     if (updatedOccurred && highlight) {
@@ -823,36 +820,50 @@ export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = 
  * @param {string} themeId - The current theme ID for localization.
  * @param {boolean} [highlight=true] - Whether to visually highlight the update.
  */
-export function updateStatusLevelDisplay(valueElement, newValue, levelMappingsConfig, themeId, highlight = true) {
-    if (!valueElement || !levelMappingsConfig) return;
-
+export function updateStatusLevelDisplay(valueElement, newValue, itemConfig, themeId, highlight = true) {
+    if (!valueElement || !itemConfig || !itemConfig.level_mappings) return;
+    const levelMappingsConfig = itemConfig.level_mappings;
     const levelConfig = levelMappingsConfig[String(newValue)]; // Ensure newValue is string for key lookup
+    let updatedOccurred = false;
+
+    if (itemConfig.maps_to_run_stat) {
+        const numericValue = parseInt(newValue, 10);
+        if (!isNaN(numericValue)) {
+            state.updateCurrentRunStat(itemConfig.maps_to_run_stat, numericValue);
+            log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to ${numericValue} via dashboard status_level update for item '${itemConfig.id}'.`);
+            updatedOccurred = true;
+        }
+    }
 
     if (levelConfig && levelConfig.display_text_key) {
         const newDisplayText = getUIText(levelConfig.display_text_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
-        const newCssClass = levelConfig.css_class || "status-info"; // Default CSS class
-
+        const newCssClass = levelConfig.css_class || "status-info";
         if (valueElement.textContent !== newDisplayText || !valueElement.classList.contains(newCssClass)) {
             valueElement.textContent = newDisplayText;
-            // Remove all potential old status classes before adding the new one
             Object.values(levelMappingsConfig).forEach(mapping => {
                 if (mapping.css_class) valueElement.classList.remove(mapping.css_class);
             });
             valueElement.classList.add(newCssClass);
-
-            if (highlight) {
-                const itemContainer = valueElement.closest(".info-item, .info-item-meter");
-                if (itemContainer) highlightElementUpdate(itemContainer);
-            }
+            updatedOccurred = true;
         }
     } else {
-        // Fallback if mapping is not found
-        valueElement.textContent = getUIText("unknown");
+        if (valueElement.textContent !== getUIText("unknown")) {
+            valueElement.textContent = getUIText("unknown");
+            updatedOccurred = true;
+        }
         Object.values(levelMappingsConfig).forEach(mapping => {
             if (mapping.css_class) valueElement.classList.remove(mapping.css_class);
         });
-        valueElement.classList.add("status-info");
-        log(LOG_LEVEL_WARN, `Status level mapping not found for value "${newValue}" in theme "${themeId}".`);
+        if (!valueElement.classList.contains("status-info")) {
+             valueElement.classList.add("status-info");
+             updatedOccurred = true;
+        }
+        log(LOG_LEVEL_WARN, `Status level mapping not found for value "${newValue}" in theme "${themeId}" for item "${itemConfig.id}".`);
+    }
+
+    if (updatedOccurred && highlight) {
+        const itemContainer = valueElement.closest(".info-item, .info-item-meter");
+        if (itemContainer) highlightElementUpdate(itemContainer);
     }
 }
 

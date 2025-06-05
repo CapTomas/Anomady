@@ -30,7 +30,10 @@ import {
     getCurrentModelName as getStateCurrentModelName,
     getCurrentTurnUnlockData,
     setCurrentTurnUnlockData,
+    getIsBoonSelectionPending,
     getDashboardItemMeta,
+    getCurrentUserThemeProgress, // Added
+    getCurrentTurnXPAwarded,     // Added
 } from '../core/state.js';
 import {
     JWT_STORAGE_KEY,
@@ -374,10 +377,21 @@ export async function saveCurrentGameState() {
     log(LOG_LEVEL_INFO, `Attempting to save game state for theme '${currentThemeId}' for user '${currentUser.email}'`);
 
     const turnUnlockData = getCurrentTurnUnlockData();
+    let userThemeProgressForPayload = getCurrentUserThemeProgress(); // Get current progress
+
+    // Ensure that if userThemeProgressForPayload is an object, its acquiredTraitKeys is an array.
+    if (userThemeProgressForPayload && typeof userThemeProgressForPayload === 'object' && !Array.isArray(userThemeProgressForPayload.acquiredTraitKeys)) {
+        log(LOG_LEVEL_WARN, `authService.saveCurrentGameState: user_theme_progress.acquiredTraitKeys was not an array. Fixing to []. Original value:`, userThemeProgressForPayload.acquiredTraitKeys);
+        // Clone to avoid mutating state._currentUserThemeProgress directly if it's the same object reference from state
+        userThemeProgressForPayload = {
+            ...userThemeProgressForPayload,
+            acquiredTraitKeys: [],
+        };
+    }
 
     const gameStatePayload = {
         theme_id: currentThemeId,
-        player_identifier: narrativePlayerIdentifier || "Unnamed Protagonist", // Fallback
+        player_identifier: narrativePlayerIdentifier || "Unnamed Protagonista", // Fallback, consider localizing or making more generic if needed
         game_history: getGameHistory(),
         last_dashboard_updates: getLastKnownDashboardUpdates(),
         last_game_state_indicators: getLastKnownGameStateIndicators(),
@@ -387,7 +401,10 @@ export async function saveCurrentGameState() {
         panel_states: getCurrentPanelStates(),
         model_name_used: getStateCurrentModelName(),
         new_persistent_lore_unlock: turnUnlockData, // Include the unlock data
-        dashboard_item_meta: getDashboardItemMeta(), // Added to save dashboard UI state
+        dashboard_item_meta: getDashboardItemMeta(),
+        xp_awarded_this_turn: getCurrentTurnXPAwarded(),
+        user_theme_progress: userThemeProgressForPayload, // Use the potentially corrected object
+        is_boon_selection_pending: getIsBoonSelectionPending(), // Add the boon pending status
     };
 
     // Reset currentTurnUnlockData in state after it's been included in the payload
@@ -398,7 +415,7 @@ export async function saveCurrentGameState() {
         log(LOG_LEVEL_INFO, "Game state saved successfully to backend.", response.message || response);
     } catch (error) {
         log(LOG_LEVEL_ERROR, "Error saving game state to backend:", error.message, error.code, error.details);
-        // Consider notifying the user through UI, e.g., a non-blocking toast or system message
         // storyLogManager.addMessageToLog(getUIText("error_saving_progress") + ` (Server: ${error.message})`, "system-error");
+        throw error; // Re-throw the error so the caller can handle it
     }
 }

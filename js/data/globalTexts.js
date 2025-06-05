@@ -194,6 +194,34 @@ export const globalTextData = {
             "action_mull_over_shard": "'{TITLE}'",
             "button_continue_game": "Continue Expedition",
             "tooltip_configure_fragments": "Configure World Fragments",
+            // --- Character Progression Panel ---
+            "char_panel_placeholder_name": "Protagonist",
+            "char_panel_placeholder_level": "Level 1",
+            "char_panel_label_level": "Level",
+            "char_panel_label_integrity": "Integrity",
+            "char_panel_label_willpower": "Willpower",
+            "char_panel_label_aptitude": "Aptitude",
+            "char_panel_label_resilience": "Resilience",
+            // --- XP Bar ---
+            "xp_bar_label_xp": "XP:",
+            "xp_bar_default_text": "XP: 0/100", // Fallback, actual values will be dynamic
+            "xp_bar_max_level": "MAX LEVEL",
+            // --- Boon Selection & XP System Messages ---
+            "system_xp_awarded": "Gained {XP_AMOUNT} XP.",
+            "system_level_up": "LEVEL UP! Reached Level {NEW_LEVEL}!",
+            "system_boon_selection_prompt": "Choose your Boon:",
+            "placeholder_boon_selection": "Select a Boon by typing its number or full text...",
+            "error_invalid_boon_choice": "Invalid selection. Please choose from the available Boons.",
+            "system_boon_applied": "Boon Applied: {BOON_TEXT}",
+            "error_generic_action_failed": "Action '{ACTION_NAME}' could not be completed.",
+            // --- Boon Descriptions (Phase 2 - Max Attribute Increases) ---
+            "boon_desc_max_integrity": "Max Integrity +{VALUE}",
+            "boon_desc_max_willpower": "Max Willpower +{VALUE}",
+            // --- Boon Descriptions (Phase 3 - Placeholders) ---
+            "boon_desc_aptitude_increase": "Aptitude +{VALUE}",
+            "boon_desc_resilience_increase": "Resilience +{VALUE}",
+            "boon_primary_choose_attribute": "Choose Attribute Enhancement",
+            "boon_primary_choose_trait": "Choose New Trait",
             "tooltip_no_fragments_to_configure": "No World Fragments unlocked for this theme.",
         },
         cs: {
@@ -383,6 +411,34 @@ export const globalTextData = {
             "action_mull_over_shard": "'{TITLE}'",
             "button_continue_game": "Pokračovat ve Výpravě",
             "tooltip_configure_fragments": "Nastavit fragmenty světa",
+            // --- Character Progression Panel ---
+            "char_panel_placeholder_name": "Protagonista",
+            "char_panel_placeholder_level": "Úroveň 1",
+            "char_panel_label_level": "Úroveň",
+            "char_panel_label_integrity": "Integrita",
+            "char_panel_label_willpower": "Vůle",
+            "char_panel_label_aptitude": "Schopnosti",
+            "char_panel_label_resilience": "Odolnost",
+            // --- XP Bar ---
+            "xp_bar_label_xp": "ZK:",
+            "xp_bar_default_text": "ZK: 0/100",
+            "xp_bar_max_level": "MAX. ÚROVEŇ",
+            // --- Boon Selection & XP System Messages ---
+            "system_xp_awarded": "Získáno {XP_AMOUNT} ZK.",
+            "system_level_up": "POSTUP NA DALŠÍ ÚROVEŇ! Dosažena úroveň {NEW_LEVEL}!",
+            "system_boon_selection_prompt": "Vyber si své Vylepšení:",
+            "placeholder_boon_selection": "Vyber Vylepšení zadáním jeho čísla nebo celého textu...",
+            "error_invalid_boon_choice": "Neplatná volba. Vyberte prosím z dostupných Vylepšení.",
+            "system_boon_applied": "Vylepšení použito: {BOON_TEXT}",
+            "error_generic_action_failed": "Akci '{ACTION_NAME}' se nepodařilo dokončit.",
+            // --- Boon Descriptions (Phase 2 - Max Attribute Increases) ---
+            "boon_desc_max_integrity": "Max. Integrita +{VALUE}",
+            "boon_desc_max_willpower": "Max. Vůle +{VALUE}",
+            // --- Boon Descriptions (Phase 3 - Placeholders) ---
+            "boon_desc_aptitude_increase": "Schopnosti +{VALUE}",
+            "boon_desc_resilience_increase": "Odolnost +{VALUE}",
+            "boon_primary_choose_attribute": "Zvolit Vylepšení Atributu",
+            "boon_primary_choose_trait": "Zvolit Novou Schopnost",
             "tooltip_no_fragments_to_configure": "Pro toto téma nejsou odemčeny žádné fragmenty světa.",
         }
     },

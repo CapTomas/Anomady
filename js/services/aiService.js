@@ -18,6 +18,12 @@ import {
     getLastKnownEvolvedWorldLore,
     getLastKnownCumulativePlayerSummary,
     getCurrentModelName,
+    getPlayerLevel,
+    getEffectiveMaxIntegrity,
+    getEffectiveMaxWillpower,
+    getEffectiveAptitude,
+    getEffectiveResilience,
+    getAcquiredTraitKeys,
     getIsInitialGameLoad,
     setIsInitialGameLoad,
     getCurrentPromptType,
@@ -63,15 +69,14 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     const narrativeLang = getCurrentNarrativeLanguage();
     const playerID = getPlayerIdentifier();
     const activePromptType = getIsInitialGameLoad() ? "initial" : getCurrentPromptType();
-
     const themeConfig = getThemeConfig(currentThemeId);
+
     if (!currentThemeId || !themeConfig || !themeConfig.dashboard_config) {
         log(LOG_LEVEL_ERROR, "getSystemPrompt: Active theme, its configuration, or dashboard_config is missing.");
-        return `{"narrative": "SYSTEM ERROR: Active theme configuration is missing for prompt generation.", "dashboard_updates": {}, "suggested_actions": [], "game_state_indicators": {}}`;
+        return `{"narrative": "SYSTEM ERROR: Active theme configuration is missing for prompt generation.", "dashboard_updates": {}, "suggested_actions": [], "game_state_indicators": {}, "xp_awarded": 0}`;
     }
 
     const dashboardLayoutConfig = themeConfig.dashboard_config;
-
     const isValidPromptText = (text) => text !== null && text !== undefined && !text.startsWith("ERROR:") && !text.startsWith("HELPER_FILE_NOT_FOUND:");
 
     let basePromptKey = activePromptType;
@@ -93,7 +98,7 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
             basePromptKey = masterKeyToTry; // Update basePromptKey if master prompt is used
         } else {
              log(LOG_LEVEL_ERROR, `CRITICAL PROMPT FAILURE: No valid prompt found for type "${activePromptType}" (final tried key "${masterKeyToTry}") for theme "${currentThemeId}" or master. Cannot generate system prompt.`);
-             return `{"narrative": "SYSTEM ERROR: Core prompt file (type: ${activePromptType}, final key: ${masterKeyToTry}) is critically missing or invalid.", "dashboard_updates": {}, "suggested_actions": ["Restart Game"], "game_state_indicators": {}}`;
+             return `{"narrative": "SYSTEM ERROR: Core prompt file (type: ${activePromptType}, final key: ${masterKeyToTry}) is critically missing or invalid.", "dashboard_updates": {}, "suggested_actions": ["Restart Game"], "game_state_indicators": {}, "xp_awarded": 0}`;
         }
     }
 
@@ -129,9 +134,8 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
             generatedGameStateIndicators = generatedGameStateIndicators.slice(0, -2);
         }
     } else {
-        // Minimal fallback if game_state_indicators is not well-defined
         generatedGameStateIndicators = `"activity_status": "string (Reflects ongoing activity, in ${narrativeLang.toUpperCase()})",\n` +
-                                      `"combat_engaged": "boolean (True if combat starts THIS turn)"`; // Example, adjust as needed
+                                      `"combat_engaged": "boolean (True if combat starts THIS turn)"`;
     }
 
     const instructionKeyForThemeText = basePromptKey.startsWith("master_") ? basePromptKey : activePromptType;
@@ -151,7 +155,6 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         let lines = null;
         if (helperContentCurrentTheme && isValidPromptText(helperContentCurrentTheme)) lines = helperContentCurrentTheme.split("\n").map(s => s.trim()).filter(s => s.length > 0);
         else if (helperContentMasterTheme && isValidPromptText(helperContentMasterTheme)) lines = helperContentMasterTheme.split("\n").map(s => s.trim()).filter(s => s.length > 0);
-
         if (lines && lines.length > 0) replacementText = lines[Math.floor(Math.random() * lines.length)];
         else log(LOG_LEVEL_WARN, `Helper file for key '${helperKey}' not found or empty. Placeholder: ${fullPlaceholder}`);
         themeSpecificInstructions = themeSpecificInstructions.replace(fullPlaceholder, replacementText);
@@ -160,13 +163,24 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
 
     const narrativeLangInstruction = getThemeNarrativeLangPromptPart(currentThemeId, narrativeLang);
     let processedPromptText = basePromptText;
-    // Replace all placeholders
+
+    // Player Progression Data - These will be empty/default if no progress yet or getters not fully implemented in state
+    const playerLevel = getPlayerLevel ? getPlayerLevel() : 1;
+    const effMaxIntegrity = getEffectiveMaxIntegrity ? getEffectiveMaxIntegrity() : (themeConfig?.base_attributes?.integrity || 100);
+    const effMaxWillpower = getEffectiveMaxWillpower ? getEffectiveMaxWillpower() : (themeConfig?.base_attributes?.willpower || 50);
+    const effAptitude = getEffectiveAptitude ? getEffectiveAptitude() : (themeConfig?.base_attributes?.aptitude || 50);
+    const effResilience = getEffectiveResilience ? getEffectiveResilience() : (themeConfig?.base_attributes?.resilience || 50);
+    const acquiredTraits = getAcquiredTraitKeys ? getAcquiredTraitKeys() : [];
+    // Phase 3 placeholders (can be added to prompts later)
+    // const currentStrain = getCurrentStrainLevel ? getCurrentStrainLevel() : "Calm";
+    // const activeConditions = getActiveConditions ? getActiveConditions() : [];
+
     const replacements = {
         'narrativeLanguageInstruction': narrativeLangInstruction,
         'currentNameForPrompt': playerID || getUIText("unknown"),
         'currentNarrativeLanguage\\.toUpperCase\\(\\)': narrativeLang.toUpperCase(),
         'theme_name': getUIText(themeConfig.name_key, {}, { explicitThemeContext: currentThemeId }),
-        'theme_lore': getUIText(themeConfig.lore_key, {}, { explicitThemeContext: currentThemeId }), // Base lore for initial prompt
+        'theme_lore': getUIText(themeConfig.lore_key, {}, { explicitThemeContext: currentThemeId }),
         'theme_category': getUIText(themeConfig.category_key || `theme_category_${currentThemeId}`, {}, { explicitThemeContext: currentThemeId }),
         'theme_style': getUIText(themeConfig.style_key || `theme_style_${currentThemeId}`, {}, { explicitThemeContext: currentThemeId }),
         'theme_tone': getUIText(themeConfig.tone_key, {}, { explicitThemeContext: currentThemeId }),
@@ -178,7 +192,16 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         'game_history_lore': getLastKnownEvolvedWorldLore() || getUIText(themeConfig.lore_key, {}, { explicitThemeContext: currentThemeId }),
         'game_history_summary': getLastKnownCumulativePlayerSummary() || "No major long-term events have been summarized yet.",
         'RIW': String(RECENT_INTERACTION_WINDOW_SIZE),
-        'world_shards_json_payload': (basePromptKey === "master_initial" ? worldShardsPayloadForInitial : "[]") // Only inject for initial prompt
+        'world_shards_json_payload': (basePromptKey === "master_initial" ? worldShardsPayloadForInitial : "[]"),
+        // Player Progression Placeholders
+        'playerLevel': String(playerLevel),
+        'effectiveMaxIntegrity': String(effMaxIntegrity),
+        'effectiveMaxWillpower': String(effMaxWillpower),
+        'effectiveAptitude': String(effAptitude),
+        'effectiveResilience': String(effResilience),
+        'acquiredTraitsJSON': JSON.stringify(acquiredTraits), // Send as JSON array string
+        // 'currentStrainLevel': currentStrain, // For Phase 3
+        // 'activeConditionsJSON': JSON.stringify(activeConditions), // For Phase 3
     };
 
     for (const key in replacements) {
@@ -322,9 +345,11 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
 
             if (!parsedAIResponse || typeof parsedAIResponse.narrative !== "string" ||
                 typeof parsedAIResponse.dashboard_updates !== "object" || parsedAIResponse.dashboard_updates === null ||
-                !Array.isArray(parsedAIResponse.suggested_actions)) {
-                log(LOG_LEVEL_ERROR, "Parsed JSON from AI is missing required core fields or has wrong types.", parsedAIResponse);
-                throw new Error("Invalid JSON structure from AI: missing or invalid core fields.");
+                !Array.isArray(parsedAIResponse.suggested_actions) ||
+                (parsedAIResponse.xp_awarded !== undefined && typeof parsedAIResponse.xp_awarded !== 'number') // Added XP validation
+                ) {
+                log(LOG_LEVEL_ERROR, "Parsed JSON from AI is missing required core fields, has wrong types, or invalid xp_awarded.", parsedAIResponse);
+                throw new Error("Invalid JSON structure from AI: missing/invalid core fields or xp_awarded.");
             }
 
             addTurnToGameHistory({ role: "model", parts: [{ text: JSON.stringify(parsedAIResponse) }] });
@@ -342,8 +367,17 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
             if (getIsInitialGameLoad()) {
                 setIsInitialGameLoad(false);
             }
+
+            // Store awarded XP to be processed by gameController
+            if (parsedAIResponse.xp_awarded !== undefined) {
+                // We'll store it temporarily in state or pass it back directly
+                // For now, let's assume gameController will grab it from the parsed response.
+                // If we need to store it in state: state.setCurrentTurnXPAwarded(parsedAIResponse.xp_awarded);
+                log(LOG_LEVEL_DEBUG, `XP awarded by AI this turn: ${parsedAIResponse.xp_awarded}`);
+            }
+
             // CurrentPromptType is determined by handleGameStateIndicators in gameController AFTER this resolves
-            return parsedAIResponse.narrative;
+            return parsedAIResponse; // Return the full parsed object
         } else if (responseData.promptFeedback?.blockReason) {
             const blockDetails = responseData.promptFeedback.safetyRatings?.map(r => `${r.category}: ${r.probability}`).join(", ") || "No details.";
             log(LOG_LEVEL_WARN, "Content blocked by AI:", responseData.promptFeedback.blockReason, "Details:", blockDetails);

@@ -37,7 +37,43 @@
                 <button id="language-toggle-button" class="ui-button icon-button" data-lang-key="toggle_language" data-lang-key-aria="toggle_language_aria" aria-label="Toggle Language"></button>
             </div>
         </header>
-
+        <div id="character-progression-panel" style="display: none;">
+            <div class="character-info-left">
+                <span id="char-panel-identifier" data-lang-key="char_panel_placeholder_name">Character Name</span>
+                <span id="char-panel-level" data-lang-key="char_panel_placeholder_level">Level 1</span>
+            </div>
+            <div class="character-attributes-grid">
+                <!-- Integrity: Column 1 -->
+                <div class="attribute-item" id="cp-item-integrity">
+                    <span class="attribute-label" data-lang-key="char_panel_label_integrity">Integrity</span>
+                    <div class="attribute-meter-container">
+                        <div id="char-panel-integrity-meter" class="attribute-meter-bar"></div>
+                    </div>
+                    <span id="char-panel-integrity-value" class="attribute-value">100/100</span>
+                </div>
+                <!-- Willpower: Column 2 -->
+                <div class="attribute-item" id="cp-item-willpower">
+                    <span class="attribute-label" data-lang-key="char_panel_label_willpower">Willpower</span>
+                    <div class="attribute-meter-container">
+                        <div id="char-panel-willpower-meter" class="attribute-meter-bar"></div>
+                    </div>
+                    <span id="char-panel-willpower-value" class="attribute-value">50/50</span>
+                </div>
+                <!-- Aptitude: Column 3, Row 1 -->
+                <div class="attribute-item" id="cp-item-aptitude">
+                    <span class="attribute-label" data-lang-key="char_panel_label_aptitude">Aptitude</span>
+                    <span id="char-panel-aptitude-value" class="attribute-value">50</span>
+                </div>
+                <!-- Resilience: Column 3, Row 2 -->
+                <div class="attribute-item" id="cp-item-resilience">
+                    <span class="attribute-label" data-lang-key="char_panel_label_resilience">Resilience</span>
+                    <span id="char-panel-resilience-value" class="attribute-value">50</span>
+                </div>
+            </div>
+             <div class="character-info-right">
+                <!-- This column is intentionally empty for future use as per requirements -->
+            </div>
+        </div>
         <div id="main-layout">
             <aside id="left-panel" class="panel-sidebar">
                 <div class="scroll-indicator scroll-indicator-up" id="left-panel-scroll-indicator-up"></div>
@@ -105,6 +141,10 @@
         <footer id="application-footer">
             <p>© 2025 Anomady v0.4.5. Worlds written as you walk them. </p>
         </footer>
+        <div id="xp-bar-container" style="display: none;">
+            <div id="xp-bar-fill"></div>
+            <span id="xp-bar-text" data-lang-key="xp_bar_default_text">XP: 0/100</span>
+        </div>
         <div id="custom-modal-overlay" class="modal-overlay">
             <div id="custom-modal" class="modal-box">
                 <h3 id="custom-modal-title" class="modal-title">Modal Title</h3>

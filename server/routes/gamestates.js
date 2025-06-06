@@ -20,11 +20,9 @@ const validateGameStatePayload = (req, res, next) => {
     theme_id, player_identifier, game_history_delta,
     last_dashboard_updates, last_game_state_indicators, current_prompt_type,
     current_narrative_language, last_suggested_actions, panel_states,
-    dashboard_item_meta, xp_awarded_this_turn, user_theme_progress, is_boon_selection_pending,
+    dashboard_item_meta, user_theme_progress, is_boon_selection_pending,
   } = req.body;
-
   const errors = [];
-
   if (!theme_id || typeof theme_id !== 'string' || theme_id.trim() === '') { errors.push('theme_id is required and must be a non-empty string.'); }
   if (!player_identifier || typeof player_identifier !== 'string' || player_identifier.trim() === '') { errors.push('player_identifier is required and must be a non-empty string.'); }
   // Validate game_history_delta instead of game_history
@@ -38,9 +36,6 @@ const validateGameStatePayload = (req, res, next) => {
   if (req.body.dashboard_item_meta !== undefined && (typeof req.body.dashboard_item_meta !== 'object' || req.body.dashboard_item_meta === null)) { errors.push('dashboard_item_meta must be an object if provided.'); }
   if (req.body.actions_before_boon_selection !== undefined && req.body.actions_before_boon_selection !== null && !Array.isArray(req.body.actions_before_boon_selection)) {
     errors.push('actions_before_boon_selection must be an array or null if provided.');
-  }
-  if (xp_awarded_this_turn !== undefined && (typeof xp_awarded_this_turn !== 'number' || xp_awarded_this_turn < 0)) {
-    errors.push('xp_awarded_this_turn must be a non-negative number if provided.');
   }
   if (user_theme_progress !== undefined) {
     if (typeof user_theme_progress !== 'object' || user_theme_progress === null) {
@@ -60,7 +55,6 @@ const validateGameStatePayload = (req, res, next) => {
   if (typeof is_boon_selection_pending === 'undefined' || typeof is_boon_selection_pending !== 'boolean') {
     errors.push('is_boon_selection_pending is required and must be a boolean.');
   }
-
   // Validate the delta's contents
   if (game_history_delta && Array.isArray(game_history_delta)) {
     for (const turn of game_history_delta) {
@@ -69,12 +63,10 @@ const validateGameStatePayload = (req, res, next) => {
       }
     }
   }
-
   if (errors.length > 0) {
     logger.warn(`GameState payload validation failed for user ${req.user?.id}:`, errors);
     return res.status(400).json({ error: { message: 'Invalid game state payload.', code: 'INVALID_PAYLOAD', details: errors } });
   }
-
   next();
 };
 
@@ -88,13 +80,12 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
     theme_id, player_identifier, game_history_delta, // Changed from game_history
     last_dashboard_updates, last_game_state_indicators, current_prompt_type,
     current_narrative_language, last_suggested_actions, panel_states,
-    new_persistent_lore_unlock, xp_awarded_this_turn,
+    new_persistent_lore_unlock,
     user_theme_progress: clientUserThemeProgress,
     is_boon_selection_pending,
   } = req.body;
   const userId = req.user.id;
   const determinedModelName = req.user.preferred_model_name || FREE_MODEL_NAME;
-
   const gameStateClientPayload = {
     player_identifier, last_dashboard_updates, last_game_state_indicators,
     current_prompt_type, current_narrative_language, last_suggested_actions,
@@ -103,17 +94,14 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
     is_boon_selection_pending,
     actions_before_boon_selection: req.body.actions_before_boon_selection || null,
   };
-
   try {
     const result = await prisma.$transaction(async (tx) => {
       let existingGameState = await tx.gameState.findUnique({
         where: { userId_theme_id: { userId, theme_id } },
       });
-
       let combinedHistory;
       let finalCumulativePlayerSummary;
       let finalCurrentWorldLore;
-
       if (existingGameState) {
         const existingHistory = Array.isArray(existingGameState.game_history) ? existingGameState.game_history : [];
         combinedHistory = existingHistory.concat(game_history_delta);
@@ -125,20 +113,17 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
         finalCumulativePlayerSummary = "";
         finalCurrentWorldLore = null; // Will be fetched below
       }
-
       // If lore is missing (new game or reset), fetch the base lore.
       if (!finalCurrentWorldLore) {
           finalCurrentWorldLore = await getResolvedBaseThemeLore(theme_id, current_narrative_language);
           logger.info(`[LivingChronicle] Initializing world lore for user ${userId}, theme ${theme_id}.`);
       }
-
       // The summarization check now happens on the combined history
       if (
         combinedHistory.length >= RAW_HISTORY_BUFFER_MAX_SIZE &&
         (!existingGameState || !existingGameState.summarization_in_progress)
       ) {
         logger.info(`[LivingChronicle] History buffer full (${combinedHistory.length} turns). Starting summarization for user ${userId}, theme ${theme_id}.`);
-
         // Mark as in-progress immediately before starting async process
         // We'll update the game state with this flag first, then run summarization
         const stateToUpdate = await tx.gameState.upsert({
@@ -146,10 +131,8 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
             update: { ...gameStateClientPayload, game_history: combinedHistory, summarization_in_progress: true },
             create: { userId, theme_id, ...gameStateClientPayload, game_history: combinedHistory, summarization_in_progress: true, game_history_summary: finalCumulativePlayerSummary, game_history_lore: finalCurrentWorldLore },
         });
-
         const baseLoreForSummarization = await getResolvedBaseThemeLore(theme_id, current_narrative_language);
         const themeNameForSummarization = await getResolvedThemeName(theme_id, current_narrative_language);
-
         // Run summarization in the background, don't wait for it
         processSummarization(
             stateToUpdate.id, userId, theme_id,
@@ -166,7 +149,6 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
                 where: { id: stateToUpdate.id }, data: { summarization_in_progress: false }
             }).catch(resetErr => logger.error(`[LivingChronicle] CRITICAL FALLBACK: Failed to reset summarization_in_progress for gsID ${stateToUpdate.id}:`, resetErr));
         });
-
       } else {
          // If no summarization is needed, just save the appended history
          await tx.gameState.upsert({
@@ -175,8 +157,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
             create: { userId, theme_id, ...gameStateClientPayload, game_history: combinedHistory, game_history_summary: finalCumulativePlayerSummary, game_history_lore: finalCurrentWorldLore, summarization_in_progress: false },
          });
       }
-
-      // Handle XP awarded this turn
+      // Handle User Theme Progress update
       if (clientUserThemeProgress && typeof clientUserThemeProgress === 'object') {
         const acquiredTraitKeysForDB = Array.isArray(clientUserThemeProgress.acquiredTraitKeys)
                                          ? clientUserThemeProgress.acquiredTraitKeys
@@ -201,13 +182,6 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
           },
         });
         logger.info(`[UserThemeProgress] Upserted for user ${userId}, theme ${theme_id} using full client payload: Level ${clientUserThemeProgress.level}, XP ${clientUserThemeProgress.currentXP}.`);
-      } else if (xp_awarded_this_turn !== undefined && typeof xp_awarded_this_turn === 'number' && xp_awarded_this_turn > 0) {
-        logger.warn(`[UserThemeProgress] clientUserThemeProgress payload missing. Using xp_awarded_this_turn (${xp_awarded_this_turn}) to increment XP only for user ${userId}, theme ${theme_id}. Level will not be updated by this save.`);
-        await tx.userThemeProgress.upsert({
-            where: { userId_themeId: { userId: userId, themeId: theme_id } },
-            create: { userId: userId, themeId: theme_id, currentXP: xp_awarded_this_turn, level: 1 },
-            update: { currentXP: { increment: xp_awarded_this_turn, } },
-        });
       } else {
         const existingProgress = await tx.userThemeProgress.findUnique({ where: { userId_themeId: { userId: userId, themeId: theme_id } } });
         if (!existingProgress) {
@@ -217,7 +191,6 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
           logger.info(`[UserThemeProgress] Initialized default progress for user ${userId}, theme ${theme_id}.`);
         }
       }
-
       // Handle World Shard Unlocking
       if (new_persistent_lore_unlock && typeof new_persistent_lore_unlock === 'object') {
         const { key_suggestion, title, content, unlock_condition_description } = new_persistent_lore_unlock;
@@ -239,16 +212,13 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
           logger.warn(`[WorldShard] Received 'new_persistent_lore_unlock' signal but required fields were missing. User: ${userId}, Theme: ${theme_id}. Unlock data:`, new_persistent_lore_unlock);
         }
       }
-
       const upsertedInteraction = await tx.userThemeInteraction.upsert({
         where: { userId_theme_id: { userId, theme_id } },
         create: { userId, theme_id, is_playing: true, last_played_at: new Date(), is_liked: false },
         update: { is_playing: true, last_played_at: new Date() },
       });
-
       return { interaction: upsertedInteraction };
     });
-
     logger.info(`GameState & UserThemeInteraction for user ${userId}, theme ${theme_id} saved/updated.`);
     res.status(200).json({ message: 'Game state saved.', interaction: result.interaction });
   } catch (error) {

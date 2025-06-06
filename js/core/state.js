@@ -47,7 +47,6 @@ let _currentRunStats = { // Ephemeral stats for the current game run
     currentWillpower: 0,
     // Strain and Conditions will be added in Phase 3
 };
-let _currentTurnXPAwarded = 0;
 let _lastAiSuggestedActions = null;
 let _isBoonSelectionPending = false;
 
@@ -102,10 +101,6 @@ export const getAcquiredTraitKeys = () => {
     return Array.isArray(_currentUserThemeProgress?.acquiredTraitKeys) ? _currentUserThemeProgress.acquiredTraitKeys : [];
 };
 
-export const getCurrentTurnXPAwarded = () => _currentTurnXPAwarded;
-export const setCurrentTurnXPAwarded = (xp) => {
-    _currentTurnXPAwarded = xp;
-};
 export const getCurrentTheme = () => _currentTheme;
 export const setCurrentTheme = (themeId) => {
     _currentTheme = themeId;
@@ -290,7 +285,6 @@ export const clearVolatileGameState = () => {
     _lastKnownCumulativePlayerSummary = "";
     _lastKnownEvolvedWorldLore = "";
     _lastAiSuggestedActions = null;
-    _currentTurnXPAwarded = 0;
     _currentUserThemeProgress = null;
     _currentRunStats = {
         currentIntegrity: 0,

@@ -35,7 +35,6 @@ import {
     getIsBoonSelectionPending,
     getDashboardItemMeta,
     getCurrentUserThemeProgress,
-    getCurrentTurnXPAwarded,
     getLastAiSuggestedActions,
 } from '../core/state.js';
 import {
@@ -356,11 +355,6 @@ export async function handleResetPassword(token, newPassword) {
 /**
  * Saves the current game state to the backend if a user is logged in.
  * Gathers all necessary state components and constructs the payload.
- * Resets `currentTurnUnlockData` after including it in the payload.
- */
-/**
- * Saves the current game state to the backend if a user is logged in.
- * Gathers all necessary state components and constructs the payload.
  * Sends only the unsaved history turns (delta) to the server.
  * Resets `currentTurnUnlockData` after including it in the payload.
  * Clears the unsaved history delta upon a successful save.
@@ -371,13 +365,11 @@ export async function saveCurrentGameState() {
         log(LOG_LEVEL_INFO, "User not logged in. Game state not saved to backend.");
         return;
     }
-
     const currentThemeId = getStateCurrentTheme();
     if (!currentThemeId) {
         log(LOG_LEVEL_WARN, "Cannot save game state: currentTheme not set in state.");
         return;
     }
-
     // Get the delta of unsaved turns. If it's empty and no boon is pending, there's nothing new to save.
     const historyDelta = getUnsavedHistoryDelta();
     // A save is necessary if there are new turns OR if a boon selection was just made (to persist the new level/stats).
@@ -385,13 +377,10 @@ export async function saveCurrentGameState() {
         log(LOG_LEVEL_INFO, "No new turns or pending boons to save. Skipping save operation.");
         return;
     }
-
     log(LOG_LEVEL_INFO, `Attempting to save game state delta (${historyDelta.length} turns) for theme '${currentThemeId}' for user '${currentUser.email}'`);
-
     const narrativePlayerIdentifier = getPlayerIdentifier();
     const turnUnlockData = getCurrentTurnUnlockData();
     let userThemeProgressForPayload = getCurrentUserThemeProgress(); // Get current progress
-
     // Ensure that if userThemeProgressForPayload is an object, its acquiredTraitKeys is an array.
     if (userThemeProgressForPayload && typeof userThemeProgressForPayload === 'object' && !Array.isArray(userThemeProgressForPayload.acquiredTraitKeys)) {
         log(LOG_LEVEL_WARN, `authService.saveCurrentGameState: user_theme_progress.acquiredTraitKeys was not an array. Fixing to []. Original value:`, userThemeProgressForPayload.acquiredTraitKeys);
@@ -401,7 +390,6 @@ export async function saveCurrentGameState() {
             acquiredTraitKeys: [],
         };
     }
-
     const gameStatePayload = {
         theme_id: currentThemeId,
         player_identifier: narrativePlayerIdentifier || "Unnamed Protagonista", // Fallback, consider localizing or making more generic if needed
@@ -416,14 +404,11 @@ export async function saveCurrentGameState() {
         model_name_used: getStateCurrentModelName(),
         new_persistent_lore_unlock: turnUnlockData, // Include the unlock data
         dashboard_item_meta: getDashboardItemMeta(),
-        xp_awarded_this_turn: getCurrentTurnXPAwarded(),
         user_theme_progress: userThemeProgressForPayload, // Use the potentially corrected object
         is_boon_selection_pending: getIsBoonSelectionPending(), // Add the boon pending status
     };
-
     // Reset currentTurnUnlockData in state after it's been included in the payload
     setCurrentTurnUnlockData(null);
-
     try {
         const response = await apiService.saveGameState(currentUser.token, gameStatePayload);
         log(LOG_LEVEL_INFO, "Game state delta saved successfully to backend.", response.message || response);

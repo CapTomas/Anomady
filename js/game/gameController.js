@@ -640,13 +640,11 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
             if (dom.playerActionInput) {
                 dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder() || localizationService.getUIText("placeholder_command");
             }
-            if (fullAiResponse.xp_awarded !== undefined) {
-                state.setCurrentTurnXPAwarded(fullAiResponse.xp_awarded); // Set for saveCurrentGameState
-            }
-            await authService.saveCurrentGameState(); // This will pick up currentTurnXPAwarded
-            state.setCurrentTurnXPAwarded(0); // Reset after saving
             if (fullAiResponse.xp_awarded > 0) {
                 await _handleExperienceAndLevelUp(fullAiResponse.xp_awarded);
+            }
+            if (!state.getIsBoonSelectionPending()) {
+                await authService.saveCurrentGameState();
             }
              // If boon selection was triggered by level up, subsequent actions are handled by the if block at the start.
         } else {

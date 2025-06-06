@@ -64,6 +64,46 @@ export function showXPBar(show) {
 }
 
 /**
+ * Animates the XP bar and text to show experience gain.
+ * Creates a floating text popup for the amount gained and flashes the XP bar text.
+ * @param {number} xpGained - The amount of experience points gained.
+ */
+export function animateXpGain(xpGained) {
+    if (!xpBarContainer || !xpBarText || xpGained <= 0) {
+        return;
+    }
+
+    // 1. Create and animate the floating XP number popup
+    const popup = document.createElement('div');
+    popup.className = 'xp-gain-popup';
+    popup.textContent = `+${xpGained} XP`;
+
+    document.body.appendChild(popup);
+
+    const textRect = xpBarText.getBoundingClientRect();
+    // Position popup in the middle of the xp-bar-text element to start its animation from there
+    popup.style.left = `${textRect.left}px`;
+    popup.style.top = `${textRect.top}px`;
+
+
+    // Remove the popup after its animation finishes (3s from CSS)
+    setTimeout(() => {
+        if (document.body.contains(popup)) {
+            document.body.removeChild(popup);
+        }
+    }, 3000);
+
+    // 2. Flash the XP bar text
+    xpBarText.classList.add('updated');
+    // Remove the class after the animation finishes (3s from CSS)
+    setTimeout(() => {
+        if (document.body.contains(xpBarText)) {
+            xpBarText.classList.remove('updated');
+        }
+    }, 3000);
+}
+
+/**
  * Updates the character progression panel and XP bar with the latest data from the state.
  */
 export function updateCharacterPanel() {

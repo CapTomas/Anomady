@@ -184,6 +184,30 @@ body {
 		transform: translateY(0) scale(1);
 	}
 }
+@keyframes flash-xp-bar-text {
+    0% {
+        color: var(--color-accent-main-light);
+        text-shadow: 0 0 8px rgba(var(--color-accent-main-rgb), 0.8);
+    }
+    50% {
+        color: var(--color-accent-main);
+        text-shadow: 0 0 4px rgba(var(--color-accent-main-rgb), 0.5);
+    }
+    100% {
+        color: var(--color-text-muted);
+        text-shadow: 0 0 2px rgba(0,0,0,0.9);
+    }
+}
+@keyframes fly-up-and-fade {
+    0% {
+        transform: translateY(0) scale(0.9);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-60px) scale(1.1);
+        opacity: 0;
+    }
+}
 #app-root {
 	display: flex;
 	flex-direction: column;
@@ -457,6 +481,19 @@ background-color: var(--color-accent-main);
     z-index: 100;
     color: var(--color-text-muted);
     font-size: 0.6rem;
+}
+#xp-bar-text.updated {
+    animation: flash-xp-bar-text 6s ease-out forwards;
+}
+.xp-gain-popup {
+    position: absolute;
+    color: var(--color-accent-main-light);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semi700);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    pointer-events: none;
+    animation: fly-up-and-fade 5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    z-index: 1002;
 }
 .panel-box {
 	display: flex;

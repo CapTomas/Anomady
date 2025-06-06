@@ -114,7 +114,7 @@ async function _handleExperienceAndLevelUp(xpAwarded) {
         return;
     }
     currentUserThemeProgress.currentXP += xpAwarded;
-    storyLogManager.addMessageToLog(localizationService.getUIText("system_xp_awarded", { XP_AMOUNT: xpAwarded }), "system");
+    characterPanelManager.animateXpGain(xpAwarded);
     let currentLevel = currentUserThemeProgress.level;
     if (currentLevel >= MAX_PLAYER_LEVEL) {
         log(LOG_LEVEL_INFO, `Player already at max level (${MAX_PLAYER_LEVEL}). Current XP: ${currentUserThemeProgress.currentXP}`);

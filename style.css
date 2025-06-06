@@ -372,15 +372,22 @@ background-color: var(--color-accent-main);
 #cp-item-aptitude,
 #cp-item-resilience {
 	display: flex;
-	align-items: baseline;
-	gap: var(--spacing-sm);
+	align-items: center;
+}
+#cp-item-aptitude .attribute-label,
+#cp-item-resilience .attribute-label {
+    flex-shrink: 0; /* Prevent the label from shrinking if space is tight */
 }
 #cp-item-aptitude .attribute-label::after,
 #cp-item-resilience .attribute-label::after {
-	content: ":";
+	content: ':';
+    margin-right: var(--spacing-sm); /* Add a consistent gap after the label */
 }
 #char-panel-aptitude-value,
 #char-panel-resilience-value {
+	flex-grow: 1; /* Allow the value to take up all remaining horizontal space */
+	text-align: right; /* Align the text content to the right edge of its container */
+	margin-right: 10px;
 	color: var(--color-text-primary);
 	font-weight: var(--font-weight-medium);
 	font-size: var(--font-size-sm);
@@ -979,7 +986,10 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 .info-item, .info-item-meter {
     position: relative;
 }
-
+#cp-item-aptitude .attribute-label::after,
+#cp-item-resilience .attribute-label::after {
+	content: ':';
+}
 #cp-item-aptitude .info-tooltip-trigger,
 #cp-item-resilience .info-tooltip-trigger {
     position: static;

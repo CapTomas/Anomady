@@ -26,6 +26,7 @@ import {
 } from '../core/state.js';
 import { SCROLL_INDICATOR_TOLERANCE } from '../core/config.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
+import { attachTooltip } from './tooltipManager.js';
 
 /**
  * Initializes scroll event listeners for the dashboard side panels.
@@ -172,14 +173,12 @@ function _createPanelItemElement(itemConfig, themeId) {
     const itemContainer = document.createElement("div");
     itemContainer.id = `info-item-container-${itemConfig.id}`;
     itemContainer.classList.add(itemConfig.type === "meter" ? "info-item-meter" : "info-item");
-
     const commonFullWidthIds = [
         "objective", "current_quest", "location", "environment", "sensorConditions",
         "omen_details", "current_location_desc", "ambient_conditions", "blight_intensity",
         "case_primary_enigma", "flux_event_description", "active_disturbance_sensation",
         "current_attire_description"
     ];
-
     if (itemConfig.type === "text_long" || commonFullWidthIds.includes(itemConfig.id)) {
         itemContainer.classList.add("full-width");
     }
@@ -197,7 +196,6 @@ function _createPanelItemElement(itemConfig, themeId) {
         meterBar.classList.add("meter-bar");
         meterContainer.appendChild(meterBar);
         itemContainer.appendChild(meterContainer);
-
         const valueOverlay = document.createElement("span");
         valueOverlay.id = `info-${itemConfig.id}`;
         valueOverlay.classList.add("value-overlay");
@@ -211,6 +209,18 @@ function _createPanelItemElement(itemConfig, themeId) {
         }
         itemContainer.appendChild(valueSpan);
     }
+
+    // Append the tooltip trigger icon if a tooltip_key is defined in the config
+    if (itemConfig.tooltip_key) {
+        const tooltipIcon = document.createElement('span');
+        tooltipIcon.className = 'info-tooltip-trigger';
+        // The icon's content is rendered via CSS mask.
+        tooltipIcon.setAttribute('role', 'button');
+        tooltipIcon.setAttribute('tabindex', '0'); // For accessibility
+        attachTooltip(tooltipIcon, itemConfig.tooltip_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
+        itemContainer.appendChild(tooltipIcon);
+    }
+
     return itemContainer;
 }
 

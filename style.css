@@ -334,6 +334,14 @@ background-color: var(--color-accent-main);
 
 
 /* --- INTEGRITY & WILLPOWER (3-ROW STACKED) --- */
+.attribute-item {
+    position: relative;
+    padding-right: 24px; /* Reserve space for the icon */
+}
+#cp-item-integrity .info-tooltip-trigger,
+#cp-item-willpower .info-tooltip-trigger {
+    top: calc(50% + 2px);
+}
 #cp-item-integrity,
 #cp-item-willpower {
 	display: grid;
@@ -905,7 +913,81 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 .info-item-meter {
 	position: relative;
 	margin-bottom: var(--spacing-md);
+	padding-right: 14px;
 }
+.info-item .info-tooltip-trigger,
+.info-item-meter .info-tooltip-trigger,
+.attribute-item .info-tooltip-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+		padding: 1px;
+    border-radius: 50%;
+    background-color: var(--color-bg-input-field);
+    cursor: help;
+    transition: all var(--transition-fast);
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 1px;
+		z-index: 2;
+}
+
+.info-tooltip-trigger::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-text-muted);
+    -webkit-mask-image: url('images/app/icon_info.svg');
+    mask-image: url('images/app/icon_info.svg');
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+    transition: background-color var(--transition-fast);
+}
+
+.panel-box:hover .info-tooltip-trigger,
+#character-progression-panel:hover .info-tooltip-trigger {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.info-tooltip-trigger:hover {
+    background-color: var(--color-bg-button-default-hover);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.info-tooltip-trigger:hover::before {
+    background-color: var(--color-text-primary); /* Dark icon on hover for contrast */
+}
+
+.panel-box:hover .info-tooltip-trigger,
+#character-progression-panel:hover .info-tooltip-trigger {
+    opacity: 0.6;
+    pointer-events: auto;
+}
+
+
+.info-item, .info-item-meter {
+    position: relative;
+}
+
+#cp-item-aptitude .info-tooltip-trigger,
+#cp-item-resilience .info-tooltip-trigger {
+    position: static;
+    transform: none;
+    margin-left: auto;
+    align-self: center;
+}
+
 .info-item:last-child,
 .info-item-meter:last-child {
 	margin-bottom: 0;
@@ -941,6 +1023,30 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 	color: var(--color-text-secondary);
 	font-size: var(--font-size-xs);
 	text-align:right;
+}
+.info-tooltip-icon {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+		padding: 2px;
+    margin-left: 6px;
+    border-radius: 50%;
+    background-color: var(--color-bg-input-field);
+    color: var(--color-text-muted);
+    font-size: 10px;
+    line-height: 15px;
+    text-align: center;
+    font-weight: var(--font-weight-semi700);
+    font-style: italic;
+    cursor: help;
+    transition: all var(--transition-fast);
+    vertical-align: middle;
+    user-select: none;
+}
+.info-tooltip-icon:hover {
+    background-color: var(--color-accent-main);
+    color: var(--color-bg-page-root);
+    transform: scale(1.1);
 }
 #landing-theme-description-container,
 #landing-theme-details-container {

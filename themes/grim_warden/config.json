@@ -18,6 +18,12 @@
     "aptitude": 50,
     "resilience": 50
   },
+  "attribute_tooltips": {
+    "integrity": "tooltip_attr_integrity_grim_warden",
+    "willpower": "tooltip_attr_willpower_grim_warden",
+    "aptitude": "tooltip_attr_aptitude_grim_warden",
+    "resilience": "tooltip_attr_resilience_grim_warden"
+  },
   "dashboard_config_ref": "grim_warden",
   "dashboard_config": {
     "left_panel": [
@@ -38,6 +44,7 @@
           {
             "id": "silver_shards",
             "label_key": "label_character_coin_grim_warden",
+            "tooltip_key": "tooltip_item_silver_shards_grim_warden",
             "type": "number_text",
             "default_value_key": "coin_scant_shards",
             "must_translate": true,
@@ -46,6 +53,7 @@
           {
             "id": "renown",
             "label_key": "label_character_renown_grim_warden",
+            "tooltip_key": "tooltip_item_renown_grim_warden",
             "type": "text",
             "default_value_key": "renown_obscure_figure",
             "must_translate": true,
@@ -54,6 +62,7 @@
           {
             "id": "oath_allegiance",
             "label_key": "label_character_oath_grim_warden",
+            "tooltip_key": "tooltip_item_oath_allegiance_grim_warden",
             "type": "text",
             "default_value_key": "oath_order_initiate",
             "must_translate": true,
@@ -89,6 +98,7 @@
           {
             "id": "blight_exposure_level",
             "label_key": "label_blight_exposure_grim_warden",
+            "tooltip_key": "tooltip_item_blight_exposure_level_grim_warden",
             "type": "status_level",
             "default_ai_value": 1,
             "level_mappings": {
@@ -103,6 +113,7 @@
           {
             "id": "elixir_charges",
             "label_key": "label_elixir_charges_grim_warden",
+            "tooltip_key": "tooltip_item_elixir_charges_grim_warden",
             "type": "text",
             "default_value_key": "elixirs_none_prepared",
             "must_translate": true,
@@ -111,6 +122,7 @@
           {
             "id": "armor_condition",
             "label_key": "label_armor_condition_grim_warden",
+            "tooltip_key": "tooltip_item_armor_condition_grim_warden",
             "type": "text",
             "default_value_key": "armor_scuffed_hide",
             "must_translate": true,
@@ -119,6 +131,7 @@
           {
             "id": "weapon_condition",
             "label_key": "label_weapon_condition_grim_warden",
+            "tooltip_key": "tooltip_item_weapon_condition_grim_warden",
             "type": "text",
             "default_value_key": "weapon_trusted_steel",
             "must_translate": true,
@@ -186,6 +199,7 @@
           {
             "id": "threat_level",
             "label_key": "label_threat_level_grim_warden",
+            "tooltip_key": "tooltip_item_threat_level_grim_warden",
             "type": "status_level",
             "default_ai_value": 1,
             "level_mappings": {
@@ -217,6 +231,7 @@
           {
             "id": "regional_control",
             "label_key": "label_regional_control_grim_warden",
+            "tooltip_key": "tooltip_item_regional_control_grim_warden",
             "type": "text",
             "default_value_key": "control_lawless_marches",
             "must_translate": true,
@@ -233,6 +248,7 @@
           {
             "id": "blight_saturation",
             "label_key": "label_blight_intensity_grim_warden",
+            "tooltip_key": "tooltip_item_blight_saturation_grim_warden",
             "type": "text_long",
             "default_value_key": "blight_whispers_of_decay",
             "must_translate": true,
@@ -241,6 +257,7 @@
           {
             "id": "local_blight_phenomenon",
             "label_key": "label_local_blight_phenomenon_grim_warden",
+            "tooltip_key": "tooltip_item_local_blight_phenomenon_grim_warden",
             "type": "text_long",
             "default_value_key": "phenomenon_none_apparent",
             "must_translate": true,

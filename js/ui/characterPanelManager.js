@@ -4,12 +4,13 @@
  * This includes character name, level, core attributes (Integrity, Willpower, Aptitude, Resilience),
  * and the XP bar.
  */
-
 import * as dom from './domElements.js';
 import * as state from '../core/state.js';
 import { getUIText } from '../services/localizationService.js';
 import { XP_LEVELS } from '../core/config.js'; // For XP bar calculation
 import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARN } from '../core/logger.js';
+import { attachTooltip } from './tooltipManager.js';
+import { getThemeConfig } from '../services/themeService.js';
 
 // Destructure DOM elements for character panel and XP bar
 const {
@@ -28,10 +29,44 @@ const {
 } = dom;
 
 /**
+ * Creates the static tooltip trigger icons within the character panel.
+ * This should be called only once during initialization.
+ * @private
+ */
+function _setupCharacterPanelTooltips() {
+    if (!characterProgressionPanel) return;
+    const attributeContainers = {
+        integrity: characterProgressionPanel.querySelector('#cp-item-integrity'),
+        willpower: characterProgressionPanel.querySelector('#cp-item-willpower'),
+        aptitude: characterProgressionPanel.querySelector('#cp-item-aptitude'),
+        resilience: characterProgressionPanel.querySelector('#cp-item-resilience')
+    };
+
+    for (const attr in attributeContainers) {
+        const container = attributeContainers[attr];
+        if (container) {
+            // Ensure no duplicate icons exist
+            const oldIcon = container.querySelector('.info-tooltip-trigger');
+            if(oldIcon) oldIcon.remove();
+
+            const tooltipIcon = document.createElement('span');
+            tooltipIcon.className = 'info-tooltip-trigger';
+            // The icon's image is a CSS mask, no content needed here.
+            tooltipIcon.setAttribute('role', 'button');
+            tooltipIcon.setAttribute('tabindex', '0'); // For accessibility
+            container.appendChild(tooltipIcon);
+        }
+    }
+    log(LOG_LEVEL_DEBUG, "Character panel tooltip triggers created.");
+}
+
+
+/**
  * Initializes the CharacterPanelManager.
- * Ensures the panel and XP bar are initially hidden.
+ * Ensures the panel and XP bar are initially hidden and creates tooltip triggers.
  */
 export function initCharacterPanelManager() {
+    _setupCharacterPanelTooltips();
     showCharacterPanel(false); // Initially hidden
     showXPBar(false); // Initially hidden
     log(LOG_LEVEL_INFO, "CharacterPanelManager initialized. Panel and XP bar hidden.");
@@ -72,27 +107,21 @@ export function animateXpGain(xpGained) {
     if (!xpBarContainer || !xpBarText || xpGained <= 0) {
         return;
     }
-
     // 1. Create and animate the floating XP number popup
     const popup = document.createElement('div');
     popup.className = 'xp-gain-popup';
     popup.textContent = `+${xpGained} XP`;
-
     document.body.appendChild(popup);
-
     const textRect = xpBarText.getBoundingClientRect();
     // Position popup in the middle of the xp-bar-text element to start its animation from there
     popup.style.left = `${textRect.left}px`;
     popup.style.top = `${textRect.top}px`;
-
-
     // Remove the popup after its animation finishes (3s from CSS)
     setTimeout(() => {
         if (document.body.contains(popup)) {
             document.body.removeChild(popup);
         }
     }, 3000);
-
     // 2. Flash the XP bar text
     xpBarText.classList.add('updated');
     // Remove the class after the animation finishes (3s from CSS)
@@ -116,25 +145,20 @@ export function updateCharacterPanel() {
         log(LOG_LEVEL_DEBUG, "Character panel is hidden, skipping DOM update.");
         return;
     }
-
     const playerIdentifier = state.getPlayerIdentifier() || getUIText(charPanelIdentifier?.dataset.langKey || "char_panel_placeholder_name");
     const userProgress = state.getCurrentUserThemeProgress();
     const runStats = state.getCurrentRunStats();
-
     const level = userProgress ? userProgress.level : 1;
     const currentXP = userProgress ? userProgress.currentXP : 0;
-
     const maxIntegrity = state.getEffectiveMaxIntegrity();
     const currentIntegrity = runStats.currentIntegrity !== undefined ? runStats.currentIntegrity : maxIntegrity;
     const maxWillpower = state.getEffectiveMaxWillpower();
     const currentWillpower = runStats.currentWillpower !== undefined ? runStats.currentWillpower : maxWillpower;
     const aptitude = state.getEffectiveAptitude();
     const resilience = state.getEffectiveResilience();
-
     // Update DOM elements for Character Panel
     if (charPanelIdentifier) charPanelIdentifier.textContent = playerIdentifier;
     if (charPanelLevel) charPanelLevel.textContent = `${getUIText("char_panel_label_level")} ${level}`;
-
     // Integrity
     if (charPanelIntegrityValue) charPanelIntegrityValue.textContent = `${currentIntegrity}/${maxIntegrity}`;
     if (charPanelIntegrityMeter) {
@@ -147,10 +171,7 @@ export function updateCharacterPanel() {
         // Apply specific theme color for 'full' state if needed
         charPanelIntegrityMeter.style.backgroundColor = ''; // Clear direct style to use CSS
         if (integrityPercentage > 50) charPanelIntegrityMeter.classList.add('integrity-full');
-
-
     }
-
     // Willpower
     if (charPanelWillpowerValue) charPanelWillpowerValue.textContent = `${currentWillpower}/${maxWillpower}`;
     if (charPanelWillpowerMeter) {
@@ -163,27 +184,21 @@ export function updateCharacterPanel() {
         charPanelWillpowerMeter.style.backgroundColor = '';
         if (willpowerPercentage > 50) charPanelWillpowerMeter.classList.add('willpower-full');
     }
-
     if (charPanelAptitudeValue) charPanelAptitudeValue.textContent = String(aptitude);
     if (charPanelResilienceValue) charPanelResilienceValue.textContent = String(resilience);
-
     // Update XP Bar
     if (xpBarContainer && xpBarFill && xpBarText) {
         const xpForCurrentLevel = XP_LEVELS[level - 1];
         const xpForNextLevel = (level < XP_LEVELS.length) ? XP_LEVELS[level] : currentXP; // If max level, cap at currentXP
-
         const xpIntoCurrentLevel = currentXP - xpForCurrentLevel;
         const xpNeededForThisLevel = xpForNextLevel - xpForCurrentLevel;
-
         let xpPercentage = 0;
         if (level >= XP_LEVELS.length) { // Max level reached
             xpPercentage = 100;
         } else if (xpNeededForThisLevel > 0) {
             xpPercentage = (xpIntoCurrentLevel / xpNeededForThisLevel) * 100;
         }
-
         xpBarFill.style.width = `${Math.max(0, Math.min(100, xpPercentage))}%`;
-
         if (level >= XP_LEVELS.length) {
             xpBarText.textContent = getUIText("xp_bar_max_level");
         } else {
@@ -192,7 +207,6 @@ export function updateCharacterPanel() {
     }
     log(LOG_LEVEL_DEBUG, "Character panel and XP bar updated.");
 }
-
 /**
  * Updates the static labels in the character panel based on the current language.
  * This is typically called by languageManager when the language changes.
@@ -200,32 +214,66 @@ export function updateCharacterPanel() {
 export function retranslateCharacterPanelLabels() {
     if (!characterProgressionPanel) return;
 
+    const themeId = state.getCurrentTheme();
+    const themeConfig = themeId ? getThemeConfig(themeId) : null;
+    const attributeTooltips = themeConfig?.attribute_tooltips || {};
+
     const labelMappings = {
-        "char_panel_label_integrity": dom.characterProgressionPanel?.querySelector('.attribute-label[data-lang-key="char_panel_label_integrity"]'),
-        "char_panel_label_willpower": dom.characterProgressionPanel?.querySelector('.attribute-label[data-lang-key="char_panel_label_willpower"]'),
-        "char_panel_label_aptitude": dom.characterProgressionPanel?.querySelector('.attribute-label[data-lang-key="char_panel_label_aptitude"]'),
-        "char_panel_label_resilience": dom.characterProgressionPanel?.querySelector('.attribute-label[data-lang-key="char_panel_label_resilience"]'),
-        "xp_bar_default_text": dom.xpBarText // For the "XP:" part if it's static and value is appended
+        "integrity": {
+            labelEl: dom.characterProgressionPanel?.querySelector('#cp-item-integrity .attribute-label'),
+            iconEl: dom.characterProgressionPanel?.querySelector('#cp-item-integrity .info-tooltip-trigger'),
+            textKey: "char_panel_label_integrity",
+            tooltipKey: attributeTooltips.integrity
+        },
+        "willpower": {
+            labelEl: dom.characterProgressionPanel?.querySelector('#cp-item-willpower .attribute-label'),
+            iconEl: dom.characterProgressionPanel?.querySelector('#cp-item-willpower .info-tooltip-trigger'),
+            textKey: "char_panel_label_willpower",
+            tooltipKey: attributeTooltips.willpower
+        },
+        "aptitude": {
+            labelEl: dom.characterProgressionPanel?.querySelector('#cp-item-aptitude .attribute-label'),
+            iconEl: dom.characterProgressionPanel?.querySelector('#cp-item-aptitude .info-tooltip-trigger'),
+            textKey: "char_panel_label_aptitude",
+            tooltipKey: attributeTooltips.aptitude
+        },
+        "resilience": {
+            labelEl: dom.characterProgressionPanel?.querySelector('#cp-item-resilience .attribute-label'),
+            iconEl: dom.characterProgressionPanel?.querySelector('#cp-item-resilience .info-tooltip-trigger'),
+            textKey: "char_panel_label_resilience",
+            tooltipKey: attributeTooltips.resilience
+        }
     };
 
-    for (const key in labelMappings) {
-        if (labelMappings[key] && labelMappings[key].dataset.langKey === key) { // Check if element has the data-lang-key
-            labelMappings[key].textContent = getUIText(key);
+    for (const attr in labelMappings) {
+        const mapping = labelMappings[attr];
+        // The label text itself does not have the icon as a child node
+        // so we can set its text content directly without destroying the icon.
+        if (mapping.labelEl) {
+            mapping.labelEl.textContent = getUIText(mapping.textKey);
+        }
+        // Re-attach tooltip to the icon to update its content
+        if (mapping.iconEl && mapping.tooltipKey && themeId) {
+            attachTooltip(mapping.iconEl, mapping.tooltipKey, {}, { explicitThemeContext: themeId, viewContext: 'game' });
         }
     }
+
     // For elements like level that combine static text with dynamic value:
     if (dom.charPanelLevel) {
          const level = state.getCurrentUserThemeProgress() ? state.getCurrentUserThemeProgress().level : 1;
          dom.charPanelLevel.textContent = `${getUIText("char_panel_label_level")} ${level}`;
     }
+
     if (dom.charPanelIdentifier) {
         const playerIdentifier = state.getPlayerIdentifier();
         if (!playerIdentifier) { // Only reset placeholder if no dynamic ID is set
             dom.charPanelIdentifier.textContent = getUIText(dom.charPanelIdentifier.dataset.langKey || "char_panel_placeholder_name");
         }
     }
-    log(LOG_LEVEL_DEBUG, "Character panel labels re-translated.");
+
+    log(LOG_LEVEL_DEBUG, "Character panel labels and tooltips re-translated.");
+
     // Call updateCharacterPanel to refresh all values, ensuring they are correct after lang change
-    // This is important if any value formatting depends on language.
+    // This is important for xpBarText which is part of the update.
     updateCharacterPanel();
 }

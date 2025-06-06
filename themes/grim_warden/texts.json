@@ -89,7 +89,23 @@
     "label_combat_active_grim_warden": "Blood is Drawn:",
     "label_blight_flare_active_grim_warden": "Blight Infusion:",
     "label_rare_trophy_claimed_grim_warden": "Grim Trophy Claimed:",
-    "confirm_new_game_theme_grim_warden": "Begin a new Warden's doomed pilgrimage? All record of this bleak chronicle will be devoured by the Blight, unremembered."
+    "confirm_new_game_theme_grim_warden": "Begin a new Warden's doomed pilgrimage? All record of this bleak chronicle will be devoured by the Blight, unremembered.",
+
+    "tooltip_attr_integrity_grim_warden": "Represents physical and mental fortitude. Lost through injury and hardship. Reaching zero means death or a fate far worse.",
+    "tooltip_attr_willpower_grim_warden": "A measure of resolve and focus. Spent on powerful abilities or resisting psychological assaults. Recovers with rest.",
+    "tooltip_attr_aptitude_grim_warden": "Governs combat prowess, tactical sense, and the use of specialized Warden skills. Higher aptitude unlocks more effective options in a fight.",
+    "tooltip_attr_resilience_grim_warden": "Determines resistance to the Blight's insidious corruption, environmental hazards, and the wearing effects of despair.",
+    "tooltip_item_silver_shards_grim_warden": "The grim currency of the frontier. Not just for trade, but for coating blades against the unholy.",
+    "tooltip_item_renown_grim_warden": "How your name is whispered in the dark. A high renown may inspire awe or attract deadlier foes.",
+    "tooltip_item_oath_allegiance_grim_warden": "The sworn vow that guides your path. It may change with deeds and betrayals.",
+    "tooltip_item_blight_exposure_level_grim_warden": "The creeping taint of the Blight within your own blood. Higher levels risk monstrous transformation and madness.",
+    "tooltip_item_elixir_charges_grim_warden": "Alchemical draughts that mend flesh and restore resolve. Brewed with rare, often foul, ingredients. Use them wisely.",
+    "tooltip_item_armor_condition_grim_warden": "The state of your worn protection. Damaged armor is less effective against both tooth and claw.",
+    "tooltip_item_weapon_condition_grim_warden": "The state of your primary weapon. A well-kept blade is a Warden's closest companion.",
+    "tooltip_item_threat_level_grim_warden": "An assessment of immediate peril. Ranges from a faint sense of Unease to the certainty of Mortal Peril.",
+    "tooltip_item_regional_control_grim_warden": "The dominant power in the current area. Influences the type of encounters and the availability of sanctuary.",
+    "tooltip_item_blight_saturation_grim_warden": "How deeply the Blight has corrupted the immediate environment. Affects flora, fauna, and the very air you breathe.",
+    "tooltip_item_local_blight_phenomenon_grim_warden": "Specific, active manifestations of the Blight's influence, such as weeping sores on the earth or blood-rain."
   },
   "cs": {
     "theme_name_short_grim_warden": "Ponurá\nStráž",
@@ -181,6 +197,22 @@
     "label_combat_active_grim_warden": "Krev se Prolévá:",
     "label_blight_flare_active_grim_warden": "Vzplanutí Zkázy:",
     "label_rare_trophy_claimed_grim_warden": "Ponurá Trofej Získána:",
-    "confirm_new_game_theme_grim_warden": "Vydat se na novou strážcovu pouť ke zkáze? Veškerý záznam této ponuré kroniky bude pohlcen Zkázou, zapomenut."
+    "confirm_new_game_theme_grim_warden": "Vydat se na novou strážcovu pouť ke zkáze? Veškerý záznam této ponuré kroniky bude pohlcen Zkázou, zapomenut.",
+
+    "tooltip_attr_integrity_grim_warden": "Představuje fyzickou a duševní odolnost. Ztrácí se zraněním a útrapami. Dosažení nuly znamená smrt nebo osud mnohem horší.",
+    "tooltip_attr_willpower_grim_warden": "Míra odhodlání a soustředění. Utrácí se za mocné schopnosti nebo odolávání psychologickým útokům. Obnovuje se odpočinkem.",
+    "tooltip_attr_aptitude_grim_warden": "Ovlivňuje bojové umění, taktický smysl a použití specializovaných strážcovských dovedností. Vyšší schopnosti odemykají efektivnější možnosti v boji.",
+    "tooltip_attr_resilience_grim_warden": "Určuje odolnost vůči zákeřné nákaze Zkázy, nebezpečím prostředí a vysilujícím účinkům zoufalství.",
+    "tooltip_item_silver_shards_grim_warden": "Ponurá měna pohraničí. Nejen pro obchod, ale i pro potažení čepelí proti bezbožným.",
+    "tooltip_item_renown_grim_warden": "Jak je tvé jméno šeptáno ve tmě. Vysoká pověst může vzbuzovat úctu nebo přitahovat smrtelnější nepřátele.",
+    "tooltip_item_oath_allegiance_grim_warden": "Přísaha, která vede tvou cestu. Může se změnit skutky i zradami.",
+    "tooltip_item_blight_exposure_level_grim_warden": "Plíživá nákaza Zkázy v tvé vlastní krvi. Vyšší úrovně riskují monstrózní proměnu a šílenství.",
+    "tooltip_item_elixir_charges_grim_warden": "Alchymistické lektvary, které léčí tělo a obnovují odhodlání. Vařené ze vzácných, často odporných, přísad. Používej je moudře.",
+    "tooltip_item_armor_condition_grim_warden": "Stav tvé opotřebované ochrany. Poškozená zbroj je méně účinná proti zubům i drápům.",
+    "tooltip_item_weapon_condition_grim_warden": "Stav tvé hlavní zbraně. Dobře udržovaná čepel je nejbližším společníkem Strážce.",
+    "tooltip_item_threat_level_grim_warden": "Posouzení bezprostředního nebezpečí. Sahá od slabého pocitu neklidu po jistotu smrtelného nebezpečí.",
+    "tooltip_item_regional_control_grim_warden": "Dominantní moc v současné oblasti. Ovlivňuje typ setkání a dostupnost útočiště.",
+    "tooltip_item_blight_saturation_grim_warden": "Jak hluboce Zkáza nakazila bezprostřední prostředí. Ovlivňuje flóru, faunu a samotný vzduch, který dýcháš.",
+    "tooltip_item_local_blight_phenomenon_grim_warden": "Specifické, aktivní projevy vlivu Zkázy, jako jsou plačící vředy na zemi nebo krvavý déšť."
   }
 }

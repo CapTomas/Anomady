@@ -5,6 +5,7 @@
  * Coordinates with ui/authUiManager.js (indirectly, via gameController or app.js).
  */
 import * as apiService from '../core/apiService.js';
+import * as state from '../core/state.js';
 import {
     setCurrentUser,
     getCurrentUser,
@@ -20,7 +21,8 @@ import {
     setCurrentLandingGridSelection,
     getCurrentTheme as getStateCurrentTheme,
     getPlayerIdentifier,
-    getGameHistory,
+    getUnsavedHistoryDelta,
+    clearUnsavedHistoryDelta,
     getLastKnownDashboardUpdates,
     getLastKnownGameStateIndicators,
     getCurrentPromptType as getStateCurrentPromptType,
@@ -32,8 +34,9 @@ import {
     setCurrentTurnUnlockData,
     getIsBoonSelectionPending,
     getDashboardItemMeta,
-    getCurrentUserThemeProgress, // Added
-    getCurrentTurnXPAwarded,     // Added
+    getCurrentUserThemeProgress,
+    getCurrentTurnXPAwarded,
+    getLastAiSuggestedActions,
 } from '../core/state.js';
 import {
     JWT_STORAGE_KEY,
@@ -355,6 +358,13 @@ export async function handleResetPassword(token, newPassword) {
  * Gathers all necessary state components and constructs the payload.
  * Resets `currentTurnUnlockData` after including it in the payload.
  */
+/**
+ * Saves the current game state to the backend if a user is logged in.
+ * Gathers all necessary state components and constructs the payload.
+ * Sends only the unsaved history turns (delta) to the server.
+ * Resets `currentTurnUnlockData` after including it in the payload.
+ * Clears the unsaved history delta upon a successful save.
+ */
 export async function saveCurrentGameState() {
     const currentUser = getCurrentUser();
     if (!currentUser || !currentUser.token) {
@@ -368,14 +378,17 @@ export async function saveCurrentGameState() {
         return;
     }
 
-    const narrativePlayerIdentifier = getPlayerIdentifier();
-    if (!narrativePlayerIdentifier && getGameHistory().length === 0 && getStateCurrentPromptType() === "initial") {
-        log(LOG_LEVEL_INFO, "Player identifier not set and game history empty for initial prompt, skipping save until identifier is set.");
+    // Get the delta of unsaved turns. If it's empty and no boon is pending, there's nothing new to save.
+    const historyDelta = getUnsavedHistoryDelta();
+    // A save is necessary if there are new turns OR if a boon selection was just made (to persist the new level/stats).
+    if (historyDelta.length === 0 && !getIsBoonSelectionPending()) {
+        log(LOG_LEVEL_INFO, "No new turns or pending boons to save. Skipping save operation.");
         return;
     }
 
-    log(LOG_LEVEL_INFO, `Attempting to save game state for theme '${currentThemeId}' for user '${currentUser.email}'`);
+    log(LOG_LEVEL_INFO, `Attempting to save game state delta (${historyDelta.length} turns) for theme '${currentThemeId}' for user '${currentUser.email}'`);
 
+    const narrativePlayerIdentifier = getPlayerIdentifier();
     const turnUnlockData = getCurrentTurnUnlockData();
     let userThemeProgressForPayload = getCurrentUserThemeProgress(); // Get current progress
 
@@ -392,12 +405,13 @@ export async function saveCurrentGameState() {
     const gameStatePayload = {
         theme_id: currentThemeId,
         player_identifier: narrativePlayerIdentifier || "Unnamed Protagonista", // Fallback, consider localizing or making more generic if needed
-        game_history: getGameHistory(),
+        game_history_delta: historyDelta, // Send only the new turns
         last_dashboard_updates: getLastKnownDashboardUpdates(),
         last_game_state_indicators: getLastKnownGameStateIndicators(),
         current_prompt_type: getStateCurrentPromptType(),
         current_narrative_language: getStateCurrentNarrativeLanguage(),
         last_suggested_actions: getCurrentSuggestedActions(),
+        actions_before_boon_selection: getLastAiSuggestedActions(), // Persist actions before boon
         panel_states: getCurrentPanelStates(),
         model_name_used: getStateCurrentModelName(),
         new_persistent_lore_unlock: turnUnlockData, // Include the unlock data
@@ -412,10 +426,12 @@ export async function saveCurrentGameState() {
 
     try {
         const response = await apiService.saveGameState(currentUser.token, gameStatePayload);
-        log(LOG_LEVEL_INFO, "Game state saved successfully to backend.", response.message || response);
+        log(LOG_LEVEL_INFO, "Game state delta saved successfully to backend.", response.message || response);
+        // On successful save, clear the delta buffer.
+        clearUnsavedHistoryDelta();
     } catch (error) {
-        log(LOG_LEVEL_ERROR, "Error saving game state to backend:", error.message, error.code, error.details);
-        // storyLogManager.addMessageToLog(getUIText("error_saving_progress") + ` (Server: ${error.message})`, "system-error");
+        log(LOG_LEVEL_ERROR, "Error saving game state delta to backend:", error.message, error.code, error.details);
+        // DO NOT clear the delta on error. The unsaved turns will be retried on the next save attempt.
         throw error; // Re-throw the error so the caller can handle it
     }
 }

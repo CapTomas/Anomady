@@ -91,8 +91,8 @@ Your response MUST be a single, perfectly structured JSON object as follows:
   "game_state_indicators": {
     // (string: boolean/string) Key-value pairs for game state flags.
    },
-    "input_placeholder": "string (A short, context-aware, and subtle hint for the player's next input. Must be in ${currentNarrativeLanguage.toUpperCase()})",
-    "new_persistent_lore_unlock": { ... } // OPTIONAL: Include ONLY IF a shard is unlocked this turn
+  "input_placeholder": "string (A short, context-aware, and subtle hint for the player's next input. Must be in ${currentNarrativeLanguage.toUpperCase()})",
+  "new_persistent_lore_unlock": { ... } // OPTIONAL: Include ONLY IF a shard is unlocked this turn
 }
 
 **INPUT_PLACEHOLDER GUIDANCE:**

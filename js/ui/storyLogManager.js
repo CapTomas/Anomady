@@ -8,38 +8,23 @@ import { formatDynamicText } from './uiUtils.js'; // For text formatting like it
 import { AUTOSCROLL_THRESHOLD } from '../core/config.js';
 import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARN } from '../core/logger.js';
 import { addTurnToGameHistory as stateAddTurnToGameHistory } from '../core/state.js';
-import { getCurrentUser, getPlayerIdentifier } from '../core/state.js';
 
 let userHasManuallyScrolledLog = false;
 
 /**
- * Adds a message to the story log.
+ * Renders a message to the story log DOM. This function does NOT modify game state/history.
+ * It's the core display logic used for both new messages and re-populating from history.
  * @param {string} text - The message text.
  * @param {string} senderTypes - A space-separated string of sender types (e.g., "gm", "player system-emphasized").
- *                               Core types are "gm", "player", "system". Additional classes can be added.
  */
-export function addMessageToLog(text, senderTypes) {
+export function renderMessage(text, senderTypes) {
     if (!storyLog) {
-        log(LOG_LEVEL_WARN, `Story log element not found. Message not added: (${senderTypes}) "${text.substring(0, 50)}..."`);
-        return;
-    }
-
-    const currentUser = getCurrentUser();
-    const currentPlayerId = currentUser ? currentUser.email : getPlayerIdentifier();
-
-    // Prevent logging the initial "My identifier is..." message from anonymous users
-    // if it's the very first message in history.
-    // This check might need refinement based on actual game flow for anonymous vs logged-in.
-    if (senderTypes.includes("player") &&
-        storyLog.children.length === 0 && // Check if log is empty
-        text.startsWith(`My identifier is ${currentPlayerId}`)) {
-        log(LOG_LEVEL_DEBUG, "Skipping initial player identifier message in log.");
+        log(LOG_LEVEL_WARN, `Story log element not found. Message not rendered: (${senderTypes}) "${text.substring(0, 50)}..."`);
         return;
     }
 
     const msgDiv = document.createElement("div");
     msgDiv.classList.add("message");
-
     const typesArray = senderTypes.split(" ").filter(t => t.trim() !== "");
     typesArray.forEach(type => {
         msgDiv.classList.add(`${type}-message`); // Add specific class like "gm-message"
@@ -50,9 +35,8 @@ export function addMessageToLog(text, senderTypes) {
     });
 
     // Format text (e.g., italics, bold) and handle multiline paragraphs
-    const formattedHtml = formatDynamicText(text); // Handles _italic_, *bold* etc.
+    const formattedHtml = formatDynamicText(text);
     const paragraphs = formattedHtml.split(/\n\s*\n/).filter(p => p.trim() !== "");
-
     if (paragraphs.length === 0 && formattedHtml.trim() !== "") {
         // Handle single line messages or those without double line breaks
         const pElement = document.createElement("p");
@@ -81,18 +65,6 @@ export function addMessageToLog(text, senderTypes) {
     }
 
     storyLog.appendChild(msgDiv);
-    const isSystemMessage = typesArray.some(type => type.startsWith("system"));
-    if (isSystemMessage) {
-        try {
-            stateAddTurnToGameHistory({
-                role: "system",
-                parts: [{ text: text, senderTypes: senderTypes }]
-            });
-            log(LOG_LEVEL_DEBUG, `System message added to game history: (${senderTypes}) "${text.substring(0,30)}..."`);
-        } catch (error) {
-            log(LOG_LEVEL_ERROR, "Failed to add system message to game history:", error);
-        }
-    }
 
     if (shouldScroll && viewport) {
         requestAnimationFrame(() => {
@@ -100,6 +72,30 @@ export function addMessageToLog(text, senderTypes) {
         });
     }
 }
+
+
+/**
+ * Adds a new message to the story log UI, and if it's a system message, adds it to game history for persistence.
+ * This function should be used by modules that generate new system-level messages.
+ * @param {string} text - The message text.
+ * @param {string} senderTypes - A space-separated string of sender types. Must include "system".
+ */
+export function addMessageToLog(text, senderTypes) {
+    // Render the message to the DOM
+    renderMessage(text, senderTypes);
+
+    // If it's a system message, also add it to the game history for persistence.
+    // Player and GM messages are added to history by their respective controllers.
+    if (senderTypes.includes("system")) {
+        stateAddTurnToGameHistory({
+            role: "system_log",
+            parts: [{ text: text }],
+            senderTypes: senderTypes // Store the types for re-rendering correctly
+        });
+        log(LOG_LEVEL_DEBUG, `Persisted system message to game history: "${text.substring(0, 30)}..."`);
+    }
+}
+
 
 /**
  * Initializes scroll handling for the story log viewport.
@@ -110,7 +106,6 @@ export function initStoryLogScrollHandling() {
         log(LOG_LEVEL_WARN, "Story log viewport element not found. Cannot initialize scroll handling.");
         return;
     }
-
     let scrollTimeout;
     storyLogViewport.addEventListener("scroll", () => {
         clearTimeout(scrollTimeout);
@@ -130,7 +125,6 @@ export function initStoryLogScrollHandling() {
             }
         }, 150); // Debounce scroll event
     }, { passive: true });
-
     log(LOG_LEVEL_INFO, "Story log scroll handling initialized.");
 }
 
@@ -166,22 +160,18 @@ export function showLoadingIndicator() {
         log(LOG_LEVEL_WARN, "Story log or viewport element not found. Cannot show loading indicator.");
         return;
     }
-
     removeLoadingIndicator(); // Ensure no duplicates
-
     const indicatorDiv = document.createElement("div");
     indicatorDiv.id = LOADING_INDICATOR_ID;
     indicatorDiv.classList.add("loading-indicator-message");
 
     const dotsContainer = document.createElement("div");
     dotsContainer.classList.add("dots-container");
-
     for (let i = 0; i < 3; i++) {
         const dotSpan = document.createElement("span");
         dotSpan.classList.add("dot");
         dotsContainer.appendChild(dotSpan);
     }
-
     indicatorDiv.appendChild(dotsContainer);
     storyLog.appendChild(indicatorDiv);
 

@@ -48,7 +48,8 @@ model GameState {
   updated_at                     DateTime  @updatedAt
   summarization_in_progress      Boolean   @default(false)
   dashboard_item_meta            Json?     @map("dashboard_item_meta")
-  is_boon_selection_pending  Boolean   @default(false) @map("is_boon_selection_pending")
+  is_boon_selection_pending      Boolean   @default(false) @map("is_boon_selection_pending")
+  actions_before_boon_selection  Json?     @map("actions_before_boon_selection")
 
   // Field for storing awarded XP, not part of the actual GameState model sent to client
   // This is just to pass the value from client to backend during save.

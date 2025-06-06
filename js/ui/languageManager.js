@@ -124,7 +124,7 @@ export async function handleLanguageToggle() {
         } catch (error) {
             log(LOG_LEVEL_ERROR, "Failed to update backend language preferences:", error.message);
             if (_storyLogManagerRef && getCurrentTheme()) { // Check if game is active
-                _storyLogManagerRef.addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Could not save language preference to server." }), "system-error");
+                _storyLogManagerRef.addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Could not save language preference to server." }), "system system-error");
             }
         }
     }

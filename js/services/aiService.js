@@ -42,7 +42,6 @@ import {
 } from '../core/config.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
 import { getUIText } from './localizationService.js';
-
 // AI Interaction Constants
 const DEFAULT_GENERATION_CONFIG = {
     temperature: 0.7,
@@ -50,14 +49,12 @@ const DEFAULT_GENERATION_CONFIG = {
     maxOutputTokens: 8192, // Default, can be overridden by theme if necessary
     responseMimeType: "application/json",
 };
-
 const DEFAULT_SAFETY_SETTINGS = [
     { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
     { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
     { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
     { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
 ];
-
 /**
  * Constructs the system prompt for the AI based on the current game state and active prompt type.
  * This function relies on prompt templates being pre-loaded by themeService.
@@ -70,38 +67,33 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     const playerID = getPlayerIdentifier();
     const activePromptType = getIsInitialGameLoad() ? "initial" : getCurrentPromptType();
     const themeConfig = getThemeConfig(currentThemeId);
-
     if (!currentThemeId || !themeConfig || !themeConfig.dashboard_config) {
         log(LOG_LEVEL_ERROR, "getSystemPrompt: Active theme, its configuration, or dashboard_config is missing.");
         return `{"narrative": "SYSTEM ERROR: Active theme configuration is missing for prompt generation.", "dashboard_updates": {}, "suggested_actions": [], "game_state_indicators": {}, "xp_awarded": 0}`;
     }
-
     const dashboardLayoutConfig = themeConfig.dashboard_config;
     const isValidPromptText = (text) => text !== null && text !== undefined && !text.startsWith("ERROR:") && !text.startsWith("HELPER_FILE_NOT_FOUND:");
 
-    let basePromptKey = activePromptType;
+    let basePromptKey;
+    if (getIsInitialGameLoad()) {
+        basePromptKey = "master_initial";
+    } else {
+        basePromptKey = getCurrentPromptType();
+    }
+
     let basePromptText = getLoadedPromptText(currentThemeId, basePromptKey);
 
+    // Fallback logic if a theme-specific prompt (like combat_active) doesn't exist
     if (!isValidPromptText(basePromptText)) {
-        if (activePromptType !== "initial" && activePromptType !== "default") {
-            log(LOG_LEVEL_DEBUG, `Prompt ${currentThemeId}/${basePromptKey} not valid/found. Falling back to 'default'.`);
-            basePromptKey = "default";
-            basePromptText = getLoadedPromptText(currentThemeId, basePromptKey);
-        }
+        log(LOG_LEVEL_DEBUG, `Prompt ${currentThemeId}/${basePromptKey} not valid/found. Falling back to 'master_default'.`);
+        basePromptKey = "master_default";
+        basePromptText = getLoadedPromptText("master", basePromptKey);
     }
 
     if (!isValidPromptText(basePromptText)) {
-        log(LOG_LEVEL_DEBUG, `Prompt ${currentThemeId}/${basePromptKey} still not valid/found. Falling back to master prompts for key type: ${activePromptType}.`);
-        const masterKeyToTry = (activePromptType === "initial" || basePromptKey === "initial") ? "master_initial" : "master_default";
-        basePromptText = getLoadedPromptText("master", masterKeyToTry);
-        if (isValidPromptText(basePromptText)) {
-            basePromptKey = masterKeyToTry; // Update basePromptKey if master prompt is used
-        } else {
-             log(LOG_LEVEL_ERROR, `CRITICAL PROMPT FAILURE: No valid prompt found for type "${activePromptType}" (final tried key "${masterKeyToTry}") for theme "${currentThemeId}" or master. Cannot generate system prompt.`);
-             return `{"narrative": "SYSTEM ERROR: Core prompt file (type: ${activePromptType}, final key: ${masterKeyToTry}) is critically missing or invalid.", "dashboard_updates": {}, "suggested_actions": ["Restart Game"], "game_state_indicators": {}, "xp_awarded": 0}`;
-        }
+        log(LOG_LEVEL_ERROR, `CRITICAL PROMPT FAILURE: No valid default prompt found for key "${basePromptKey}" for theme "${currentThemeId}" or master. Cannot generate system prompt.`);
+        return `{"narrative": "SYSTEM ERROR: Core prompt file (type: ${activePromptType}, final key: ${basePromptKey}) is critically missing or invalid.", "dashboard_updates": {}, "suggested_actions": ["Restart Game"], "game_state_indicators": {}, "xp_awarded": 0}`;
     }
-
     let generatedDashboardDescription = "";
     const dashboardItems = [...(dashboardLayoutConfig.left_panel || []), ...(dashboardLayoutConfig.right_panel || [])].flatMap(p => p.items);
     dashboardItems.forEach(item => {
@@ -117,7 +109,6 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     if (generatedDashboardDescription.endsWith(",\n")) {
         generatedDashboardDescription = generatedDashboardDescription.slice(0, -2);
     }
-
     let generatedGameStateIndicators = "";
     if (dashboardLayoutConfig.game_state_indicators && Array.isArray(dashboardLayoutConfig.game_state_indicators)) {
         dashboardLayoutConfig.game_state_indicators.forEach(indicator => {
@@ -137,13 +128,11 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         generatedGameStateIndicators = `"activity_status": "string (Reflects ongoing activity, in ${narrativeLang.toUpperCase()})",\n` +
                                       `"combat_engaged": "boolean (True if combat starts THIS turn)"`;
     }
-
     const instructionKeyForThemeText = basePromptKey.startsWith("master_") ? basePromptKey : activePromptType;
     let themeSpecificInstructions = getUIText(`theme_instructions_${instructionKeyForThemeText}_${currentThemeId}`, {}, { explicitThemeContext: currentThemeId });
     if (themeSpecificInstructions === `theme_instructions_${instructionKeyForThemeText}_${currentThemeId}` || !themeSpecificInstructions.trim()) {
         themeSpecificInstructions = "No specific instructions provided for this context.";
     }
-
     const helperPlaceholderRegex = /{{HELPER_RANDOM_LINE:([a-zA-Z0-9_]+)}}/g;
     let match;
     while ((match = helperPlaceholderRegex.exec(themeSpecificInstructions)) !== null) {
@@ -160,10 +149,8 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         themeSpecificInstructions = themeSpecificInstructions.replace(fullPlaceholder, replacementText);
         helperPlaceholderRegex.lastIndex = 0;
     }
-
     const narrativeLangInstruction = getThemeNarrativeLangPromptPart(currentThemeId, narrativeLang);
     let processedPromptText = basePromptText;
-
     // Player Progression Data - These will be empty/default if no progress yet or getters not fully implemented in state
     const playerLevel = getPlayerLevel ? getPlayerLevel() : 1;
     const effMaxIntegrity = getEffectiveMaxIntegrity ? getEffectiveMaxIntegrity() : (themeConfig?.base_attributes?.integrity || 100);
@@ -174,7 +161,6 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     // Phase 3 placeholders (can be added to prompts later)
     // const currentStrain = getCurrentStrainLevel ? getCurrentStrainLevel() : "Calm";
     // const activeConditions = getActiveConditions ? getActiveConditions() : [];
-
     const replacements = {
         'narrativeLanguageInstruction': narrativeLangInstruction,
         'currentNameForPrompt': playerID || getUIText("unknown"),
@@ -203,11 +189,9 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         // 'currentStrainLevel': currentStrain, // For Phase 3
         // 'activeConditionsJSON': JSON.stringify(activeConditions), // For Phase 3
     };
-
     for (const key in replacements) {
         processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${key}\\}`, "g"), replacements[key]);
     }
-
     if (basePromptKey === "master_initial") {
         const startsContent = getLoadedPromptText(currentThemeId, "starts") || getLoadedPromptText("master", "starts");
         if (startsContent) {
@@ -220,7 +204,6 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     }
     return processedPromptText;
 }
-
 /**
  * Constructs the system prompt for a "lore deep dive" on a World Shard.
  * @param {object} shardData - The data of the shard: { title, content, key_suggestion, unlock_condition_description }.
@@ -231,25 +214,20 @@ export function getSystemPromptForDeepDive(shardData) {
     const narrativeLang = getCurrentNarrativeLanguage();
     const themeConfig = getThemeConfig(currentThemeId);
     const basePromptText = getLoadedPromptText("master", "master_lore_deep_dive");
-
     if (!basePromptText || !themeConfig) {
         log(LOG_LEVEL_ERROR, `getSystemPromptForDeepDive: Missing 'master_lore_deep_dive.txt' or theme config for ${currentThemeId}.`);
         return `{"narrative": "SYSTEM ERROR: Deep dive prompt template missing."}`;
     }
-
     const narrativeLangInstruction = getThemeNarrativeLangPromptPart(currentThemeId, narrativeLang);
     let processedPrompt = basePromptText;
-
     let summarySnippet = "No recent relevant game events to summarize for this reflection.";
     const history = getGameHistory();
     if (history.length >= 2) { // Player action (Mull Over) -> GM Response (This is the deep dive itself)
                                // So we look at history before the player selected "Mull Over"
         const turnBeforeMullOverPlayerAction = history[history.length - 2];
         const turnBeforeThatGMResponse = history[history.length -3];
-
         let playerActionText = "N/A";
         let gmNarrativeText = "N/A";
-
         if (turnBeforeMullOverPlayerAction && turnBeforeMullOverPlayerAction.role === 'user' && turnBeforeMullOverPlayerAction.parts[0].text){
             playerActionText = turnBeforeMullOverPlayerAction.parts[0].text.substring(0, 100) + (turnBeforeMullOverPlayerAction.parts[0].text.length > 100 ? "..." : "");
         }
@@ -261,7 +239,6 @@ export function getSystemPromptForDeepDive(shardData) {
         }
         summarySnippet = `Prior Player Action: ${playerActionText}\nPrevious GM Narrative: ${gmNarrativeText}`;
     }
-
     const replacements = {
         'theme_name': getUIText(themeConfig.name_key, {}, { explicitThemeContext: currentThemeId }),
         'currentNarrativeLanguage\\.toUpperCase\\(\\)': narrativeLang.toUpperCase(),
@@ -270,13 +247,11 @@ export function getSystemPromptForDeepDive(shardData) {
         'game_history_lore': getLastKnownEvolvedWorldLore() || getUIText(themeConfig.lore_key, {}, { explicitThemeContext: currentThemeId }),
         'game_history_summary_snippet': summarySnippet
     };
-
     for (const key in replacements) {
         processedPrompt = processedPrompt.replace(new RegExp(`\\$\\{${key}\\}`, "g"), replacements[key]);
     }
     return processedPrompt;
 }
-
 /**
  * Processes a player's turn: constructs the prompt, calls the AI, and updates state.
  * @param {string} playerActionText - The text of the player's action (already added to history by gameController).
@@ -284,18 +259,25 @@ export function getSystemPromptForDeepDive(shardData) {
  * @returns {Promise<string|null>} The narrative string from the AI, or null on failure.
  */
 export async function processAiTurn(playerActionText, worldShardsPayloadForInitial = "[]") {
-    log(LOG_LEVEL_INFO, `Processing AI turn. Player action text already in history: "${playerActionText.substring(0,50)}..."`);
+    log(LOG_LEVEL_INFO, `Processing AI turn for player action: "${playerActionText.substring(0, 50)}..."`);
     const fullHistory = getGameHistory();
-    const historyForAI = fullHistory
-        .filter(turn => turn.role === 'user' || turn.role === 'model')
-        .map(turn => ({
-            role: turn.role,
-            parts: turn.parts.map(part => ({ text: part.text }))
-        }))
-        .slice(-RECENT_INTERACTION_WINDOW_SIZE);
-
+    let historyForAI;
+    if (getIsInitialGameLoad()) {
+        historyForAI = [{
+            role: 'user',
+            parts: [{ text: playerActionText }]
+        }];
+        log(LOG_LEVEL_DEBUG, "Initial game load: constructing temporary history for AI from initial action text.");
+    } else {
+        historyForAI = fullHistory
+            .filter(turn => turn.role === 'user' || turn.role === 'model')
+            .map(turn => ({
+                role: turn.role,
+                parts: turn.parts.map(part => ({ text: part.text }))
+            }))
+            .slice(-RECENT_INTERACTION_WINDOW_SIZE);
+    }
     const systemPromptText = getSystemPrompt(worldShardsPayloadForInitial);
-
     if (systemPromptText.startsWith('{"narrative": "SYSTEM ERROR:')) {
         try {
             const errorResponse = JSON.parse(systemPromptText);
@@ -307,10 +289,8 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
         }
         return null; // Signal critical error to gameController
     }
-
     const currentUser = getCurrentUser();
     const token = currentUser ? currentUser.token : null;
-
     const payload = {
         contents: historyForAI,
         generationConfig: DEFAULT_GENERATION_CONFIG,
@@ -318,10 +298,8 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
         systemInstruction: { parts: [{ text: systemPromptText }] },
         modelName: getCurrentModelName(),
     };
-
     try {
         const responseData = await apiService.callGeminiProxy(payload, token); // Pass token
-
         if (responseData.candidates && responseData.candidates[0]?.content?.parts?.[0]?.text) {
             let jsonStringFromAI = responseData.candidates[0].content.parts[0].text;
             let parsedAIResponse;
@@ -342,7 +320,6 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
                     }
                 }
             }
-
             if (!parsedAIResponse || typeof parsedAIResponse.narrative !== "string" ||
                 typeof parsedAIResponse.dashboard_updates !== "object" || parsedAIResponse.dashboard_updates === null ||
                 !Array.isArray(parsedAIResponse.suggested_actions) ||
@@ -351,23 +328,19 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
                 log(LOG_LEVEL_ERROR, "Parsed JSON from AI is missing required core fields, has wrong types, or invalid xp_awarded.", parsedAIResponse);
                 throw new Error("Invalid JSON structure from AI: missing/invalid core fields or xp_awarded.");
             }
-
             addTurnToGameHistory({ role: "model", parts: [{ text: JSON.stringify(parsedAIResponse) }] });
             setLastKnownDashboardUpdates(parsedAIResponse.dashboard_updates);
             setCurrentSuggestedActions(parsedAIResponse.suggested_actions);
             setLastKnownGameStateIndicators(parsedAIResponse.game_state_indicators || {});
             setCurrentAiPlaceholder(parsedAIResponse.input_placeholder || getUIText("placeholder_command"));
-
             if (parsedAIResponse.new_persistent_lore_unlock) {
                 setCurrentTurnUnlockData(parsedAIResponse.new_persistent_lore_unlock);
             } else {
                 setCurrentTurnUnlockData(null);
             }
-
             if (getIsInitialGameLoad()) {
                 setIsInitialGameLoad(false);
             }
-
             // Store awarded XP to be processed by gameController
             if (parsedAIResponse.xp_awarded !== undefined) {
                 // We'll store it temporarily in state or pass it back directly
@@ -375,7 +348,6 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
                 // If we need to store it in state: state.setCurrentTurnXPAwarded(parsedAIResponse.xp_awarded);
                 log(LOG_LEVEL_DEBUG, `XP awarded by AI this turn: ${parsedAIResponse.xp_awarded}`);
             }
-
             // CurrentPromptType is determined by handleGameStateIndicators in gameController AFTER this resolves
             return parsedAIResponse; // Return the full parsed object
         } else if (responseData.promptFeedback?.blockReason) {
@@ -392,7 +364,6 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
         throw error; // Re-throw for gameController to handle UI error display
     }
 }
-
 /**
  * Handles the "Mull Over Shard" action by making a specialized AI call.
  * @param {object} shardData - The data of the World Shard to reflect upon.
@@ -404,16 +375,13 @@ export async function handleMullOverShardAction(shardData) {
         return null;
     }
     log(LOG_LEVEL_INFO, "Handling Mull Over Shard action for:", shardData.title);
-
     const systemPromptText = getSystemPromptForDeepDive(shardData);
     if (systemPromptText.startsWith('{"narrative": "SYSTEM ERROR:')) {
         log(LOG_LEVEL_ERROR, `Failed to generate system prompt for deep dive: ${systemPromptText}`);
         return null; // Signal critical error
     }
-
     const currentUser = getCurrentUser();
     const token = currentUser ? currentUser.token : null;
-
     const payload = {
         contents: [], // Deep dive context is in the system prompt
         generationConfig: { ...DEFAULT_GENERATION_CONFIG, temperature: 0.65, maxOutputTokens: 1024 },
@@ -421,10 +389,8 @@ export async function handleMullOverShardAction(shardData) {
         systemInstruction: { parts: [{ text: systemPromptText }] },
         modelName: getCurrentModelName(),
     };
-
     try {
         const responseData = await apiService.callGeminiProxy(payload, token); // Pass token
-
         if (responseData.candidates && responseData.candidates[0]?.content?.parts?.[0]?.text) {
             let jsonStringFromAI = responseData.candidates[0].content.parts[0].text;
             let parsedResponse;
@@ -437,7 +403,6 @@ export async function handleMullOverShardAction(shardData) {
                     parsedResponse = JSON.parse(markdownMatch[1].trim());
                 } else { throw parseError; }
             }
-
             if (parsedResponse && parsedResponse.deep_dive_narrative && typeof parsedResponse.deep_dive_narrative === 'string') {
                 addTurnToGameHistory({
                     role: "model", // Could be a special role like "deep_dive" if needed for history filtering

@@ -131,7 +131,9 @@ async function _handleExperienceAndLevelUp(xpAwarded) {
         if (currentUserThemeProgress.currentXP >= xpForNextLevel) {
             // A level up condition is met.
             // The actual level increment will happen on the backend after boon selection.
-            // Here, we just mark that a boon selection is pending.
+            // Store the original suggested actions before overwriting them with boon choices.
+            state.setLastAiSuggestedActions(state.getCurrentSuggestedActions());
+            // Now, mark that a boon selection is pending.
             state.setIsBoonSelectionPending(true);
             storyLogManager.addMessageToLog(
                 localizationService.getUIText("system_level_up", { NEW_LEVEL: currentLevel + 1 }), // Show the target level
@@ -213,7 +215,7 @@ async function _handleBoonSelection(boonId, boonDisplayText) {
         value = BOON_DEFINITIONS.MAX_WILLPOWER_INCREASE.value;
     } else {
         log(LOG_LEVEL_ERROR, `Invalid Boon ID selected: ${boonId}`);
-        storyLogManager.addMessageToLog(localizationService.getUIText("error_generic_action_failed", { ACTION_NAME: "Boon Selection" }), "system-error");
+        storyLogManager.addMessageToLog(localizationService.getUIText("error_generic_action_failed", { ACTION_NAME: "Boon Selection" }), "system system-error");
         _presentBoonChoices(); // Re-present choices
         uiUtils.setGMActivityIndicator(false);
         storyLogManager.removeLoadingIndicator();
@@ -239,20 +241,26 @@ async function _handleBoonSelection(boonId, boonDisplayText) {
         );
         _initializeCurrentRunStats(); // Re-initialize run stats like current IG/WP based on new max values
         characterPanelManager.updateCharacterPanel(); // Update the UI with new level and stats
-        suggestedActionsManager.clearSuggestedActions(); // Clear Boon choices
+
+        // ** FIX APPLIED HERE **
+        // Explicitly restore the previous suggested actions to the main state holder.
+        const restoredActions = state.getLastAiSuggestedActions();
+        state.setCurrentSuggestedActions(restoredActions || []);
+
+        // Now, display the actions from the corrected state.
+        suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
+
         if (dom.playerActionInput) {
             dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder() || localizationService.getUIText("placeholder_command");
             dom.playerActionInput.focus();
         }
-        // Save game state *after* boon application to persist the new level and attribute bonuses
+        // Save game state *after* boon application to persist the new level and attribute bonuses.
+        // This save will now correctly include the restored suggested_actions.
         log(LOG_LEVEL_DEBUG, "Saving game state after successful Boon application.");
         await authService.saveCurrentGameState();
     } catch (error) {
         log(LOG_LEVEL_ERROR, "Error applying Boon:", error);
-        storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: error.message || "Failed to apply Boon." }), "system-error");
-        // Do not re-present choices immediately on API error, as the backend state might be inconsistent.
-        // The user might need to retry or refresh if the save itself failed.
-        // If the applyBoonSelection itself failed, their level wouldn't have incremented.
+        storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: error.message || "Failed to apply Boon." }), "system system-error");
     } finally {
         uiUtils.setGMActivityIndicator(false);
         storyLogManager.removeLoadingIndicator();
@@ -282,33 +290,40 @@ export function initGameController(dependencies) {
 async function _setupNewGameEnvironment(themeId) {
     log(LOG_LEVEL_INFO, `Setting up new game environment for theme: ${themeId}. Player will be prompted for identifier.`);
     state.setCurrentTheme(themeId);
+
+    // --- FIX: Ensure all theme data and prompts are loaded for a new game ---
+    const dataLoaded = await themeService.ensureThemeDataLoaded(themeId);
+    if (!dataLoaded) {
+        log(LOG_LEVEL_ERROR, `Critical data for theme ${themeId} failed to load for new game.`);
+        modalManager.showCustomModal({type: "alert", titleKey: "alert_title_error", messageKey: "error_theme_data_load_failed", replacements: { THEME_ID: themeId }});
+        await switchToLanding();
+        return;
+    }
+    await themeService.getAllPromptsForTheme(themeId);
+    await themeService.ensureThemeDataLoaded("master");
+    await themeService.getAllPromptsForTheme("master");
+
     state.clearVolatileGameState();
     state.setIsInitialGameLoad(true);
     state.setCurrentPromptType("initial");
-
     log(LOG_LEVEL_DEBUG, "Clearing UI components for new game environment...");
     storyLogManager.clearStoryLogDOM();
     suggestedActionsManager.clearSuggestedActions();
     dashboardManager.resetDashboardUI(themeId);
-
     await _loadOrCreateUserThemeProgress(themeId);
     _initializeCurrentRunStats();
     characterPanelManager.updateCharacterPanel();
     characterPanelManager.showCharacterPanel(true); // Make sure it's visible
     characterPanelManager.showXPBar(true); // Also show XP bar
-
     landingPageManager.switchToGameView(themeId);
-
     if (_userThemeControlsManagerRef && typeof _userThemeControlsManagerRef.setThemeAsPlaying === 'function') {
         await _userThemeControlsManagerRef.setThemeAsPlaying(themeId);
     } else {
         log(LOG_LEVEL_WARN, "UserThemeControlsManager not available in _setupNewGameEnvironment. Cannot set theme as playing.");
     }
-
     const themeDisplayName = themeService.getThemeConfig(themeId)?.name_key
         ? localizationService.getUIText(themeService.getThemeConfig(themeId).name_key, {}, { explicitThemeContext: themeId })
         : themeId;
-
     state.setPlayerIdentifier("");
     if (dom.nameInputSection) dom.nameInputSection.style.display = "flex";
     if (dom.actionInputSection) dom.actionInputSection.style.display = "none";
@@ -317,8 +332,6 @@ async function _setupNewGameEnvironment(themeId) {
         dom.playerIdentifierInput.placeholder = localizationService.getUIText("placeholder_name_login");
         dom.playerIdentifierInput.focus();
     }
-
-    storyLogManager.addMessageToLog(localizationService.getUIText("system_theme_set_generic", { THEME_NAME: themeDisplayName }), "system");
     storyLogManager.addMessageToLog(localizationService.getUIText("alert_identifier_required"), "system");
     log(LOG_LEVEL_INFO, `UI configured for new game in theme ${themeId}. Awaiting player identifier input.`);
 }
@@ -330,16 +343,13 @@ async function _setupNewGameEnvironment(themeId) {
 export async function handleIdentifierSubmission(identifier) {
     log(LOG_LEVEL_INFO, `Player identifier submitted: ${identifier}`);
     if (!identifier || identifier.trim() === "") {
-        storyLogManager.addMessageToLog(localizationService.getUIText("alert_identifier_required"), "system-error");
+        storyLogManager.addMessageToLog(localizationService.getUIText("alert_identifier_required"), "system system-error");
         if (dom.playerIdentifierInput) dom.playerIdentifierInput.focus();
         return;
     }
-
     state.setPlayerIdentifier(identifier);
-
     if (dom.nameInputSection) dom.nameInputSection.style.display = "none";
     if (dom.actionInputSection) dom.actionInputSection.style.display = "flex";
-
     if (dom.playerActionInput) {
         dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_command");
         state.setCurrentAiPlaceholder(dom.playerActionInput.placeholder);
@@ -347,25 +357,19 @@ export async function handleIdentifierSubmission(identifier) {
         dom.playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
         dom.playerActionInput.focus();
     }
-
     storyLogManager.addMessageToLog(localizationService.getUIText("connecting", { PLAYER_ID: identifier }), "system");
-
     const currentThemeId = state.getCurrentTheme();
     const themeDisplayName = currentThemeId
         ? (themeService.getThemeConfig(currentThemeId)?.name_key
             ? localizationService.getUIText(themeService.getThemeConfig(currentThemeId).name_key, {}, { explicitThemeContext: currentThemeId })
             : currentThemeId)
         : "Unknown Theme";
-
     const newGameSettings = state.getCurrentNewGameSettings();
     const useEvolvedWorld = newGameSettings ? newGameSettings.useEvolvedWorld : false;
-
     const initialActionText = `Start game as "${identifier}". Theme: ${themeDisplayName}. Evolved World: ${useEvolvedWorld}.`;
-    state.addTurnToGameHistory({ role: "user", parts: [{ text: initialActionText }] });
 
     // Clear the new game settings from state now that they've been used
     state.clearCurrentNewGameSettings();
-
     await processPlayerAction(initialActionText, true); // true for isGameStartingAction
 }
 
@@ -464,15 +468,12 @@ export async function resumeGameSession(themeId) {
     await themeService.getAllPromptsForTheme(themeId);
     await themeService.ensureThemeDataLoaded("master");
     await themeService.getAllPromptsForTheme("master");
-
     landingPageManager.switchToGameView(themeId);
     dashboardManager.generatePanelsForTheme(themeId);
-
     const currentUser = state.getCurrentUser();
     if (currentUser && currentUser.token) {
         try {
             const loadedData = await apiService.loadGameState(currentUser.token, themeId);
-
             // Set UserThemeProgress first
             if (loadedData.userThemeProgress) {
                 state.setCurrentUserThemeProgress(loadedData.userThemeProgress);
@@ -484,7 +485,6 @@ export async function resumeGameSession(themeId) {
             characterPanelManager.updateCharacterPanel();
             characterPanelManager.showCharacterPanel(true);
             characterPanelManager.showXPBar(true); // Also show XP bar for resumed game
-
             // Set GameState details
             if (!loadedData.player_identifier) {
                 log(LOG_LEVEL_WARN, `Loaded game state for theme ${themeId} is missing player_identifier. Using user email.`);
@@ -498,13 +498,13 @@ export async function resumeGameSession(themeId) {
             state.setCurrentPromptType(loadedData.current_prompt_type || "default");
             state.setCurrentNarrativeLanguage(loadedData.current_narrative_language || state.getCurrentAppLanguage());
             state.setCurrentSuggestedActions(loadedData.last_suggested_actions || []);
+            state.setLastAiSuggestedActions(loadedData.actions_before_boon_selection || null);
             state.setCurrentPanelStates(loadedData.panel_states || {});
             state.setCurrentAiPlaceholder(loadedData.input_placeholder || localizationService.getUIText("placeholder_command"));
             state.setDashboardItemMeta(loadedData.dashboard_item_meta || {});
             state.setLastKnownCumulativePlayerSummary(loadedData.game_history_summary || "");
             state.setLastKnownEvolvedWorldLore(loadedData.game_history_lore || "");
             state.setIsBoonSelectionPending(loadedData.is_boon_selection_pending || false); // Load pending boon state
-
             // Update current run stats if they were part of the saved GameState's dashboard_updates
             // (This assumes currentIntegrity etc. might be saved within last_dashboard_updates)
             const igFromSave = loadedData.last_dashboard_updates?.currentIntegrity;
@@ -512,29 +512,21 @@ export async function resumeGameSession(themeId) {
             if (igFromSave !== undefined) state.updateCurrentRunStat('currentIntegrity', parseInt(igFromSave,10));
             if (wpFromSave !== undefined) state.updateCurrentRunStat('currentWillpower', parseInt(wpFromSave,10));
             // Phase 3: Load strain, conditions from saved state similarly
-
             storyLogManager.clearStoryLogDOM();
-            state.getGameHistory().forEach((turn, index) => {
+            state.getGameHistory().forEach(turn => {
                 if (turn.role === "user") {
-                    const textToLog = turn.parts[0].text;
-                    const isLikelyInitialSystemAction = textToLog.startsWith("Start game as ") && textToLog.includes(". Theme: ") && textToLog.includes(". Evolved World: ");
-                    if (index === 0 && isLikelyInitialSystemAction) { /* Suppress */ } else {
-                        storyLogManager.addMessageToLog(textToLog, "player");
-                    }
+                    storyLogManager.renderMessage(turn.parts[0].text, "player");
                 } else if (turn.role === "model") {
                     try {
                         const modelResponse = JSON.parse(turn.parts[0].text);
-                        storyLogManager.addMessageToLog(modelResponse.narrative, "gm");
+                        storyLogManager.renderMessage(modelResponse.narrative, "gm");
                         if (modelResponse.isDeepDive) log(LOG_LEVEL_DEBUG, "Repopulating deep dive msg.");
                     } catch (e) {
                         log(LOG_LEVEL_ERROR, "Error parsing model response from loaded history:", e, turn.parts[0].text);
-                        storyLogManager.addMessageToLog(localizationService.getUIText("error_reconstruct_story"), "system-error");
+                        storyLogManager.addMessageToLog(localizationService.getUIText("error_reconstruct_story"), "system system-error");
                     }
-                } else if (turn.role === "system") {
-                    const sysMsg = turn.parts[0];
-                    if (sysMsg?.text && sysMsg?.senderTypes) {
-                         storyLogManager.addMessageToLog(sysMsg.text, sysMsg.senderTypes);
-                    }
+                } else if (turn.role === "system_log") {
+                    storyLogManager.renderMessage(turn.parts[0].text, turn.senderTypes || "system");
                 }
             });
             dashboardManager.updateDashboard(state.getLastKnownDashboardUpdates(), false);
@@ -542,10 +534,8 @@ export async function resumeGameSession(themeId) {
             dashboardManager.applyPersistedItemMeta();
             suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
             state.setIsInitialGameLoad(false);
-
             if (dom.nameInputSection) dom.nameInputSection.style.display = "none";
             if (dom.actionInputSection) dom.actionInputSection.style.display = "flex";
-
         if (state.getIsBoonSelectionPending()) {
                 log(LOG_LEVEL_INFO, "Resuming game with a pending Boon selection.");
                 _presentBoonChoices();
@@ -565,7 +555,7 @@ export async function resumeGameSession(themeId) {
                 await initiateNewGameSessionFlow(themeId);
             } else {
                 log(LOG_LEVEL_ERROR, `Error loading game state or progress for ${themeId}:`, error.message);
-                storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: `Could not load game: ${error.message}` }), "system-error");
+                storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: `Could not load game: ${error.message}` }), "system system-error");
                 await initiateNewGameSessionFlow(themeId);
             }
         }
@@ -583,21 +573,19 @@ export async function resumeGameSession(themeId) {
  */
 export async function processPlayerAction(actionText, isGameStartingAction = false) {
     log(LOG_LEVEL_INFO, `Processing player action: "${actionText.substring(0, 50)}..." (isGameStartingAction: ${isGameStartingAction})`);
-
     if (state.getIsBoonSelectionPending()) {
-        const boonAction = suggestedActionsManager.getCurrentSuggestedActions().find(
+        const boonAction = state.getCurrentSuggestedActions().find(
             action => (typeof action === 'string' && action === actionText) || (typeof action === 'object' && action.text === actionText && action.isBoonChoice)
         );
         if (boonAction && typeof boonAction === 'object' && boonAction.boonId) {
             await _handleBoonSelection(boonAction.boonId, boonAction.text);
         } else {
             // If the input doesn't match a boon choice, re-present.
-            storyLogManager.addMessageToLog(localizationService.getUIText("error_invalid_boon_choice"), "system-error");
+            storyLogManager.addMessageToLog(localizationService.getUIText("error_invalid_boon_choice"), "system system-error");
             _presentBoonChoices();
         }
         return;
     }
-
     let worldShardsPayloadForInitialTurn = "[]";
     if (isGameStartingAction) {
         const newGameSettings = state.getCurrentNewGameSettings();
@@ -627,27 +615,24 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
             }
         }
     }
-
     if (!isGameStartingAction) {
-        storyLogManager.addMessageToLog(actionText, "player");
+        storyLogManager.renderMessage(actionText, "player");
         state.addTurnToGameHistory({ role: "user", parts: [{ text: actionText }] });
         if (dom.playerActionInput) {
             dom.playerActionInput.value = "";
             dom.playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
         }
     }
-
     uiUtils.setGMActivityIndicator(true);
     suggestedActionsManager.clearSuggestedActions();
     state.resetAllDashboardItemRecentUpdates();
     dashboardManager.clearAllDashboardItemDotClasses();
     storyLogManager.showLoadingIndicator();
-
     try {
         const fullAiResponse = await aiService.processAiTurn(actionText, worldShardsPayloadForInitialTurn);
         storyLogManager.removeLoadingIndicator();
         if (fullAiResponse) {
-            storyLogManager.addMessageToLog(fullAiResponse.narrative, "gm");
+            storyLogManager.renderMessage(fullAiResponse.narrative, "gm");
             dashboardManager.updateDashboard(state.getLastKnownDashboardUpdates()); // State is updated by aiService
             characterPanelManager.updateCharacterPanel(); // ENSURE THIS IS THE PLACEMENT
             suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
@@ -672,7 +657,7 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
     } catch (error) {
         storyLogManager.removeLoadingIndicator();
         log(LOG_LEVEL_ERROR, "Error during AI turn processing in gameController:", error.message, error);
-        storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: error.message }), "system-error");
+        storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: error.message }), "system system-error");
         if (dom.playerActionInput) dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_command");
     } finally {
         // Only set GM activity to false if no boon selection is pending.

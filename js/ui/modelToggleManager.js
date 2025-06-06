@@ -92,7 +92,7 @@ export async function handleModelToggle() {
             // Optionally, show an error message to the user via a modal
             // For now, just log, as the local state change has already occurred.
             if (_storyLogManagerRef && getCurrentTheme() && storyLogViewport && storyLogViewport.style.display !== 'none') {
-                 _storyLogManagerRef.addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Could not save model preference to server." }), "system-error");
+                 _storyLogManagerRef.addMessageToLog(getUIText("error_api_call_failed", { ERROR_MSG: "Could not save model preference to server." }), "system system-error");
             }
         }
     }

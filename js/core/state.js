@@ -1,11 +1,9 @@
 // js/core/state.js
-
 /**
  * @file Manages the central, in-memory application state.
  * Provides explicit getter/setter functions for state variables.
  */
 import { getThemeConfig } from '../services/themeService.js';
-
 import {
     DEFAULT_LANGUAGE,
     FREE_MODEL_NAME,
@@ -20,7 +18,11 @@ let _currentTheme = localStorage.getItem(CURRENT_THEME_STORAGE_KEY) || null;
 let _currentAppLanguage = localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
 let _currentNarrativeLanguage = localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) || _currentAppLanguage;
 let _currentUser = null; // User object including token
-let _gameHistory = [];
+
+// --- History Management ---
+let _gameHistory = []; // Represents the history received from the server plus any new turns in the current session.
+let _unsavedHistoryDelta = []; // Tracks only the new turns since the last successful save.
+
 let _playerIdentifier = "";
 let _currentPromptType = "initial";
 let _lastKnownDashboardUpdates = {};
@@ -46,13 +48,14 @@ let _currentRunStats = { // Ephemeral stats for the current game run
     // Strain and Conditions will be added in Phase 3
 };
 let _currentTurnXPAwarded = 0;
+let _lastAiSuggestedActions = null;
 let _isBoonSelectionPending = false;
+
 // --- Getters and Setters ---
 export const getCurrentUserThemeProgress = () => _currentUserThemeProgress;
 export const setCurrentUserThemeProgress = (progress) => {
     _currentUserThemeProgress = progress;
 };
-
 export const getCurrentRunStats = () => _currentRunStats;
 export const setCurrentRunStats = (stats) => {
     _currentRunStats = { ..._currentRunStats, ...stats };
@@ -67,43 +70,38 @@ export const updateCurrentRunStat = (statName, value) => {
         _currentRunStats[statName] = value;
     }
 };
-
-
 export const getIsBoonSelectionPending = () => _isBoonSelectionPending;
 export const setIsBoonSelectionPending = (isPending) => {
     _isBoonSelectionPending = !!isPending;
 };
+
 // --- Player Progression Getters ---
 export const getPlayerLevel = () => _currentUserThemeProgress ? _currentUserThemeProgress.level : 1;
-
 export const getEffectiveMaxIntegrity = () => {
     const baseIntegrity = getThemeConfig(getCurrentTheme())?.base_attributes?.integrity || 100;
     const bonusIntegrity = _currentUserThemeProgress?.maxIntegrityBonus || 0;
     return baseIntegrity + bonusIntegrity;
 };
-
 export const getEffectiveMaxWillpower = () => {
     const baseWillpower = getThemeConfig(getCurrentTheme())?.base_attributes?.willpower || 50;
     const bonusWillpower = _currentUserThemeProgress?.maxWillpowerBonus || 0;
     return baseWillpower + bonusWillpower;
 };
-
 export const getEffectiveAptitude = () => {
     const baseAptitude = getThemeConfig(getCurrentTheme())?.base_attributes?.aptitude || 50;
     const bonusAptitude = _currentUserThemeProgress?.aptitudeBonus || 0;
     return baseAptitude + bonusAptitude;
 };
-
 export const getEffectiveResilience = () => {
     const baseResilience = getThemeConfig(getCurrentTheme())?.base_attributes?.resilience || 50;
     const bonusResilience = _currentUserThemeProgress?.resilienceBonus || 0;
     return baseResilience + bonusResilience;
 };
-
 export const getAcquiredTraitKeys = () => {
     // Ensure it always returns an array, even if null/undefined in raw progress object.
     return Array.isArray(_currentUserThemeProgress?.acquiredTraitKeys) ? _currentUserThemeProgress.acquiredTraitKeys : [];
 };
+
 export const getCurrentTurnXPAwarded = () => _currentTurnXPAwarded;
 export const setCurrentTurnXPAwarded = (xp) => {
     _currentTurnXPAwarded = xp;
@@ -117,60 +115,65 @@ export const setCurrentTheme = (themeId) => {
         localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
     }
 };
-
 export const getCurrentAppLanguage = () => _currentAppLanguage;
 export const setCurrentAppLanguage = (lang) => {
     _currentAppLanguage = lang;
     localStorage.setItem(LANGUAGE_PREFERENCE_STORAGE_KEY, lang);
 };
-
 export const getCurrentNarrativeLanguage = () => _currentNarrativeLanguage;
 export const setCurrentNarrativeLanguage = (lang) => {
     _currentNarrativeLanguage = lang;
     localStorage.setItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY, lang);
 };
-
 export const getCurrentUser = () => _currentUser;
 export const setCurrentUser = (user) => {
     _currentUser = user; // User object should contain the token
 };
 
+// --- History Management Functions ---
 export const getGameHistory = () => _gameHistory;
 export const setGameHistory = (history) => {
     _gameHistory = Array.isArray(history) ? history : [];
+    _unsavedHistoryDelta = []; // Reset delta when history is explicitly set (e.g., on game load)
 };
 export const addTurnToGameHistory = (turn) => {
     _gameHistory.push(turn);
+    _unsavedHistoryDelta.push(turn);
 };
 export const clearGameHistory = () => {
     _gameHistory = [];
+    _unsavedHistoryDelta = [];
 };
+export const getUnsavedHistoryDelta = () => _unsavedHistoryDelta;
+export const clearUnsavedHistoryDelta = () => {
+    _unsavedHistoryDelta = [];
+};
+// --- End History Management ---
 
 export const getPlayerIdentifier = () => _playerIdentifier;
 export const setPlayerIdentifier = (identifier) => {
     _playerIdentifier = identifier;
 };
-
 export const getCurrentPromptType = () => _currentPromptType;
 export const setCurrentPromptType = (type) => {
     _currentPromptType = type;
 };
-
 export const getLastKnownDashboardUpdates = () => _lastKnownDashboardUpdates;
 export const setLastKnownDashboardUpdates = (updates) => {
-    _lastKnownDashboardUpdates = typeof updates === 'object' && updates !== null ? updates : {};
+    if (typeof updates === 'object' && updates !== null) {
+        _lastKnownDashboardUpdates = { ..._lastKnownDashboardUpdates, ...updates };
+    } else {
+        _lastKnownDashboardUpdates = {};
+    }
 };
-
 export const getLastKnownGameStateIndicators = () => _lastKnownGameStateIndicators;
 export const setLastKnownGameStateIndicators = (indicators) => {
     _lastKnownGameStateIndicators = typeof indicators === 'object' && indicators !== null ? indicators : {};
 };
-
 export const getCurrentSuggestedActions = () => _currentSuggestedActions;
 export const setCurrentSuggestedActions = (actions) => {
     _currentSuggestedActions = Array.isArray(actions) ? actions : [];
 };
-
 export const getCurrentPanelStates = () => _currentPanelStates;
 export const setCurrentPanelStates = (states) => {
     _currentPanelStates = typeof states === 'object' && states !== null ? states : {};
@@ -179,23 +182,19 @@ export const getPanelState = (panelId) => _currentPanelStates[panelId];
 export const setPanelState = (panelId, isExpanded) => {
     _currentPanelStates[panelId] = isExpanded;
 };
-
 export const getCurrentModelName = () => _currentModelName;
 export const setCurrentModelName = (modelName) => {
     _currentModelName = modelName;
     localStorage.setItem(MODEL_PREFERENCE_STORAGE_KEY, modelName);
 };
-
 export const getPlayingThemes = () => _playingThemes;
 export const setPlayingThemes = (themes) => {
     _playingThemes = Array.isArray(themes) ? themes : [];
 };
-
 export const getLikedThemes = () => _likedThemes;
 export const setLikedThemes = (themes) => {
     _likedThemes = Array.isArray(themes) ? themes : [];
 };
-
 export const getShapedThemeData = () => _shapedThemeData;
 export const setShapedThemeData = (data) => {
     if (data instanceof Map) {
@@ -208,17 +207,14 @@ export const setShapedThemeData = (data) => {
 export const updateShapedThemeEntry = (themeId, entryData) => {
     _shapedThemeData.set(themeId, entryData);
 };
-
 export const getLastKnownCumulativePlayerSummary = () => _lastKnownCumulativePlayerSummary;
 export const setLastKnownCumulativePlayerSummary = (summary) => {
     _lastKnownCumulativePlayerSummary = summary || "";
 };
-
 export const getLastKnownEvolvedWorldLore = () => _lastKnownEvolvedWorldLore;
 export const setLastKnownEvolvedWorldLore = (lore) => {
     _lastKnownEvolvedWorldLore = lore || "";
 };
-
 export const getCurrentLandingGridSelection = () => _currentLandingGridSelection;
 export const setCurrentLandingGridSelection = (themeId) => {
     _currentLandingGridSelection = themeId;
@@ -228,22 +224,18 @@ export const setCurrentLandingGridSelection = (themeId) => {
         localStorage.removeItem(LANDING_SELECTED_GRID_THEME_KEY);
     }
 };
-
 export const getIsInitialGameLoad = () => _isInitialGameLoad;
 export const setIsInitialGameLoad = (isInitial) => {
     _isInitialGameLoad = !!isInitial;
 };
-
 export const getCurrentAiPlaceholder = () => _currentAiPlaceholder;
 export const setCurrentAiPlaceholder = (placeholderText) => {
     _currentAiPlaceholder = placeholderText || "";
 };
-
 export const getCurrentTurnUnlockData = () => _currentTurnUnlockData;
 export const setCurrentTurnUnlockData = (data) => {
     _currentTurnUnlockData = data;
 };
-
 export const getCurrentNewGameSettings = () => _currentNewGameSettings;
 export const setCurrentNewGameSettings = (settings) => {
     _currentNewGameSettings = settings;
@@ -272,13 +264,20 @@ export const resetAllDashboardItemRecentUpdates = () => {
         }
     }
 };
-
+export const getLastAiSuggestedActions = () => _lastAiSuggestedActions;
+export const setLastAiSuggestedActions = (actions) => {
+    _lastAiSuggestedActions = Array.isArray(actions) ? actions : null;
+};
+export const clearLastAiSuggestedActions = () => {
+    _lastAiSuggestedActions = null;
+};
 /**
  * Clears all non-persistent game-specific state variables.
  * User preferences and auth state are not cleared here.
  */
 export const clearVolatileGameState = () => {
     _gameHistory = [];
+    _unsavedHistoryDelta = [];
     _playerIdentifier = "";
     _currentPromptType = "initial";
     _lastKnownDashboardUpdates = {};
@@ -290,6 +289,7 @@ export const clearVolatileGameState = () => {
     _currentPanelStates = {};
     _lastKnownCumulativePlayerSummary = "";
     _lastKnownEvolvedWorldLore = "";
+    _lastAiSuggestedActions = null;
     _currentTurnXPAwarded = 0;
     _currentUserThemeProgress = null;
     _currentRunStats = {
@@ -297,7 +297,6 @@ export const clearVolatileGameState = () => {
         currentWillpower: 0,
     };
     _isBoonSelectionPending = false;
-
     clearCurrentNewGameSettings();
     _dashboardItemMeta = {};
 };

@@ -1901,6 +1901,68 @@ body.landing-page-active #application-header .top-bar-right #new-game-button,
 body.landing-page-active #application-header .top-bar-right #model-toggle-button {
 	display: none;
 }
+.lore-modal-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-lg);
+	text-align: left;
+	max-height: 75vh; /* Ensure it's scrollable on smaller viewports */
+	overflow-y: auto;
+	padding-right: var(--spacing-sm); /* Space for scrollbar */
+}
+
+.lore-section {
+	padding-bottom: var(--spacing-md);
+	border-bottom: 1px solid var(--color-bg-input-field);
+}
+
+.lore-modal-content .lore-section:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.lore-section-title {
+	margin-bottom: var(--spacing-sm);
+	color: var(--color-accent-main);
+	font-size: var(--font-size-md);
+	font-weight: var(--font-weight-semi700);
+}
+
+.lore-text-content {
+	white-space: pre-wrap; /* Preserve newlines from the lore string */
+	color: var(--color-text-secondary);
+	line-height: var(--line-height-base);
+}
+
+.lore-fragments-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+}
+
+.shard-item-readonly {
+	padding: var(--spacing-sm);
+	border-radius: var(--radius-sm);
+	background-color: var(--color-bg-panel);
+    background-image: url('images/app/background_noise.png');
+}
+
+.shard-item-readonly .shard-title {
+	color: var(--color-text-primary);
+	font-weight: var(--font-weight-semi700);
+	margin-bottom: var(--spacing-xs);
+}
+#char-panel-lore-button {
+	margin-right: 2px;
+}
+.shard-item-readonly .shard-content {
+	color: var(--color-text-secondary);
+	font-size: var(--font-size-sm);
+	white-space: pre-wrap;
+}
 @media (min-width: 2000px) {
 	#theme-grid-container {
 		grid-template-columns: repeat(6, 1fr);

@@ -256,6 +256,11 @@ export const globalTextData = {
             "boon_primary_choose_attribute": "Choose Attribute Enhancement",
             "boon_primary_choose_trait": "Choose New Trait",
             "tooltip_no_fragments_to_configure": "No World Fragments unlocked for this theme.",
+            "tooltip_lore_button": "View World Lore & Fragments",
+            "modal_title_world_lore": "World Lore: {THEME_NAME}",
+            "lore_modal_base_lore_title": "Founding Lore",
+            "lore_modal_fragments_title": "Unlocked World Fragments",
+            "lore_modal_no_fragments_unlocked": "No World Fragments have been unlocked for this theme yet.",
         },
         cs: {
             // --- General Status & UI ---
@@ -507,6 +512,11 @@ export const globalTextData = {
             "boon_primary_choose_attribute": "Zvolit Vylepšení Atributu",
             "boon_primary_choose_trait": "Zvolit Novou Schopnost",
             "tooltip_no_fragments_to_configure": "Pro toto téma nejsou odemčeny žádné fragmenty světa.",
+            "tooltip_lore_button": "Zobrazit historii světa a fragmenty",
+            "modal_title_world_lore": "Historie Světa: {THEME_NAME}",
+            "lore_modal_base_lore_title": "Základní příběh",
+            "lore_modal_fragments_title": "Odemčené Fragmenty Světa",
+            "lore_modal_no_fragments_unlocked": "Pro toto téma zatím nebyly odemčeny žádné fragmenty světa.",
         }
     },
     // --- Landing Page Specific Text ---

@@ -6,6 +6,7 @@
  */
 import * as dom from './domElements.js';
 import * as state from '../core/state.js';
+import * as apiService from '../core/apiService.js';
 import { getUIText } from '../services/localizationService.js';
 import { XP_LEVELS, MAX_PLAYER_LEVEL } from '../core/config.js'; // For XP bar calculation
 import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARN } from '../core/logger.js';
@@ -90,6 +91,102 @@ function _showInventoryModal() {
     });
 }
 
+/**
+ * Shows a modal with the current Evolved World Lore and any unlocked World Fragments.
+ * @private
+ */
+async function _showLoreModal() {
+    const themeId = state.getCurrentTheme();
+    const currentUser = state.getCurrentUser();
+    const themeConfig = getThemeConfig(themeId);
+    if (!themeConfig) return;
+
+    const themeDisplayName = getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeId });
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'lore-modal-content';
+    modalContent.textContent = getUIText('system_processing_short'); // Loading indicator
+
+    modalManager.showCustomModal({
+        type: 'custom',
+        titleKey: 'modal_title_world_lore',
+        replacements: { THEME_NAME: themeDisplayName },
+        htmlContent: modalContent,
+        customActions: [{ textKey: 'modal_ok_button', className: 'ui-button primary', onClick: () => modalManager.hideCustomModal() }]
+    });
+
+    try {
+        const baseLore = getUIText(themeConfig.lore_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
+        let shards = [];
+        if (currentUser && currentUser.token) {
+            const shardsResponse = await apiService.fetchWorldShards(currentUser.token, themeId);
+            shards = shardsResponse.worldShards || [];
+        }
+
+        modalContent.innerHTML = ''; // Clear loading text
+
+        // Base Lore Section
+        const loreSection = document.createElement('div');
+        loreSection.className = 'lore-section';
+        const loreTitle = document.createElement('h4');
+        loreTitle.className = 'lore-section-title';
+        loreTitle.textContent = getUIText('lore_modal_base_lore_title');
+        const loreText = document.createElement('p');
+        loreText.className = 'lore-text-content';
+        loreText.textContent = baseLore;
+        loreSection.appendChild(loreTitle);
+        loreSection.appendChild(loreText);
+        modalContent.appendChild(loreSection);
+
+        // World Fragments Section
+        const fragmentsSection = document.createElement('div');
+        fragmentsSection.className = 'lore-section';
+        const fragmentsTitle = document.createElement('h4');
+        fragmentsTitle.className = 'lore-section-title';
+        fragmentsTitle.textContent = getUIText('lore_modal_fragments_title');
+        fragmentsSection.appendChild(fragmentsTitle);
+
+        if (shards.length > 0) {
+            const list = document.createElement('ul');
+            list.className = 'lore-fragments-list';
+            shards.sort((a, b) => new Date(a.unlockedAt) - new Date(b.unlockedAt));
+            shards.forEach(shard => {
+                const listItem = document.createElement('li');
+                listItem.className = 'shard-item-readonly';
+
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'shard-title';
+                titleDiv.textContent = shard.loreFragmentTitle;
+                if (!shard.isActiveForNewGames) {
+                    titleDiv.style.opacity = '0.6';
+                    const inactiveIndicator = document.createElement('span');
+                    inactiveIndicator.textContent = ' (Inactive)';
+                    inactiveIndicator.style.fontStyle = 'italic';
+                    titleDiv.appendChild(inactiveIndicator);
+                }
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'shard-content';
+                contentDiv.textContent = shard.loreFragmentContent;
+
+                listItem.appendChild(titleDiv);
+                listItem.appendChild(contentDiv);
+                list.appendChild(listItem);
+            });
+            fragmentsSection.appendChild(list);
+        } else {
+            const noFragmentsP = document.createElement('p');
+            noFragmentsP.textContent = getUIText('lore_modal_no_fragments_unlocked');
+            fragmentsSection.appendChild(noFragmentsP);
+        }
+        modalContent.appendChild(fragmentsSection);
+
+    } catch (error) {
+        log(LOG_LEVEL_ERROR, "Failed to load lore/shards for modal:", error);
+        modalManager.displayModalError(getUIText("error_api_call_failed", { ERROR_MSG: error.message }), modalContent);
+    }
+}
+
 
 /**
  * Creates the icon buttons for Inventory and Traits.
@@ -98,8 +195,17 @@ function _showInventoryModal() {
 function _createIconButtons() {
     const rightContainer = dom.characterProgressionPanel.querySelector('.character-info-right');
     if (!rightContainer) return;
-
     rightContainer.innerHTML = ''; // Clear it first
+
+    // --- Create all buttons first ---
+
+    // Lore Button
+    const loreButton = document.createElement('button');
+    loreButton.id = 'char-panel-lore-button';
+    loreButton.className = 'ui-button icon-button';
+    loreButton.innerHTML = `<img src="images/app/icon_lore.svg" alt="World Lore">`;
+    attachTooltip(loreButton, "tooltip_lore_button");
+    loreButton.addEventListener('click', _showLoreModal);
 
     // Inventory Button
     const inventoryButton = document.createElement('button');
@@ -108,7 +214,6 @@ function _createIconButtons() {
     inventoryButton.innerHTML = `<img src="images/app/icon_inventory.svg" alt="Inventory">`;
     attachTooltip(inventoryButton, "tooltip_inventory_button");
     inventoryButton.addEventListener('click', _showInventoryModal);
-    rightContainer.appendChild(inventoryButton);
 
     // Traits Button
     const traitsButton = document.createElement('button');
@@ -117,6 +222,10 @@ function _createIconButtons() {
     traitsButton.innerHTML = `<img src="images/app/icon_traits.svg" alt="Traits">`;
     attachTooltip(traitsButton, "tooltip_traits_button");
     traitsButton.addEventListener('click', _showTraitsModal);
+
+    // --- Append buttons in the desired order ---
+    rightContainer.appendChild(loreButton);
+    rightContainer.appendChild(inventoryButton);
     rightContainer.appendChild(traitsButton);
 }
 
@@ -446,19 +555,20 @@ export function retranslateCharacterPanelLabels() {
             attachTooltip(mapping.iconEl, mapping.tooltipKey, {}, { explicitThemeContext: themeId, viewContext: 'game' });
         }
     }
-
     // Note: Strain item no longer has a text label to translate.
     // Its tooltip is updated dynamically in updateCharacterPanel.
-
     const inventoryButton = document.getElementById('char-panel-inventory-button');
     if (inventoryButton) {
         attachTooltip(inventoryButton, "tooltip_inventory_button");
+    }
+    const loreButton = document.getElementById('char-panel-lore-button');
+    if (loreButton) {
+        attachTooltip(loreButton, "tooltip_lore_button");
     }
     const traitsButton = document.getElementById('char-panel-traits-button');
     if (traitsButton) {
         attachTooltip(traitsButton, "tooltip_traits_button");
     }
-
     if (dom.charPanelLevel) {
          const level = state.getCurrentUserThemeProgress() ? state.getCurrentUserThemeProgress().level : 1;
          dom.charPanelLevel.textContent = `${getUIText("char_panel_label_level")} ${level}`;

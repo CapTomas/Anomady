@@ -31,7 +31,9 @@ import {
     getLikedThemes,   // Used by renderLandingPageActionButtons for like status
     setShapedThemeData,
     getShapedThemeData,
-    getCurrentUser
+    getCurrentUser,
+    setLandingSelectedThemeProgress,
+    getLandingSelectedThemeProgress
 } from '../core/state.js';
 import { getThemeConfig } from '../services/themeService.js';
 import { getUIText } from '../services/localizationService.js';
@@ -47,6 +49,27 @@ let _gameControllerRef = null;
 let _userThemeControlsManagerRef = null; // For like button logic and top bar updates
 
 /**
+ * Fetches and sets the UserThemeProgress for a given theme into the landing page state.
+ * @param {string} themeId - The ID of the theme to fetch progress for.
+ * @private
+ */
+async function _fetchAndSetLandingProgress(themeId) {
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser.token) {
+        try {
+            const progressData = await apiService.fetchUserThemeProgress(currentUser.token, themeId);
+            setLandingSelectedThemeProgress(progressData.userThemeProgress);
+            log(LOG_LEVEL_DEBUG, `Fetched and set landing theme progress for: ${themeId}`);
+        } catch (error) {
+            log(LOG_LEVEL_WARN, `Could not fetch theme progress for landing selection ${themeId}. Defaulting.`, error);
+            setLandingSelectedThemeProgress(null);
+        }
+    } else {
+        setLandingSelectedThemeProgress(null);
+    }
+}
+
+/**
  * Initializes the landing page manager with references to other modules.
  * @param {object} gameController - Reference to gameController.
  * @param {object} userThemeControlsManager - Reference to userThemeControlsManager.
@@ -59,12 +82,12 @@ export function initLandingPageManager(gameController, userThemeControlsManager)
 
 /**
  * Fetches the summary of themes with World Shards and updates the UI.
+ * This also handles pre-fetching character progress if a theme is already selected on load.
  */
 export async function fetchShapedWorldStatusAndUpdateGrid() {
     log(LOG_LEVEL_INFO, "Fetching shaped world status and updating grid...");
     const currentUser = getCurrentUser();
     const newShapedData = new Map();
-
     if (currentUser && currentUser.token) {
         try {
             const response = await apiService.fetchShapedThemesSummary(currentUser.token);
@@ -84,19 +107,22 @@ export async function fetchShapedWorldStatusAndUpdateGrid() {
     } else {
         log(LOG_LEVEL_INFO, "User not logged in, shaped world status will default to 'not shaped'.");
     }
-
     // Ensure all manifest themes have an entry, defaulting if not found from API
     THEMES_MANIFEST.filter(tm => tm.playable).forEach(themeMeta => {
         if (!newShapedData.has(themeMeta.id)) {
             newShapedData.set(themeMeta.id, { hasShards: false, activeShardCount: 0 });
         }
     });
-
     setShapedThemeData(newShapedData);
     log(LOG_LEVEL_DEBUG, "Shaped theme data updated in state:", Object.fromEntries(newShapedData));
-
     await renderThemeGrid(); // Re-render grid with new shard indicators
+
+    // Check for a pre-selected theme and fetch its progress before rendering panels
     const currentSelection = getCurrentLandingGridSelection();
+    if (currentSelection) {
+        await _fetchAndSetLandingProgress(currentSelection);
+    }
+
     if (currentSelection && document.body.classList.contains('landing-page-active')) {
         // Ensure the selected item's panel details are updated
         updateLandingPagePanelsWithThemeInfo(currentSelection, false);
@@ -315,17 +341,14 @@ export function renderLandingPageActionButtons(themeId) {
     // Change flex direction for landingThemeActions to stack Continue button above others
     landingThemeActions.style.flexDirection = 'column';
     landingThemeActions.style.gap = 'var(--spacing-sm)';
-
     const themeConfig = getThemeConfig(themeId);
     const themeManifestEntry = THEMES_MANIFEST.find(t => t.id === themeId);
     if (!themeConfig || !themeManifestEntry) {
         log(LOG_LEVEL_ERROR, `Cannot render landing actions: Config or manifest entry missing for ${themeId}.`);
         return;
     }
-
     const isThemePlayed = getPlayingThemes().includes(themeId);
     const currentUser = getCurrentUser();
-
     // 1. "Continue Expedition" button (if applicable)
     if (isThemePlayed && themeManifestEntry.playable) {
         const continueButton = document.createElement("button");
@@ -342,11 +365,9 @@ export function renderLandingPageActionButtons(themeId) {
         });
         landingThemeActions.appendChild(continueButton);
     }
-
     // 2. Container for "New Game", "Like", and "Configure Shards" icon buttons
     const standardActionsRow = document.createElement('div');
     standardActionsRow.className = 'landing-actions-row'; // For styling this row
-
     // "New Game" button
     const newGameButton = document.createElement("button");
     newGameButton.id = "choose-theme-button"; // Existing ID, now clearly "New Game"
@@ -372,7 +393,6 @@ export function renderLandingPageActionButtons(themeId) {
         newGameButton.disabled = true;
     }
     standardActionsRow.appendChild(newGameButton);
-
     // "Like" button
     if (_userThemeControlsManagerRef && typeof _userThemeControlsManagerRef.handleLikeThemeOnLandingClick === 'function') {
         const likeButton = document.createElement("button");
@@ -401,7 +421,32 @@ export function renderLandingPageActionButtons(themeId) {
         }
         standardActionsRow.appendChild(likeButton);
     }
-
+    // "Character Progress" icon button
+    const characterProgressButton = document.createElement("button");
+    characterProgressButton.id = "character-progress-button";
+    characterProgressButton.classList.add("ui-button", "icon-button", "character-progress-button");
+    const progressData = getLandingSelectedThemeProgress();
+    const hasProgress = currentUser && progressData && progressData.currentXP > 0;
+    const progressIconSrc = hasProgress ? "images/app/icon_character.svg" : "images/app/icon_character_empty.svg";
+    const progressTooltipKey = hasProgress ? "tooltip_character_progress" : "tooltip_character_progress_empty";
+    const progressAltText = getUIText(progressTooltipKey, {}, { viewContext: 'landing' });
+    characterProgressButton.innerHTML = `<img src="${progressIconSrc}" alt="${progressAltText}" class="character-icon">`;
+    characterProgressButton.setAttribute("aria-label", progressAltText);
+    attachTooltip(characterProgressButton, progressTooltipKey, {}, { viewContext: 'landing' });
+    if (currentUser && hasProgress) {
+        characterProgressButton.disabled = false;
+        characterProgressButton.addEventListener("click", () => {
+            if (_gameControllerRef && typeof _gameControllerRef.showCharacterProgressModal === 'function') {
+                _gameControllerRef.showCharacterProgressModal(themeId);
+            } else {
+                 log(LOG_LEVEL_ERROR, "GameController reference or showCharacterProgressModal method not available.");
+            }
+        });
+    } else {
+        characterProgressButton.disabled = true;
+        characterProgressButton.classList.add("disabled");
+    }
+    standardActionsRow.appendChild(characterProgressButton);
     // "Configure Shards" icon button
     const themeStatus = getShapedThemeData().get(themeId);
     const configureShardsIconButton = document.createElement("button");
@@ -412,20 +457,17 @@ export function renderLandingPageActionButtons(themeId) {
     let shardIconSrc = "images/app/icon_world_shard_empty.svg";
     let shardTooltipKey = "tooltip_no_fragments_to_configure";
     let canConfigureShards = false;
-
     if (currentUser && themeStatus && themeStatus.hasShards) {
         shardIconSrc = "images/app/icon_world_shard.svg";
         shardTooltipKey = "tooltip_configure_fragments";
         canConfigureShards = true;
     }
-
     shardIconImg.src = shardIconSrc;
     const shardAltText = getUIText(shardTooltipKey, {}, { viewContext: 'landing' });
     shardIconImg.alt = shardAltText;
     configureShardsIconButton.setAttribute("aria-label", shardAltText);
     attachTooltip(configureShardsIconButton, shardTooltipKey, {}, { viewContext: 'landing' });
     configureShardsIconButton.appendChild(shardIconImg);
-
     if (canConfigureShards && _gameControllerRef && typeof _gameControllerRef.showConfigureShardsModal === 'function') {
         configureShardsIconButton.disabled = false;
         configureShardsIconButton.addEventListener("click", () => {
@@ -436,18 +478,21 @@ export function renderLandingPageActionButtons(themeId) {
         configureShardsIconButton.classList.add("disabled");
     }
     standardActionsRow.appendChild(configureShardsIconButton);
-
     landingThemeActions.appendChild(standardActionsRow);
 }
 
 /**
  * Handles the selection of a theme from the grid.
- * Updates the "active" state in the grid and refreshes the side panel content.
+ * Updates the "active" state in the grid, fetches character progress, and refreshes the side panel content.
  * @param {string} themeId - The ID of the selected theme.
  * @param {boolean} [animatePanel=true] - Whether to animate panel expansion.
  */
-export function handleThemeGridSelection(themeId, animatePanel = true) {
+export async function handleThemeGridSelection(themeId, animatePanel = true) {
     setCurrentLandingGridSelection(themeId);
+
+    // Fetch progress for the newly selected theme
+    await _fetchAndSetLandingProgress(themeId);
+
     if (themeGridContainer) {
         themeGridContainer.querySelectorAll(".theme-grid-icon.active").forEach(btn => btn.classList.remove("active"));
         const clickedBtn = themeGridContainer.querySelector(`.theme-grid-icon[data-theme="${themeId}"]`);

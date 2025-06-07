@@ -42,6 +42,7 @@ let _currentTurnUnlockData = null; // Data for a world shard unlocked in the cur
 let _currentNewGameSettings = null; // Stores settings for a new game, e.g., { useEvolvedWorld: boolean }
 let _dashboardItemMeta = {}; // Stores UI-specific metadata for dashboard items, e.g., { itemId: { hasRecentUpdate: true } }
 let _currentUserThemeProgress = null; // Stores the UserThemeProgress object for the current theme
+let _landingSelectedThemeProgress = null;
 let _currentRunStats = { // Ephemeral stats for the current game run
     currentIntegrity: 0,
     currentWillpower: 0,
@@ -103,6 +104,10 @@ export const getAcquiredTraitKeys = () => {
 };
 export const getCurrentStrainLevel = () => _currentRunStats.strainLevel || 1;
 export const getActiveConditions = () => _currentRunStats.conditions || [];
+export const getLandingSelectedThemeProgress = () => _landingSelectedThemeProgress;
+export const setLandingSelectedThemeProgress = (progress) => {
+    _landingSelectedThemeProgress = progress;
+};
 export const getCurrentTheme = () => _currentTheme;
 export const setCurrentTheme = (themeId) => {
     _currentTheme = themeId;

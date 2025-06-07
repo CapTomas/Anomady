@@ -367,4 +367,58 @@ router.post('/me/themes/:themeId/boon', protect, async (req, res) => {
     res.status(500).json({ error: { message: 'Failed to apply Boon due to a server error.', code: 'BOON_APPLICATION_ERROR' } });
   }
 });
+/**
+ * @route   DELETE /api/v1/users/me/themes/:themeId/character-reset
+ * @desc    Completely resets a character's progress for a specific theme.
+ *          This includes deleting UserThemeProgress, all World Shards (UserThemePersistedLore),
+ *          and the GameState. It also marks the theme as not currently playing.
+ * @access  Private
+ */
+router.delete('/me/themes/:themeId/character-reset', protect, async (req, res) => {
+  const userId = req.user.id;
+  const { themeId } = req.params;
+
+  if (!themeId) {
+    logger.warn(`Character reset request for user ${userId} with missing themeId.`);
+    return res.status(400).json({ error: { message: 'Theme ID is required.', code: 'MISSING_THEME_ID' } });
+  }
+
+  logger.info(`Initiating complete character reset for user ${userId}, theme ${themeId}`);
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      // 1. Delete UserThemeProgress
+      await tx.userThemeProgress.deleteMany({
+        where: { userId: userId, themeId: themeId },
+      });
+      logger.debug(`[TX] Deleted UserThemeProgress for user ${userId}, theme ${themeId}`);
+
+      // 2. Delete all World Shards (UserThemePersistedLore)
+      await tx.userThemePersistedLore.deleteMany({
+        where: { userId: userId, themeId: themeId },
+      });
+      logger.debug(`[TX] Deleted UserThemePersistedLore for user ${userId}, theme ${themeId}`);
+
+      // 3. Delete GameState
+      await tx.gameState.deleteMany({
+        where: { userId: userId, theme_id: themeId },
+      });
+      logger.debug(`[TX] Deleted GameState for user ${userId}, theme ${themeId}`);
+
+      // 4. Update UserThemeInteraction to mark as not playing
+      await tx.userThemeInteraction.updateMany({
+        where: { userId: userId, theme_id: themeId },
+        data: { is_playing: false },
+      });
+      logger.debug(`[TX] Updated UserThemeInteraction for user ${userId}, theme ${themeId}`);
+    });
+
+    logger.info(`Character reset successful for user ${userId}, theme ${themeId}.`);
+    res.status(200).json({ message: 'Character reset successfully. All progress, fragments, and saved games for this theme have been removed.' });
+
+  } catch (error) {
+    logger.error(`Transaction error during character reset for user ${userId}, theme ${themeId}:`, error);
+    res.status(500).json({ error: { message: 'Failed to reset character due to a server error.', code: 'CHARACTER_RESET_TRANSACTION_ERROR' } });
+  }
+});
 export default router;

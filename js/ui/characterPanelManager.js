@@ -9,10 +9,17 @@ import * as state from '../core/state.js';
 import * as apiService from '../core/apiService.js';
 import { getUIText } from '../services/localizationService.js';
 import { XP_LEVELS, MAX_PLAYER_LEVEL } from '../core/config.js'; // For XP bar calculation
-import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARN } from '../core/logger.js';
+import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARN, LOG_LEVEL_ERROR } from '../core/logger.js';
 import { attachTooltip } from './tooltipManager.js';
 import * as modalManager from './modalManager.js';
 import { getThemeConfig } from '../services/themeService.js';
+import * as uiUtils from './uiUtils.js';
+import { getLandingSelectedThemeProgress } from '../core/state.js';
+
+
+// Dependencies
+let _landingPageManagerRef = null;
+let _userThemeControlsManagerRef = null;
 
 // Destructure DOM elements for character panel and XP bar
 const {
@@ -312,41 +319,183 @@ function _setupCharacterPanelTooltips() {
 
 /**
  * Initializes the CharacterPanelManager.
- * Ensures the panel and XP bar are initially hidden, restructures the DOM for the new layout,
- * and creates tooltip triggers.
+ * @param {object} [dependencies={}] - Optional dependencies.
+ * @param {object} [dependencies.landingPageManager] - Reference to landingPageManager.
+ * @param {object} [dependencies.userThemeControlsManager] - Reference to userThemeControlsManager.
  */
-export function initCharacterPanelManager() {
-    _createAdvancedPanelElements();
+export function initCharacterPanelManager(dependencies = {}) {
+    if (dependencies.landingPageManager) _landingPageManagerRef = dependencies.landingPageManager;
+    if (dependencies.userThemeControlsManager) _userThemeControlsManagerRef = dependencies.userThemeControlsManager;
 
+    _createAdvancedPanelElements();
     // Restructure the DOM for the new flex layout
     const leftContainer = dom.characterProgressionPanel?.querySelector('.character-info-left');
     const strainItem = document.getElementById('cp-item-strain');
-
     if (leftContainer && dom.charPanelIdentifier && dom.charPanelLevel) {
         const identityBlock = document.createElement('div');
         identityBlock.className = 'char-panel-identity-block';
-
         // Move existing elements into the new wrapper
         identityBlock.appendChild(dom.charPanelIdentifier);
         identityBlock.appendChild(dom.charPanelLevel);
         leftContainer.appendChild(identityBlock);
-
         // Prepend the strain item to appear first
         if (strainItem) {
             leftContainer.prepend(strainItem);
         }
     }
-
     // Add click listener to the strain icon
     const strainIcon = document.getElementById('char-panel-strain-icon');
     if (strainIcon) {
         strainIcon.addEventListener('click', _showStrainDetailsModal);
     }
-
     _setupCharacterPanelTooltips();
     showCharacterPanel(false); // Initially hidden
     showXPBar(false); // Initially hidden
     log(LOG_LEVEL_INFO, "CharacterPanelManager initialized. Panel and XP bar hidden.");
+}
+
+/**
+ * Shows a modal displaying the character's persistent progress for a specific theme.
+ * Includes stats, traits, and a 'Reset Character' option.
+ * @param {string} themeId - The ID of the theme for which to show progress.
+ */
+export async function showCharacterProgressModal(themeId) {
+    const themeConfig = getThemeConfig(themeId);
+    const progress = getLandingSelectedThemeProgress();
+    const currentUser = state.getCurrentUser();
+
+    if (!themeConfig || !progress || !currentUser) {
+        log(LOG_LEVEL_ERROR, "Could not show character progress modal. Missing themeConfig, progress data, or user.");
+        return;
+    }
+
+    const themeDisplayName = getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeId });
+    const content = document.createElement('div');
+    content.className = 'character-progress-modal-content';
+
+    // Build the stats list
+    const statsList = document.createElement('dl');
+    statsList.className = 'progress-stats-list';
+    const createStatItem = (labelKey, value) => {
+        const dt = document.createElement('dt');
+        dt.textContent = getUIText(labelKey);
+        const dd = document.createElement('dd');
+        dd.textContent = value;
+        statsList.appendChild(dt);
+        statsList.appendChild(dd);
+    };
+
+    const xpForNextLevel = progress.level < XP_LEVELS.length ? XP_LEVELS[progress.level] : 'MAX';
+
+    createStatItem('label_char_progress_level', progress.level || 1);
+    createStatItem('label_char_progress_xp', `${progress.currentXP || 0} / ${xpForNextLevel}`);
+    createStatItem('label_char_progress_integrity', `${themeConfig.base_attributes.integrity} (+${progress.maxIntegrityBonus || 0})`);
+    createStatItem('label_char_progress_willpower', `${themeConfig.base_attributes.willpower} (+${progress.maxWillpowerBonus || 0})`);
+    createStatItem('label_char_progress_aptitude', `${themeConfig.base_attributes.aptitude} (+${progress.aptitudeBonus || 0})`);
+    createStatItem('label_char_progress_resilience', `${themeConfig.base_attributes.resilience} (+${progress.resilienceBonus || 0})`);
+
+    content.appendChild(statsList);
+
+    // Build the traits list
+    const traitsSection = document.createElement('div');
+    traitsSection.className = 'progress-traits-section';
+    const traitsTitle = document.createElement('h4');
+    traitsTitle.textContent = getUIText('label_char_progress_traits');
+    traitsSection.appendChild(traitsTitle);
+
+    const acquiredTraits = Array.isArray(progress.acquiredTraitKeys) ? progress.acquiredTraitKeys : [];
+    if (acquiredTraits.length > 0) {
+        const list = document.createElement('ul');
+        list.className = 'traits-list';
+        acquiredTraits.forEach(traitKey => {
+            const traitName = getUIText(`trait_name_${traitKey}`, {}, { explicitThemeContext: themeId });
+            const traitDesc = getUIText(`trait_desc_${traitKey}`, {}, { explicitThemeContext: themeId });
+            const listItem = document.createElement('li');
+            listItem.className = 'trait-item';
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'trait-name';
+            nameSpan.textContent = traitName;
+            const descSpan = document.createElement('span');
+            descSpan.className = 'trait-description';
+            descSpan.textContent = traitDesc;
+            listItem.appendChild(nameSpan);
+            listItem.appendChild(descSpan);
+            list.appendChild(listItem);
+        });
+        traitsSection.appendChild(list);
+    } else {
+        const noTraitsP = document.createElement('p');
+        noTraitsP.textContent = getUIText('label_char_progress_no_traits');
+        traitsSection.appendChild(noTraitsP);
+    }
+    content.appendChild(traitsSection);
+
+    // Danger Zone for Reset Button
+    const dangerZone = document.createElement('div');
+    dangerZone.className = 'danger-zone';
+    const dangerTitle = document.createElement('h4');
+    dangerTitle.className = 'danger-zone-title';
+    dangerTitle.textContent = getUIText('title_danger_zone');
+    const resetButton = document.createElement('button');
+    resetButton.className = 'ui-button danger';
+    resetButton.textContent = getUIText('button_reset_character');
+    attachTooltip(resetButton, 'tooltip_reset_character');
+
+    resetButton.addEventListener('click', async () => {
+        const confirmed = await modalManager.showGenericConfirmModal({
+            titleKey: "confirm_reset_character_title",
+            messageKey: "confirm_reset_character_message",
+            replacements: { THEME_NAME: themeDisplayName },
+            confirmTextKey: "button_reset_character"
+        });
+
+        if (confirmed) {
+            try {
+                modalManager.hideCustomModal(); // Hide the progress modal before showing loading/processing
+                uiUtils.setGMActivityIndicator(true); // Show a processing state
+
+                await apiService.resetCharacterProgress(currentUser.token, themeId);
+
+                // Refresh UI state
+                state.setLandingSelectedThemeProgress(null); // Clear the cached progress
+
+                if (_userThemeControlsManagerRef) {
+                    await _userThemeControlsManagerRef.loadUserThemeInteractions();
+                }
+                if (_landingPageManagerRef) {
+                    await _landingPageManagerRef.fetchShapedWorldStatusAndUpdateGrid();
+                    if (state.getCurrentLandingGridSelection() === themeId) {
+                        _landingPageManagerRef.renderLandingPageActionButtons(themeId);
+                    }
+                }
+
+                log(LOG_LEVEL_INFO, `Character reset for theme ${themeId} completed successfully.`);
+
+            } catch (error) {
+                log(LOG_LEVEL_ERROR, "Failed to reset character:", error);
+                modalManager.showCustomModal({
+                    type: "alert",
+                    titleKey: "alert_title_error",
+                    messageKey: "error_api_call_failed",
+                    replacements: { ERROR_MSG: error.message || "Could not complete character reset." }
+                });
+            } finally {
+                uiUtils.setGMActivityIndicator(false);
+            }
+        }
+    });
+
+    dangerZone.appendChild(dangerTitle);
+    dangerZone.appendChild(resetButton);
+    content.appendChild(dangerZone);
+
+    modalManager.showCustomModal({
+        type: 'custom',
+        titleKey: 'modal_title_character_progress',
+        replacements: { THEME_NAME: themeDisplayName },
+        htmlContent: content,
+        customActions: [{ textKey: 'modal_ok_button', className: 'ui-button primary', onClick: () => modalManager.hideCustomModal() }]
+    });
 }
 
 /**

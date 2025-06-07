@@ -38,15 +38,13 @@
 	--color-accent-meter-blue-rgb: 59, 108, 188;
 	--color-accent-meter-violet: #7858c0;
 	--color-accent-meter-violet-rgb: 120, 88, 192;
+	--color-accent-meter-red-light: #d9534f;
 	--color-accent-meter-red: #bb4848;
 	--color-accent-meter-red-rgb: 187, 72, 72;
 	--color-accent-meter-yellow: #b9a64f;
 	--color-accent-meter-yellow-rgb: 185, 166, 79;
 	--color-accent-meter-orange: #c0843f;
 	--color-accent-meter-orange-rgb: 192, 132, 63;
-
-
-
 	--color-meter-critical: var(--color-accent-meter-red);
 	--color-meter-low: var(--color-accent-meter-orange);
 	--color-meter-medium: var(--color-accent-meter-yellow);
@@ -1205,13 +1203,15 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 	color: var(--color-bg-button-default-hover);
 }
 .like-theme-button img.like-icon,
-.configure-shards-button img.shard-icon {
+.configure-shards-button img.shard-icon,
+.character-progress-button img.character-icon {
 	width: calc(var(--font-size-lg) * 1.2);
 	height: calc(var(--font-size-lg) * 1.2);
 	transition: transform 0.2s ease;
 }
 .like-theme-button:hover img.like-icon,
-.configure-shards-button:hover img.shard-icon {
+.configure-shards-button:hover img.shard-icon,
+.character-progress-button:hover img.character-icon {
 	transform: scale(1.1);
 }
 .like-theme-button.disabled .like-icon {
@@ -1900,6 +1900,76 @@ body.initial-state #start-game-button.ui-button.primary {
 body.landing-page-active #application-header .top-bar-right #new-game-button,
 body.landing-page-active #application-header .top-bar-right #model-toggle-button {
 	display: none;
+}
+.character-progress-button.disabled img.character-icon {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ui-button.icon-button.character-progress-button.disabled:hover img.character-icon {
+    transform: none;
+}
+
+.character-progress-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    text-align: left;
+    max-height: 75vh;
+    overflow-y: auto;
+    padding-right: var(--spacing-sm);
+}
+
+.progress-stats-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-sm) var(--spacing-lg);
+    padding: 0;
+    margin: 0;
+}
+
+.progress-stats-list dt {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.progress-stats-list dd {
+    margin-left: 0;
+    color: var(--color-accent-main);
+    font-weight: var(--font-weight-semi700);
+    font-size: var(--font-size-base);
+}
+
+.progress-traits-section {
+    margin-top: var(--spacing-md);
+}
+
+.progress-traits-section h4 {
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-accent-main);
+}
+
+.danger-zone {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    border: 1px solid rgba(var(--color-accent-meter-red-rgb), 0.5);
+    border-radius: var(--radius-sm);
+    background-color: rgba(var(--color-accent-meter-red-rgb), 0.1);
+}
+button.ui-button.danger {
+    background-color: var(--color-accent-meter-red);
+    color: var(--color-text-primary);
+    background-image: url(images/app/color_noise.png);
+}
+button.ui-button.danger:hover {
+    background-color: var(--color-accent-meter-red-light);
+    color: var(--color-text-on-primary-button);
+}
+.danger-zone-title {
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-accent-meter-red);
+    font-weight: var(--font-weight-semi700);
 }
 .lore-modal-content {
 	display: flex;

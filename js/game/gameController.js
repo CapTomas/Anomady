@@ -929,3 +929,11 @@ export async function switchToLanding() {
 export function showConfigureShardsModal(themeId) {
     worldShardsModalManager.showConfigureShardsModal(themeId);
 }
+
+/**
+ * Public interface for characterPanelManager to show the character progress modal.
+ * @param {string} themeId - The theme ID for which to show the progress modal.
+ */
+export function showCharacterProgressModal(themeId) {
+    characterPanelManager.showCharacterProgressModal(themeId);
+}

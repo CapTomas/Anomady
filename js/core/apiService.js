@@ -196,6 +196,17 @@ export const fetchUserThemeProgress = (token, themeId) => {
 };
 
 /**
+ * Completely resets a character's progress for a specific theme.
+ * Deletes progress, world shards, and game state.
+ * @param {string} token - The JWT token for authentication.
+ * @param {string} themeId - The ID of the theme to reset.
+ * @returns {Promise<object>} The API response message.
+ */
+export const resetCharacterProgress = (token, themeId) => {
+    return _callApi(`/api/v1/users/me/themes/${themeId}/character-reset`, 'DELETE', null, token);
+};
+
+/**
  * Applies a selected Boon to the user's theme progress.
  * @param {string} token - The JWT token for authentication.
  * @param {string} themeId - The ID of the theme.

@@ -230,6 +230,11 @@ export const globalTextData = {
             "char_panel_label_willpower": "Willpower",
             "char_panel_label_aptitude": "Aptitude",
             "char_panel_label_resilience": "Resilience",
+            "modal_title_inventory": "Inventory",
+            "inventory_not_implemented_message": "Inventory functionality will be available in a future update.",
+            "tooltip_inventory_button": "Open Inventory",
+            "modal_title_acquired_traits": "Acquired Traits",
+            "tooltip_traits_button": "View Acquired Traits",
             // --- XP Bar ---
             "xp_bar_label_xp": "XP:",
             "xp_bar_default_text": "XP: 0/100", // Fallback, actual values will be dynamic
@@ -476,6 +481,11 @@ export const globalTextData = {
             "char_panel_label_willpower": "Vůle",
             "char_panel_label_aptitude": "Schopnosti",
             "char_panel_label_resilience": "Odolnost",
+            "modal_title_inventory": "Inventář",
+            "inventory_not_implemented_message": "Funkce inventáře bude dostupná v budoucí aktualizaci.",
+            "tooltip_inventory_button": "Otevřít inventář",
+            "modal_title_acquired_traits": "Získané Rysy",
+            "tooltip_traits_button": "Zobrazit získané rysy",
             // --- XP Bar ---
             "xp_bar_label_xp": "ZK:",
             "xp_bar_default_text": "ZK: 0/100",

@@ -67,6 +67,15 @@
             "default_value_key": "oath_order_initiate",
             "must_translate": true,
             "short_description": "Warden's defining oath or current allegiance."
+          },
+          {
+            "id": "conditions_list",
+            "label_key": "label_conditions_list_grim_warden",
+            "tooltip_key": "tooltip_item_active_conditions_grim_warden",
+            "type": "text_long",
+            "default_value_key": "conditions_none_active",
+            "must_translate": true,
+            "short_description": "A list of temporary narrative tags affecting the Warden, like 'Injured Arm' or 'Inspired'."
           }
         ]
       },
@@ -94,6 +103,21 @@
             "default_value": "100",
             "must_translate": false,
             "short_description": "Character's current vigor/resolve (0-100). Expended by strenuous actions. Should not decrease passively."
+          },
+          {
+            "id": "strain_level",
+            "label_key": "label_strain_level_grim_warden",
+            "tooltip_key": "tooltip_item_strain_level_grim_warden",
+            "type": "status_icon",
+            "default_ai_value": 1,
+            "level_mappings": {
+              "1": { "display_text_key": "strain_level_1_display", "css_class": "status-ok", "icon_path": "images/sentiment/icon_sentiment_satisfied.svg" },
+              "2": { "display_text_key": "strain_level_2_display", "css_class": "status-warning", "icon_path": "images/sentiment/icon_sentiment_neutral.svg" },
+              "3": { "display_text_key": "strain_level_3_display", "css_class": "status-danger", "icon_path": "images/sentiment/icon_sentiment_dissatisfied.svg" },
+              "4": { "display_text_key": "strain_level_4_display", "css_class": "status-critical", "icon_path": "images/sentiment/icon_sentiment_very_dissatisfied.svg" }
+            },
+            "must_translate": false,
+            "short_description": "Warden's cumulative stress and fatigue. MUST BE INTEGER (1-4). Higher levels negatively impact actions. 1: Calm, 2: Taxed, 3: Stressed, 4: Breaking Point."
           },
           {
             "id": "blight_exposure_level",

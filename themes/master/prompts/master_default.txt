@@ -10,8 +10,8 @@ Max Willpower: ${effectiveMaxWillpower}
 Aptitude: ${effectiveAptitude}
 Resilience: ${effectiveResilience}
 Acquired Traits (JSON): ${acquiredTraitsJSON}
-Current Strain Level: ${currentStrainLevel} // Placeholder for Phase 3
-Active Conditions (JSON): ${activeConditionsJSON} // Placeholder for Phase 3
+Current Strain Level: ${currentStrainLevel} // This is the character's cumulative stress level (1-4). Higher levels should negatively impact actions.
+Active Conditions (JSON): ${activeConditionsJSON} // This is a list of temporary narrative tags (e.g., "Injured Arm", "Inspired") that affect outcomes.
 
 GAME WORLD LORE:
 '${game_history_lore}'

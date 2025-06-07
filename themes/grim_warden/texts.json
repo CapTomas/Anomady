@@ -105,7 +105,21 @@
     "tooltip_item_threat_level_grim_warden": "An assessment of immediate peril. Ranges from a faint sense of Unease to the certainty of Mortal Peril.",
     "tooltip_item_regional_control_grim_warden": "The dominant power in the current area. Influences the type of encounters and the availability of sanctuary.",
     "tooltip_item_blight_saturation_grim_warden": "How deeply the Blight has corrupted the immediate environment. Affects flora, fauna, and the very air you breathe.",
-    "tooltip_item_local_blight_phenomenon_grim_warden": "Specific, active manifestations of the Blight's influence, such as weeping sores on the earth or blood-rain."
+    "tooltip_item_local_blight_phenomenon_grim_warden": "Specific, active manifestations of the Blight's influence, such as weeping sores on the earth or blood-rain.",
+
+    "label_acquired_traits_grim_warden": "Acquired Traits",
+    "traits_none_acquired": "None",
+    "tooltip_item_acquired_traits_grim_warden": "Permanent abilities gained through experience, shaping your approach to the horrors of the frontier.",
+    "title_active_conditions_grim_warden": "Active Conditions",
+    "label_conditions_list_grim_warden": "Current Afflictions & Boons",
+    "conditions_none_active": "None",
+    "label_conditions_active_grim_warden": "Conditions Active:",
+    "label_strain_level_grim_warden": "Strain",
+    "tooltip_item_strain_level_grim_warden": "Cumulative mental and physical stress. High strain can lead to penalties and unpredictable consequences.",
+    "strain_level_1_display": "Calm",
+    "strain_level_2_display": "Taxed",
+    "strain_level_3_display": "Stressed",
+    "strain_level_4_display": "Breaking Point"
   },
   "cs": {
     "theme_name_short_grim_warden": "Ponurá\nStráž",
@@ -213,6 +227,20 @@
     "tooltip_item_threat_level_grim_warden": "Posouzení bezprostředního nebezpečí. Sahá od slabého pocitu neklidu po jistotu smrtelného nebezpečí.",
     "tooltip_item_regional_control_grim_warden": "Dominantní moc v současné oblasti. Ovlivňuje typ setkání a dostupnost útočiště.",
     "tooltip_item_blight_saturation_grim_warden": "Jak hluboce Zkáza nakazila bezprostřední prostředí. Ovlivňuje flóru, faunu a samotný vzduch, který dýcháš.",
-    "tooltip_item_local_blight_phenomenon_grim_warden": "Specifické, aktivní projevy vlivu Zkázy, jako jsou plačící vředy na zemi nebo krvavý déšť."
+    "tooltip_item_local_blight_phenomenon_grim_warden": "Specifické, aktivní projevy vlivu Zkázy, jako jsou plačící vředy na zemi nebo krvavý déšť.",
+
+    "label_acquired_traits_grim_warden": "Získané Rysy",
+    "traits_none_acquired": "Žádné",
+    "tooltip_item_acquired_traits_grim_warden": "Trvalé schopnosti získané zkušenostmi, které formují váš přístup k hrůzám pohraničí.",
+    "title_active_conditions_grim_warden": "Aktivní Stavy",
+    "label_conditions_list_grim_warden": "Současná Utrpení a Výhody",
+    "conditions_none_active": "Žádné",
+    "label_conditions_active_grim_warden": "Stavy aktivní:",
+    "label_strain_level_grim_warden": "Únava",
+    "tooltip_item_strain_level_grim_warden": "Kumulativní duševní a fyzický stres. Vysoká únava může vést k postihům a nepředvídatelným následkům.",
+    "strain_level_1_display": "V klidu",
+    "strain_level_2_display": "Zatížen",
+    "strain_level_3_display": "Vystresován",
+    "strain_level_4_display": "Na pokraji zhroucení"
   }
 }

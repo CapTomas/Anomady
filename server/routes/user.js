@@ -297,8 +297,8 @@ router.post('/me/themes/:themeId/boon', protect, async (req, res) => {
   if (!themeId) {
     return res.status(400).json({ error: { message: 'Theme ID is required.', code: 'MISSING_THEME_ID_BOON' } });
   }
-  if (!boonType || !targetAttribute || value === undefined) {
-    return res.status(400).json({ error: { message: 'Boon type, target attribute, and value are required.', code: 'MISSING_BOON_PAYLOAD' } });
+  if (!boonType || !value) {
+    return res.status(400).json({ error: { message: 'Boon type and value are required.', code: 'MISSING_BOON_PAYLOAD' } });
   }
   try {
     const userThemeProgress = await prisma.userThemeProgress.findUnique({
@@ -323,10 +323,22 @@ router.post('/me/themes/:themeId/boon', protect, async (req, res) => {
       } else {
         logger.warn(`Invalid targetAttribute or value for MAX_ATTRIBUTE_INCREASE: ${targetAttribute}, ${value}`);
       }
+    } else if (boonType === "ATTRIBUTE_ENHANCEMENT") {
+        const allowedTargets = ["aptitudeBonus", "resilienceBonus"];
+        if(allowedTargets.includes(targetAttribute) && typeof value === 'number' && value > 0) {
+            updateData[targetAttribute] = (userThemeProgress[targetAttribute] || 0) + value;
+            validBoon = true;
+        } else {
+            logger.warn(`Invalid targetAttribute or value for ATTRIBUTE_ENHANCEMENT: ${targetAttribute}, ${value}`);
+        }
+    } else if (boonType === "NEW_TRAIT") {
+        if(typeof value === 'string' && value.trim() !== '') {
+            updateData.acquiredTraitKeys = { push: value };
+            validBoon = true;
+        } else {
+            logger.warn(`Invalid value for NEW_TRAIT: must be a non-empty string. Received: ${value}`);
+        }
     }
-    // Future Phase 3:
-    // else if (boonType === "ATTRIBUTE_ENHANCEMENT") { ... }
-    // else if (boonType === "NEW_TRAIT") { ... }
     if (!validBoon) {
       return res.status(400).json({ error: { message: 'Invalid Boon details provided.', code: 'INVALID_BOON_DETAILS' } });
     }

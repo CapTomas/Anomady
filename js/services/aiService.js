@@ -24,6 +24,8 @@ import {
     getEffectiveAptitude,
     getEffectiveResilience,
     getAcquiredTraitKeys,
+    getCurrentStrainLevel,
+    getActiveConditions,
     getIsInitialGameLoad,
     setIsInitialGameLoad,
     getCurrentPromptType,
@@ -73,23 +75,19 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     }
     const dashboardLayoutConfig = themeConfig.dashboard_config;
     const isValidPromptText = (text) => text !== null && text !== undefined && !text.startsWith("ERROR:") && !text.startsWith("HELPER_FILE_NOT_FOUND:");
-
     let basePromptKey;
     if (getIsInitialGameLoad()) {
         basePromptKey = "master_initial";
     } else {
         basePromptKey = getCurrentPromptType();
     }
-
     let basePromptText = getLoadedPromptText(currentThemeId, basePromptKey);
-
     // Fallback logic if a theme-specific prompt (like combat_active) doesn't exist
     if (!isValidPromptText(basePromptText)) {
         log(LOG_LEVEL_DEBUG, `Prompt ${currentThemeId}/${basePromptKey} not valid/found. Falling back to 'master_default'.`);
         basePromptKey = "master_default";
         basePromptText = getLoadedPromptText("master", basePromptKey);
     }
-
     if (!isValidPromptText(basePromptText)) {
         log(LOG_LEVEL_ERROR, `CRITICAL PROMPT FAILURE: No valid default prompt found for key "${basePromptKey}" for theme "${currentThemeId}" or master. Cannot generate system prompt.`);
         return `{"narrative": "SYSTEM ERROR: Core prompt file (type: ${activePromptType}, final key: ${basePromptKey}) is critically missing or invalid.", "dashboard_updates": {}, "suggested_actions": ["Restart Game"], "game_state_indicators": {}, "xp_awarded": 0}`;
@@ -151,16 +149,14 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     }
     const narrativeLangInstruction = getThemeNarrativeLangPromptPart(currentThemeId, narrativeLang);
     let processedPromptText = basePromptText;
-    // Player Progression Data - These will be empty/default if no progress yet or getters not fully implemented in state
     const playerLevel = getPlayerLevel ? getPlayerLevel() : 1;
     const effMaxIntegrity = getEffectiveMaxIntegrity ? getEffectiveMaxIntegrity() : (themeConfig?.base_attributes?.integrity || 100);
     const effMaxWillpower = getEffectiveMaxWillpower ? getEffectiveMaxWillpower() : (themeConfig?.base_attributes?.willpower || 50);
     const effAptitude = getEffectiveAptitude ? getEffectiveAptitude() : (themeConfig?.base_attributes?.aptitude || 50);
     const effResilience = getEffectiveResilience ? getEffectiveResilience() : (themeConfig?.base_attributes?.resilience || 50);
     const acquiredTraits = getAcquiredTraitKeys ? getAcquiredTraitKeys() : [];
-    // Phase 3 placeholders (can be added to prompts later)
-    // const currentStrain = getCurrentStrainLevel ? getCurrentStrainLevel() : "Calm";
-    // const activeConditions = getActiveConditions ? getActiveConditions() : [];
+    const currentStrain = getCurrentStrainLevel ? getCurrentStrainLevel() : 1;
+    const activeConditions = getActiveConditions ? getActiveConditions() : [];
     const replacements = {
         'narrativeLanguageInstruction': narrativeLangInstruction,
         'currentNameForPrompt': playerID || getUIText("unknown"),
@@ -185,9 +181,9 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         'effectiveMaxWillpower': String(effMaxWillpower),
         'effectiveAptitude': String(effAptitude),
         'effectiveResilience': String(effResilience),
-        'acquiredTraitsJSON': JSON.stringify(acquiredTraits), // Send as JSON array string
-        // 'currentStrainLevel': currentStrain, // For Phase 3
-        // 'activeConditionsJSON': JSON.stringify(activeConditions), // For Phase 3
+        'acquiredTraitsJSON': JSON.stringify(acquiredTraits),
+        'currentStrainLevel': String(currentStrain),
+        'activeConditionsJSON': JSON.stringify(activeConditions),
     };
     for (const key in replacements) {
         processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${key}\\}`, "g"), replacements[key]);
@@ -204,6 +200,7 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     }
     return processedPromptText;
 }
+
 /**
  * Constructs the system prompt for a "lore deep dive" on a World Shard.
  * @param {object} shardData - The data of the shard: { title, content, key_suggestion, unlock_condition_description }.

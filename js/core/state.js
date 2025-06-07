@@ -45,7 +45,8 @@ let _currentUserThemeProgress = null; // Stores the UserThemeProgress object for
 let _currentRunStats = { // Ephemeral stats for the current game run
     currentIntegrity: 0,
     currentWillpower: 0,
-    // Strain and Conditions will be added in Phase 3
+    strainLevel: 1,
+    conditions: [],
 };
 let _lastAiSuggestedActions = null;
 let _isBoonSelectionPending = false;
@@ -100,7 +101,8 @@ export const getAcquiredTraitKeys = () => {
     // Ensure it always returns an array, even if null/undefined in raw progress object.
     return Array.isArray(_currentUserThemeProgress?.acquiredTraitKeys) ? _currentUserThemeProgress.acquiredTraitKeys : [];
 };
-
+export const getCurrentStrainLevel = () => _currentRunStats.strainLevel || 1;
+export const getActiveConditions = () => _currentRunStats.conditions || [];
 export const getCurrentTheme = () => _currentTheme;
 export const setCurrentTheme = (themeId) => {
     _currentTheme = themeId;
@@ -289,6 +291,8 @@ export const clearVolatileGameState = () => {
     _currentRunStats = {
         currentIntegrity: 0,
         currentWillpower: 0,
+        strainLevel: 1,
+        conditions: [],
     };
     _isBoonSelectionPending = false;
     clearCurrentNewGameSettings();

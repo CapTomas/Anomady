@@ -81,6 +81,9 @@ export const registerUser = (email, password, preferences = {}) => {
     return _callApi('/api/v1/auth/register', 'POST', {
         email,
         password,
+        username: preferences.username,
+        story_preference: preferences.storyPreference,
+        newsletter_opt_in: preferences.newsletterOptIn,
         preferred_app_language: preferences.appLanguage,
         preferred_narrative_language: preferences.narrativeLanguage,
         preferred_model_name: preferences.modelName

@@ -366,7 +366,21 @@ background-color: var(--color-accent-main);
 	color: var(--color-text-secondary);
 	line-height: 1;
 }
+.select-description {
+	margin-top: 15px;
+	padding: 10px;
+	border-radius: var(--radius-sm);
+	background-color: var(--color-bg-panel);
+	color: var(--color-text-secondary);
+	transition: all var(--transition-fast);
+	display: none; /* Hide by default if empty */
+	background-image: url(images/app/background_noise.png); /* Keep visual consistency */
+}
 
+/* Only display the description box if it contains text */
+.select-description:not(:empty) {
+	display: block;
+}
 
 /* --- APTITUDE & RESILIENCE (INLINE) --- */
 #cp-item-aptitude,

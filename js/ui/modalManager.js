@@ -16,12 +16,10 @@ import {
 import { getUIText } from '../services/localizationService.js';
 import { log, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
 import { getCurrentTheme } from '../core/state.js'; // To pass theme context for localization
-
 let _activeOverlayClickListener = null;
 let currentModalResolve = null;
 const customModalFormContainer = document.createElement('div'); // Dynamically added/removed
 customModalFormContainer.id = 'custom-modal-form-container';
-
 /**
  * Hides the currently active custom modal.
  * This is typically called by modal action buttons or externally if needed.
@@ -32,10 +30,8 @@ export function hideCustomModal() {
         if (customModalTitle) customModalTitle.textContent = "";
         if (customModalMessage) customModalMessage.innerHTML = ""; // Clears message, and form/input containers if they are children
         if (customModalActions) customModalActions.innerHTML = "";
-
         // Explicitly reset standalone prompt input value
         if (customModalInput) customModalInput.value = "";
-
         // Ensure input container and form container are handled if they were not children of customModalMessage
         if (customModalInputContainer && customModalInputContainer.style.display !== "none") {
             if (!customModalMessage || !customModalMessage.contains(customModalInputContainer)) {
@@ -50,23 +46,18 @@ export function hideCustomModal() {
         // Clear any persistent error messages that might have been added to customModalMessage
         const errorDisplay = customModalMessage ? customModalMessage.querySelector('.modal-error-display') : null;
         if (errorDisplay) errorDisplay.remove();
-
-
         // 2. Remove the overlay click listener.
         if (_activeOverlayClickListener) {
             customModalOverlay.removeEventListener('click', _activeOverlayClickListener);
             _activeOverlayClickListener = null;
         }
-
         // 3. Now that the modal is visually empty and listeners are cleaned, start the fade-out.
         customModalOverlay.classList.remove("active");
-
         log(LOG_LEVEL_DEBUG, "Custom modal content cleared, event listener removed, and fade-out initiated.");
     }
     // 4. Clear any pending promise resolver.
     currentModalResolve = null;
 }
-
 /**
  * Displays an error message within the modal's message area or a specified container.
  * @param {string} messageText - The error message to display.
@@ -77,18 +68,15 @@ export function displayModalError(messageText, containerElement = customModalMes
         log(LOG_LEVEL_WARN, "displayModalError: containerElement is null or undefined for message:", messageText);
         return;
     }
-
     // Remove any existing error messages from this specific container
     const existingError = containerElement.querySelector('.modal-error-display');
     if (existingError) existingError.remove();
-
     const errorDisplay = document.createElement('p');
     errorDisplay.className = 'modal-error-display'; // For specific styling
     errorDisplay.style.color = 'var(--color-meter-critical)'; // Default error color
     errorDisplay.style.marginTop = 'var(--spacing-sm)';
     errorDisplay.style.marginBottom = 'var(--spacing-sm)';
     errorDisplay.textContent = messageText;
-
     // Prepend error if it's in the main message area, otherwise append
     if (containerElement === customModalMessage) {
         containerElement.insertBefore(errorDisplay, containerElement.firstChild);
@@ -96,8 +84,6 @@ export function displayModalError(messageText, containerElement = customModalMes
         containerElement.appendChild(errorDisplay);
     }
 }
-
-
 /**
  * Shows a custom modal and returns a Promise that resolves with the user's interaction.
  * @param {object} options - Configuration for the modal.
@@ -106,7 +92,7 @@ export function displayModalError(messageText, containerElement = customModalMes
  * @param {string} [options.messageKey] - Localization key for a static message.
  * @param {string|HTMLElement} [options.htmlContent] - Raw HTML string or HTMLElement to inject into message area.
  * @param {Array<object>} [options.formFields] - Array of field configs for 'form' type.
- *   Each field: { id, labelKey, type, placeholderKey, required, value (initial) }
+ *   Each field: { id, labelKey, type, placeholderKey, required, value (initial), options (for select) }
  * @param {object} [options.replacements={}] - Replacements for titleKey/messageKey.
  * @param {string} [options.confirmTextKey] - Localization key for confirm button.
  * @param {string} [options.cancelTextKey] - Localization key for cancel button.
@@ -134,16 +120,11 @@ export function showCustomModal(options) {
             if (currentModalResolve) currentModalResolve(type === 'prompt' ? null : (type === 'confirm' || type === 'form') ? false : null);
             return;
         }
-
         const modalThemeContext = explicitThemeContext || getCurrentTheme();
         let confirmBtnRef = null; // A reference to the confirm button that the handler can use
-
-        // Determine the default confirm button text key based on modal type
         let defaultConfirmKey = "modal_ok_button";
         if (type === "confirm" || type === "form") defaultConfirmKey = "modal_confirm_button";
-        else if (type === "prompt") defaultConfirmKey = "modal_confirm_button"; // "OK" or "Submit"
-
-        // This handler contains all the logic for confirming the modal, so it can be called by a button click or an Enter key press.
+        else if (type === "prompt") defaultConfirmKey = "modal_confirm_button";
         const handleConfirm = async () => {
             let modalShouldClose = true;
             let resolveValue;
@@ -151,17 +132,20 @@ export function showCustomModal(options) {
                 const formData = {};
                 let firstInvalidField = null;
                 let isValid = true;
-                // Clear previous form errors
                 customModalFormContainer.querySelectorAll('.modal-error-display').forEach(el => el.remove());
                 formFields.forEach(field => {
                     const inputElement = customModalFormContainer.querySelector(`#${field.id}`);
                     if (inputElement) {
-                        formData[field.id] = inputElement.value;
-                        if (field.required && !inputElement.value.trim()) {
+                        if (inputElement.type === 'checkbox') {
+                            formData[field.id] = inputElement.checked;
+                        } else {
+                            formData[field.id] = inputElement.value;
+                        }
+                        if (field.required && typeof formData[field.id] === 'string' && !formData[field.id].trim()) {
                             isValid = false;
                             if (!firstInvalidField) firstInvalidField = inputElement;
                         }
-                        if (field.type === 'email' && inputElement.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputElement.value.trim())) {
+                        if (field.type === 'email' && formData[field.id] && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData[field.id])) {
                             isValid = false;
                             if (!firstInvalidField) firstInvalidField = inputElement;
                             displayModalError(getUIText("alert_invalid_email_format"), inputElement.parentElement);
@@ -171,17 +155,17 @@ export function showCustomModal(options) {
                 if (!isValid) {
                     if (firstInvalidField) firstInvalidField.focus();
                     log(LOG_LEVEL_WARN, "Modal form validation failed.");
-                    if (!customModalFormContainer.querySelector('.modal-error-display[data-general-error="true"]')) { // Avoid duplicate general errors
+                    if (!customModalFormContainer.querySelector('.modal-error-display[data-general-error="true"]')) {
                        const generalErrorContainer = customModalFormContainer.closest('.modal-box').querySelector('.modal-message') || customModalFormContainer;
                        displayModalError(getUIText("alert_fill_required_fields"), generalErrorContainer);
                     }
-                    return; // Don't proceed
+                    return;
                 }
                 if (onSubmit) {
                     try {
                         if (confirmBtnRef) {
                             confirmBtnRef.disabled = true;
-                            confirmBtnRef.textContent = getUIText("system_processing_short"); // Loading state
+                            confirmBtnRef.textContent = getUIText("system_processing_short");
                         }
                         const resultFromOnSubmit = await onSubmit(formData);
                         if (typeof resultFromOnSubmit === 'object' && resultFromOnSubmit !== null) {
@@ -189,28 +173,28 @@ export function showCustomModal(options) {
                             if (resultFromOnSubmit.keepOpen === true) {
                                 modalShouldClose = false;
                             }
-                        } else { // For simpler onSubmit that just returns true/false or data
+                        } else {
                             resolveValue = { success: resultFromOnSubmit !== false, data: resultFromOnSubmit };
                         }
                     } catch (error) {
                         log(LOG_LEVEL_ERROR, "Error in modal onSubmit:", error);
                         displayModalError(error.message || getUIText("error_api_call_failed", { ERROR_MSG: "Operation failed" }), customModalFormContainer);
-                        modalShouldClose = false; // Keep open on error from onSubmit
+                        modalShouldClose = false;
                         resolveValue = { success: false, error: error };
                     } finally {
-                        if (confirmBtnRef && document.body.contains(confirmBtnRef)) { // Check if button is still in DOM
+                        if (confirmBtnRef && document.body.contains(confirmBtnRef)) {
                             confirmBtnRef.disabled = false;
                             confirmBtnRef.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, { explicitThemeContext: modalThemeContext });
                         }
                     }
                 } else {
-                    resolveValue = formData; // Resolve with form data if no onSubmit
+                    resolveValue = formData;
                 }
             } else if (type === "prompt" && customModalInput) {
                 resolveValue = customModalInput.value;
             } else if (type === "confirm") {
                 resolveValue = true;
-            } else { // alert
+            } else {
                 resolveValue = null;
             }
             if (currentModalResolve) {
@@ -220,13 +204,10 @@ export function showCustomModal(options) {
                 hideCustomModal();
             }
         };
-
         customModalTitle.textContent = getUIText(titleKey || `modal_default_title_${type}`, replacements, { explicitThemeContext: modalThemeContext });
-        // Clear previous content
         customModalMessage.innerHTML = "";
         customModalFormContainer.innerHTML = "";
         if (customModalInputContainer) customModalInputContainer.style.display = "none";
-
         if (messageKey) {
             const staticMessageP = document.createElement('p');
             staticMessageP.innerHTML = getUIText(messageKey, replacements, { explicitThemeContext: modalThemeContext }).replace(/\n/g, "<br>");
@@ -239,31 +220,83 @@ export function showCustomModal(options) {
                 customModalMessage.appendChild(htmlContent);
             }
         }
-
         if (type === "form" || (formFields && formFields.length > 0)) {
-            customModalMessage.appendChild(customModalFormContainer); // Add form container
+            customModalMessage.appendChild(customModalFormContainer);
             formFields.forEach(field => {
                 const fieldGroup = document.createElement('div');
                 fieldGroup.classList.add('modal-form-group');
-                const label = document.createElement('label');
-                label.htmlFor = field.id;
-                label.textContent = getUIText(field.labelKey, {}, { explicitThemeContext: modalThemeContext });
-                fieldGroup.appendChild(label);
-                const input = document.createElement('input');
-                input.type = field.type || 'text';
-                input.id = field.id;
-                input.name = field.id; // Important for form data collection
-                if (field.placeholderKey) input.placeholder = getUIText(field.placeholderKey, {}, { explicitThemeContext: modalThemeContext });
-                if (field.value) input.value = field.value;
-                if (field.required) input.required = true;
-                input.classList.add('modal-input');
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleConfirm();
+                switch (field.type) {
+                    case 'checkbox': {
+                        fieldGroup.classList.add('modal-form-group-checkbox');
+                        const label = document.createElement('label');
+                        label.htmlFor = field.id;
+                        label.classList.add('modal-checkbox-label');
+                        const input = document.createElement('input');
+                        input.type = 'checkbox';
+                        input.id = field.id;
+                        input.name = field.id;
+                        input.checked = field.value || false;
+                        label.appendChild(input);
+                        const labelText = document.createElement('span');
+                        labelText.textContent = getUIText(field.labelKey, {}, { explicitThemeContext: modalThemeContext });
+                        label.appendChild(labelText);
+                        fieldGroup.appendChild(label);
+                        break;
                     }
-                });
-                fieldGroup.appendChild(input);
+                    case 'select': {
+                        const label = document.createElement('label');
+                        label.htmlFor = field.id;
+                        label.textContent = getUIText(field.labelKey, {}, { explicitThemeContext: modalThemeContext });
+                        fieldGroup.appendChild(label);
+                        const select = document.createElement('select');
+                        select.id = field.id;
+                        select.name = field.id;
+                        select.classList.add('modal-input');
+                        if (field.options && Array.isArray(field.options)) {
+                            field.options.forEach(opt => {
+                                const option = document.createElement('option');
+                                option.value = opt.value;
+                                option.textContent = getUIText(opt.textKey, {}, { explicitThemeContext: modalThemeContext });
+                                if (opt.descriptionKey) {
+                                    option.dataset.description = getUIText(opt.descriptionKey, {}, { explicitThemeContext: modalThemeContext });
+                                }
+                                select.appendChild(option);
+                            });
+                        }
+                        fieldGroup.appendChild(select);
+                        const descContainer = document.createElement('div');
+                        descContainer.id = `${field.id}-description`;
+                        descContainer.className = 'select-description';
+                        descContainer.textContent = select.options[select.selectedIndex]?.dataset.description || '';
+                        select.addEventListener('change', () => {
+                            descContainer.textContent = select.options[select.selectedIndex]?.dataset.description || '';
+                        });
+                        fieldGroup.appendChild(descContainer);
+                        break;
+                    }
+                    default: {
+                        const label = document.createElement('label');
+                        label.htmlFor = field.id;
+                        label.textContent = getUIText(field.labelKey, {}, { explicitThemeContext: modalThemeContext });
+                        fieldGroup.appendChild(label);
+                        const input = document.createElement('input');
+                        input.type = field.type || 'text';
+                        input.id = field.id;
+                        input.name = field.id;
+                        if (field.placeholderKey) input.placeholder = getUIText(field.placeholderKey, {}, { explicitThemeContext: modalThemeContext });
+                        if (field.value) input.value = field.value;
+                        if (field.required) input.required = true;
+                        input.classList.add('modal-input');
+                        input.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleConfirm();
+                            }
+                        });
+                        fieldGroup.appendChild(input);
+                        break;
+                    }
+                }
                 customModalFormContainer.appendChild(fieldGroup);
             });
         } else if (type === "prompt") {
@@ -280,17 +313,16 @@ export function showCustomModal(options) {
                 });
             }
         }
-
-        customModalActions.innerHTML = ""; // Clear previous actions
+        customModalActions.innerHTML = "";
         if (customActions && Array.isArray(customActions) && customActions.length > 0) {
             customActions.forEach(actionConfig => {
                 const btn = document.createElement("button");
                 btn.className = actionConfig.className || "ui-button";
                 btn.textContent = getUIText(actionConfig.textKey, {}, { explicitThemeContext: modalThemeContext });
-                btn.addEventListener("click", async () => { // Make listener async if onClick can be
+                btn.addEventListener("click", async () => {
                     if (actionConfig.onClick) {
                         try {
-                            await actionConfig.onClick(btn); // Allow onClick to be async
+                            await actionConfig.onClick(btn);
                         } catch(e) {
                             log(LOG_LEVEL_ERROR, `Error in custom action button's onClick for ${actionConfig.textKey}:`, e);
                             displayModalError(e.message || "An unexpected error occurred in the action.");
@@ -300,14 +332,12 @@ export function showCustomModal(options) {
                 customModalActions.appendChild(btn);
             });
         } else {
-            // Default button logic
             const confirmBtn = document.createElement("button");
             confirmBtn.classList.add("ui-button", "primary");
             confirmBtn.textContent = getUIText(confirmTextKey || defaultConfirmKey, {}, { explicitThemeContext: modalThemeContext });
-            confirmBtnRef = confirmBtn; // Assign the created button to the reference
+            confirmBtnRef = confirmBtn;
             confirmBtn.addEventListener("click", handleConfirm);
             customModalActions.appendChild(confirmBtn);
-
             if (type === "confirm" || type === "prompt" || type === "form" || (formFields && formFields.length > 0)) {
                 const cancelBtn = document.createElement("button");
                 cancelBtn.classList.add("ui-button");
@@ -319,10 +349,8 @@ export function showCustomModal(options) {
                 customModalActions.appendChild(cancelBtn);
             }
         }
-
         customModalOverlay.classList.add("active");
-        // Add click listener to overlay for "click outside to close"
-        if (_activeOverlayClickListener) { // Remove any old listener first
+        if (_activeOverlayClickListener) {
             customModalOverlay.removeEventListener('click', _activeOverlayClickListener);
         }
         _activeOverlayClickListener = (event) => {
@@ -335,8 +363,6 @@ export function showCustomModal(options) {
             }
         };
         customModalOverlay.addEventListener('click', _activeOverlayClickListener);
-
-        // Focus logic
         if ((type === "form" || (formFields && formFields.length > 0)) && customModalFormContainer.querySelector('input:not([type=hidden])')) {
             setTimeout(() => {
                 const firstInput = customModalFormContainer.querySelector('input:not([type=hidden])');
@@ -349,13 +375,11 @@ export function showCustomModal(options) {
         } else if (customModalActions.firstChild && typeof customModalActions.firstChild.focus === 'function') {
              setTimeout(() => {
                 if(document.body.contains(customModalActions.firstChild)) customModalActions.firstChild.focus();
-             }, 50); // Focus first button as fallback
+             }, 50);
         }
     });
 }
-
 // --- Specific Modal Orchestrators ---
-
 /**
  * Shows an authentication modal (login or register).
  * @param {'login'|'register'} [initialMode='login'] - The mode to open the modal in.
@@ -365,33 +389,48 @@ export function showCustomModal(options) {
 export async function showAuthFormModal(initialMode = 'login', onAuthSuccess) {
     log(LOG_LEVEL_DEBUG, `Showing auth form modal in '${initialMode}' mode.`);
     let currentAuthMode = initialMode;
-
     const renderAndShow = () => {
         const isLogin = currentAuthMode === 'login';
         const titleKey = isLogin ? "modal_title_login" : "modal_title_register";
         const confirmTextKey = isLogin ? "button_login" : "button_register";
-        const formFields = [
+        let formFields = [
             { id: "authEmail", labelKey: "label_email", type: "email", placeholderKey: "placeholder_email", required: true },
             { id: "authPassword", labelKey: "label_password", type: "password", placeholderKey: isLogin ? "placeholder_password" : "placeholder_password_register", required: true }
         ];
-
-        // HTML content for switching between login/register and forgot password
+        if (!isLogin) {
+            const registrationFields = [
+                { id: "authUsername", labelKey: "label_username", type: "text", placeholderKey: "placeholder_username", required: true },
+                {
+                    id: "storyPreference",
+                    labelKey: "label_story_preference",
+                    type: "select",
+                    options: [
+                        { value: "", textKey: "option_story_preference_default", descriptionKey: "" },
+                        { value: "explorer", textKey: "option_story_preference_explorer", descriptionKey: "desc_story_preference_explorer" },
+                        { value: "strategist", textKey: "option_story_preference_strategist", descriptionKey: "desc_story_preference_strategist" },
+                        { value: "weaver", textKey: "option_story_preference_weaver", descriptionKey: "desc_story_preference_weaver" },
+                        { value: "chaos", textKey: "option_story_preference_chaos", descriptionKey: "desc_story_preference_chaos" },
+                    ]
+                },
+                { id: "newsletterOptIn", labelKey: "label_newsletter_opt_in", type: "checkbox", value: false }
+            ];
+            formFields.splice(1, 0, registrationFields[0]);
+            formFields.push(registrationFields[1], registrationFields[2]);
+        }
         const linksContainer = document.createElement('div');
         linksContainer.className = 'auth-modal-links';
-
         if (isLogin) {
             const forgotPasswordLink = document.createElement('a');
             forgotPasswordLink.href = '#';
             forgotPasswordLink.textContent = getUIText("button_forgot_password");
-            forgotPasswordLink.className = 'forgot-password-link'; // For styling if needed
+            forgotPasswordLink.className = 'forgot-password-link';
             forgotPasswordLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                hideCustomModal(); // Close current auth modal
-                showForgotPasswordRequestModal(onAuthSuccess); // Show the forgot password modal
+                hideCustomModal();
+                showForgotPasswordRequestModal(onAuthSuccess);
             });
             linksContainer.appendChild(forgotPasswordLink);
         }
-
         const switchAuthModeLink = document.createElement('a');
         switchAuthModeLink.href = '#';
         const switchLinkTextKey = isLogin ? "modal_switch_to_register" : "modal_switch_to_login";
@@ -400,35 +439,39 @@ export async function showAuthFormModal(initialMode = 'login', onAuthSuccess) {
         switchAuthModeLink.addEventListener('click', (e) => {
             e.preventDefault();
             currentAuthMode = isLogin ? 'register' : 'login';
-            // Instead of hideCustomModal() then renderAndShow(), we might need a way to re-render content within the active modal
-            // For now, simplicity dictates closing and reopening.
             hideCustomModal();
             renderAndShow();
         });
         linksContainer.appendChild(switchAuthModeLink);
-
         showCustomModal({
             type: "form",
             titleKey: titleKey,
             formFields: formFields,
-            htmlContent: linksContainer, // Inject the links
+            htmlContent: linksContainer,
             confirmTextKey: confirmTextKey,
             onSubmit: async (formData) => {
-                const { authEmail, authPassword } = formData;
+                const { authEmail, authPassword, authUsername, storyPreference, newsletterOptIn } = formData;
                 try {
                     let result;
                     if (isLogin) {
                         result = await onAuthSuccess({ mode: 'login', email: authEmail, password: authPassword });
-                    } else { // register
-                        result = await onAuthSuccess({ mode: 'register', email: authEmail, password: authPassword });
+                    } else {
+                        result = await onAuthSuccess({
+                            mode: 'register',
+                            email: authEmail,
+                            password: authPassword,
+                            username: authUsername,
+                            storyPreference: storyPreference,
+                            newsletterOptIn: newsletterOptIn,
+                        });
                     }
-                    return result; // { success: true, data: userData } or { success: true, actionAfterClose: 'showXYZ' }
+                    return result;
                 } catch (error) {
                     log(LOG_LEVEL_ERROR, `${currentAuthMode} failed from modal onSubmit:`, error.message);
-                    throw error; // Re-throw to be caught by showCustomModal's internal error handling
+                    throw error;
                 }
             },
-        }).then(result => { // This .then is after showCustomModal's promise resolves
+        }).then(result => {
             if (result && result.success && result.actionAfterClose === 'showRegistrationSuccessAlert') {
                 const registeredEmail = result.data?.user?.email || '';
                 showCustomModal({
@@ -441,15 +484,11 @@ export async function showAuthFormModal(initialMode = 'login', onAuthSuccess) {
                 // Login success handled by onAuthSuccess, modal closes by default
             }
         }).catch(error => {
-            // Errors from onSubmit (like validation or API errors) are usually handled within showCustomModal
-            // This catch is more for unhandled issues with the modal promise itself
             log(LOG_LEVEL_ERROR, "Error from showAuthFormModal's main promise chain:", error);
         });
     };
-
-    renderAndShow(); // Initial render
+    renderAndShow();
 }
-
 /**
  * Shows the "Forgot Password" request modal.
  * @param {Function} onAuthSuccess - The main auth success callback (indirectly used if reset leads to login).
@@ -464,9 +503,7 @@ export async function showForgotPasswordRequestModal(onAuthSuccess) {
         confirmTextKey: "button_send_reset_link",
         onSubmit: async (formData) => {
             const email = formData.resetEmail;
-            // Directly call the authService function that calls the API
-            // This relies on authService.handleForgotPassword to throw on error
-            const response = await onAuthSuccess({ mode: 'forgotPassword', email: email }); // Using onAuthSuccess to trigger authService
+            const response = await onAuthSuccess({ mode: 'forgotPassword', email: email });
             return { success: true, message: response.message, actionAfterClose: 'showResetRequestSentAlert' };
         }
     }).then(result => {
@@ -474,16 +511,13 @@ export async function showForgotPasswordRequestModal(onAuthSuccess) {
             showCustomModal({
                 type: "alert",
                 titleKey: "alert_reset_link_sent_title",
-                messageText: result.message // Use message directly from API response
+                messageText: result.message
             });
         }
     }).catch(error => {
-        // Error already displayed within the form modal by showCustomModal's onSubmit handling
         log(LOG_LEVEL_DEBUG, "Forgot password request modal onSubmit error handled, or modal cancelled.");
     });
 }
-
-
 /**
  * Shows a modal for changing the user's password.
  * @param {Function} onChangePasswordSubmit - Async function (currentPassword, newPassword) => Promise<response>
@@ -510,7 +544,6 @@ export async function showChangePasswordFormModal(onChangePasswordSubmit) {
             if (currentPassword === newPassword) {
                 throw new Error(getUIText("alert_new_password_same_as_old"));
             }
-            // Call the passed-in submit handler which should interact with authService
             await onChangePasswordSubmit(currentPassword, newPassword);
             return { success: true, actionAfterClose: 'showPasswordChangeSuccessAlert' };
         },
@@ -526,7 +559,6 @@ export async function showChangePasswordFormModal(onChangePasswordSubmit) {
         log(LOG_LEVEL_DEBUG, "Change password modal onSubmit error handled, or modal cancelled.");
     });
 }
-
 /**
  * Shows a generic confirmation modal.
  * @param {object} options - Options for the confirmation modal.
@@ -551,12 +583,12 @@ export async function showGenericConfirmModal({
     const result = await showCustomModal({
         type: "confirm",
         titleKey,
-        messageKey: messageKey, // Pass key if available
-        htmlContent: !messageKey && messageText ? `<p>${messageText.replace(/\n/g, "<br>")}</p>` : undefined, // Pass direct text if key isn't
+        messageKey: messageKey,
+        htmlContent: !messageKey && messageText ? `<p>${messageText.replace(/\n/g, "<br>")}</p>` : undefined,
         replacements,
         confirmTextKey,
         cancelTextKey,
         explicitThemeContext
     });
-    return !!result; // Coerce to boolean (true for confirm, false for cancel/close)
+    return !!result;
 }

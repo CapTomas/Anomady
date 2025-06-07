@@ -66,7 +66,18 @@ export async function handleRegistration(email, password, preferences = {}) {
         return response; // Includes message and user object (without token yet)
     } catch (error) {
         log(LOG_LEVEL_ERROR, `Registration failed for ${email}:`, error.message, error.code);
-        throw error; // Re-throw for UI handling
+        // Translate specific error codes for the UI
+        if (error.code === 'USERNAME_ALREADY_EXISTS') {
+            const newError = new Error(getUIText("alert_username_already_exists"));
+            newError.code = error.code; // Preserve original code for potential logic
+            throw newError;
+        }
+        if (error.code === 'INVALID_USERNAME_FORMAT') {
+            const newError = new Error(getUIText("alert_invalid_username_format"));
+            newError.code = error.code;
+            throw newError;
+        }
+        throw error; // Re-throw other errors for UI handling
     }
 }
 

@@ -17,11 +17,9 @@ import logger from '../utils/logger.js';
  */
 const protect = async (req, res, next) => {
   let token;
-
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       token = req.headers.authorization.split(' ')[1];
-
       const jwtSecret = process.env.JWT_SECRET;
       if (!jwtSecret) {
         logger.error('JWT_SECRET is not defined. Cannot verify token.');
@@ -29,14 +27,15 @@ const protect = async (req, res, next) => {
           error: { message: 'Server authentication configuration error.', code: 'AUTH_CONFIG_ERROR' },
         });
       }
-
       const decoded = jwt.verify(token, jwtSecret);
-
       const user = await prisma.user.findUnique({
         where: { id: decoded.user.id },
         select: {
           id: true,
           email: true,
+          username: true,
+          story_preference: true,
+          newsletter_opt_in: true,
           preferred_app_language: true,
           preferred_narrative_language: true,
           preferred_model_name: true,
@@ -45,12 +44,10 @@ const protect = async (req, res, next) => {
           updated_at: true,
         },
       });
-
       if (!user) {
         logger.warn(`Authenticated user ID ${decoded.user.id} not found in DB.`);
         return res.status(401).json({ error: { message: 'Not authorized, user not found.', code: 'USER_NOT_FOUND' } });
       }
-
       req.user = user;
       logger.debug(`User authenticated: ${req.user.email} (ID: ${req.user.id}) for path: ${req.path}`);
       next();
@@ -65,7 +62,6 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ error: { message: 'Not authorized, token error.', code: 'TOKEN_PROCESSING_ERROR' } });
     }
   }
-
   if (!token) {
     logger.info(`No token found in request to ${req.path}`);
     return res.status(401).json({ error: { message: 'Not authorized, no token provided.', code: 'NO_TOKEN' } });

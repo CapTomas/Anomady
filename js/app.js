@@ -180,7 +180,8 @@ async function initializeApp() {
         modalManager, // For showing auth forms
         gameController, // For actions like switching to landing on logout
         userThemeControlsManager, // For updating top bar icons after login
-        landingPageManager // For updating landing page (e.g., shard icons) after login
+        landingPageManager, // For updating landing page (e.g., shard icons) after login
+        languageManager // For triggering full UI re-translation on preference change
     });
     dashboardManager.initDashboardManagerScrollEvents();
     characterPanelManager.initCharacterPanelManager();

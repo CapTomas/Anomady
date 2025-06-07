@@ -207,6 +207,24 @@ body {
         opacity: 0;
     }
 }
+/* Hide main layout during initial JS loading to prevent flicker */
+body.app-loading #main-layout {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.2s, opacity 0.2s linear;
+}
+
+/* When the app is ready, reveal the layout */
+body:not(.app-loading) #main-layout {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.2s linear;
+}
+
+/* On auth pages, make the center column background match the main layout for a seamless look */
+body.auth-page-active #center-column {
+    background-color: var(--color-bg-panel);
+}
 #app-root {
 	display: flex;
 	flex-direction: column;
@@ -542,9 +560,13 @@ div#char-panel-willpower-meter {
 	flex-direction: column;
 	flex-grow: 1;
 	border-radius: var(--radius-md);
-	background-color: var(--color-bg-content-view);
+	background-color: var(--color-bg-panel);
 	overflow: hidden;
 	background-image: url(images/app/background_noise.png);
+	transition: background-color 0.3s ease-in-out;
+}
+body[class*="theme-"] #center-column {
+	background-color: var(--color-bg-content-view);
 }
 #story-log-viewport {
 	flex-grow: 1;

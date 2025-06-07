@@ -582,7 +582,7 @@ export function displayEmailConfirmationStatusPage(status) {
         return;
     }
     centerColumn.innerHTML = ''; // Clear current content
-    if(appRoot) appRoot.className = 'auth-page-active theme-landing'; // Apply base styling
+    document.body.className = 'auth-page-active theme-landing'; // Apply base styling
     const container = document.createElement('div');
     container.className = 'email-confirmation-container';
     const title = document.createElement('h2');
@@ -635,7 +635,7 @@ export function displayPasswordResetPage(token, onPasswordResetSubmit) {
     const centerColumn = document.getElementById('center-column');
     if (!centerColumn) return;
     centerColumn.innerHTML = '';
-    if(appRoot) appRoot.className = 'auth-page-active theme-landing';
+    document.body.className = 'auth-page-active theme-landing';
     // Use modalManager to display the form, adapted for a full-page feel
     _modalManager.showCustomModal({
         type: "form",

@@ -253,6 +253,9 @@ if (dom.sendActionButton && dom.playerActionInput) {
     log(LOG_LEVEL_INFO, "Global UI translations applied after view setup.");
 
     log(LOG_LEVEL_INFO, "Anomady Application initialized successfully.");
+    // Reveal the fully initialized application UI
+    document.body.classList.remove('app-loading');
+    log(LOG_LEVEL_DEBUG, "App loading class removed, UI revealed.");
 }
 
 // --- Start the application ---

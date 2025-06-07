@@ -20,9 +20,12 @@ import {
     setPanelState,
     getCurrentTheme,
     getLastKnownDashboardUpdates,
-    getLastKnownGameStateIndicators, // Added for completeness, though not directly used in this file's primary functions
+    getLastKnownGameStateIndicators,
     updateDashboardItemMetaEntry,
-    getDashboardItemMeta
+    getDashboardItemMeta,
+    getEffectiveMaxIntegrity,
+    getEffectiveMaxWillpower,
+    updateCurrentRunStat
 } from '../core/state.js';
 import { SCROLL_INDICATOR_TOLERANCE } from '../core/config.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
@@ -726,11 +729,9 @@ export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = 
     let updatedOccurred = false;
     const meterType = itemConfig.meter_type;
     if (!barEl && !textEl) return;
-
     let finalPct = 0;
     let newContentForTextEl = "";
     const parsedPct = parseInt(newPctStr, 10);
-
     if (!isNaN(parsedPct)) {
         finalPct = Math.max(0, Math.min(100, parsedPct));
     } else {
@@ -742,29 +743,37 @@ export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = 
             finalPct = (meterType === "shields" || meterType === "conceptual_cohesion" || meterType === "monster_defense" || meterType === "mana") ? 0 : 100;
         }
     }
-
     if (itemConfig.maps_to_run_stat && !isNaN(parsedPct)) {
-        // If the item maps to a run stat (e.g., currentIntegrity), update the state.
-        // Ensure we're passing the numerical value, not the percentage string.
-        // The 'value' for IG/WP is the actual current value, not a percentage.
-        // If the meter represents a percentage of a max value, this needs careful handling.
-        // For now, assume `newPctStr` IS the new value for IG/WP if maps_to_run_stat is set.
-        // This implies AI might return "80" for an Integrity of 80, not "80%".
-        // If AI returns a percentage, we'd need to calculate based on max values.
-        // Based on feature description, IG/WP are direct values.
-        const numericValue = parseInt(newPctStr, 10); // Re-parse to ensure it's the number for the stat
-        if (!isNaN(numericValue)) {
-            state.updateCurrentRunStat(itemConfig.maps_to_run_stat, numericValue);
-            log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to ${numericValue} via dashboard meter update for item '${itemConfig.id}'.`);
-            updatedOccurred = true; // Mark update for highlight even if text/bar didn't change visually but state did
+        let maxStatValue;
+        if (itemConfig.maps_to_run_stat === 'currentIntegrity') {
+            maxStatValue = getEffectiveMaxIntegrity();
+        } else if (itemConfig.maps_to_run_stat === 'currentWillpower') {
+            maxStatValue = getEffectiveMaxWillpower();
+        }
+
+        if (maxStatValue !== undefined) {
+            // Calculate absolute value from percentage, clamp it to the max value
+            const calculatedValue = Math.round((finalPct / 100) * maxStatValue);
+            const finalValue = Math.min(calculatedValue, maxStatValue);
+
+            // Update the state with the absolute value
+            updateCurrentRunStat(itemConfig.maps_to_run_stat, finalValue);
+            log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to ${finalValue} (from ${finalPct}% of ${maxStatValue}) via dashboard meter update for item '${itemConfig.id}'.`);
+            updatedOccurred = true;
+        } else {
+            // Fallback for other stats that might be mapped directly.
+            const numericValue = parseInt(newPctStr, 10);
+            if (!isNaN(numericValue)) {
+                updateCurrentRunStat(itemConfig.maps_to_run_stat, numericValue);
+                log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to ${numericValue} via dashboard meter update for item '${itemConfig.id}'.`);
+                updatedOccurred = true;
+            }
         }
     }
-
     let statusTextToUse = explicitStatusText;
     if (itemConfig.status_text_id && explicitStatusText === undefined) {
         statusTextToUse = getLastKnownDashboardUpdates()[itemConfig.status_text_id];
     }
-
     if (meterType === "shields" || meterType === "conceptual_cohesion" || meterType === "monster_defense" || meterType === "monster_health") {
         const statusForDisplay = statusTextToUse || (finalPct > 0 ? getUIText("online") : getUIText("offline"));
         newContentForTextEl = `${statusForDisplay}: ${finalPct}%`;
@@ -776,12 +785,10 @@ export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = 
     } else {
         newContentForTextEl = (newContentForTextEl === "" && !isNaN(parsedPct)) ? `${finalPct}%` : newContentForTextEl || `${finalPct}%`;
     }
-
     if (textEl && textEl.textContent !== newContentForTextEl) {
         textEl.textContent = newContentForTextEl;
         updatedOccurred = true;
     }
-
     if (barEl) {
         if (barEl.style.width !== `${finalPct}%`) {
             barEl.style.width = `${finalPct}%`;
@@ -814,13 +821,11 @@ export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = 
         }
         if (!barEl.classList.contains("meter-bar")) barEl.classList.add("meter-bar");
     }
-
     if (updatedOccurred && highlight) {
         const container = textEl ? textEl.closest(".info-item, .info-item-meter") : (barEl ? barEl.closest(".info-item, .info-item-meter") : null);
         if (container) highlightElementUpdate(container);
     }
 }
-
 
 /**
  * Updates the display of a status level item (e.g., threat level, blight exposure).

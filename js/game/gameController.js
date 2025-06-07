@@ -523,26 +523,45 @@ export async function resumeGameSession(themeId) {
     if (currentUser && currentUser.token) {
         try {
             const loadedData = await apiService.loadGameState(currentUser.token, themeId);
-
             if (loadedData.userThemeProgress) {
                 state.setCurrentUserThemeProgress(loadedData.userThemeProgress);
             } else {
                 await _loadOrCreateUserThemeProgress(themeId);
             }
-            _initializeCurrentRunStats();
+            // Initialize run stats to max values first
+            await _initializeCurrentRunStats();
 
+            // Now, apply the loaded percentages and other stats
             const lastUpdates = loadedData.last_dashboard_updates || {};
-            const statsToUpdate = {};
-            if (lastUpdates.healthPct !== undefined) statsToUpdate.currentIntegrity = parseInt(lastUpdates.healthPct, 10);
-            if (lastUpdates.staminaPct !== undefined) statsToUpdate.currentWillpower = parseInt(lastUpdates.staminaPct, 10);
-            if (lastUpdates.strain_level !== undefined) statsToUpdate.strainLevel = parseInt(lastUpdates.strain_level, 10);
-            if (lastUpdates.conditions_list !== undefined) statsToUpdate.conditions = lastUpdates.conditions_list;
-            state.setCurrentRunStats(statsToUpdate);
+            const statsToUpdate = { ...state.getCurrentRunStats() }; // Start with a fresh object with max values
+
+            const maxIntegrity = state.getEffectiveMaxIntegrity();
+            const maxWillpower = state.getEffectiveMaxWillpower();
+
+            if (lastUpdates.healthPct !== undefined) {
+                const pct = parseInt(lastUpdates.healthPct, 10);
+                if (!isNaN(pct)) {
+                    statsToUpdate.currentIntegrity = Math.min(maxIntegrity, Math.round((pct / 100) * maxIntegrity));
+                }
+            }
+            if (lastUpdates.staminaPct !== undefined) {
+                const pct = parseInt(lastUpdates.staminaPct, 10);
+                if (!isNaN(pct)) {
+                    statsToUpdate.currentWillpower = Math.min(maxWillpower, Math.round((pct / 100) * maxWillpower));
+                }
+            }
+            if (lastUpdates.strain_level !== undefined) {
+                const newStrain = parseInt(lastUpdates.strain_level, 10);
+                if (!isNaN(newStrain)) statsToUpdate.strainLevel = newStrain;
+            }
+            if (lastUpdates.conditions_list !== undefined) {
+                statsToUpdate.conditions = Array.isArray(lastUpdates.conditions_list) ? lastUpdates.conditions_list : [];
+            }
+            state.setCurrentRunStats(statsToUpdate); // Apply the fully calculated stats
 
             characterPanelManager.updateCharacterPanel();
             characterPanelManager.showCharacterPanel(true);
             characterPanelManager.showXPBar(true);
-
             if (!loadedData.player_identifier) {
                 log(LOG_LEVEL_WARN, `Loaded game state for theme ${themeId} is missing player_identifier. Using user email.`);
                 state.setPlayerIdentifier(currentUser.email);
@@ -562,7 +581,6 @@ export async function resumeGameSession(themeId) {
             state.setLastKnownCumulativePlayerSummary(loadedData.game_history_summary || "");
             state.setLastKnownEvolvedWorldLore(loadedData.game_history_lore || "");
             state.setIsBoonSelectionPending(loadedData.is_boon_selection_pending || false);
-
             storyLogManager.clearStoryLogDOM();
             state.getGameHistory().forEach(turn => {
                 if (turn.role === "user") {

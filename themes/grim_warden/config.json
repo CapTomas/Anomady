@@ -93,6 +93,7 @@
             "meter_type": "health",
             "default_value": "100",
             "must_translate": false,
+            "maps_to_run_stat": "currentIntegrity",
             "short_description": "Character's current physical integrity (0-100). E.g., '100', '65 (Bruised)', '10 (Near Death)'."
           },
           {
@@ -102,6 +103,7 @@
             "meter_type": "stamina",
             "default_value": "100",
             "must_translate": false,
+            "maps_to_run_stat": "currentWillpower",
             "short_description": "Character's current vigor/resolve (0-100). Expended by strenuous actions. Should not decrease passively."
           },
           {
@@ -110,6 +112,7 @@
             "tooltip_key": "tooltip_item_strain_level_grim_warden",
             "type": "status_icon",
             "default_ai_value": 1,
+            "maps_to_run_stat": "strainLevel",
             "level_mappings": {
               "1": { "display_text_key": "strain_level_1_display", "css_class": "status-ok", "icon_path": "images/sentiment/icon_sentiment_satisfied.svg" },
               "2": { "display_text_key": "strain_level_2_display", "css_class": "status-warning", "icon_path": "images/sentiment/icon_sentiment_neutral.svg" },

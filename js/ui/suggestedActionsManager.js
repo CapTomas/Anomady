@@ -7,6 +7,7 @@ import { setCurrentSuggestedActions } from '../core/state.js';
 import { autoGrowTextarea } from './uiUtils.js';
 import { handleMullOverShardAction } from '../services/aiService.js';
 import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_WARN, LOG_LEVEL_ERROR } from '../core/logger.js';
+import { attachTooltip, hideCurrentTooltip } from './tooltipManager.js';
 let _gameControllerRef = null;
 
 /**
@@ -38,23 +39,27 @@ export function displaySuggestedActions(actions) {
         setCurrentSuggestedActions(actions && Array.isArray(actions) ? actions.slice(0, MAX_SUGGESTED_ACTIONS) : []);
         return;
     }
-
     suggestedActionsWrapper.innerHTML = ""; // Clear previous actions
     let validActionsToStore = [];
-
     if (actions && Array.isArray(actions) && actions.length > 0) {
         actions.slice(0, MAX_SUGGESTED_ACTIONS).forEach(actionObjOrString => {
-            let actionText;
+            let actionText; // The full text for processing (e.g., "Trait Name: Description")
+            let buttonDisplayText; // The text to show on the button (e.g., "Trait Name")
+            let tooltipText; // Text for the hover title attribute
             let isMullOver = false;
+            let isBoonOrTrait = false;
             let shardDataForMullOver = null;
 
             if (typeof actionObjOrString === 'string') {
                 actionText = actionObjOrString;
+                buttonDisplayText = actionText;
             } else if (typeof actionObjOrString === 'object' && actionObjOrString.text) {
                 actionText = actionObjOrString.text;
-                // Check for the specific properties that define a "Mull Over" action
+                buttonDisplayText = actionObjOrString.displayText || actionText;
+                tooltipText = actionObjOrString.descriptionForTooltip || null;
                 isMullOver = actionObjOrString.isTemporaryMullOver === true;
                 shardDataForMullOver = actionObjOrString.shardDataForMullOver || actionObjOrString.shardData || null;
+                isBoonOrTrait = actionObjOrString.isBoonChoice === true || actionObjOrString.isTraitChoice === true;
             } else {
                 log(LOG_LEVEL_WARN, "Invalid action format in suggested actions array:", actionObjOrString);
                 return; // Skip this invalid action
@@ -63,18 +68,25 @@ export function displaySuggestedActions(actions) {
             if (actionText && actionText.trim() !== "") {
                 const btn = document.createElement("button");
                 btn.classList.add("ui-button");
-                if (isMullOver) {
-                    btn.classList.add("mull-over-action"); // Specific class for styling
+
+                if (isMullOver) btn.classList.add("mull-over-action");
+                if (isBoonOrTrait) btn.classList.add("boon-action");
+
+                btn.textContent = buttonDisplayText;
+                btn.removeAttribute('title'); // Ensure no native tooltip interferes
+
+                if (tooltipText) {
+                    attachTooltip(btn, null, {}, { rawText: tooltipText });
                 }
-                btn.textContent = actionText;
 
                 btn.addEventListener("click", () => {
-                    if (actionObjOrString.isBoonChoice) {
+                    hideCurrentTooltip(); // Hide any active tooltip immediately on click
+                    if (isBoonOrTrait) {
                         if (_gameControllerRef && typeof _gameControllerRef.processPlayerAction === 'function') {
-                            _gameControllerRef.processPlayerAction(actionText); // actionText is boonChoice.text
+                            _gameControllerRef.processPlayerAction(actionText); // Pass the full text for matching
                         } else {
-                            log(LOG_LEVEL_ERROR, "GameController not available in SuggestedActionsManager to process Boon choice. Falling back to input population.");
-                            if (playerActionInput) { // Fallback behavior
+                            log(LOG_LEVEL_ERROR, "GameController not available in SuggestedActionsManager to process Boon/Trait choice. Falling back to input population.");
+                            if (playerActionInput) {
                                 playerActionInput.value = actionText;
                                 playerActionInput.focus();
                                 playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
@@ -98,15 +110,13 @@ export function displaySuggestedActions(actions) {
                         }
                     }
                 });
-
                 suggestedActionsWrapper.appendChild(btn);
-                validActionsToStore.push(actionObjOrString); // Store the original action (string or object)
+                validActionsToStore.push(actionObjOrString);
             }
         });
     }
     setCurrentSuggestedActions(validActionsToStore);
     log(LOG_LEVEL_DEBUG, `Displayed ${validActionsToStore.length} suggested actions.`);
-    // Visibility of suggestedActionsWrapper itself is generally handled by gameController or main UI view logic
 }
 
 /**

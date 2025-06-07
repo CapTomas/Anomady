@@ -1,0 +1,182 @@
+{
+  "scrounger": {
+    "en": {
+      "name": "Scrounger",
+      "description": "You have a knack for finding extra resources—coin, reagents, or supplies—where others see only refuse."
+    },
+    "cs": {
+      "name": "Šmejdil",
+      "description": "Máte talent na nacházení dodatečných zdrojů – mincí, činidel nebo zásob – tam, kde ostatní vidí jen odpad."
+    }
+  },
+  "tough_as_nails": {
+    "en": {
+      "name": "Tough as Nails",
+      "description": "You can endure more punishment than most before breaking. Your Integrity is effectively higher when calculating damage from blows."
+    },
+    "cs": {
+      "name": "Tvrdý jako hřebík",
+      "description": "Vydržíte více trestů než většina ostatních, než se zlomíte. Vaše Integrita je efektivně vyšší při výpočtu poškození z úderů."
+    }
+  },
+  "unseen_sense": {
+    "en": {
+      "name": "Unseen Sense",
+      "description": "A chilling prickle on your neck or a whisper in the static of your mind often warns you of immediate, hidden dangers like traps or ambushes."
+    },
+    "cs": {
+      "name": "Neviděný smysl",
+      "description": "Mrazivé mravenčení na krku nebo šepot ve statickém šumu vaší mysli vás často varuje před bezprostředními, skrytými nebezpečími, jako jsou pasti nebo léčky."
+    }
+  },
+  "alchemical_blood": {
+    "en": {
+      "name": "Alchemical Blood",
+      "description": "Your blood, altered by Warden rituals, grants you a natural resistance to common poisons and the slower, creeping effects of Blight exposure."
+    },
+    "cs": {
+      "name": "Alchymistická krev",
+      "description": "Vaše krev, změněná rituály Strážců, vám poskytuje přirozenou odolnost vůči běžným jedům a pomalejším, plíživým účinkům Zkázy."
+    }
+  },
+  "grave_walker": {
+    "en": {
+      "name": "Grave Walker",
+      "description": "You move with an unnatural quietness, making you harder to detect when sneaking through ruins or blighted wilds."
+    },
+    "cs": {
+      "name": "Chodec hrobu",
+      "description": "Pohybujete se s nepřirozenou tichostí, což ztěžuje vaše odhalení při plížení se ruinami nebo zkaženou divočinou."
+    }
+  },
+  "beast_slayer": {
+    "en": {
+      "name": "Beast Slayer",
+      "description": "Your deep knowledge of monstrous anatomy allows you to find weak points more easily, granting an edge when fighting non-humanoid abominations."
+    },
+    "cs": {
+      "name": "Zabiják bestií",
+      "description": "Vaše hluboké znalosti anatomie nestvůr vám umožňují snadněji nacházet slabá místa, což vám dává výhodu v boji proti nelidským ohavnostem."
+    }
+  },
+  "witch_hunter": {
+    "en": {
+      "name": "Witch Hunter",
+      "description": "You have honed your senses to detect the subtle signs of human corruption, making you more effective against Blight-cultists and their ilk."
+    },
+    "cs": {
+      "name": "Lovec čarodějnic",
+      "description": "Vycvičili jste své smysly k odhalování jemných známek lidské zkaženosti, což vás činí efektivnějšími proti kultistům Zkázy a jim podobným."
+    }
+  },
+  "iron_will": {
+    "en": {
+      "name": "Iron Will",
+      "description": "The horrors you've witnessed have forged your mind into a fortress, granting you superior resistance to fear, madness, and the psychic assaults of powerful Blighted entities."
+    },
+    "cs": {
+      "name": "Železná vůle",
+      "description": "Hrůzy, které jste zažili, ukovaly vaši mysl v pevnost, což vám poskytuje vyšší odolnost vůči strachu, šílenství a psychickým útokům mocných Zkažených entit."
+    }
+  },
+  "dour_visage": {
+    "en": {
+      "name": "Dour Visage",
+      "description": "Your grim countenance and scarred features are naturally intimidating, making threats more effective but friendly persuasion nearly impossible."
+    },
+    "cs": {
+      "name": "Ponurá tvář",
+      "description": "Vaše ponurá tvář a zjizvené rysy jsou přirozeně zastrašující, což činí výhrůžky účinnějšími, ale přátelské přesvědčování téměř nemožným."
+    }
+  },
+  "folk_hero": {
+    "en": {
+      "name": "Folk Hero",
+      "description": "Despite the Order's decline, whispers of your deeds precede you. Common folk are more likely to offer you shelter, information, or a bit of trust."
+    },
+    "cs": {
+      "name": "Lidový hrdina",
+      "description": "Navzdory úpadku Řádu vás předcházejí šepoty o vašich činech. Obyčejní lidé vám pravděpodobněji nabídnou úkryt, informace nebo trochu důvěry."
+    }
+  },
+  "orders_scholar": {
+    "en": {
+      "name": "Order's Scholar",
+      "description": "You have a rare talent for deciphering the crumbling texts and faded symbols of the old Warden Order, potentially unlocking forgotten knowledge."
+    },
+    "cs": {
+      "name": "Řádový učenec",
+      "description": "Máte vzácný talent na luštění drolících se textů a vybledlých symbolů starého Řádu Strážců, což vám může odemknout zapomenuté vědomosti."
+    }
+  },
+  "night_eyed": {
+    "en": {
+      "name": "Night-Eyed",
+      "description": "Your eyes have adapted to the gloom of the frontier, allowing you to see more clearly in near-total darkness than a normal human."
+    },
+    "cs": {
+      "name": "Noční zrak",
+      "description": "Vaše oči se přizpůsobily šeru pohraničí, což vám umožňuje vidět v téměř úplné tmě jasněji než normální člověk."
+    }
+  },
+  "resilient_digestion": {
+    "en": {
+      "name": "Resilient Digestion",
+      "description": "A life on the road, eating whatever can be scavenged, has given you an iron stomach, able to consume questionable food and drink with little ill effect."
+    },
+    "cs": {
+      "name": "Odolné trávení",
+      "description": "Život na cestách a konzumace všeho, co se dá najít, vám daly železný žaludek, schopný strávit pochybné jídlo a pití s malými následky."
+    }
+  },
+  "pain_fueled": {
+    "en": {
+      "name": "Pain-Fueled",
+      "description": "When grievously wounded, your desperation and adrenaline can surge, granting you a momentary burst of surprising strength or speed."
+    },
+    "cs": {
+      "name": "Poháněn bolestí",
+      "description": "Když jste těžce zraněni, vaše zoufalství a adrenalin mohou explodovat a poskytnout vám chvilkový výbuch překvapivé síly nebo rychlosti."
+    }
+  },
+  "blight_sniffer": {
+    "en": {
+      "name": "Blight-Sniffer",
+      "description": "You possess an unnerving, almost animalistic ability to smell concentrations of Blight, sometimes allowing you to detect hidden corruption or the lairs of tainted creatures."
+    },
+    "cs": {
+      "name": "Čichač Zkázy",
+      "description": "Máte znepokojivou, téměř zvířecí schopnost cítit koncentrace Zkázy, což vám někdy umožňuje odhalit skrytou nákazu nebo doupata zkažených tvorů."
+    }
+  },
+  "last_stand": {
+    "en": {
+      "name": "Last Stand",
+      "description": "When pushed to the brink of death, you can channel your remaining life force into one final, heroic effort, be it a mighty blow or a desperate escape."
+    },
+    "cs": {
+      "name": "Poslední vzdor",
+      "description": "Když jste na pokraji smrti, můžete soustředit svou zbývající životní sílu do jednoho posledního, hrdinského úsilí, ať už je to mocný úder nebo zoufalý únik."
+    }
+  },
+  "stoic_mind": {
+    "en": {
+      "name": "Stoic Mind",
+      "description": "You have mastered the art of emotional detachment, making you less susceptible to despair-inducing omens or the psychological ploys of intelligent foes."
+    },
+    "cs": {
+      "name": "Stoická mysl",
+      "description": "Ovládli jste umění emočního odstupu, což vás činí méně náchylnými k zoufalství vyvolávajícím znamením nebo psychologickým trikům inteligentních nepřátel."
+    }
+  },
+  "wardens_anatomy": {
+    "en": {
+      "name": "Warden's Anatomy",
+      "description": "The alchemical rites of your initiation have hardened your body, making you resistant to mundane diseases and allowing minor wounds to clot with unnatural speed."
+    },
+    "cs": {
+      "name": "Anatomie Strážce",
+      "description": "Alchymistické rituály vaší iniciace zocelily vaše tělo, učinily vás odolnými vůči běžným nemocem a umožnily, aby se menší rány srážely s nepřirozenou rychlostí."
+    }
+  }
+}

@@ -141,6 +141,30 @@ export function setGMActivityIndicator(isProcessing) {
 }
 
 /**
+ * Enables or disables the main player action input area without affecting GM activity indicators.
+ * Used for states where user should use suggested actions instead of typing.
+ * @param {boolean} isEnabled - True to enable, false to disable.
+ */
+export function setPlayerInputEnabled(isEnabled) {
+    const inputGroup = playerActionInput?.closest('.input-group');
+
+    if (playerActionInput) {
+        playerActionInput.disabled = !isEnabled;
+    }
+    if (sendActionButton) {
+        sendActionButton.disabled = !isEnabled;
+    }
+    if (inputGroup) {
+        if (isEnabled) {
+            inputGroup.classList.remove('input-group-disabled');
+        } else {
+            inputGroup.classList.add('input-group-disabled');
+        }
+    }
+    log(LOG_LEVEL_DEBUG, `Player action input set to enabled: ${isEnabled}`);
+}
+
+/**
  * Handles input events on the player action textarea.
  * Updates the character counter, enforces the MAX_PLAYER_ACTION_INPUT_LENGTH by truncating from the end
  * (keeping the beginning of pasted text if it exceeds the limit), and calls autoGrowTextarea.

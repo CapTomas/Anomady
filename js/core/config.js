@@ -55,7 +55,7 @@ export const MAX_PLAYER_LEVEL = XP_LEVELS.length;
 export const BOON_DEFINITIONS = {
     MAX_INTEGRITY_INCREASE: { value: 10, descriptionKey: "boon_desc_max_integrity" },
     MAX_WILLPOWER_INCREASE: { value: 5, descriptionKey: "boon_desc_max_willpower" },
-    // Attribute Enhancements and New Traits will be detailed later.
+    // Attribute Enhancements
 };
 
 // --- Game Logic Constants ---

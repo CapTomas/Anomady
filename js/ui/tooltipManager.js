@@ -51,7 +51,7 @@ function _createTooltipElement() {
  * @param {HTMLElement} targetElement - The element to show the tooltip for.
  * @param {string} textKey - The localization key for the tooltip text.
  * @param {object} textReplacements - Replacements for the text key.
- * @param {object} textOptions - Options for getUIText.
+ * @param {object} textOptions - Options including `rawText` for direct content.
  * @private
  */
 function _displayTooltipUI(targetElement, textKey, textReplacements, textOptions) {
@@ -59,26 +59,29 @@ function _displayTooltipUI(targetElement, textKey, textReplacements, textOptions
         _createTooltipElement();
     }
     if (!tooltipElement || !targetElement) return;
-
     clearTimeout(animationCleanupTimeoutId); // Cancel any pending animation cleanup
 
-    const explicitThemeContext = textOptions.explicitThemeContext || getCurrentTheme();
-    tooltipElement.textContent = getUIText(textKey, textReplacements, { ...textOptions, explicitThemeContext });
+    if (textOptions.rawText) {
+        tooltipElement.textContent = textOptions.rawText;
+    } else if (textKey) {
+        const explicitThemeContext = textOptions.explicitThemeContext || getCurrentTheme();
+        tooltipElement.textContent = getUIText(textKey, textReplacements, { ...textOptions, explicitThemeContext });
+    } else {
+        tooltipElement.textContent = ''; // No text to show, hide the tooltip
+        _hideTooltipUI();
+        return;
+    }
 
     // Temporarily make visible to measure dimensions for accurate positioning
     tooltipElement.style.visibility = 'hidden'; // Keep it hidden but layout-affecting
     tooltipElement.style.opacity = '0';       // Ensure it's transparent
     tooltipElement.style.display = 'block'; // Ensure it takes space for measurement
-
     const currentTooltipWidth = tooltipElement.offsetWidth;
     const currentTooltipHeight = tooltipElement.offsetHeight;
-
     tooltipElement.style.display = ''; // Reset display property
-
     const targetRect = targetElement.getBoundingClientRect();
     let top = targetRect.bottom + window.scrollY + TOOLTIP_OFFSET_Y;
     let left = targetRect.left + window.scrollX + (targetRect.width / 2) - (currentTooltipWidth / 2) + TOOLTIP_OFFSET_X;
-
     // Adjust if tooltip goes off screen (right edge)
     if (left + currentTooltipWidth > window.innerWidth - TOOLTIP_OFFSET_Y) {
         left = window.innerWidth - currentTooltipWidth - TOOLTIP_OFFSET_Y;
@@ -89,9 +92,7 @@ function _displayTooltipUI(targetElement, textKey, textReplacements, textOptions
     }
   // Top is initially calculated for bottom placement:
     const overflowsViewportBottom = (top + currentTooltipHeight) > (window.innerHeight + window.scrollY - TOOLTIP_OFFSET_Y);
-
     const hasClearSpaceAbove = (targetRect.top - (currentTooltipHeight + TOOLTIP_OFFSET_Y * 2)) > 0;
-
     if (overflowsViewportBottom && hasClearSpaceAbove) {
         top = targetRect.top + window.scrollY - currentTooltipHeight - TOOLTIP_OFFSET_Y;
     } else if (overflowsViewportBottom) {
@@ -100,7 +101,6 @@ function _displayTooltipUI(targetElement, textKey, textReplacements, textOptions
     if (top < window.scrollY + TOOLTIP_OFFSET_Y) {
         top = window.scrollY + TOOLTIP_OFFSET_Y;
     }
-
     tooltipElement.style.left = `${left}px`;
     tooltipElement.style.top = `${top}px`;
     tooltipElement.style.visibility = 'visible';
@@ -127,25 +127,56 @@ function _hideTooltipUI() {
 }
 
 /**
+ * Forces the currently displayed tooltip to hide immediately.
+ * This is useful for events like 'click' on the target element.
+ */
+export function hideCurrentTooltip() {
+    if (!tooltipElement) return;
+
+    // Clear any pending timers that might show or hide the tooltip.
+    clearTimeout(showTimeoutId);
+    clearTimeout(hideTimeoutId);
+    clearTimeout(animationCleanupTimeoutId);
+
+    // Reset state to prevent lingering hover/focus from re-showing the tooltip.
+    currentHoverTarget = null;
+    currentFocusTarget = null;
+
+    // Force an immediate, non-transitional hide.
+    tooltipElement.style.transition = 'none';
+    tooltipElement.style.opacity = '0';
+    tooltipElement.style.visibility = 'hidden';
+
+    // Restore the transition property after a frame so future mouseleave events work correctly.
+    requestAnimationFrame(() => {
+        if (tooltipElement) {
+            tooltipElement.style.transition = `opacity ${FADE_DURATION}ms ease-out, visibility 0s linear ${FADE_DURATION}ms`;
+        }
+    });
+}
+/**
  * Attaches custom tooltip functionality to an element.
  * The element's existing `title` attribute will be removed.
  * @param {HTMLElement} element - The element to attach the tooltip to.
- * @param {string} textKey - The localization key for the tooltip text.
+ * @param {string} textKey - The localization key for the tooltip text. Can be null if using rawText.
  * @param {object} [textReplacements={}] - Replacements for the text key.
- * @param {object} [textOptions={}] - Options for getUIText (e.g., explicitThemeContext).
+ * @param {object} [textOptions={}] - Options for getUIText (e.g., explicitThemeContext, rawText).
  */
 export function attachTooltip(element, textKey, textReplacements = {}, textOptions = {}) {
     if (!element) {
         log(LOG_LEVEL_DEBUG, "attachTooltip: Target element is null.");
         return;
     }
-
     element.removeAttribute('title');
+
+    // Do not attach listeners if there's no text source
+    if (!textKey && (!textOptions || !textOptions.rawText)) {
+        return;
+    }
 
     const handleMouseEnter = () => {
         clearTimeout(hideTimeoutId); // Cancel any pending hide from a previous mouseleave
         currentHoverTarget = element;
-
         showTimeoutId = setTimeout(() => {
             // Only show if the mouse is still over this element (or focus hasn't taken precedence)
             if (currentHoverTarget === element && currentFocusTarget !== element) {
@@ -153,11 +184,9 @@ export function attachTooltip(element, textKey, textReplacements = {}, textOptio
             }
         }, SHOW_DELAY);
     };
-
     const handleMouseLeave = () => {
         clearTimeout(showTimeoutId); // Cancel any pending show for this element
         currentHoverTarget = null;
-
         // Only hide if focus isn't currently on this element
         if (currentFocusTarget !== element) {
             hideTimeoutId = setTimeout(() => {
@@ -167,14 +196,12 @@ export function attachTooltip(element, textKey, textReplacements = {}, textOptio
             }, HIDE_DELAY);
         }
     };
-
     const handleFocus = () => {
         clearTimeout(hideTimeoutId); // Cancel any pending hide
         clearTimeout(showTimeoutId); // Cancel any pending show from mouse hover
         currentFocusTarget = element;
         _displayTooltipUI(element, textKey, textReplacements, textOptions); // Show immediately on focus
     };
-
     const handleBlur = () => {
         currentFocusTarget = null;
         // If mouse is still hovering, let mouseleave handle hiding later.
@@ -183,7 +210,6 @@ export function attachTooltip(element, textKey, textReplacements = {}, textOptio
              _hideTooltipUI();
         }
     };
-
     element.addEventListener('mouseenter', handleMouseEnter);
     element.addEventListener('mouseleave', handleMouseLeave);
     element.addEventListener('focus', handleFocus);

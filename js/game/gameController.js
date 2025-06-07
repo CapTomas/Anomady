@@ -22,14 +22,15 @@ import * as worldShardsModalManager from '../ui/worldShardsModalManager.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
 import { XP_LEVELS, MAX_PLAYER_LEVEL, BOON_DEFINITIONS } from '../core/config.js';
 import * as characterPanelManager from '../ui/characterPanelManager.js';
+import { getThemeTraits } from '../services/themeService.js';
 
+let _deferredInitialActionText = null;
 // Module-level state for managing multi-step boon selections
 let _boonSelectionContext = {
     step: 'none', // 'none', 'primary', 'secondary_attribute', 'secondary_trait'
 };
 // Dependencies to be injected by app.js
 let _userThemeControlsManagerRef = null;
-
 /**
  * Loads the UserThemeProgress for the current user and theme, or initializes a default one.
  * @param {string} themeId - The ID of the theme.
@@ -86,7 +87,6 @@ async function _loadOrCreateUserThemeProgress(themeId) {
     state.setCurrentUserThemeProgress(progressData);
     log(LOG_LEVEL_DEBUG, `UserThemeProgress set in state for theme ${themeId}:`, progressData);
 }
-
 /**
  * Initializes current run stats (Integrity, Willpower) based on effective maximums.
  * @private
@@ -102,7 +102,6 @@ async function _initializeCurrentRunStats() {
     });
     log(LOG_LEVEL_DEBUG, `Current run stats initialized: IG ${maxIntegrity}, WP ${maxWillpower}, Strain 1`);
 }
-
 /**
  * Handles XP gain and checks for level-ups.
  * If a level-up occurs, it sets the boon selection pending state and triggers boon choice presentation.
@@ -139,8 +138,6 @@ async function _handleExperienceAndLevelUp(xpAwarded) {
     state.setCurrentUserThemeProgress(currentUserThemeProgress);
     characterPanelManager.updateCharacterPanel();
 }
-
-
 /**
  * Presents the primary Boon selection choices to the player.
  * @private
@@ -148,7 +145,6 @@ async function _handleExperienceAndLevelUp(xpAwarded) {
 function _presentPrimaryBoonChoices() {
     _boonSelectionContext.step = 'primary';
     storyLogManager.addMessageToLog(localizationService.getUIText("system_boon_selection_prompt"), "system");
-
     const boonChoices = [
         {
             text: localizationService.getUIText(BOON_DEFINITIONS.MAX_INTEGRITY_INCREASE.descriptionKey, { VALUE: BOON_DEFINITIONS.MAX_INTEGRITY_INCREASE.value }),
@@ -166,15 +162,15 @@ function _presentPrimaryBoonChoices() {
             boonId: 'PRIMARY_NEW_TRAIT'
         }
     ];
-
     suggestedActionsManager.displaySuggestedActions(boonChoices);
     if (dom.playerActionInput) {
         dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_boon_selection");
         state.setCurrentAiPlaceholder(dom.playerActionInput.placeholder);
     }
     uiUtils.setGMActivityIndicator(false);
-}
+    uiUtils.setPlayerInputEnabled(false); // Prevent typing during boon choice
 
+}
 /**
  * Presents the secondary Boon selection choices (attributes or traits).
  * @param {'attribute'|'trait'} type - The type of secondary choice to present.
@@ -182,9 +178,8 @@ function _presentPrimaryBoonChoices() {
  */
 function _presentSecondaryBoonChoices(type) {
     const themeId = state.getCurrentTheme();
-    const themeConfig = themeService.getThemeConfig(themeId);
+    const lang = state.getCurrentAppLanguage();
     let secondaryChoices = [];
-
     if (type === 'attribute') {
         _boonSelectionContext.step = 'secondary_attribute';
         secondaryChoices.push({
@@ -199,30 +194,41 @@ function _presentSecondaryBoonChoices(type) {
         });
     } else if (type === 'trait') {
         _boonSelectionContext.step = 'secondary_trait';
-        const allTraitKeys = themeConfig?.trait_definitions || [];
+        const allThemeTraits = getThemeTraits(themeId);
         const acquiredTraitKeys = state.getAcquiredTraitKeys();
-        const availableTraitKeys = allTraitKeys.filter(key => !acquiredTraitKeys.includes(key));
-
-        const traitsToOffer = availableTraitKeys.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-        if (traitsToOffer.length > 0) {
-            traitsToOffer.forEach(traitKey => {
-                secondaryChoices.push({
-                    text: localizationService.getUIText(`trait_name_${traitKey}`, {}, {explicitThemeContext: themeId}),
-                    isBoonChoice: true,
-                    boonId: `TRAIT_${traitKey.toUpperCase()}`
-                });
-            });
-        } else {
-            storyLogManager.addMessageToLog("No new traits available. Please choose another Boon.", "system-error");
+        if (!allThemeTraits) {
+            log(LOG_LEVEL_ERROR, `Cannot offer trait boon: No traits defined for theme ${themeId}.`);
+            storyLogManager.addMessageToLog("SYSTEM ERROR: Trait definitions for this theme are missing. Please choose another Boon.", "system-error");
             _presentPrimaryBoonChoices();
             return;
         }
+        const availableTraitKeys = Object.keys(allThemeTraits).filter(key => !acquiredTraitKeys.includes(key));
+        if (availableTraitKeys.length === 0) {
+            storyLogManager.addMessageToLog("No new traits available. Please choose another Boon.", "system-error");
+            _presentPrimaryBoonChoices(); // Go back to primary choices
+            return;
+        }
+        const traitsToOffer = availableTraitKeys.sort(() => 0.5 - Math.random()).slice(0, 3);
+        traitsToOffer.forEach(traitKey => {
+            const traitData = allThemeTraits[traitKey];
+            if (traitData && (traitData[lang] || traitData['en'])) {
+                const localizedTrait = traitData[lang] || traitData['en'];
+                const name = localizedTrait.name;
+                const description = localizedTrait.description;
+                secondaryChoices.push({
+                    text: `${name}: ${description}`, // Full text for matching
+                    displayText: name, // For button text
+                    descriptionForTooltip: description, // For tooltip
+                    isBoonChoice: true,
+                    boonId: `TRAIT_${traitKey.toUpperCase()}`
+                });
+            }
+        });
     }
-
     suggestedActionsManager.displaySuggestedActions(secondaryChoices);
-}
+    uiUtils.setPlayerInputEnabled(false); // Prevent typing during boon choice
 
+}
 /**
  * Finalizes the boon application by calling the API and updating the UI.
  * @param {object} payload - The boon payload for the API.
@@ -232,38 +238,31 @@ function _presentSecondaryBoonChoices(type) {
 async function _applyBoonAndFinalize(payload, boonDisplayText) {
     uiUtils.setGMActivityIndicator(true);
     storyLogManager.showLoadingIndicator();
-
     try {
         const currentUser = state.getCurrentUser();
         const themeId = state.getCurrentTheme();
         if (!currentUser || !currentUser.token || !themeId) {
             throw new Error("User or theme context lost during Boon finalization.");
         }
-
         const response = await apiService.applyBoonSelection(currentUser.token, themeId, payload);
-
         state.setCurrentUserThemeProgress(response.userThemeProgress);
         state.setIsBoonSelectionPending(false);
         _boonSelectionContext.step = 'none';
-
         storyLogManager.addMessageToLog(
             localizationService.getUIText("system_boon_applied", { BOON_TEXT: boonDisplayText }),
             "system-emphasized"
         );
         _initializeCurrentRunStats();
         characterPanelManager.updateCharacterPanel();
-
         const restoredActions = state.getLastAiSuggestedActions();
         state.setCurrentSuggestedActions(restoredActions || []);
         suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
-
+        uiUtils.setPlayerInputEnabled(true);
         if (dom.playerActionInput) {
             dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder() || localizationService.getUIText("placeholder_command");
             dom.playerActionInput.focus();
         }
-
         await authService.saveCurrentGameState();
-
     } catch (error) {
         log(LOG_LEVEL_ERROR, "Error applying Boon:", error);
         storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: error.message || "Failed to apply Boon." }), "system system-error");
@@ -273,7 +272,6 @@ async function _applyBoonAndFinalize(payload, boonDisplayText) {
         storyLogManager.removeLoadingIndicator();
     }
 }
-
 /**
  * Handles the player's Boon selection.
  * @param {string} boonId - The ID of the selected Boon (e.g., "PRIMARY_MAX_IG").
@@ -282,9 +280,7 @@ async function _applyBoonAndFinalize(payload, boonDisplayText) {
  */
 async function _handleBoonSelection(boonId, boonDisplayText) {
     log(LOG_LEVEL_INFO, `Handling boon selection (Step: ${_boonSelectionContext.step}) for choice: ${boonId}`);
-
     const step = _boonSelectionContext.step;
-
     if (step === 'primary') {
         switch (boonId) {
             case 'PRIMARY_MAX_IG':
@@ -318,11 +314,78 @@ async function _handleBoonSelection(boonId, boonDisplayText) {
         if (boonId.startsWith('TRAIT_')) {
             const traitKey = boonId.replace('TRAIT_', '').toLowerCase();
             const payload = { boonType: "NEW_TRAIT", value: traitKey };
-            await _applyBoonAndFinalize(payload, boonDisplayText);
+            // For logging, we only want the name, not the full description
+            const traitName = boonDisplayText.split(':')[0];
+            await _applyBoonAndFinalize(payload, traitName);
         }
     }
 }
-
+/**
+ * Presents the initial trait selection choices to a new character.
+ * @private
+ */
+function _presentInitialTraitChoices() {
+    storyLogManager.addMessageToLog(localizationService.getUIText("system_initial_trait_selection_prompt"), "system");
+    const themeId = state.getCurrentTheme();
+    const lang = state.getCurrentAppLanguage();
+    const allTraits = getThemeTraits(themeId);
+    if (!allTraits) {
+        log(LOG_LEVEL_ERROR, `No traits found for theme ${themeId}. Skipping initial trait selection.`);
+        processPlayerAction(_deferredInitialActionText, true);
+        return;
+    }
+    const traitKeys = Object.keys(allTraits);
+    const traitsToOffer = traitKeys.sort(() => 0.5 - Math.random()).slice(0, 3);
+    const traitChoices = traitsToOffer.map(key => {
+        const traitData = allTraits[key][lang] || allTraits[key]['en'];
+        const name = traitData.name;
+        const description = traitData.description;
+        return {
+            text: `${name}: ${description}`, // Full text for matching
+            displayText: name, // For button text
+            descriptionForTooltip: description, // For tooltip
+            isTraitChoice: true,
+            traitKey: key
+        };
+    });
+    suggestedActionsManager.displaySuggestedActions(traitChoices);
+    if (dom.playerActionInput) {
+        dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_boon_selection");
+        state.setCurrentAiPlaceholder(dom.playerActionInput.placeholder);
+    }
+    uiUtils.setGMActivityIndicator(false);
+    uiUtils.setPlayerInputEnabled(false); // Prevent typing during trait choice
+}
+/**
+ * Handles the player's initial trait selection and starts the game.
+ * @param {string} traitKey - The key of the selected trait.
+ * @private
+ */
+async function _handleInitialTraitSelection(traitKey) {
+    uiUtils.setGMActivityIndicator(true);
+    storyLogManager.showLoadingIndicator();
+    const progress = state.getCurrentUserThemeProgress();
+    if (progress) {
+        progress.acquiredTraitKeys = [traitKey];
+        state.setCurrentUserThemeProgress(progress);
+    } else {
+        log(LOG_LEVEL_ERROR, "Cannot set initial trait: UserThemeProgress is not initialized.");
+        uiUtils.setGMActivityIndicator(false);
+        storyLogManager.removeLoadingIndicator();
+        return;
+    }
+    state.setIsInitialTraitSelectionPending(false);
+    uiUtils.setPlayerInputEnabled(true);
+    log(LOG_LEVEL_INFO, `Initial trait '${traitKey}' selected. Proceeding to start game narrative.`);
+    if (_deferredInitialActionText) {
+        await processPlayerAction(_deferredInitialActionText, true);
+        _deferredInitialActionText = null; // Clear after use
+    } else {
+        log(LOG_LEVEL_ERROR, "Deferred initial action text was missing after trait selection.");
+        uiUtils.setGMActivityIndicator(false);
+        storyLogManager.removeLoadingIndicator();
+    }
+}
 /**
  * Initializes the GameController with necessary dependencies.
  * @param {object} dependencies - Object containing references to other modules.
@@ -336,7 +399,6 @@ export function initGameController(dependencies) {
     }
     log(LOG_LEVEL_INFO, "GameController initialized.");
 }
-
 /**
  * Internal helper to set up UI for a new game after theme selection and world type choice.
  * This function prepares the environment for the player to enter their identifier.
@@ -346,7 +408,6 @@ export function initGameController(dependencies) {
 async function _setupNewGameEnvironment(themeId) {
     log(LOG_LEVEL_INFO, `Setting up new game environment for theme: ${themeId}. Player will be prompted for identifier.`);
     state.setCurrentTheme(themeId);
-
     const dataLoaded = await themeService.ensureThemeDataLoaded(themeId);
     if (!dataLoaded) {
         log(LOG_LEVEL_ERROR, `Critical data for theme ${themeId} failed to load for new game.`);
@@ -354,34 +415,30 @@ async function _setupNewGameEnvironment(themeId) {
         await switchToLanding();
         return;
     }
+    // Preload all necessary text files
     await themeService.getAllPromptsForTheme(themeId);
     await themeService.ensureThemeDataLoaded("master");
     await themeService.getAllPromptsForTheme("master");
-
+    // This will fetch and cache traits.json if it's in the config
+    await themeService.fetchAndCachePromptFile(themeId, 'traits');
     state.clearVolatileGameState();
     state.setIsInitialGameLoad(true);
     state.setCurrentPromptType("initial");
-
     log(LOG_LEVEL_DEBUG, "Clearing UI components for new game environment...");
     storyLogManager.clearStoryLogDOM();
     suggestedActionsManager.clearSuggestedActions();
     dashboardManager.resetDashboardUI(themeId);
-
     await _loadOrCreateUserThemeProgress(themeId);
     _initializeCurrentRunStats();
-
     characterPanelManager.updateCharacterPanel();
     characterPanelManager.showCharacterPanel(true);
     characterPanelManager.showXPBar(true);
-
     landingPageManager.switchToGameView(themeId);
-
     if (_userThemeControlsManagerRef && typeof _userThemeControlsManagerRef.setThemeAsPlaying === 'function') {
         await _userThemeControlsManagerRef.setThemeAsPlaying(themeId);
     } else {
         log(LOG_LEVEL_WARN, "UserThemeControlsManager not available in _setupNewGameEnvironment. Cannot set theme as playing.");
     }
-
     state.setPlayerIdentifier("");
     if (dom.nameInputSection) dom.nameInputSection.style.display = "flex";
     if (dom.actionInputSection) dom.actionInputSection.style.display = "none";
@@ -393,7 +450,6 @@ async function _setupNewGameEnvironment(themeId) {
     storyLogManager.addMessageToLog(localizationService.getUIText("alert_identifier_required"), "system");
     log(LOG_LEVEL_INFO, `UI configured for new game in theme ${themeId}. Awaiting player identifier input.`);
 }
-
 /**
  * Handles player identifier submission for anonymous users.
  * @param {string} identifier - The player's chosen identifier.
@@ -415,7 +471,6 @@ export async function handleIdentifierSubmission(identifier) {
         dom.playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
         dom.playerActionInput.focus();
     }
-    storyLogManager.addMessageToLog(localizationService.getUIText("connecting", { PLAYER_ID: identifier }), "system");
     const currentThemeId = state.getCurrentTheme();
     const themeDisplayName = currentThemeId
         ? (themeService.getThemeConfig(currentThemeId)?.name_key
@@ -424,29 +479,36 @@ export async function handleIdentifierSubmission(identifier) {
         : "Unknown Theme";
     const newGameSettings = state.getCurrentNewGameSettings();
     const useEvolvedWorld = newGameSettings ? newGameSettings.useEvolvedWorld : false;
-    const initialActionText = `Start game as "${identifier}". Theme: ${themeDisplayName}. Evolved World: ${useEvolvedWorld}.`;
-
+    _deferredInitialActionText = `Start game as "${identifier}". Theme: ${themeDisplayName}. Evolved World: ${useEvolvedWorld}.`;
     state.clearCurrentNewGameSettings();
-    await processPlayerAction(initialActionText, true);
+    const progress = state.getCurrentUserThemeProgress();
+    if (progress && progress.level === 1 && progress.currentXP === 0 && progress.acquiredTraitKeys.length === 0) {
+        state.setIsInitialTraitSelectionPending(true);
+        _presentInitialTraitChoices();
+    } else {
+        await processPlayerAction(_deferredInitialActionText, true);
+        _deferredInitialActionText = null;
+    }
 }
-
 /**
  * Initializes a new game session after user confirmation and world type choice.
  * @param {string} themeId - The ID of the theme to start.
+ * @param {boolean} [skipConfirmation=false] - If true, skips the confirmation dialog for overwriting an existing game.
  */
-export async function initiateNewGameSessionFlow(themeId) {
-    log(LOG_LEVEL_INFO, `Initiating new game session flow for theme: ${themeId}`);
+export async function initiateNewGameSessionFlow(themeId, skipConfirmation = false) {
+    log(LOG_LEVEL_INFO, `Initiating new game session flow for theme: ${themeId}. Skip confirmation: ${skipConfirmation}`);
     const currentUser = state.getCurrentUser();
     const themeConfig = themeService.getThemeConfig(themeId);
     const themeDisplayName = themeConfig?.name_key
         ? localizationService.getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeId })
         : themeId;
-
     let needsConfirmation = false;
-    if (currentUser && state.getPlayingThemes().includes(themeId)) {
-        needsConfirmation = true;
-    } else if (!currentUser && state.getCurrentTheme() === themeId && state.getGameHistory().length > 0) {
-        needsConfirmation = true;
+    if (!skipConfirmation) {
+        if (currentUser && state.getPlayingThemes().includes(themeId)) {
+            needsConfirmation = true;
+        } else if (!currentUser && state.getCurrentTheme() === themeId && state.getGameHistory().length > 0) {
+            needsConfirmation = true;
+        }
     }
 
     if (needsConfirmation) {
@@ -456,21 +518,18 @@ export async function initiateNewGameSessionFlow(themeId) {
         if (testThemeMessage === themeSpecificMessageKey) {
              messageKeyToUse = "confirm_new_game_message_theme";
         }
-
         const confirmed = await modalManager.showGenericConfirmModal({
             titleKey: "confirm_new_game_title_theme",
             messageKey: messageKeyToUse,
             replacements: { THEME_NAME: themeDisplayName },
             explicitThemeContext: themeId
         });
-
         if (!confirmed) {
             log(LOG_LEVEL_INFO, "User cancelled starting new game.");
             return;
         }
         log(LOG_LEVEL_INFO, "User confirmed starting new game. Proceeding to delete old state if any.");
     }
-
     if (currentUser && currentUser.token) {
         try {
             log(LOG_LEVEL_DEBUG, `New game flow for logged-in user. Attempting to delete any existing game state for theme ${themeId}.`);
@@ -484,7 +543,6 @@ export async function initiateNewGameSessionFlow(themeId) {
             }
         }
     }
-
     const themeStatus = currentUser ? state.getShapedThemeData().get(themeId) : null;
     let useEvolvedWorld = false;
     if (currentUser && themeStatus && themeStatus.hasShards && themeStatus.activeShardCount > 0) {
@@ -495,10 +553,8 @@ export async function initiateNewGameSessionFlow(themeId) {
         useEvolvedWorld = false;
     }
     state.setCurrentNewGameSettings({ useEvolvedWorld });
-
     await _setupNewGameEnvironment(themeId);
 }
-
 /**
  * Resumes an existing game session for the given theme.
  * If no saved game is found, it initiates a new game flow.
@@ -517,6 +573,7 @@ export async function resumeGameSession(themeId) {
     await themeService.getAllPromptsForTheme(themeId);
     await themeService.ensureThemeDataLoaded("master");
     await themeService.getAllPromptsForTheme("master");
+    await themeService.fetchAndCachePromptFile(themeId, 'traits'); // Ensure traits are loaded
     landingPageManager.switchToGameView(themeId);
     dashboardManager.generatePanelsForTheme(themeId);
     const currentUser = state.getCurrentUser();
@@ -530,14 +587,11 @@ export async function resumeGameSession(themeId) {
             }
             // Initialize run stats to max values first
             await _initializeCurrentRunStats();
-
             // Now, apply the loaded percentages and other stats
             const lastUpdates = loadedData.last_dashboard_updates || {};
             const statsToUpdate = { ...state.getCurrentRunStats() }; // Start with a fresh object with max values
-
             const maxIntegrity = state.getEffectiveMaxIntegrity();
             const maxWillpower = state.getEffectiveMaxWillpower();
-
             if (lastUpdates.healthPct !== undefined) {
                 const pct = parseInt(lastUpdates.healthPct, 10);
                 if (!isNaN(pct)) {
@@ -558,7 +612,6 @@ export async function resumeGameSession(themeId) {
                 statsToUpdate.conditions = Array.isArray(lastUpdates.conditions_list) ? lastUpdates.conditions_list : [];
             }
             state.setCurrentRunStats(statsToUpdate); // Apply the fully calculated stats
-
             characterPanelManager.updateCharacterPanel();
             characterPanelManager.showCharacterPanel(true);
             characterPanelManager.showXPBar(true);
@@ -620,12 +673,13 @@ export async function resumeGameSession(themeId) {
         } catch (error) {
             if (_userThemeControlsManagerRef) _userThemeControlsManagerRef.updateTopbarThemeIcons();
             if (error.status === 404 && (error.code === 'GAME_STATE_NOT_FOUND' || error.code === 'USER_THEME_PROGRESS_NOT_FOUND')) {
-                log(LOG_LEVEL_INFO, `No game state or progress found for theme '${themeId}'. Starting new game flow.`);
-                await initiateNewGameSessionFlow(themeId);
+                log(LOG_LEVEL_INFO, `No game state or progress found for theme '${themeId}'. Starting new game flow without confirmation.`);
+                await initiateNewGameSessionFlow(themeId, true); // Pass true to skip confirmation
             } else {
                 log(LOG_LEVEL_ERROR, `Error loading game state or progress for ${themeId}:`, error.message);
                 storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: `Could not load game: ${error.message}` }), "system system-error");
-                await initiateNewGameSessionFlow(themeId);
+                // Also skip confirmation on other load errors to avoid getting stuck in a loop.
+                await initiateNewGameSessionFlow(themeId, true);
             }
         }
     } else {
@@ -634,7 +688,6 @@ export async function resumeGameSession(themeId) {
     }
     characterPanelManager.updateCharacterPanel();
 }
-
 /**
  * Processes the player's action, sends it to the AI, and updates the UI.
  * @param {string} actionText - The text of the player's action.
@@ -642,6 +695,18 @@ export async function resumeGameSession(themeId) {
  */
 export async function processPlayerAction(actionText, isGameStartingAction = false) {
     log(LOG_LEVEL_INFO, `Processing player action: "${actionText.substring(0, 50)}..." (isGameStartingAction: ${isGameStartingAction})`);
+    if (state.getIsInitialTraitSelectionPending()) {
+        const traitAction = state.getCurrentSuggestedActions().find(
+            action => (typeof action === 'object' && action.text === actionText && action.isTraitChoice)
+        );
+        if (traitAction && traitAction.traitKey) {
+            await _handleInitialTraitSelection(traitAction.traitKey);
+        } else {
+             storyLogManager.addMessageToLog(localizationService.getUIText("error_invalid_boon_choice"), "system system-error");
+            _presentInitialTraitChoices(); // Re-present choices if input was invalid
+        }
+        return; // Stop processing here, _handleInitialTraitSelection will trigger the next step
+    }
     if (state.getIsBoonSelectionPending()) {
         const boonAction = state.getCurrentSuggestedActions().find(
             action => (typeof action === 'object' && action.text === actionText && action.isBoonChoice)
@@ -688,7 +753,9 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
         }
     }
     if (!isGameStartingAction) {
-        storyLogManager.renderMessage(actionText, "player");
+        if (state.getGameHistory().length > 0) {
+            storyLogManager.renderMessage(actionText, "player");
+        }
         state.addTurnToGameHistory({ role: "user", parts: [{ text: actionText }] });
         if (dom.playerActionInput) {
             dom.playerActionInput.value = "";
@@ -744,12 +811,11 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
         storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: error.message }), "system system-error");
         if (dom.playerActionInput) dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_command");
     } finally {
-        if (!state.getIsBoonSelectionPending()) {
+        if (!state.getIsBoonSelectionPending() && !state.getIsInitialTraitSelectionPending()) {
             uiUtils.setGMActivityIndicator(false);
         }
     }
 }
-
 /**
  * Changes the active game theme.
  * @param {string} newThemeId - The ID of the theme to switch to.
@@ -818,7 +884,6 @@ export async function changeActiveTheme(newThemeId, forceNewGame = false) {
         log(LOG_LEVEL_DEBUG, `changeActiveTheme finally block: Character panel updated. Visible: ${state.getCurrentTheme() !== null}`);
     }
 }
-
 /**
  * Handles changes in game state indicators received from the AI.
  * This function is responsible for updating UI based on these flags,
@@ -845,7 +910,6 @@ export function handleGameStateIndicatorsChange(newIndicators, isInitialBoot = f
     }
     const dashboardConfig = themeCfgFull.dashboard_config;
     const allThemePanels = [...(dashboardConfig.left_panel || []), ...(dashboardConfig.right_panel || [])];
-
     allThemePanels.forEach(panelCfg => {
         if (panelCfg.type === "hidden_until_active" && panelCfg.indicator_key) {
             const panelBox = document.getElementById(panelCfg.id);
@@ -861,7 +925,6 @@ export function handleGameStateIndicatorsChange(newIndicators, isInitialBoot = f
             }
         }
     });
-
     let newPromptTypeForAI = "default";
     let highestPriorityFound = -1;
     if (dashboardConfig.game_state_indicators && Array.isArray(dashboardConfig.game_state_indicators)) {
@@ -881,18 +944,15 @@ export function handleGameStateIndicatorsChange(newIndicators, isInitialBoot = f
             }
         }
     }
-
     if (state.getCurrentPromptType() !== newPromptTypeForAI) {
         state.setCurrentPromptType(newPromptTypeForAI);
         log(LOG_LEVEL_INFO, `Switched to prompt type: ${newPromptTypeForAI} (Priority: ${highestPriorityFound > -1 ? highestPriorityFound : "default"})`);
     }
-
     requestAnimationFrame(() => {
         if (dom.leftPanel && !document.body.classList.contains("landing-page-active")) dashboardManager.updateScrollIndicators('left');
         if (dom.rightPanel && !document.body.classList.contains("landing-page-active")) dashboardManager.updateScrollIndicators('right');
     });
 }
-
 /**
  * Switches the UI to the landing page view.
  * Orchestrates saving the current game (if any), clearing game-specific state,
@@ -910,17 +970,14 @@ export async function switchToLanding() {
     state.setCurrentTheme(null);
     state.setIsInitialGameLoad(true);
     state.setIsBoonSelectionPending(false);
-
     await landingPageManager.switchToLandingView();
     characterPanelManager.showCharacterPanel(false);
     characterPanelManager.showXPBar(false);
-
     if (_userThemeControlsManagerRef) {
         _userThemeControlsManagerRef.updateTopbarThemeIcons();
     }
     log(LOG_LEVEL_INFO, "Switched to landing view. Game session state cleared.");
 }
-
 /**
  * Public interface for worldShardsModalManager to call from landing page,
  * or potentially from within a game if a "Configure Shards" button is added there.
@@ -929,7 +986,6 @@ export async function switchToLanding() {
 export function showConfigureShardsModal(themeId) {
     worldShardsModalManager.showConfigureShardsModal(themeId);
 }
-
 /**
  * Public interface for characterPanelManager to show the character progress modal.
  * @param {string} themeId - The theme ID for which to show the progress modal.

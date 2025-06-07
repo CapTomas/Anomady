@@ -278,7 +278,16 @@ body.auth-page-active #center-column {
 	gap: var(--spacing-md);
 	background-image: url(images/app/background_noise.png);
 }
-
+button.ui-button.boon-action {
+    background-color: var(--color-accent-main) !important;
+    background-image: url(images/app/color_noise.png) !important;
+    color: var(--color-bg-theme-grid-icon-hover) !important;
+}
+button.ui-button.boon-action:hover {
+    background-color: var(--color-accent-main-light) !important;
+    background-image: url(images/app/color_noise.png) !important;
+    color: var(--color-bg-content-view) !important;
+}
 .character-info-left {
 	display: flex;
 	flex-direction: row;
@@ -1643,6 +1652,28 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 }
 .input-group:focus-within {
 	box-shadow: var(--shadow-focus-ring);
+}
+.input-group.input-group-disabled {
+	background-color: var(--color-bg-content-view); /* A slightly different shade to indicate inactive state */
+	cursor: not-allowed;
+	box-shadow: 0 0 0 2px var(--color-bg-content-view);
+}
+.input-group.input-group-disabled textarea,
+.input-group.input-group-disabled .ui-button {
+	cursor: not-allowed;
+}
+.input-group.input-group-disabled textarea {
+	color: var(--color-text-muted);
+}
+.input-group.input-group-disabled textarea::placeholder {
+	color: var(--color-text-muted);
+	opacity: 0.6;
+}
+/* Override generic disabled button styles for better visibility in this specific context */
+.input-group.input-group-disabled .ui-button.primary:disabled {
+    background-color: var(--color-bg-button-default-active);
+    color: var(--color-text-muted) !important; /* Important needed to override generic disabled style */
+    opacity: 0.6;
 }
 #player-input-control-panel input[type="text"],
 #player-input-control-panel textarea {

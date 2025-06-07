@@ -51,6 +51,7 @@ let _currentRunStats = { // Ephemeral stats for the current game run
 };
 let _lastAiSuggestedActions = null;
 let _isBoonSelectionPending = false;
+let _isInitialTraitSelectionPending = false;
 
 // --- Getters and Setters ---
 export const getCurrentUserThemeProgress = () => _currentUserThemeProgress;
@@ -273,6 +274,10 @@ export const setLastAiSuggestedActions = (actions) => {
 export const clearLastAiSuggestedActions = () => {
     _lastAiSuggestedActions = null;
 };
+export const getIsInitialTraitSelectionPending = () => _isInitialTraitSelectionPending;
+export const setIsInitialTraitSelectionPending = (isPending) => {
+    _isInitialTraitSelectionPending = !!isPending;
+};
 /**
  * Clears all non-persistent game-specific state variables.
  * User preferences and auth state are not cleared here.
@@ -300,6 +305,7 @@ export const clearVolatileGameState = () => {
         conditions: [],
     };
     _isBoonSelectionPending = false;
+    _isInitialTraitSelectionPending = false;
     clearCurrentNewGameSettings();
     _dashboardItemMeta = {};
 };

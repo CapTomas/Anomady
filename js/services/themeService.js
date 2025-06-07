@@ -13,6 +13,7 @@ const _themeTextData = {}; // Stores parsed texts.json for each theme
 const _PROMPT_URLS_BY_THEME = {}; // Stores prompt URLs from prompts-config.json
 const _NARRATIVE_LANG_PROMPT_PARTS_BY_THEME = {}; // Stores narrative lang parts from prompts-config.json
 const _gamePrompts = {}; // Cache for fetched prompt file contents: _gamePrompts[themeId][promptName] = content
+const _themeTraits = {}; // Cache for parsed traits: _themeTraits[themeId] = [{key, name, description}]
 
 /**
  * Fetches and parses a JSON file.
@@ -331,6 +332,34 @@ export async function getAllPromptsForTheme(themeId) {
     }
 }
 
+/**
+ * Retrieves the parsed trait definitions for a given theme.
+ * This function assumes the 'traits' JSON file has been loaded via `getAllPromptsForTheme`.
+ * The file should be a JSON object where keys are trait IDs.
+ * @param {string} themeId - The ID of the theme.
+ * @returns {object|null} A dictionary of trait objects, or null if not available.
+ */
+export function getThemeTraits(themeId) {
+    if (_themeTraits[themeId]) {
+        return _themeTraits[themeId];
+    }
+    // Note: Prompts are cached as text, even if they are JSON. We need to parse them.
+    const traitFileContent = getLoadedPromptText(themeId, 'traits');
+    if (traitFileContent) {
+        try {
+            const parsedTraits = JSON.parse(traitFileContent);
+            _themeTraits[themeId] = parsedTraits;
+            log(LOG_LEVEL_DEBUG, `Parsed and cached traits for theme ${themeId}.`);
+            return parsedTraits;
+        } catch (e) {
+            log(LOG_LEVEL_ERROR, `Failed to parse traits.json for theme ${themeId}. Content:`, traitFileContent, e);
+            return null;
+        }
+    }
+    log(LOG_LEVEL_WARN, `Trait definitions for theme '${themeId}' not found or not loaded. Ensure 'traits' is in prompts-config.json and preloaded.`);
+    return null;
+}
+
 // --- Cache Clearing Utilities (mostly for development/testing) ---
 export function _clearThemePromptCache(themeId = null) {
     if (themeId) {
@@ -349,6 +378,7 @@ export function _clearAllThemeDataCache() {
     Object.keys(_themeTextData).forEach(key => delete _themeTextData[key]);
     Object.keys(_PROMPT_URLS_BY_THEME).forEach(key => delete _PROMPT_URLS_BY_THEME[key]);
     Object.keys(_NARRATIVE_LANG_PROMPT_PARTS_BY_THEME).forEach(key => delete _NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[key]);
+    Object.keys(_themeTraits).forEach(key => delete _themeTraits[key]);
     _clearThemePromptCache(); // Clears _gamePrompts
-    log(LOG_LEVEL_INFO, 'All theme data caches (configs, texts, prompt configs, prompts) cleared.');
+    log(LOG_LEVEL_INFO, 'All theme data caches (configs, texts, prompt configs, prompts, traits) cleared.');
 }

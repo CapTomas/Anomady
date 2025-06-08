@@ -356,32 +356,34 @@ export function animateXpGain(xpGained) {
 
 /**
  * Updates the character progression panel and XP bar with the latest data from the state.
- * @param {object} [updates] - Optional object with new values to apply. If not provided, uses current state.
+ * @param {boolean} [highlight=true] - If true, updated values will flash to draw attention. Set to false for silent updates like on game load.
  */
-export function updateCharacterPanel(updates = {}) {
+export function updateCharacterPanel(highlight = true) {
     if (!characterProgressionPanel || characterProgressionPanel.style.display === 'none') {
         return;
     }
-
     const themeId = state.getCurrentTheme();
     if (!themeId) return;
-
     const themeConfig = getThemeConfig(themeId);
     const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
-
     // Update Identity block
     const playerIdentifier = state.getPlayerIdentifier() || getUIText('char_panel_placeholder_name');
     const level = state.getPlayerLevel();
     const idEl = document.getElementById('char-panel-identifier');
     const levelEl = document.getElementById('char-panel-level');
-    if (idEl) idEl.textContent = playerIdentifier;
-    if (levelEl) levelEl.textContent = `${getUIText("char_panel_label_level")} ${level}`;
-
+    if (idEl && idEl.textContent !== playerIdentifier) {
+        idEl.textContent = playerIdentifier;
+        if (highlight) uiUtils.flashElement(idEl);
+    }
+    const levelText = `${getUIText("char_panel_label_level")} ${level}`;
+    if (levelEl && levelEl.textContent !== levelText) {
+        levelEl.textContent = levelText;
+        if (highlight) uiUtils.flashElement(levelEl);
+    }
     // Update dynamic attributes
     const runStats = state.getCurrentRunStats();
     topPanelConfig.forEach(itemConfig => {
         let itemValue;
-
         // Special handling for Aptitude and Resilience which are calculated, not stored in runStats
         if (itemConfig.id === 'aptitude') {
             itemValue = state.getEffectiveAptitude();
@@ -391,20 +393,20 @@ export function updateCharacterPanel(updates = {}) {
             // For other stats like integrity, willpower, strain, get them from runStats
             itemValue = runStats[itemConfig.maps_to_run_stat];
         }
-
         if (itemValue === undefined) return;
-
         const valueEl = document.getElementById(`char-panel-${itemConfig.id}-value`);
         const meterEl = document.getElementById(`char-panel-${itemConfig.id}-meter`);
-
         if (itemConfig.type === 'meter') {
             let maxVal;
             if (itemConfig.id === 'integrity') maxVal = state.getEffectiveMaxIntegrity();
             else if (itemConfig.id === 'willpower') maxVal = state.getEffectiveMaxWillpower();
             else maxVal = 100; // Fallback for other meters if any
-
             const percentage = maxVal > 0 ? (itemValue / maxVal) * 100 : 0;
-            if (valueEl) valueEl.textContent = `${itemValue}/${maxVal}`;
+            const newTextContent = `${itemValue}/${maxVal}`;
+            if (valueEl && valueEl.textContent !== newTextContent) {
+                valueEl.textContent = newTextContent;
+                if (highlight) uiUtils.flashElement(valueEl);
+            }
             if (meterEl) {
                 meterEl.style.width = `${Math.max(0, Math.min(100, percentage))}%`;
                 meterEl.className = 'attribute-meter-bar'; // Reset classes
@@ -417,38 +419,48 @@ export function updateCharacterPanel(updates = {}) {
                 }
             }
         } else if (itemConfig.type === 'number') {
-            if (valueEl) valueEl.textContent = String(itemValue);
+            const newTextContent = String(itemValue);
+            if (valueEl && valueEl.textContent !== newTextContent) {
+                valueEl.textContent = newTextContent;
+                if (highlight) uiUtils.flashElement(valueEl);
+            }
         } else if (itemConfig.type === 'status_icon') {
             const iconEl = document.getElementById('char-panel-strain-icon');
             const levelConfig = itemConfig.level_mappings?.[String(itemValue)];
             if (iconEl && levelConfig) {
+                const newClass = levelConfig.css_class || 'status-info';
+                // Check if the class has changed to trigger flash
+                if (!iconEl.classList.contains(newClass)) {
+                    iconEl.className = 'attribute-value status-icon ' + newClass; // Reset and set
+                    if (highlight) uiUtils.flashElement(iconEl);
+                }
                 iconEl.style.webkitMaskImage = `url(${levelConfig.icon_path})`;
                 iconEl.style.maskImage = `url(${levelConfig.icon_path})`;
-                const newClass = levelConfig.css_class || 'status-info';
-                iconEl.className = 'attribute-value status-icon ' + newClass; // Reset and set
                 const tooltipText = getUIText(levelConfig.display_text_key, {}, { explicitThemeContext: themeId });
                 attachTooltip(iconEl, null, {}, { rawText: tooltipText });
             }
         }
     });
-
     // Update XP Bar
     const userProgress = state.getCurrentUserThemeProgress();
     if (xpBarContainer && xpBarFill && xpBarText && userProgress) {
+        const currentLevel = userProgress.level;
         const currentXP = userProgress.currentXP;
-        const xpForCurrentLevel = XP_LEVELS[level - 1] || 0;
-        const xpForNextLevel = (level < MAX_PLAYER_LEVEL) ? XP_LEVELS[level] : currentXP;
+        const xpForCurrentLevel = XP_LEVELS[currentLevel - 1] || 0;
+        const xpForNextLevel = (currentLevel < MAX_PLAYER_LEVEL) ? XP_LEVELS[currentLevel] : currentXP;
         const xpIntoCurrentLevel = currentXP - xpForCurrentLevel;
         const xpNeededForThisLevel = xpForNextLevel - xpForCurrentLevel;
-        const xpPercentage = (level >= MAX_PLAYER_LEVEL || xpNeededForThisLevel <= 0) ? 100 : (xpIntoCurrentLevel / xpNeededForThisLevel) * 100;
-
+        const xpPercentage = (currentLevel >= MAX_PLAYER_LEVEL || xpNeededForThisLevel <= 0) ? 100 : (xpIntoCurrentLevel / xpNeededForThisLevel) * 100;
         xpBarFill.style.width = `${Math.max(0, Math.min(100, xpPercentage))}%`;
-        xpBarText.textContent = (level >= MAX_PLAYER_LEVEL)
+        const newXpText = (currentLevel >= MAX_PLAYER_LEVEL)
             ? getUIText("xp_bar_max_level")
             : `${getUIText("xp_bar_label_xp")} ${currentXP}/${xpForNextLevel}`;
+        // Just update the text, the xpGained animation provides the visual feedback.
+        if (xpBarText.textContent !== newXpText) {
+            xpBarText.textContent = newXpText;
+        }
     }
 }
-
 
 /**
  * Updates the static labels in the character panel based on the current language.
@@ -456,33 +468,27 @@ export function updateCharacterPanel(updates = {}) {
  */
 export function retranslateCharacterPanelLabels() {
     if (!characterProgressionPanel) return;
-
     const themeId = state.getCurrentTheme();
     if (!themeId) return;
-
     // Retranslate static elements
     const idEl = document.getElementById('char-panel-identifier');
     const levelEl = document.getElementById('char-panel-level');
     if (idEl && !state.getPlayerIdentifier()) idEl.textContent = getUIText('char_panel_placeholder_name');
     if (levelEl) levelEl.textContent = `${getUIText("char_panel_label_level")} ${state.getPlayerLevel()}`;
-
     // Retranslate dynamically generated elements and tooltips
     const themeConfig = getThemeConfig(themeId);
     const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
-
     topPanelConfig.forEach(itemConfig => {
         const itemContainer = document.getElementById(`cp-item-${itemConfig.id}`);
         if (itemContainer) {
             const labelEl = itemContainer.querySelector('.attribute-label');
             if (labelEl) labelEl.textContent = getUIText(itemConfig.label_key);
-
             const tooltipTrigger = itemContainer.querySelector('.info-tooltip-trigger');
             if (tooltipTrigger && itemConfig.tooltip_key) {
                 attachTooltip(tooltipTrigger, itemConfig.tooltip_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
             }
         }
     });
-
     const rightContainer = dom.characterProgressionPanel.querySelector('.character-info-right');
     if(rightContainer) {
         const loreBtn = rightContainer.querySelector('#char-panel-lore-button');
@@ -492,9 +498,8 @@ export function retranslateCharacterPanelLabels() {
         if (invBtn) attachTooltip(invBtn, 'tooltip_inventory_button');
         if (traitsBtn) attachTooltip(traitsBtn, 'tooltip_traits_button');
     }
-
     log(LOG_LEVEL_DEBUG, "Character panel labels and tooltips re-translated.");
-    updateCharacterPanel(); // Refresh values which might include translated text
+    updateCharacterPanel(false); // Refresh values without highlight on language change
 }
 
 /**

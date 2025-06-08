@@ -426,7 +426,7 @@ async function _setupNewGameEnvironment(themeId) {
     characterPanelManager.buildCharacterPanel(themeId);
     await _loadOrCreateUserThemeProgress(themeId);
     _initializeCurrentRunStats();
-    characterPanelManager.updateCharacterPanel();
+    characterPanelManager.updateCharacterPanel(false);
     characterPanelManager.showCharacterPanel(true);
     characterPanelManager.showXPBar(true);
     landingPageManager.switchToGameView(themeId);
@@ -589,12 +589,10 @@ export async function resumeGameSession(themeId) {
             const statsToUpdate = { ...state.getCurrentRunStats() }; // Start with a fresh object with max values
             const themeConfig = themeService.getThemeConfig(themeId);
             const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
-
             // This loop correctly restores core stats like integrity and willpower from their absolute values
             topPanelConfig.forEach(itemConfig => {
                 const updateKey = itemConfig.id;
                 const statToUpdate = itemConfig.maps_to_run_stat;
-
                 if (lastUpdates[updateKey] !== undefined && statsToUpdate.hasOwnProperty(statToUpdate)) {
                     const absoluteValue = parseInt(String(lastUpdates[updateKey]), 10);
                     if (!isNaN(absoluteValue)) {
@@ -603,14 +601,12 @@ export async function resumeGameSession(themeId) {
                     }
                 }
             });
-
             // Handle other non-top-panel stats that might be in lastUpdates
             if (lastUpdates.conditions_list !== undefined) {
                 statsToUpdate.conditions = Array.isArray(lastUpdates.conditions_list) ? lastUpdates.conditions_list : [];
             }
-
             state.setCurrentRunStats(statsToUpdate); // Apply the fully calculated stats
-            characterPanelManager.updateCharacterPanel();
+            characterPanelManager.updateCharacterPanel(false);
             characterPanelManager.showCharacterPanel(true);
             characterPanelManager.showXPBar(true);
             if (!loadedData.player_identifier) {
@@ -684,7 +680,7 @@ export async function resumeGameSession(themeId) {
         log(LOG_LEVEL_INFO, "User not logged in. Cannot load. Initiating new game flow for anonymous user.");
         await initiateNewGameSessionFlow(themeId);
     }
-    characterPanelManager.updateCharacterPanel();
+    characterPanelManager.updateCharacterPanel(false);
 }
 /**
  * Processes the player's action, sends it to the AI, and updates the UI.
@@ -877,7 +873,7 @@ export async function changeActiveTheme(newThemeId, forceNewGame = false) {
                 landingPageManager.switchToGameView(newThemeId);
                 dashboardManager.updateDashboard(state.getLastKnownDashboardUpdates(), false);
                 suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
-                characterPanelManager.updateCharacterPanel();
+                characterPanelManager.updateCharacterPanel(false);
                 characterPanelManager.showCharacterPanel(true);
                 if (dom.playerActionInput && dom.actionInputSection && dom.actionInputSection.style.display !== 'none') {
                     dom.playerActionInput.focus();
@@ -919,7 +915,7 @@ export async function changeActiveTheme(newThemeId, forceNewGame = false) {
             log(LOG_LEVEL_DEBUG, `changeActiveTheme finally block: Updating topbar icons. Current theme in state after logic: ${state.getCurrentTheme()}`);
             _userThemeControlsManagerRef.updateTopbarThemeIcons();
         }
-        characterPanelManager.updateCharacterPanel();
+        characterPanelManager.updateCharacterPanel(false);
         const themeActive = state.getCurrentTheme() !== null;
         characterPanelManager.showCharacterPanel(themeActive);
         characterPanelManager.showXPBar(themeActive);

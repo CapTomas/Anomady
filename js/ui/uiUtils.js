@@ -71,6 +71,37 @@ export function highlightElementUpdate(element) {
 }
 
 /**
+ * Briefly highlights a UI element to indicate an update, using a flash effect.
+ * Differentiates between text elements (color flash via CSS) and icons (brightness flash via JS).
+ * @param {HTMLElement} element - The DOM element to flash.
+ */
+export function flashElement(element) {
+    if (!element) return;
+
+    if (element.classList.contains('status-icon')) {
+        // For icons, which are colored via background-color, we use a filter animation.
+        if (typeof element.animate === 'function') {
+            element.animate([
+                { filter: 'brightness(1.85)', offset: 0 },
+                { filter: 'brightness(1.85)', offset: 0.15 },
+                { filter: 'brightness(1)', offset: 1 }
+            ], {
+                duration: UPDATE_HIGHLIGHT_DURATION,
+                easing: 'ease-out'
+            });
+        }
+    } else {
+        // For text elements, use the existing CSS animation by adding a class.
+        element.classList.add("value-updated");
+        setTimeout(() => {
+            if (document.body.contains(element)) {
+                element.classList.remove("value-updated");
+            }
+        }, UPDATE_HIGHLIGHT_DURATION);
+    }
+}
+
+/**
  * Automatically adjusts the height of a textarea to fit its content,
  * up to a CSS-defined max-height.
  * @param {HTMLTextAreaElement} textareaElement - The textarea element to auto-grow.

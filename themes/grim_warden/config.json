@@ -33,14 +33,6 @@
         "initial_expanded": true,
         "items": [
           {
-            "id": "character_name",
-            "label_key": "label_character_name_grim_warden",
-            "type": "text",
-            "default_value_key": "unknown_warden",
-            "must_translate": false,
-            "short_description": "Player character's chosen name or grim epithet."
-          },
-          {
             "id": "silver_shards",
             "label_key": "label_character_coin_grim_warden",
             "tooltip_key": "tooltip_item_silver_shards_grim_warden",

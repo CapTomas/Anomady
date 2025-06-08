@@ -333,7 +333,11 @@ router.post('/me/themes/:themeId/boon', protect, async (req, res) => {
         }
     } else if (boonType === "NEW_TRAIT") {
         if(typeof value === 'string' && value.trim() !== '') {
-            updateData.acquiredTraitKeys = { push: value };
+            // Ensure acquiredTraitKeys is an array before pushing
+            const currentTraits = Array.isArray(userThemeProgress.acquiredTraitKeys) ? userThemeProgress.acquiredTraitKeys : [];
+            // Add the new trait, ensuring no duplicates
+            const newTraits = [...new Set([...currentTraits, value])];
+            updateData.acquiredTraitKeys = newTraits;
             validBoon = true;
         } else {
             logger.warn(`Invalid value for NEW_TRAIT: must be a non-empty string. Received: ${value}`);

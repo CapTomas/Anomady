@@ -31,8 +31,10 @@ const MAX_SUGGESTED_ACTIONS = 3; // Consistent with prompt file requests (2-3 ac
  *                                         `text` (string, button label),
  *                                         `isTemporaryMullOver: true`,
  *                                         `shardData` (object, the shard details).
+ * @param {object} [options={}] - Optional parameters for display.
+ * @param {string} [options.headerText] - Text to display as a header above the buttons.
  */
-export function displaySuggestedActions(actions) {
+export function displaySuggestedActions(actions, options = {}) {
     if (!suggestedActionsWrapper) {
         log(LOG_LEVEL_WARN, "Suggested actions wrapper element not found. Cannot display actions.");
         // Still update state even if UI element is missing, so game logic is consistent
@@ -40,6 +42,14 @@ export function displaySuggestedActions(actions) {
         return;
     }
     suggestedActionsWrapper.innerHTML = ""; // Clear previous actions
+
+    if (options.headerText) {
+        const header = document.createElement('div');
+        header.classList.add('suggested-actions-header');
+        header.textContent = options.headerText;
+        suggestedActionsWrapper.appendChild(header);
+    }
+
     let validActionsToStore = [];
     if (actions && Array.isArray(actions) && actions.length > 0) {
         actions.slice(0, MAX_SUGGESTED_ACTIONS).forEach(actionObjOrString => {
@@ -49,7 +59,6 @@ export function displaySuggestedActions(actions) {
             let isMullOver = false;
             let isBoonOrTrait = false;
             let shardDataForMullOver = null;
-
             if (typeof actionObjOrString === 'string') {
                 actionText = actionObjOrString;
                 buttonDisplayText = actionText;
@@ -64,21 +73,16 @@ export function displaySuggestedActions(actions) {
                 log(LOG_LEVEL_WARN, "Invalid action format in suggested actions array:", actionObjOrString);
                 return; // Skip this invalid action
             }
-
             if (actionText && actionText.trim() !== "") {
                 const btn = document.createElement("button");
                 btn.classList.add("ui-button");
-
                 if (isMullOver) btn.classList.add("mull-over-action");
                 if (isBoonOrTrait) btn.classList.add("boon-action");
-
                 btn.textContent = buttonDisplayText;
                 btn.removeAttribute('title'); // Ensure no native tooltip interferes
-
                 if (tooltipText) {
                     attachTooltip(btn, null, {}, { rawText: tooltipText });
                 }
-
                 btn.addEventListener("click", () => {
                     hideCurrentTooltip(); // Hide any active tooltip immediately on click
                     if (isBoonOrTrait) {

@@ -142,9 +142,9 @@ async function _handleExperienceAndLevelUp(xpAwarded) {
  * Presents the primary Boon selection choices to the player.
  * @private
  */
-function _presentPrimaryBoonChoices() {
+async function _presentPrimaryBoonChoices() {
     _boonSelectionContext.step = 'primary';
-    storyLogManager.addMessageToLog(localizationService.getUIText("system_boon_selection_prompt"), "system");
+    const headerText = localizationService.getUIText("system_boon_selection_prompt");
     const boonChoices = [
         {
             text: localizationService.getUIText(BOON_DEFINITIONS.MAX_INTEGRITY_INCREASE.descriptionKey, { VALUE: BOON_DEFINITIONS.MAX_INTEGRITY_INCREASE.value }),
@@ -162,14 +162,13 @@ function _presentPrimaryBoonChoices() {
             boonId: 'PRIMARY_NEW_TRAIT'
         }
     ];
-    suggestedActionsManager.displaySuggestedActions(boonChoices);
+    suggestedActionsManager.displaySuggestedActions(boonChoices, { headerText });
     if (dom.playerActionInput) {
         dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_boon_selection");
         state.setCurrentAiPlaceholder(dom.playerActionInput.placeholder);
     }
     uiUtils.setGMActivityIndicator(false);
     uiUtils.setPlayerInputEnabled(false); // Prevent typing during boon choice
-
 }
 /**
  * Presents the secondary Boon selection choices (attributes or traits).
@@ -248,10 +247,6 @@ async function _applyBoonAndFinalize(payload, boonDisplayText) {
         state.setCurrentUserThemeProgress(response.userThemeProgress);
         state.setIsBoonSelectionPending(false);
         _boonSelectionContext.step = 'none';
-        storyLogManager.addMessageToLog(
-            localizationService.getUIText("system_boon_applied", { BOON_TEXT: boonDisplayText }),
-            "system-emphasized"
-        );
         _initializeCurrentRunStats();
         characterPanelManager.updateCharacterPanel();
         const restoredActions = state.getLastAiSuggestedActions();
@@ -325,7 +320,7 @@ async function _handleBoonSelection(boonId, boonDisplayText) {
  * @private
  */
 function _presentInitialTraitChoices() {
-    storyLogManager.addMessageToLog(localizationService.getUIText("system_initial_trait_selection_prompt"), "system");
+    const headerText = localizationService.getUIText("system_initial_trait_selection_prompt");
     const themeId = state.getCurrentTheme();
     const lang = state.getCurrentAppLanguage();
     const allTraits = getThemeTraits(themeId);
@@ -348,7 +343,7 @@ function _presentInitialTraitChoices() {
             traitKey: key
         };
     });
-    suggestedActionsManager.displaySuggestedActions(traitChoices);
+    suggestedActionsManager.displaySuggestedActions(traitChoices, { headerText });
     if (dom.playerActionInput) {
         dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_boon_selection");
         state.setCurrentAiPlaceholder(dom.playerActionInput.placeholder);

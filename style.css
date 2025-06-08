@@ -1625,6 +1625,17 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 	flex-shrink: 0;
 	overflow-y: auto;
 }
+.suggested-actions-header {
+ 		width: 100%;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-panel);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    text-align: center;
+    user-select: none;
+    background-image: url(images/app/background_noise.png);
+}
 #suggested-actions-wrapper .ui-button {
 	flex-grow: 1;
 	padding: var(--spacing-xs) var(--spacing-md);
@@ -1654,9 +1665,9 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 	box-shadow: var(--shadow-focus-ring);
 }
 .input-group.input-group-disabled {
-	background-color: var(--color-bg-content-view); /* A slightly different shade to indicate inactive state */
-	cursor: not-allowed;
-	box-shadow: 0 0 0 2px var(--color-bg-content-view);
+    background-color: var(--color-bg-input-area);
+    cursor: not-allowed;
+    box-shadow: 0 0 0 2px var(--color-bg-input-area);
 }
 .input-group.input-group-disabled textarea,
 .input-group.input-group-disabled .ui-button {
@@ -1669,10 +1680,9 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 	color: var(--color-text-muted);
 	opacity: 0.6;
 }
-/* Override generic disabled button styles for better visibility in this specific context */
 .input-group.input-group-disabled .ui-button.primary:disabled {
     background-color: var(--color-bg-button-default-active);
-    color: var(--color-text-muted) !important; /* Important needed to override generic disabled style */
+    color: var(--color-text-muted) !important;
     opacity: 0.6;
 }
 #player-input-control-panel input[type="text"],

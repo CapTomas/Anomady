@@ -260,7 +260,6 @@ export const globalTextData = {
             "system_boon_selection_prompt": "Choose your Boon:",
             "placeholder_boon_selection": "Select a Boon by clicking the button...",
             "error_invalid_boon_choice": "Invalid selection. Please choose from the available Boons.",
-            "system_boon_applied": "Boon Applied: {BOON_TEXT}",
             "error_generic_action_failed": "Action '{ACTION_NAME}' could not be completed.",
             // --- Boon Descriptions (Phase 2 - Max Attribute Increases) ---
             "boon_desc_max_integrity": "Max Integrity +{VALUE}",
@@ -535,7 +534,6 @@ export const globalTextData = {
             "system_boon_selection_prompt": "Vyber si své Vylepšení:",
             "placeholder_boon_selection": "Vyber Vylepšení kliknutím na tlačítko...",
             "error_invalid_boon_choice": "Neplatná volba. Vyberte prosím z dostupných Vylepšení.",
-            "system_boon_applied": "Vylepšení použito: {BOON_TEXT}",
             "error_generic_action_failed": "Akci '{ACTION_NAME}' se nepodařilo dokončit.",
             // --- Boon Descriptions (Phase 2 - Max Attribute Increases) ---
             "boon_desc_max_integrity": "Max. Integrita +{VALUE}",

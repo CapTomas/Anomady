@@ -53,11 +53,8 @@ model GameState {
   dashboard_item_meta            Json?     @map("dashboard_item_meta")
   is_boon_selection_pending      Boolean   @default(false) @map("is_boon_selection_pending")
   actions_before_boon_selection  Json?     @map("actions_before_boon_selection")
-
-  // Field for storing awarded XP, not part of the actual GameState model sent to client
-  // This is just to pass the value from client to backend during save.
-  // It will be processed and stored in UserThemeProgress.
-  // Optional: xp_awarded_this_turn Int?
+  session_inventory              Json?     @map("session_inventory")
+  equipped_items                 Json?     @map("equipped_items")
   @@unique([userId, theme_id])
   @@index([userId])
   @@index([theme_id])

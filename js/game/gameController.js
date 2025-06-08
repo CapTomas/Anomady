@@ -423,6 +423,7 @@ async function _setupNewGameEnvironment(themeId) {
     storyLogManager.clearStoryLogDOM();
     suggestedActionsManager.clearSuggestedActions();
     dashboardManager.resetDashboardUI(themeId);
+    characterPanelManager.buildCharacterPanel(themeId);
     await _loadOrCreateUserThemeProgress(themeId);
     _initializeCurrentRunStats();
     characterPanelManager.updateCharacterPanel();
@@ -571,6 +572,7 @@ export async function resumeGameSession(themeId) {
     await themeService.fetchAndCachePromptFile(themeId, 'traits'); // Ensure traits are loaded
     landingPageManager.switchToGameView(themeId);
     dashboardManager.generatePanelsForTheme(themeId);
+    characterPanelManager.buildCharacterPanel(themeId);
     const currentUser = state.getCurrentUser();
     if (currentUser && currentUser.token) {
         try {
@@ -580,32 +582,33 @@ export async function resumeGameSession(themeId) {
             } else {
                 await _loadOrCreateUserThemeProgress(themeId);
             }
-            // Initialize run stats to max values first
+            // Initialize run stats to max values first, which is now done before applying the loaded specific stats.
             await _initializeCurrentRunStats();
-            // Now, apply the loaded percentages and other stats
+            // Now, apply the loaded stats from last_dashboard_updates
             const lastUpdates = loadedData.last_dashboard_updates || {};
             const statsToUpdate = { ...state.getCurrentRunStats() }; // Start with a fresh object with max values
-            const maxIntegrity = state.getEffectiveMaxIntegrity();
-            const maxWillpower = state.getEffectiveMaxWillpower();
-            if (lastUpdates.healthPct !== undefined) {
-                const pct = parseInt(lastUpdates.healthPct, 10);
-                if (!isNaN(pct)) {
-                    statsToUpdate.currentIntegrity = Math.min(maxIntegrity, Math.round((pct / 100) * maxIntegrity));
+            const themeConfig = themeService.getThemeConfig(themeId);
+            const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
+
+            // This loop correctly restores core stats like integrity and willpower from their absolute values
+            topPanelConfig.forEach(itemConfig => {
+                const updateKey = itemConfig.id;
+                const statToUpdate = itemConfig.maps_to_run_stat;
+
+                if (lastUpdates[updateKey] !== undefined && statsToUpdate.hasOwnProperty(statToUpdate)) {
+                    const absoluteValue = parseInt(String(lastUpdates[updateKey]), 10);
+                    if (!isNaN(absoluteValue)) {
+                        statsToUpdate[statToUpdate] = absoluteValue;
+                        log(LOG_LEVEL_DEBUG, `Restoring run stat '${statToUpdate}' to ${absoluteValue} from saved state.`);
+                    }
                 }
-            }
-            if (lastUpdates.staminaPct !== undefined) {
-                const pct = parseInt(lastUpdates.staminaPct, 10);
-                if (!isNaN(pct)) {
-                    statsToUpdate.currentWillpower = Math.min(maxWillpower, Math.round((pct / 100) * maxWillpower));
-                }
-            }
-            if (lastUpdates.strain_level !== undefined) {
-                const newStrain = parseInt(lastUpdates.strain_level, 10);
-                if (!isNaN(newStrain)) statsToUpdate.strainLevel = newStrain;
-            }
+            });
+
+            // Handle other non-top-panel stats that might be in lastUpdates
             if (lastUpdates.conditions_list !== undefined) {
                 statsToUpdate.conditions = Array.isArray(lastUpdates.conditions_list) ? lastUpdates.conditions_list : [];
             }
+
             state.setCurrentRunStats(statsToUpdate); // Apply the fully calculated stats
             characterPanelManager.updateCharacterPanel();
             characterPanelManager.showCharacterPanel(true);
@@ -767,6 +770,8 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
         storyLogManager.removeLoadingIndicator();
         if (fullAiResponse) {
             const updatesFromAI = fullAiResponse.dashboard_updates || {};
+
+            // 1. Process any special update handlers first, which may modify the updatesFromAI object
             if (updatesFromAI.conditions_update) {
                 let currentConditions = state.getActiveConditions();
                 const { add = [], remove = [] } = updatesFromAI.conditions_update;
@@ -777,13 +782,55 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
                     currentConditions = currentConditions.filter(c => !remove.includes(c));
                 }
                 state.updateCurrentRunStat('conditions', currentConditions);
-                updatesFromAI.conditions_list = currentConditions;
+                updatesFromAI.conditions_list = currentConditions.join(', ') || localizationService.getUIText('conditions_none_active');
                 delete updatesFromAI.conditions_update;
-                state.setLastKnownDashboardUpdates(updatesFromAI); // Update state before UI update
             }
+
+            // 2. Update the central state for what needs to be saved. This MUST get the complete object.
+            state.setLastKnownDashboardUpdates(updatesFromAI);
+
+            // 3. Update the ephemeral run-time state (_currentRunStats) based on the updates received.
+            const themeConfig = themeService.getThemeConfig(state.getCurrentTheme());
+            const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
+
+            topPanelConfig.forEach(itemConfig => {
+                const updateKey = itemConfig.id;
+                const statToUpdate = itemConfig.maps_to_run_stat;
+
+                if (updatesFromAI[updateKey] !== undefined && statToUpdate) {
+                    const newValueStr = String(updatesFromAI[updateKey]);
+                    let finalValue;
+
+                    if (itemConfig.type === 'meter') {
+                        const absoluteValue = parseInt(newValueStr, 10);
+                        if (!isNaN(absoluteValue)) {
+                            finalValue = absoluteValue;
+                            // Clamp value to max if it's integrity or willpower
+                            if (statToUpdate === 'currentIntegrity') {
+                                finalValue = Math.min(finalValue, state.getEffectiveMaxIntegrity());
+                            } else if (statToUpdate === 'currentWillpower') {
+                                finalValue = Math.min(finalValue, state.getEffectiveMaxWillpower());
+                            }
+                        }
+                    } else if (itemConfig.type === 'number' || itemConfig.type === 'status_icon') {
+                        const numVal = parseInt(newValueStr, 10);
+                        if (!isNaN(numVal)) {
+                            finalValue = numVal;
+                        }
+                    }
+
+                    if (finalValue !== undefined) {
+                        log(LOG_LEVEL_DEBUG, `Processing AI update for core stat: setting ${statToUpdate} to ${finalValue}`);
+                        state.updateCurrentRunStat(statToUpdate, finalValue);
+                    }
+                }
+            });
+
+
+            // 4. Now, update the UI from the fresh state.
             storyLogManager.renderMessage(fullAiResponse.narrative, "gm");
-            dashboardManager.updateDashboard(state.getLastKnownDashboardUpdates());
-            characterPanelManager.updateCharacterPanel();
+            dashboardManager.updateDashboard(updatesFromAI); // Updates side panels
+            characterPanelManager.updateCharacterPanel(); // Updates top panel from fresh runStats
             suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
             handleGameStateIndicatorsChange(state.getLastKnownGameStateIndicators());
             if (dom.playerActionInput) {

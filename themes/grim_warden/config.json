@@ -14,8 +14,8 @@
   "base_attributes": {
     "integrity": 100,
     "willpower": 50,
-    "aptitude": 50,
-    "resilience": 50
+    "aptitude": 10,
+    "resilience": 10
   },
   "attribute_tooltips": {
     "integrity": "tooltip_attr_integrity_grim_warden",
@@ -25,6 +25,58 @@
   },
   "dashboard_config_ref": "grim_warden",
   "dashboard_config": {
+    "top_panel": [
+      {
+        "id": "integrity",
+        "label_key": "char_panel_label_integrity",
+        "tooltip_key": "tooltip_attr_integrity_grim_warden",
+        "type": "meter",
+        "meter_type": "health",
+        "maps_to_run_stat": "currentIntegrity",
+        "short_description": "The character's Health Pool. Represents physical and metaphysical wholeness. Reaching zero results in incapacitation or death."
+      },
+      {
+        "id": "willpower",
+        "label_key": "char_panel_label_willpower",
+        "tooltip_key": "tooltip_attr_willpower_grim_warden",
+        "type": "meter",
+        "meter_type": "stamina",
+        "maps_to_run_stat": "currentWillpower",
+        "short_description": "A spendable resource for special abilities, like a mana or energy bar. Used to fuel powerful actions."
+      },
+      {
+        "id": "aptitude",
+        "label_key": "char_panel_label_aptitude",
+        "tooltip_key": "tooltip_attr_aptitude_grim_warden",
+        "type": "number",
+        "maps_to_run_stat": "aptitude",
+        "short_description": "A passive modifier for skill, precision, and intellect. Influences the success and quality of deliberate actions."
+      },
+      {
+        "id": "resilience",
+        "label_key": "char_panel_label_resilience",
+        "tooltip_key": "tooltip_attr_resilience_grim_warden",
+        "type": "number",
+        "maps_to_run_stat": "resilience",
+        "short_description": "A passive defensive modifier for resisting hostile effects like damage, curses, or corruption."
+      },
+      {
+        "id": "strain_level",
+        "label_key": "label_strain_level_grim_warden",
+        "tooltip_key": "tooltip_item_strain_level_grim_warden",
+        "type": "status_icon",
+        "default_ai_value": 1,
+        "maps_to_run_stat": "strainLevel",
+        "level_mappings": {
+          "1": { "display_text_key": "strain_level_1_display", "css_class": "status-ok", "icon_path": "images/sentiment/icon_sentiment_satisfied.svg" },
+          "2": { "display_text_key": "strain_level_2_display", "css_class": "status-warning", "icon_path": "images/sentiment/icon_sentiment_neutral.svg" },
+          "3": { "display_text_key": "strain_level_3_display", "css_class": "status-danger", "icon_path": "images/sentiment/icon_sentiment_dissatisfied.svg" },
+          "4": { "display_text_key": "strain_level_4_display", "css_class": "status-critical", "icon_path": "images/sentiment/icon_sentiment_very_dissatisfied.svg" }
+        },
+        "must_translate": false,
+        "short_description": "Warden's cumulative stress and fatigue. MUST BE INTEGER (1-4). Higher levels negatively impact actions. 1: Calm, 2: Taxed, 3: Stressed, 4: Breaking Point."
+      }
+    ],
     "left_panel": [
       {
         "id": "character-status-panel-box",
@@ -77,42 +129,6 @@
         "initial_expanded": false,
         "boot_delay": 750,
         "items": [
-          {
-            "id": "healthPct",
-            "label_key": "label_character_health_grim_warden",
-            "type": "meter",
-            "meter_type": "health",
-            "default_value": "100",
-            "must_translate": false,
-            "maps_to_run_stat": "currentIntegrity",
-            "short_description": "Character's current physical integrity (0-100). E.g., '100', '65 (Bruised)', '10 (Near Death)'."
-          },
-          {
-            "id": "staminaPct",
-            "label_key": "label_character_stamina_grim_warden",
-            "type": "meter",
-            "meter_type": "stamina",
-            "default_value": "100",
-            "must_translate": false,
-            "maps_to_run_stat": "currentWillpower",
-            "short_description": "Character's current vigor/resolve (0-100). Expended by strenuous actions. Should not decrease passively."
-          },
-          {
-            "id": "strain_level",
-            "label_key": "label_strain_level_grim_warden",
-            "tooltip_key": "tooltip_item_strain_level_grim_warden",
-            "type": "status_icon",
-            "default_ai_value": 1,
-            "maps_to_run_stat": "strainLevel",
-            "level_mappings": {
-              "1": { "display_text_key": "strain_level_1_display", "css_class": "status-ok", "icon_path": "images/sentiment/icon_sentiment_satisfied.svg" },
-              "2": { "display_text_key": "strain_level_2_display", "css_class": "status-warning", "icon_path": "images/sentiment/icon_sentiment_neutral.svg" },
-              "3": { "display_text_key": "strain_level_3_display", "css_class": "status-danger", "icon_path": "images/sentiment/icon_sentiment_dissatisfied.svg" },
-              "4": { "display_text_key": "strain_level_4_display", "css_class": "status-critical", "icon_path": "images/sentiment/icon_sentiment_very_dissatisfied.svg" }
-            },
-            "must_translate": false,
-            "short_description": "Warden's cumulative stress and fatigue. MUST BE INTEGER (1-4). Higher levels negatively impact actions. 1: Calm, 2: Taxed, 3: Stressed, 4: Breaking Point."
-          },
           {
             "id": "blight_exposure_level",
             "label_key": "label_blight_exposure_grim_warden",

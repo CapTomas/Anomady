@@ -14,11 +14,69 @@
   "base_attributes": {
     "integrity": 100,
     "willpower": 50,
-    "aptitude": 50,
-    "resilience": 50
+    "aptitude": 10,
+    "resilience": 10
+  },
+  "attribute_tooltips": {
+    "integrity": "tooltip_attr_integrity_salt_reavers",
+    "willpower": "tooltip_attr_willpower_salt_reavers",
+    "aptitude": "tooltip_attr_aptitude_salt_reavers",
+    "resilience": "tooltip_attr_resilience_salt_reavers"
   },
   "dashboard_config_ref": "salt_reavers",
   "dashboard_config": {
+    "top_panel": [
+      {
+        "id": "integrity",
+        "label_key": "char_panel_label_integrity",
+        "tooltip_key": "tooltip_attr_integrity_salt_reavers",
+        "type": "meter",
+        "meter_type": "health",
+        "maps_to_run_stat": "currentIntegrity",
+        "short_description": "The pirate's health in a duel and their ship's hull integrity in naval combat. Reaching zero means a trip to Davy Jones' Locker."
+      },
+      {
+        "id": "willpower",
+        "label_key": "char_panel_label_willpower",
+        "tooltip_key": "tooltip_attr_willpower_salt_reavers",
+        "type": "meter",
+        "meter_type": "stamina",
+        "maps_to_run_stat": "currentWillpower",
+        "short_description": "Grit. A spendable resource for performing daring feats and rallying the crew. Restored with grog and victory."
+      },
+      {
+        "id": "aptitude",
+        "label_key": "char_panel_label_aptitude",
+        "tooltip_key": "tooltip_attr_aptitude_salt_reavers",
+        "type": "number",
+        "maps_to_run_stat": "aptitude",
+        "short_description": "Skill with a cutlass, accuracy with a pistol, and cunning navigation. Influences the success of deliberate actions."
+      },
+      {
+        "id": "resilience",
+        "label_key": "char_panel_label_resilience",
+        "tooltip_key": "tooltip_attr_resilience_salt_reavers",
+        "type": "number",
+        "maps_to_run_stat": "resilience",
+        "short_description": "Ability to endure hardship, resist supernatural curses, and shrug off the effects of a harsh storm or poor grog."
+      },
+      {
+        "id": "strain_level",
+        "label_key": "label_strain_level_salt_reavers",
+        "tooltip_key": "tooltip_item_strain_level_salt_reavers",
+        "type": "status_icon",
+        "default_ai_value": 1,
+        "maps_to_run_stat": "strainLevel",
+        "level_mappings": {
+          "1": { "display_text_key": "strain_level_1_display_sr", "css_class": "status-ok", "icon_path": "images/sentiment/icon_sentiment_satisfied.svg" },
+          "2": { "display_text_key": "strain_level_2_display_sr", "css_class": "status-warning", "icon_path": "images/sentiment/icon_sentiment_neutral.svg" },
+          "3": { "display_text_key": "strain_level_3_display_sr", "css_class": "status-danger", "icon_path": "images/sentiment/icon_sentiment_dissatisfied.svg" },
+          "4": { "display_text_key": "strain_level_4_display_sr", "css_class": "status-critical", "icon_path": "images/sentiment/icon_sentiment_very_dissatisfied.svg" }
+        },
+        "must_translate": false,
+        "short_description": "The Captain's stress and weariness. Higher levels can lead to poor decisions or a restless crew. 1: Steady, 2: Frayed, 3: Pressured, 4: At Wit's End."
+      }
+    ],
     "left_panel": [
       {
         "id": "captain-orders-panel-box",
@@ -41,14 +99,6 @@
             "default_value_key": "first_mate_default",
             "must_translate": true,
             "short_description": "Name of the ship's current First Mate."
-          },
-          {
-            "id": "captain_mood",
-            "label_key": "label_captain_mood_salt_reavers",
-            "type": "text",
-            "default_value_key": "mood_unpredictable",
-            "must_translate": true,
-            "short_description": "The Captain's current temperament or disposition."
           },
           {
             "id": "ship_doubloons",
@@ -84,15 +134,6 @@
             "short_description": "The name of your current vessel."
           },
           {
-            "id": "hull_integrity_pct",
-            "label_key": "label_hull_integrity_salt_reavers",
-            "type": "meter",
-            "meter_type": "health",
-            "default_value": "100",
-            "must_translate": false,
-            "short_description": "Ship's current hull strength (0-100)."
-          },
-          {
             "id": "sail_condition",
             "label_key": "label_sail_condition_salt_reavers",
             "type": "text",
@@ -115,14 +156,6 @@
             "default_value_key": "provisions_well_stocked",
             "must_translate": true,
             "short_description": "Current stock of food and water (e.g., days remaining, status)."
-          },
-          {
-            "id": "grog_rations",
-            "label_key": "label_grog_rations_salt_reavers",
-            "type": "text",
-            "default_value_key": "grog_barrel_full",
-            "must_translate": true,
-            "short_description": "Availability of grog for the crew."
           }
         ]
       },

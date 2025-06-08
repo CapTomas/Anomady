@@ -14,11 +14,69 @@
   "base_attributes": {
     "integrity": 100,
     "willpower": 50,
-    "aptitude": 50,
-    "resilience": 50
+    "aptitude": 10,
+    "resilience": 10
+  },
+  "attribute_tooltips": {
+    "integrity": "tooltip_attr_integrity_echo_sleuths",
+    "willpower": "tooltip_attr_willpower_echo_sleuths",
+    "aptitude": "tooltip_attr_aptitude_echo_sleuths",
+    "resilience": "tooltip_attr_resilience_echo_sleuths"
   },
   "dashboard_config_ref": "echo_sleuths",
   "dashboard_config": {
+    "top_panel": [
+      {
+        "id": "integrity",
+        "label_key": "char_panel_label_integrity",
+        "tooltip_key": "tooltip_attr_integrity_echo_sleuths",
+        "type": "meter",
+        "meter_type": "health",
+        "maps_to_run_stat": "currentIntegrity",
+        "short_description": "Psychic Cohesion. The ability to maintain a stable physical and mental form against reality-bending forces. Reaching zero means dissolution."
+      },
+      {
+        "id": "willpower",
+        "label_key": "char_panel_label_willpower",
+        "tooltip_key": "tooltip_attr_willpower_echo_sleuths",
+        "type": "meter",
+        "meter_type": "stamina",
+        "maps_to_run_stat": "currentWillpower",
+        "short_description": "Focus. A spendable resource for using advanced mental techniques, deconstructing paradoxes, or shaping dream-memories."
+      },
+      {
+        "id": "aptitude",
+        "label_key": "char_panel_label_aptitude",
+        "tooltip_key": "tooltip_attr_aptitude_echo_sleuths",
+        "type": "number",
+        "maps_to_run_stat": "aptitude",
+        "short_description": "Deduction. A measure of skill in reasoning, investigation, and spotting inconsistencies in reality's narrative."
+      },
+      {
+        "id": "resilience",
+        "label_key": "char_panel_label_resilience",
+        "tooltip_key": "tooltip_attr_resilience_echo_sleuths",
+        "type": "number",
+        "maps_to_run_stat": "resilience",
+        "short_description": "Mental Fortitude. The ability to passively resist psychic intrusions, conceptual attacks, and reality-flux events."
+      },
+      {
+        "id": "strain_level",
+        "label_key": "label_strain_level_echo_sleuths",
+        "tooltip_key": "tooltip_item_strain_level_echo_sleuths",
+        "type": "status_icon",
+        "default_ai_value": 1,
+        "maps_to_run_stat": "strainLevel",
+        "level_mappings": {
+          "1": { "display_text_key": "strain_level_1_display_es", "css_class": "status-ok", "icon_path": "images/sentiment/icon_sentiment_satisfied.svg" },
+          "2": { "display_text_key": "strain_level_2_display_es", "css_class": "status-warning", "icon_path": "images/sentiment/icon_sentiment_neutral.svg" },
+          "3": { "display_text_key": "strain_level_3_display_es", "css_class": "status-danger", "icon_path": "images/sentiment/icon_sentiment_dissatisfied.svg" },
+          "4": { "display_text_key": "strain_level_4_display_es", "css_class": "status-critical", "icon_path": "images/sentiment/icon_sentiment_very_dissatisfied.svg" }
+        },
+        "must_translate": false,
+        "short_description": "Cognitive Dissonance. The Sleuth's cumulative mental strain. MUST BE INTEGER (1-4). Higher levels can cause perceptual distortions. 1: Anchored, 2: Adrift, 3: Unmoored, 4: Dissociating."
+      }
+    ],
     "left_panel": [
       {
         "id": "sleuth-identity-psyche-panel",
@@ -41,15 +99,6 @@
             "default_value_key": "default_license_status_echo_sleuths",
             "must_translate": true,
             "short_description": "Sleuth's current, often precarious, standing with Reverie's Municipal Authority. This should be a thematic, descriptive phrase."
-          },
-          {
-            "id": "cognitive_dissonance_pct",
-            "label_key": "label_cognitive_dissonance_echo_sleuths",
-            "type": "meter",
-            "meter_type": "dissonance",
-            "default_value": "0",
-            "must_translate": false,
-            "short_description": "Mental strain/fragmentation (0-100%). Higher values indicate greater mental instability, potentially affecting perception, decision-making, or triggering surreal side-effects. Initial value is low."
           },
           {
             "id": "lucidity_shards",

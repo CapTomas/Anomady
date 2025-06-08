@@ -316,21 +316,17 @@ export function generatePanelsForTheme(themeId) {
 function initializeDashboardDefaultTexts(themeId) {
     const themeConfigFull = getThemeConfig(themeId);
     if (!themeConfigFull || !themeConfigFull.dashboard_config) return;
-
     const dashboardConfig = themeConfigFull.dashboard_config;
     const allItemConfigs = [
         ...(dashboardConfig.left_panel || []),
         ...(dashboardConfig.right_panel || [])
     ].flatMap(panel => panel.items);
-
     allItemConfigs.forEach(itemConfig => {
         const valueElement = document.getElementById(`info-${itemConfig.id}`);
         const meterBarElement = document.getElementById(`meter-${itemConfig.id}`);
-
         let defaultValueText = itemConfig.default_value !== undefined ?
             String(itemConfig.default_value) :
             (itemConfig.default_value_key ? getUIText(itemConfig.default_value_key, {}, { explicitThemeContext: themeId, viewContext: 'game' }) : getUIText("unknown"));
-
         if (itemConfig.type === "meter") {
             if (valueElement || meterBarElement) {
                 const defaultStatusText = itemConfig.default_status_key ? getUIText(itemConfig.default_status_key, {}, { explicitThemeContext: themeId, viewContext: 'game' }) : undefined;
@@ -339,9 +335,9 @@ function initializeDashboardDefaultTexts(themeId) {
         } else if (itemConfig.type === "status_level") {
             if (valueElement && itemConfig.level_mappings) {
                 const defaultAiValue = itemConfig.default_ai_value !== undefined ? String(itemConfig.default_ai_value) : "1";
-                updateStatusLevelDisplay(valueElement, defaultAiValue, itemConfig.level_mappings, themeId, false);
+                updateStatusLevelDisplay(valueElement, defaultAiValue, itemConfig, themeId, false);
             }
-        } else if (itemConfig.type === "text" || itemConfig.type === "text_long") {
+        } else if (itemConfig.type === "text" || itemConfig.type === "text_long" || itemConfig.type === "number_text") {
             if (valueElement) {
                 const suffix = itemConfig.suffix || "";
                 valueElement.textContent = `${defaultValueText}${suffix}`;
@@ -620,25 +616,24 @@ export function animatePanelExpansion(panelBoxId, shouldExpand, manageVisibility
  * @param {boolean} [highlight=true] - Whether to visually highlight the update.
  */
 export function updateDashboardItem(itemId, newValue, highlight = true) {
+    if (newValue === null || newValue === undefined || String(newValue).trim() === "") {
+        log(LOG_LEVEL_DEBUG, `Skipping dashboard update for item '${itemId}' due to empty/null value.`);
+        return;
+    }
     const currentThemeId = getCurrentTheme();
     if (!currentThemeId) return;
-
     const themeConfigFull = getThemeConfig(currentThemeId);
     if (!themeConfigFull || !themeConfigFull.dashboard_config) return;
-
     const allItemConfigs = [...(themeConfigFull.dashboard_config.left_panel || []), ...(themeConfigFull.dashboard_config.right_panel || [])]
         .flatMap(panel => panel.items);
     const itemConfig = allItemConfigs.find(item => item.id === itemId);
-
     if (!itemConfig) {
         log(LOG_LEVEL_WARN, `Dashboard item config not found for ID: ${itemId}`);
         return;
     }
-
     const valueElement = document.getElementById(`info-${itemId}`);
     const meterBarElement = document.getElementById(`meter-${itemId}`);
     const itemContainer = document.getElementById(`info-item-container-${itemId}`); // The parent div of label & value/meter
-
     if (itemConfig.type === "meter") {
         if (valueElement || meterBarElement) {
             const statusTextId = itemConfig.status_text_id;
@@ -648,7 +643,7 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
     } else if (itemConfig.type === "status_level") {
         // Pass the full itemConfig to updateStatusLevelDisplay
         updateStatusLevelDisplay(valueElement, String(newValue), itemConfig, currentThemeId, highlight);
-    } else if (itemConfig.type === "text" || itemConfig.type === "text_long") {
+    } else if (itemConfig.type === "text" || itemConfig.type === "text_long" || itemConfig.type === "number_text") {
         if (valueElement) {
             const suffix = itemConfig.suffix || "";
             const newText = `${newValue}${suffix}`;
@@ -667,7 +662,6 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
             }
         }
     }
-
     // If an item inside a collapsible panel is updated, ensure the panel expands.
     if (itemContainer && highlight) {
         const parentPanelBox = itemContainer.closest('.panel-box');
@@ -677,17 +671,7 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
                 animatePanelExpansion(parentPanelBox.id, true, false, false);
             }
         }
-    }
-    // If an item inside a collapsible panel is updated, ensure the panel expands.
-    if (itemContainer && highlight) { // Existing logic for panel expansion
-        const parentPanelBox = itemContainer.closest('.panel-box');
-        if (parentPanelBox && parentPanelBox.classList.contains('collapsible')) {
-            if (!parentPanelBox.classList.contains('is-expanded')) {
-                log(LOG_LEVEL_DEBUG, `Item ${itemId} updated in collapsed panel ${parentPanelBox.id}. Auto-expanding.`);
-                animatePanelExpansion(parentPanelBox.id, true, false, false);
-            }
-        }
-        // New logic: Track changed item for scroll indicators if panel is expanded and in game view
+        // If an item inside a collapsible panel is updated, ensure the panel expands.
         if (parentPanelBox && parentPanelBox.classList.contains('is-expanded') && !document.body.classList.contains("landing-page-active")) {
             const panelSide = leftPanel.contains(itemContainer) ? 'left' : (rightPanel.contains(itemContainer) ? 'right' : null);
             if (panelSide) {

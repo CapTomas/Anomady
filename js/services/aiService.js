@@ -92,6 +92,19 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         log(LOG_LEVEL_ERROR, `CRITICAL PROMPT FAILURE: No valid default prompt found for key "${basePromptKey}" for theme "${currentThemeId}" or master. Cannot generate system prompt.`);
         return `{"narrative": "SYSTEM ERROR: Core prompt file (type: ${activePromptType}, final key: ${basePromptKey}) is critically missing or invalid.", "dashboard_updates": {}, "suggested_actions": ["Restart Game"], "game_state_indicators": {}, "xp_awarded": 0}`;
     }
+
+    // Generate description for the new Top Panel (Core Attributes)
+    let generatedTopPanelDescription = "";
+    const topPanelItems = dashboardLayoutConfig.top_panel || [];
+    topPanelItems.forEach(item => {
+        let description = `// "${item.id}": "${item.type} (${item.short_description || 'No description available.'})",\n`;
+        generatedTopPanelDescription += description;
+    });
+    if (generatedTopPanelDescription.endsWith(",\n")) {
+        generatedTopPanelDescription = generatedTopPanelDescription.slice(0, -2);
+    }
+
+    // Generate description for the side panels (dashboard_updates)
     let generatedDashboardDescription = "";
     const dashboardItems = [...(dashboardLayoutConfig.left_panel || []), ...(dashboardLayoutConfig.right_panel || [])].flatMap(p => p.items);
     dashboardItems.forEach(item => {
@@ -107,6 +120,7 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     if (generatedDashboardDescription.endsWith(",\n")) {
         generatedDashboardDescription = generatedDashboardDescription.slice(0, -2);
     }
+
     let generatedGameStateIndicators = "";
     if (dashboardLayoutConfig.game_state_indicators && Array.isArray(dashboardLayoutConfig.game_state_indicators)) {
         dashboardLayoutConfig.game_state_indicators.forEach(indicator => {
@@ -169,6 +183,7 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         'theme_inspiration': getUIText(themeConfig.inspiration_key, {}, { explicitThemeContext: currentThemeId }),
         'theme_concept': getUIText(themeConfig.concept_key, {}, { explicitThemeContext: currentThemeId }),
         'theme_specific_instructions': themeSpecificInstructions,
+        'generated_top_panel_description': generatedTopPanelDescription,
         'generated_dashboard_description': generatedDashboardDescription,
         'generated_game_state_indicators': generatedGameStateIndicators,
         'game_history_lore': getLastKnownEvolvedWorldLore() || getUIText(themeConfig.lore_key, {}, { explicitThemeContext: currentThemeId }),

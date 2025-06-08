@@ -14,11 +14,69 @@
   "base_attributes": {
     "integrity": 100,
     "willpower": 50,
-    "aptitude": 50,
-    "resilience": 50
+    "aptitude": 10,
+    "resilience": 10
+  },
+  "attribute_tooltips": {
+    "integrity": "tooltip_attr_integrity_celestial_custodians",
+    "willpower": "tooltip_attr_willpower_celestial_custodians",
+    "aptitude": "tooltip_attr_aptitude_celestial_custodians",
+    "resilience": "tooltip_attr_resilience_celestial_custodians"
   },
   "dashboard_config_ref": "celestial_custodians",
   "dashboard_config": {
+    "top_panel": [
+      {
+        "id": "integrity",
+        "label_key": "char_panel_label_integrity",
+        "tooltip_key": "tooltip_attr_integrity_celestial_custodians",
+        "type": "meter",
+        "meter_type": "health",
+        "maps_to_run_stat": "currentIntegrity",
+        "short_description": "The Ship's structural integrity. Represents physical durability against cosmic phenomena and mishaps. Reaching zero means unscheduled, rapid disassembly."
+      },
+      {
+        "id": "willpower",
+        "label_key": "char_panel_label_willpower",
+        "tooltip_key": "tooltip_attr_willpower_celestial_custodians",
+        "type": "meter",
+        "meter_type": "stamina",
+        "maps_to_run_stat": "currentWillpower",
+        "short_description": "Gumption. The Custodian's finite reserve of nerve and focus. Spent on using bizarre equipment or attempting acts of improbable reasoning. Recovers with tea."
+      },
+      {
+        "id": "aptitude",
+        "label_key": "char_panel_label_aptitude",
+        "tooltip_key": "tooltip_attr_aptitude_celestial_custodians",
+        "type": "number",
+        "maps_to_run_stat": "aptitude",
+        "short_description": "Aptitude. A measure of proficiency with bizarre tools and the knack for finding loopholes in reality."
+      },
+      {
+        "id": "resilience",
+        "label_key": "char_panel_label_resilience",
+        "tooltip_key": "tooltip_attr_resilience_celestial_custodians",
+        "type": "number",
+        "maps_to_run_stat": "resilience",
+        "short_description": "Resilience. Passive resistance to cosmic absurdity, existential despair, and morale-draining bureaucracy."
+      },
+      {
+        "id": "strain_level",
+        "label_key": "label_strain_level_celestial_custodians",
+        "tooltip_key": "tooltip_item_strain_level_celestial_custodians",
+        "type": "status_icon",
+        "default_ai_value": 1,
+        "maps_to_run_stat": "strainLevel",
+        "level_mappings": {
+          "1": { "display_text_key": "strain_level_1_display_cc", "css_class": "status-ok", "icon_path": "images/sentiment/icon_sentiment_satisfied.svg" },
+          "2": { "display_text_key": "strain_level_2_display_cc", "css_class": "status-warning", "icon_path": "images/sentiment/icon_sentiment_neutral.svg" },
+          "3": { "display_text_key": "strain_level_3_display_cc", "css_class": "status-danger", "icon_path": "images/sentiment/icon_sentiment_dissatisfied.svg" },
+          "4": { "display_text_key": "strain_level_4_display_cc", "css_class": "status-critical", "icon_path": "images/sentiment/icon_sentiment_very_dissatisfied.svg" }
+        },
+        "must_translate": false,
+        "short_description": "Custodian's level of exasperation and mental fatigue. MUST BE INTEGER (1-4). Higher levels negatively impact actions. 1: Placid, 2: Mildly Perturbed, 3: Thoroughly Baffled, 4: On the Verge of a Stiff Drink."
+      }
+    ],
     "left_panel": [
       {
         "id": "custodian-identity-module",
@@ -33,15 +91,6 @@
             "default_value_key": "custodian_name_default_celestial_custodians",
             "must_translate": false,
             "short_description": "The Custodian's official (or hilariously self-bestowed) designation. Should ideally sound vaguely professional yet hint at impending chaos."
-          },
-          {
-            "id": "gumption_level_pct",
-            "label_key": "label_gumption_level_celestial_custodians",
-            "type": "meter",
-            "meter_type": "stamina",
-            "default_value": "0",
-            "must_translate": false,
-            "short_description": "Custodian's current 'Gumption' (0-100). Essential for powering arcane cleaning implements, enduring baffling bureaucracy, and delivering perfectly timed sarcastic remarks. Replenished by strong tea, successfully not making things worse, or brief moments of surprising competence."
           },
           {
             "id": "union_dues_status_text",
@@ -67,15 +116,6 @@
             "default_value_key": "ship_name_default_celestial_custodians",
             "must_translate": false,
             "short_description": "Proud (or resigned) designation of the Custodian's trusty, and likely slightly dented, vessel. Should sound like it has character and questionable repair history."
-          },
-          {
-            "id": "ship_integrity_pct",
-            "label_key": "label_ship_integrity_celestial_custodians",
-            "type": "meter",
-            "meter_type": "health",
-            "default_value": "0",
-            "must_translate": false,
-            "short_description": "Structural integrity of the vessel (0-100). Prone to unscheduled disassembly due to rogue asteroids, overly enthusiastic mopping, or experimental tea brewing."
           },
           {
             "id": "ship_fuel_supply_text",

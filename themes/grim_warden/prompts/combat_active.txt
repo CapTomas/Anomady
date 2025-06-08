@@ -40,7 +40,7 @@ YOUR IMMEDIATE TASK - FORGE A SCENE OF UNFORGETTABLE, HEART-STOPPING COMBAT:
     *   **Warden's Toll (The Price of Defiance)**:
         *   `healthPct`: (string, "0"-"100") Reflect wounds taken.
         *   `staminaPct`: (string, "0"-"100") Reflect the cost of exertion.
-        *   `elixir_charges`: (string, translated) Update if a precious draught was used.
+        *   `elixir_item`: (string, translated) Update if a precious draught was used.
         *   `blight_exposure_level`: (string) **CRUCIAL: If updated, provide ONLY the numerical level as a string (e.g., "1", "2", "3", "4").** Update if the Blight's touch was felt from the adversary or environment, potentially increasing the level by one stage. The game client will display the corresponding textual stage. Your narrative should describe the *effects* of this level.
     *   **The Battle's Pulse (Its Erratic Heartbeat)**:
         *   `activity_status`: (string, translated) A *cinematic and concise* thematic phrase (e.g., "Weathering a storm of blighted claws," "Locked blades with the bandit leader," "Steel bites deep into the abomination").

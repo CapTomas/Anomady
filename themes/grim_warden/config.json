@@ -145,27 +145,27 @@
             "short_description": "Warden's current stage of Blight contamination. MUST BE INTEGER (1-4). 1: Dormant, 2: Nascent, 3: Festering, 4: Critical. Affects perception, resilience, or invokes Blight-induced afflictions. AI provides numerical level."
           },
           {
-            "id": "elixir_charges",
-            "label_key": "label_elixir_charges_grim_warden",
-            "tooltip_key": "tooltip_item_elixir_charges_grim_warden",
+            "id": "elixir_item",
+            "label_key": "label_elixir_item_grim_warden",
+            "tooltip_key": "tooltip_item_elixir_item_grim_warden",
             "type": "text",
             "default_value_key": "elixirs_none_prepared",
             "must_translate": true,
             "short_description": "Count of potent restorative draughts or alchemical concoctions."
           },
           {
-            "id": "armor_condition",
-            "label_key": "label_armor_condition_grim_warden",
-            "tooltip_key": "tooltip_item_armor_condition_grim_warden",
+            "id": "armor_item",
+            "label_key": "label_armor_item_grim_warden",
+            "tooltip_key": "tooltip_item_armor_item_grim_warden",
             "type": "text",
             "default_value_key": "armor_scuffed_hide",
             "must_translate": true,
             "short_description": "Warden's primary armor description and state. "
           },
           {
-            "id": "weapon_condition",
-            "label_key": "label_weapon_condition_grim_warden",
-            "tooltip_key": "tooltip_item_weapon_condition_grim_warden",
+            "id": "weapon_item",
+            "label_key": "label_weapon_item_grim_warden",
+            "tooltip_key": "tooltip_item_weapon_item_grim_warden",
             "type": "text",
             "default_value_key": "weapon_trusted_steel",
             "must_translate": true,

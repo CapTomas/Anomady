@@ -148,7 +148,7 @@
             "short_description": "The Sleuth's current, likely characteristic, and perhaps slightly unsettling, outfit or appearance."
           },
           {
-            "id": "reality_anchor_item_name",
+            "id": "reality_anchor_item",
             "label_key": "label_reality_anchor_item_echo_sleuths",
             "type": "text",
             "default_value_key": "default_reality_anchor_item_echo_sleuths",
@@ -156,18 +156,18 @@
             "short_description": "Name of a personal, mundane item that helps the Sleuth stay grounded amidst Reverie's flux. Its perceived state or relevance might change."
           },
           {
-            "id": "memoria_flask_state",
-            "label_key": "label_memoria_flask_status_echo_sleuths",
+            "id": "memoria_flask_item",
+            "label_key": "label_memoria_flask_item_echo_sleuths",
             "type": "text",
-            "default_value_key": "default_memoria_flask_status_echo_sleuths",
+            "default_value_key": "default_memoria_flask_item_echo_sleuths",
             "must_translate": true,
             "short_description": "Current status of the device used to capture and examine stray memories or echoes. This should be a thematic, descriptive phrase."
           },
           {
-            "id": "paradox_resolver_charge_count",
-            "label_key": "label_paradox_resolver_charges_echo_sleuths",
+            "id": "paradox_resolver_charges_item",
+            "label_key": "label_paradox_resolver_charges_item_echo_sleuths",
             "type": "text",
-            "default_value_key": "default_paradox_resolver_charges_echo_sleuths",
+            "default_value_key": "default_paradox_resolver_charges_item_echo_sleuths",
             "must_translate": true,
             "short_description": "Number of available charges for a conceptual tool that helps temporarily untangle or withstand direct logical paradoxes. Should reflect quantity (e.g., a number, or descriptive term like 'Depleted')."
           }

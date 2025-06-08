@@ -1,0 +1,65 @@
+This is the "Game Design Document" for the core attributes:
+
+### **1. Integrity**
+
+*   **Core Concept:** The character's (or their vessel's) ability to maintain physical and metaphysical wholeness.
+*   **Represents:**
+    *   **Physical Health:** Resistance to injury, poison, and sickness.
+    *   **Structural Soundness:** For entities like ships or constructs, this is hull integrity or physical condition.
+    *   **Psychic Cohesion:** In more abstract themes, it represents the stability of one's form against forces that would unravel or deconstruct it.
+*   **In Gameplay (How the AI should use it):**
+    *   This is the primary **Health Pool**. Direct physical damage from attacks, environmental hazards, or catastrophic failures reduces Integrity.
+    *   When Integrity reaches zero, the character is defeated, incapacitated, destroyed, or otherwise narratively "taken out of action." The specific outcome depends on the theme (e.g., a Grim Warden dies, a Salt Reaver's ship sinks).
+*   **Thematic Examples:**
+    *   **Grim Warden:** A Warden's physical toughness and ability to withstand wounds from a beast's claws.
+    *   **Salt Reavers:** A pirate's ability to survive a sword fight, or the structural integrity of their ship's hull during cannon fire.
+    *   **Celestial Custodians:** The physical durability of the Custodian's ship, *The Mildly Perturbed Pigeon*, against cosmic phenomena.
+    *   **Echo Sleuths:** The Sleuth's ability to maintain a stable physical form when reality itself attempts to rewrite them.
+
+### **2. Willpower**
+
+*   **Core Concept:** The finite reservoir of focused energy, resolve, and inner strength a character expends to perform extraordinary actions.
+*   **Represents:**
+    *   **Mental Stamina & Focus:** The energy for complex or draining tasks.
+    *   **Spiritual or Magical Energy:** The fuel for casting spells, using psychic abilities, or performing alchemical rites.
+    *   **Guts & Daring:** The sheer nerve required to attempt a risky maneuver or a feat of incredible bravado.
+*   **In Gameplay (How the AI should use it):**
+    *   This is a **Spendable Resource**, akin to a mana or energy bar. It is *actively used* by the player to fuel special abilities, traits, or powerful narrative actions.
+    *   It is not typically reduced by taking damage, but by *choosing* to expend it for a greater effect. It is recovered through rest, items (potions, tea, grog), or specific narrative events.
+*   **Thematic Examples:**
+    *   **Grim Warden:** Fueling alchemical signs or performing exhausting Warden-specific combat techniques.
+    *   **Salt Reavers:** The "Grit" needed to perform a daring boarding action or a once-per-battle heroic feat.
+    *   **Celestial Custodians:** The "Gumption" required to operate a bizarre piece of Custodial tech or to successfully reason with a sentient nebula.
+    *   **Echo Sleuths:** The mental energy needed to actively shape a dream-memory or deconstruct a psychic assault with a Logicist technique.
+
+### **3. Aptitude**
+
+*   **Core Concept:** A measure of the character's inherent skill, training, and precision in executing deliberate actions.
+*   **Represents:**
+    *   **Proficiency:** Expertise with weapons, tools, or specific knowledge sets.
+    *   **Finesse & Dexterity:** The ability to perform delicate tasks, aim accurately, or move gracefully.
+    *   **Intellect & Cunning:** The sharpness of mind for investigation, persuasion, or tactical planning.
+*   **In Gameplay (How the AI should use it):**
+    *   This is a **Passive Modifier** that influences the *success and quality* of actions. A higher Aptitude increases the chance that an action will succeed and improves the quality of the outcome (e.g., not just hitting, but hitting a weak point; not just persuading, but gaining extra information).
+    *   It is the primary stat for "attack rolls" or "skill checks." It answers the question: **"How well do I *do* things?"**
+*   **Thematic Examples:**
+    *   **Grim Warden:** Skill with a blade, knowledge of monster anatomy to strike weak points.
+    *   **Salt Reavers:** Accuracy with a cannon or pistol, skill in navigating treacherous waters.
+    *   **Celestial Custodians:** Proficiency with bizarre custodial tools, knack for finding the one obscure loophole in galactic bylaws.
+    *   **Echo Sleuths:** Deductive reasoning, ability to spot inconsistencies in a narrative, skill in deciphering psychic echoes.
+
+### **4. Resilience**
+
+*   **Core Concept:** The character's innate ability to endure and passively resist hostile external and internal forces.
+*   **Represents:**
+    *   **Fortitude & Toughness:** Natural armor and the ability to shrug off the effects of poison, disease, and environmental hazards.
+    *   **Mental & Spiritual Armor:** Defense against fear, madness, psychic intrusion, and corruption.
+    *   **Grit & Stoicism:** The capacity to withstand stress, despair, and the wearing effects of a hostile world.
+*   **In Gameplay (How the AI should use it):**
+    *   This is a **Defensive Modifier**. Higher Resilience reduces the impact of negative effects. It can decrease incoming damage, increase the chance to completely resist a status effect (like fear or a curse), or slow the rate at which a negative condition (like Strain or Blight) worsens.
+    *   It is the primary stat for "defense rolls" or "saving throws." It answers the question: **"How well do I *resist* things happening *to me*?"**
+*   **Thematic Examples:**
+    *   **Grim Warden:** Resisting the corrupting influence of the Blight or the maddening whispers of a monster.
+    *   **Salt Reavers:** Shrugging off the effects of a supernatural curse or enduring a harsh storm at sea.
+    *   **Celestial Custodians:** Maintaining sanity when faced with cosmic absurdity; resisting the morale-draining effects of bureaucratic paperwork.
+    *   **Echo Sleuths:** Passively filtering out psychic static, resisting cognitive dissonance, and maintaining a grip on reality during a flux event.

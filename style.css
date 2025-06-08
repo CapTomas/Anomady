@@ -608,9 +608,10 @@ body[class*="theme-"] #center-column {
 	flex-shrink: 0;
 	margin: var(--spacing-xs);
 	border-radius: var(--radius-xs);
-	overflow: hidden;
+	overflow: visible;
 	order: 4;
 	background-image: url(images/app/color_noise.png);
+	position: relative;
 }
 #xp-bar-fill {
 	width: 0%;
@@ -621,14 +622,13 @@ body[class*="theme-"] #center-column {
 }
 #xp-bar-text {
     position: absolute;
-    left: 100%;
-    transform: translate(-50%, -50%);
+    right: 20px;
+    bottom: 100%;
+    margin-bottom: 4px;
+    transform: none;
     font-weight: var(--font-weight-medium);
     text-shadow: 0 0 2px rgba(0,0,0,0.9);
     white-space: nowrap;
-    margin-bottom: 100px !important;
-    padding-bottom: 30px;
-    padding-right: 70px;
     z-index: 100;
     color: var(--color-text-muted);
     font-size: 0.6rem;
@@ -645,6 +645,7 @@ body[class*="theme-"] #center-column {
     pointer-events: none;
     animation: fly-up-and-fade 5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     z-index: 1002;
+		white-space: nowrap;
 }
 .panel-box {
 	display: flex;

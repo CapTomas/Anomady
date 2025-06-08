@@ -282,6 +282,7 @@ export async function showCharacterProgressModal(themeId) {
     resetButton.textContent = getUIText('button_reset_character');
     attachTooltip(resetButton, 'tooltip_reset_character');
     resetButton.addEventListener('click', () => {
+        hideCurrentTooltip(); // Hide tooltip immediately on click
         if (_gameControllerRef) {
             _gameControllerRef.initiateCharacterResetFlow(themeId);
         }
@@ -339,19 +340,22 @@ export function animateXpGain(xpGained) {
     popup.textContent = `+${xpGained} XP`;
     document.body.appendChild(popup);
     const textRect = xpBarText.getBoundingClientRect();
-    popup.style.left = `${textRect.left + (textRect.width / 2)}px`;
-    popup.style.top = `${textRect.top}px`;
+    // Adjust starting position: more to the left and upwards from the anchor text
+    popup.style.left = `${textRect.left + (textRect.width / 2) - 10}px`;
+    popup.style.top = `${textRect.top - 10}px`;
+    // Set timeout to match the 5s animation duration in style.css for .xp-gain-popup
     setTimeout(() => {
         if (document.body.contains(popup)) {
             document.body.removeChild(popup);
         }
-    }, 3000);
+    }, 5000);
     xpBarText.classList.add('updated');
+    // Set timeout to match the 6s animation duration in style.css for #xp-bar-text.updated
     setTimeout(() => {
         if (document.body.contains(xpBarText)) {
             xpBarText.classList.remove('updated');
         }
-    }, 3000);
+    }, 6000);
 }
 
 /**

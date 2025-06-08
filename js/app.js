@@ -184,7 +184,7 @@ async function initializeApp() {
         languageManager // For triggering full UI re-translation on preference change
     });
     dashboardManager.initDashboardManagerScrollEvents();
-    characterPanelManager.initCharacterPanelManager({ landingPageManager, userThemeControlsManager });
+    characterPanelManager.initCharacterPanelManager({ landingPageManager, userThemeControlsManager, gameController });
     tooltipManager.initTooltipManager();
 
 

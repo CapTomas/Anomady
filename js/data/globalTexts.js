@@ -237,6 +237,7 @@ export const globalTextData = {
             "tooltip_reset_character": "Permanently resets all progress, stats, and unlocked fragments for this character.",
             "confirm_reset_character_title": "Reset Character Progress?",
             "confirm_reset_character_message": "Are you sure you want to permanently reset this character? All level progress, stats, experience, and unlocked World Fragments for {THEME_NAME} will be lost forever. This cannot be undone.",
+            "alert_character_reset_success_message": "Character progress for {THEME_NAME} has been reset.",
             // --- Character Progression Panel ---
             "char_panel_placeholder_name": "Protagonist",
             "char_panel_placeholder_level": "Level 1",
@@ -511,6 +512,7 @@ export const globalTextData = {
             "tooltip_reset_character": "Trvale resetuje veškerý postup, statistiky a odemčené fragmenty pro tuto postavu.",
             "confirm_reset_character_title": "Resetovat Postup Postavy?",
             "confirm_reset_character_message": "Opravdu chcete trvale resetovat tuto postavu? Veškerý postup, úrovně, statistiky, zkušenosti a odemčené Fragmenty Světa pro {THEME_NAME} budou navždy ztraceny. Tuto akci nelze vrátit.",
+            "alert_character_reset_success_message": "Postup postavy pro {THEME_NAME} byl resetován.",
             // --- Character Progression Panel ---
             "char_panel_placeholder_name": "Protagonista",
             "char_panel_placeholder_level": "Úroveň 1",

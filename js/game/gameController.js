@@ -152,6 +152,11 @@ async function _presentPrimaryBoonChoices() {
             boonId: 'PRIMARY_MAX_IG'
         },
         {
+            text: localizationService.getUIText(BOON_DEFINITIONS.MAX_WILLPOWER_INCREASE.descriptionKey, { VALUE: BOON_DEFINITIONS.MAX_WILLPOWER_INCREASE.value }),
+            isBoonChoice: true,
+            boonId: 'PRIMARY_MAX_WP'
+        },
+        {
             text: localizationService.getUIText('boon_primary_choose_attribute'),
             isBoonChoice: true,
             boonId: 'PRIMARY_ATTR_ENH'
@@ -182,12 +187,12 @@ function _presentSecondaryBoonChoices(type) {
     if (type === 'attribute') {
         _boonSelectionContext.step = 'secondary_attribute';
         secondaryChoices.push({
-            text: localizationService.getUIText('boon_desc_aptitude_increase', { VALUE: 4 }),
+            text: localizationService.getUIText(BOON_DEFINITIONS.APTITUDE_INCREASE.descriptionKey, { VALUE: BOON_DEFINITIONS.APTITUDE_INCREASE.value }),
             isBoonChoice: true,
             boonId: 'SECONDARY_APTITUDE'
         });
         secondaryChoices.push({
-            text: localizationService.getUIText('boon_desc_resilience_increase', { VALUE: 4 }),
+            text: localizationService.getUIText(BOON_DEFINITIONS.RESILIENCE_INCREASE.descriptionKey, { VALUE: BOON_DEFINITIONS.RESILIENCE_INCREASE.value }),
             isBoonChoice: true,
             boonId: 'SECONDARY_RESILIENCE'
         });
@@ -226,7 +231,6 @@ function _presentSecondaryBoonChoices(type) {
     }
     suggestedActionsManager.displaySuggestedActions(secondaryChoices);
     uiUtils.setPlayerInputEnabled(false); // Prevent typing during boon choice
-
 }
 /**
  * Finalizes the boon application by calling the API and updating the UI.
@@ -285,6 +289,13 @@ async function _handleBoonSelection(boonId, boonDisplayText) {
                     value: BOON_DEFINITIONS.MAX_INTEGRITY_INCREASE.value
                 }, boonDisplayText);
                 break;
+            case 'PRIMARY_MAX_WP':
+                await _applyBoonAndFinalize({
+                    boonType: "MAX_ATTRIBUTE_INCREASE",
+                    targetAttribute: "maxWillpowerBonus",
+                    value: BOON_DEFINITIONS.MAX_WILLPOWER_INCREASE.value
+                }, boonDisplayText);
+                break;
             case 'PRIMARY_ATTR_ENH':
                 _presentSecondaryBoonChoices('attribute');
                 break;
@@ -298,9 +309,9 @@ async function _handleBoonSelection(boonId, boonDisplayText) {
     } else if (step === 'secondary_attribute') {
         let payload;
         if (boonId === 'SECONDARY_APTITUDE') {
-            payload = { boonType: "ATTRIBUTE_ENHANCEMENT", targetAttribute: "aptitudeBonus", value: 4 };
+            payload = { boonType: "ATTRIBUTE_ENHANCEMENT", targetAttribute: "aptitudeBonus", value: BOON_DEFINITIONS.APTITUDE_INCREASE.value };
         } else if (boonId === 'SECONDARY_RESILIENCE') {
-            payload = { boonType: "ATTRIBUTE_ENHANCEMENT", targetAttribute: "resilienceBonus", value: 4 };
+            payload = { boonType: "ATTRIBUTE_ENHANCEMENT", targetAttribute: "resilienceBonus", value: BOON_DEFINITIONS.RESILIENCE_INCREASE.value };
         }
         if (payload) {
             await _applyBoonAndFinalize(payload, boonDisplayText);
@@ -550,6 +561,80 @@ export async function initiateNewGameSessionFlow(themeId, skipConfirmation = fal
     }
     state.setCurrentNewGameSettings({ useEvolvedWorld });
     await _setupNewGameEnvironment(themeId);
+}
+/**
+ * Initiates the flow for resetting all progress for a character in a specific theme.
+ * @param {string} themeId - The ID of the theme to reset.
+ */
+export async function initiateCharacterResetFlow(themeId) {
+    log(LOG_LEVEL_INFO, `Initiating character reset flow for theme: ${themeId}.`);
+    const themeConfig = themeService.getThemeConfig(themeId);
+    const themeDisplayName = themeConfig ? localizationService.getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeId }) : themeId;
+
+    const confirmed = await modalManager.showGenericConfirmModal({
+        titleKey: "confirm_reset_character_title",
+        messageKey: "confirm_reset_character_message",
+        replacements: { THEME_NAME: themeDisplayName },
+        explicitThemeContext: themeId
+    });
+
+    if (!confirmed) {
+        log(LOG_LEVEL_INFO, `User cancelled character reset for theme ${themeId}.`);
+        return;
+    }
+
+    // Hide the progress modal before showing any new alerts
+    modalManager.hideCustomModal();
+
+    const currentUser = state.getCurrentUser();
+    if (!currentUser || !currentUser.token) {
+        log(LOG_LEVEL_ERROR, "Cannot reset character: User not logged in.");
+        modalManager.showCustomModal({
+            type: "alert",
+            titleKey: "alert_title_error",
+            messageKey: "error_api_call_failed",
+            replacements: { ERROR_MSG: "You must be logged in to perform this action." }
+        });
+        return;
+    }
+
+    try {
+        await apiService.resetCharacterProgress(currentUser.token, themeId);
+        log(LOG_LEVEL_INFO, `Character reset successful for theme ${themeId}.`);
+
+        // Show success alert
+        modalManager.showCustomModal({
+            type: "alert",
+            titleKey: "alert_title_notice", // Using a generic success title
+            messageKey: "alert_character_reset_success_message",
+            replacements: { THEME_NAME: themeDisplayName }
+        });
+
+        // The reset on the backend removes UserThemeProgress, GameState, and WorldShards,
+        // and sets is_playing to false. We need to refresh the frontend state to match.
+
+        // 1. Remove theme from local 'playing' state to update top bar immediately
+        const playingThemes = state.getPlayingThemes().filter(id => id !== themeId);
+        state.setPlayingThemes(playingThemes);
+        _userThemeControlsManagerRef.updateTopbarThemeIcons(); // Update top bar icons immediately
+
+        // 2. Fetch fresh shaped world data (since shards were deleted) and re-render the grid
+        await landingPageManager.fetchShapedWorldStatusAndUpdateGrid();
+
+        // 3. If the reset theme was the selected one on the landing page, we need to refresh its display
+        if (state.getCurrentLandingGridSelection() === themeId) {
+            await landingPageManager.handleThemeGridSelection(themeId, false); // This will re-fetch progress (which is now reset) and re-render panels
+        }
+
+    } catch (error) {
+        log(LOG_LEVEL_ERROR, `Failed to reset character for theme ${themeId}:`, error);
+        modalManager.showCustomModal({
+            type: "alert",
+            titleKey: "alert_title_error",
+            messageKey: "error_api_call_failed",
+            replacements: { ERROR_MSG: error.message }
+        });
+    }
 }
 /**
  * Resumes an existing game session for the given theme.

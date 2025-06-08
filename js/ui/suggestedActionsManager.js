@@ -22,7 +22,7 @@ export function initSuggestedActionsManager(dependencies = {}) {
     log(LOG_LEVEL_DEBUG, "SuggestedActionsManager initialized.");
 }
 
-const MAX_SUGGESTED_ACTIONS = 3; // Consistent with prompt file requests (2-3 actions)
+const MAX_SUGGESTED_ACTIONS = 4; // Consistent with prompt file requests (2-3 actions, 4 for boons)
 
 /**
  * Displays AI-suggested actions as clickable buttons.
@@ -42,14 +42,12 @@ export function displaySuggestedActions(actions, options = {}) {
         return;
     }
     suggestedActionsWrapper.innerHTML = ""; // Clear previous actions
-
     if (options.headerText) {
         const header = document.createElement('div');
         header.classList.add('suggested-actions-header');
         header.textContent = options.headerText;
         suggestedActionsWrapper.appendChild(header);
     }
-
     let validActionsToStore = [];
     if (actions && Array.isArray(actions) && actions.length > 0) {
         actions.slice(0, MAX_SUGGESTED_ACTIONS).forEach(actionObjOrString => {
@@ -58,7 +56,7 @@ export function displaySuggestedActions(actions, options = {}) {
             let tooltipText; // Text for the hover title attribute
             let isMullOver = false;
             let isBoonOrTrait = false;
-            let shardDataForMullOver = null;
+            let shardData = null;
             if (typeof actionObjOrString === 'string') {
                 actionText = actionObjOrString;
                 buttonDisplayText = actionText;
@@ -67,7 +65,7 @@ export function displaySuggestedActions(actions, options = {}) {
                 buttonDisplayText = actionObjOrString.displayText || actionText;
                 tooltipText = actionObjOrString.descriptionForTooltip || null;
                 isMullOver = actionObjOrString.isTemporaryMullOver === true;
-                shardDataForMullOver = actionObjOrString.shardDataForMullOver || actionObjOrString.shardData || null;
+                shardData = actionObjOrString.shardData || null;
                 isBoonOrTrait = actionObjOrString.isBoonChoice === true || actionObjOrString.isTraitChoice === true;
             } else {
                 log(LOG_LEVEL_WARN, "Invalid action format in suggested actions array:", actionObjOrString);
@@ -97,9 +95,9 @@ export function displaySuggestedActions(actions, options = {}) {
                                 autoGrowTextarea(playerActionInput);
                             }
                         }
-                    } else if (isMullOver && shardDataForMullOver) {
-                        log(LOG_LEVEL_DEBUG, "Mull Over Shard action clicked:", shardDataForMullOver.title);
-                        handleMullOverShardAction(shardDataForMullOver)
+                    } else if (isMullOver && shardData) {
+                        log(LOG_LEVEL_DEBUG, "Mull Over Shard action clicked:", shardData.title);
+                        handleMullOverShardAction(shardData)
                             .catch(err => {
                                 log(LOG_LEVEL_ERROR, "Error handling Mull Over Shard action from suggestedActionsManager:", err);
                             });

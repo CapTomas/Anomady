@@ -50,14 +50,13 @@ export const XP_LEVELS = [
 ];
 export const MAX_PLAYER_LEVEL = XP_LEVELS.length;
 
-// Placeholder for Boon definitions - will be fleshed out in Phase 3
 // This will likely be a more complex structure, possibly per-theme or global with theme overrides.
 export const BOON_DEFINITIONS = {
     MAX_INTEGRITY_INCREASE: { value: 10, descriptionKey: "boon_desc_max_integrity" },
     MAX_WILLPOWER_INCREASE: { value: 5, descriptionKey: "boon_desc_max_willpower" },
-    // Attribute Enhancements
+    APTITUDE_INCREASE: { value: 1, descriptionKey: "boon_desc_aptitude_increase" },
+    RESILIENCE_INCREASE: { value: 1, descriptionKey: "boon_desc_resilience_increase" },
 };
-
 // --- Game Logic Constants ---
 export const RECENT_INTERACTION_WINDOW_SIZE = 10; // Number of recent turns to consider for certain operations or display
 export const MAX_PLAYER_ACTION_INPUT_LENGTH = 600;

@@ -1,0 +1,952 @@
+[
+  {
+    "id": "cc_ag_emergency_biscuit_l01",
+    "name": {
+      "en": "Emergency Biscuit (Slightly Stale)",
+      "cs": "Nouzová Sušenka (Lehce Okoralá)"
+    },
+    "description": {
+      "en": "A single, universally recognized 'comfort food'. Offers minimal nutritional value but a surprisingly high morale boost in moments of mild existential bewilderment. Not effective against ravenous space hamsters.",
+      "cs": "Jediná, všeobecně uznávaná 'útěšná potravina'. Nabízí minimální nutriční hodnotu, ale překvapivě vysoké povzbuzení morálky v okamžicích mírného existenčního zmatení. Neúčinná proti hladovým vesmírným křečkům."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Minor morale boost. Not hamster-proof.",
+      "cs": "Menší povzbuzení morálky. Není odolná vůči křečkům."
+    },
+    "attributes": { "gumption_boost_minor": 1, "consumable_charges": 1, "hamster_attraction_index": -2 },
+    "abilities": ["Provides momentary comfort", "Can be offered as a gesture of goodwill (to non-hamsters)"],
+    "level": 1
+  },
+  {
+    "id": "cc_ag_confusing_noise_maker_l02",
+    "name": {
+      "en": "Pocket Confusing Noise Maker",
+      "cs": "Kapesní Generátor Matoucích Zvuků"
+    },
+    "description": {
+      "en": "Emits a series of sounds that are universally recognized as 'mildly perplexing'. Useful for creating brief distractions or making sentient teapots question their life choices.",
+      "cs": "Vydává sérii zvuků, které jsou všeobecně uznávány jako 'mírně matoucí'. Užitečné pro vytváření krátkých rozptýlení nebo přimění vnímajících čajových konvic k zpochybnění jejich životních voleb."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Creates brief confusion. Puzzles teapots.",
+      "cs": "Vytváří krátké zmatení. Mate čajové konvice."
+    },
+    "attributes": { "distraction_factor_auditory": 2, "teapot_bewilderment_rating": 3, "charges": 3 },
+    "abilities": ["Generates perplexing sounds", "Can briefly derail a conversation"],
+    "level": 2
+  },
+  {
+    "id": "cc_ag_sparkly_thing_l03",
+    "name": {
+      "en": "Shiny Sparkly Thing on a Stick",
+      "cs": "Lesklá Třpytivá Věc na Klacku"
+    },
+    "description": {
+      "en": "Its actual function is unknown, but it's very good at attracting the attention of easily distracted cosmic entities or very small children. Do not wave near magpies.",
+      "cs": "Její skutečná funkce je neznámá, ale je velmi dobrá v přitahování pozornosti snadno rozptýlitelných kosmických entit nebo velmi malých dětí. Nemávejte s ní poblíž strak."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Attracts attention. Magpie hazard.",
+      "cs": "Přitahuje pozornost. Nebezpečí pro straky."
+    },
+    "attributes": { "attention_grabbing_index": 4, "magpie_aggravation_factor": 5, "charges": -1 },
+    "abilities": ["Distracts simple-minded entities", "Visually appealing (to some)"],
+    "level": 3
+  },
+  {
+    "id": "cc_ag_instant_mess_powder_l04",
+    "name": {
+      "en": "Packet of Instant Cosmic Mess Powder",
+      "cs": "Sáček Instantního Kosmického Nepořádku"
+    },
+    "description": {
+      "en": "For when an area is just too tidy and it's making everyone uncomfortable. Creates a small, localized, and entirely harmless (but very visible) mess. Union-approved for 'atmosphere enhancement'.",
+      "cs": "Pro případy, kdy je oblast prostě příliš uklizená a všem je to nepříjemné. Vytváří malý, lokalizovaný a zcela neškodný (ale velmi viditelný) nepořádek. Schváleno Odbory pro 'vylepšení atmosféry'."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Creates harmless mess. Union approved.",
+      "cs": "Vytváří neškodný nepořádek. Schváleno Odbory."
+    },
+    "attributes": { "mess_creation_factor": 3, "harmlessness_rating": 10, "charges": 2 },
+    "abilities": ["Instantly makes an area look 'lived-in'", "Good for breaking the ice (or tidiness)"],
+    "level": 4
+  },
+  {
+    "id": "cc_ag_questionable_manual_l05",
+    "name": {
+      "en": "Manual of Questionable Custodial Techniques",
+      "cs": "Manuál Pochybných Údržbářských Technik"
+    },
+    "description": {
+      "en": "A dog-eared pamphlet filled with 'creative' solutions to common cosmic problems, like 'Negotiating with Rogue Black Holes using Interpretive Dance' or 'The Zen of Unclogging Sentient Drains'.",
+      "cs": "Ošoupaná brožura plná 'kreativních' řešení běžných kosmických problémů, jako 'Vyjednávání se Zbloudilými Černými Dírami pomocí Interpretačního Tance' nebo 'Zen Odcpávání Vnímajících Odtoků'."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Offers bizarre advice. Questionable efficacy.",
+      "cs": "Nabízí bizarní rady. Pochybná účinnost."
+    },
+    "attributes": { "unorthodox_solution_generator": 4, "success_probability_low": 0.2, "entertainment_value": 5, "consumable_charges": -1 },
+    "abilities": ["Provides highly unconventional suggestions", "May inspire accidental genius"],
+    "level": 5
+  },
+  {
+    "id": "cc_ag_portable_tea_stain_l06",
+    "name": {
+      "en": "Portable Tea Stain Applicator",
+      "cs": "Přenosný Aplikátor Čajových Skvrn"
+    },
+    "description": {
+      "en": "For marking territory, confusing sentient cleaning robots, or just making a place feel more 'authentically Custodial'. Comes in 'Earl Grey Nebula' and 'Forgotten Darjeeling' patterns.",
+      "cs": "Pro značení teritoria, matení vnímajících uklízecích robotů nebo jen pro dodání místu 'autenticky Údržbářského' pocitu. Dodává se ve vzorech 'Mlhovina Earl Grey' a 'Zapomenutý Darjeeling'."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Applies realistic tea stains. Confuses robots.",
+      "cs": "Aplikuje realistické čajové skvrny. Mate roboty."
+    },
+    "attributes": { "aesthetic_degradation_minor": 3, "robot_confusion_rating": 4, "charges": 5 },
+    "abilities": ["Creates authentic-looking tea stains", "Can be used to disrupt cleaning routines"],
+    "level": 6
+  },
+  {
+    "id": "cc_ag_antigravity_paperclip_l07",
+    "name": {
+      "en": "Anti-Gravity Paperclip (Slightly Unreliable)",
+      "cs": "Antigravitační Sponka na Papír (Lehce Nespolehlivá)"
+    },
+    "description": {
+      "en": "A single paperclip that occasionally defies local gravitational fields. Useful for... well, nobody's quite sure, but it looks impressive when it floats.",
+      "cs": "Jediná sponka na papír, která občas vzdoruje místním gravitačním polím. Užitečná pro... no, nikdo si není úplně jistý, ale vypadá působivě, když plave."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Occasionally floats. Impressive but useless.",
+      "cs": "Občas plave. Působivé, ale neužitečné."
+    },
+    "attributes": { "anti_gravity_effect_unreliable": 2, "impressiveness_quotient": 3, "practical_application_index": 0, "consumable_charges": -1 },
+    "abilities": ["Can float impressively at random intervals", "Guaranteed to not hold papers together"],
+    "level": 7
+  },
+  {
+    "id": "cc_ag_universal_apology_form_l08",
+    "name": {
+      "en": "Pre-Filled Universal Apology Form (TR-47)",
+      "cs": "Předvyplněný Univerzální Omluvný Formulář (TR-47)"
+    },
+    "description": {
+      "en": "Apologizes for 'any and all cosmic disturbances, existential quandaries, or tea-related mishaps, whether caused by, adjacent to, or merely contemplated by the bearer.' Surprisingly effective in some bureaucratic circles.",
+      "cs": "Omlouvá se za 'jakékoli a všechny kosmické poruchy, existenční dilemata nebo nehody související s čajem, ať už způsobené, přilehlé k, nebo pouze zvažované nositelem.' Překvapivě účinný v některých byrokratických kruzích."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Universal apology. Sometimes works.",
+      "cs": "Univerzální omluva. Někdy funguje."
+    },
+    "attributes": { "diplomacy_modifier_apologetic": 5, "bureaucracy_appeasement_minor": 3, "charges": 1 },
+    "abilities": ["Can placate mildly annoyed entities", "May satisfy obscure regulatory requirements"],
+    "level": 8
+  },
+  {
+    "id": "cc_ag_mood_indicator_rock_l09",
+    "name": {
+      "en": "Cosmic Mood Indicator Rock",
+      "cs": "Kámen Indikující Kosmickou Náladu"
+    },
+    "description": {
+      "en": "Changes color based on the ambient mood of the universe. If wet, it's raining. If gone, someone stole your rock. If glowing ominously, consult a professional.",
+      "cs": "Mění barvu podle okolní nálady vesmíru. Pokud je mokrý, prší. Pokud zmizel, někdo vám ukradl kámen. Pokud zlověstně září, poraďte se s profesionálem."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Indicates mood/weather. Highly accurate (sometimes).",
+      "cs": "Indikuje náladu/počasí. Vysoce přesný (někdy)."
+    },
+    "attributes": { "ambient_mood_detection": 4, "weather_prediction_unreliable": 2, "theft_attraction_level": 3, "consumable_charges": -1 },
+    "abilities": ["Changes color to reflect local cosmic mood", "Provides obvious weather information"],
+    "level": 9
+  },
+  {
+    "id": "cc_ag_self_solving_puzzle_l10",
+    "name": {
+      "en": "Self-Solving Puzzle Box (Mildly Smug)",
+      "cs": "Samořešící Hlavolam (Lehce Samolibý)"
+    },
+    "description": {
+      "en": "A complex mechanical puzzle that, when presented with a problem, solves itself with a flourish and then emits a faint, satisfied hum. Doesn't actually help with *your* problem, but it's a good distraction.",
+      "cs": "Složitý mechanický hlavolam, který, když je mu předložen problém, se sám vyřeší s bravurou a poté vydá slabý, spokojený brum. Ve skutečnosti nepomůže s *vaším* problémem, ale je to dobré rozptýlení."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Solves itself. Offers no real help.",
+      "cs": "Vyřeší se sám. Nenabízí skutečnou pomoc."
+    },
+    "attributes": { "self_solving_speed": 7, "smugness_aura": 4, "actual_utility": 0, "charges": -1 },
+    "abilities": ["Demonstrates impressive problem-solving (on itself)", "Can be used to impress easily bewildered entities"],
+    "level": 10
+  },
+  {
+    "id": "cc_ag_pocket_lint_analyzer_l11",
+    "name": {
+      "en": "Quantum Pocket Lint Analyzer",
+      "cs": "Kvantový Analyzátor Kapesních Chuchvalců"
+    },
+    "description": {
+      "en": "Scans and identifies the origin, age, and potential metaphysical properties of common pocket lint. Surprisingly, sometimes reveals vital clues or spare change.",
+      "cs": "Skenuje a identifikuje původ, stáří a potenciální metafyzické vlastnosti běžných kapesních chuchvalců. Překvapivě někdy odhalí životně důležité stopy nebo drobné."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Analyzes lint. May find clues/coins.",
+      "cs": "Analyzuje chuchvalce. Může najít stopy/mince."
+    },
+    "attributes": { "lint_analysis_depth": 6, "clue_discovery_chance_lint": 0.1, "spare_change_generation_lint": 0.05, "charges": 3 },
+    "abilities": ["Provides detailed information about pocket lint", "Rarely uncovers something useful"],
+    "level": 11
+  },
+  {
+    "id": "cc_ag_button_of_significance_l12",
+    "name": {
+      "en": "Button of Undetermined Significance",
+      "cs": "Tlačítko Neurčitého Významu"
+    },
+    "description": {
+      "en": "A single, enticing red button labeled 'DO NOT PRESS (Or Maybe Do, I'm Not Your Supervisor)'. Its actual function is a complete unknown. Pressing it is an act of faith, or folly.",
+      "cs": "Jediné, lákavé červené tlačítko s nápisem 'NEMAČKAT (Nebo Možná Ano, Nejsem Váš Nadřízený)'. Jeho skutečná funkce je naprosto neznámá. Jeho stisknutí je aktem víry, nebo pošetilosti."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Unknown effect. Press at own risk.",
+      "cs": "Neznámý účinek. Stiskněte na vlastní nebezpečí."
+    },
+    "attributes": { "random_effect_level": 7, "temptation_factor": 8, "charges": 1 },
+    "abilities": ["Causes a completely random, potentially significant event", "Highly unpredictable"],
+    "level": 12
+  },
+  {
+    "id": "cc_ag_perpetual_motion_pen_l13",
+    "name": {
+      "en": "Perpetual Motion Pen (Currently Out of Ink)",
+      "cs": "Perpetuum Mobile Pero (Momentálně Bez Inkoustu)"
+    },
+    "description": {
+      "en": "A marvel of engineering that would write forever, if only it had any ink. Or if anyone could figure out how to refill its temporally-locked ink cartridge. Makes an excellent fidget toy.",
+      "cs": "Zázrak inženýrství, který by psal věčně, kdyby jen měl nějaký inkoust. Nebo kdyby někdo přišel na to, jak doplnit jeho časově uzamčenou inkoustovou kazetu. Skvělá hračka pro neposedné prsty."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Writes forever (theoretically). Inkless.",
+      "cs": "Píše věčně (teoreticky). Bez inkoustu."
+    },
+    "attributes": { "perpetual_motion_potential": 10, "ink_level": 0, "fidget_quality": 7, "consumable_charges": -1 },
+    "abilities": ["Serves as an excellent conversation starter about theoretical physics", "Cannot actually write"],
+    "level": 13
+  },
+  {
+    "id": "cc_ag_emotional_support_pet_rock_l14",
+    "name": {
+      "en": "Emotional Support Pet Rock (Stoic Edition)",
+      "cs": "Emoční Podpora Mazlíček Kámen (Stoická Edice)"
+    },
+    "description": {
+      "en": "Remarkably good listener. Offers no actual advice but has a very calming, silent presence. Doesn't require feeding, walking, or existential validation.",
+      "cs": "Pozoruhodně dobrý posluchač. Nenabízí žádné skutečné rady, ale má velmi uklidňující, tichou přítomnost. Nevyžaduje krmení, venčení ani existenciální potvrzení."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Good listener. Offers stoic support.",
+      "cs": "Dobrý posluchač. Nabízí stoickou podporu."
+    },
+    "attributes": { "passive_morale_boost": 3, "listening_skill": 9, "maintenance_level": 0, "consumable_charges": -1 },
+    "abilities": ["Provides a sense of calm companionship", "Absorbs unspoken anxieties (allegedly)"],
+    "level": 14
+  },
+  {
+    "id": "cc_ag_instant_potted_plant_l15",
+    "name": {
+      "en": "Instant Potted Plant (Just Add Confusion)",
+      "cs": "Instantní Květináč (Stačí Přidat Zmatek)"
+    },
+    "description": {
+      "en": "A small pellet that, when exposed to a sufficiently baffling situation or a strong wave of existential uncertainty, blossoms into a surprisingly mundane potted fern. Good for emergency de-escalation through sheer unexpectedness.",
+      "cs": "Malá peleta, která, když je vystavena dostatečně matoucí situaci nebo silné vlně existenční nejistoty, rozkvete v překvapivě všední kapradinu v květináči. Dobré pro nouzovou deeskalaci pomocí naprosté neočekávanosti."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Creates a fern in confusing situations.",
+      "cs": "Vytváří kapradinu v matoucích situacích."
+    },
+    "attributes": { "plant_generation_conditional": 6, "deescalation_by_absurdity": 4, "charges": 2 },
+    "abilities": ["Can spontaneously generate a potted fern", "Useful for derailing tense negotiations"],
+    "level": 15
+  },
+  {
+    "id": "cc_ag_portable_wormhole_l16",
+    "name": {
+      "en": "Portable Wormhole (Destination Unreliable)",
+      "cs": "Přenosná Červí Díra (Cíl Nespolehlivý)"
+    },
+    "description": {
+      "en": "Creates a very small, very temporary wormhole to... somewhere else. 'Somewhere else' is rarely where you intended, but it's almost always interesting. Or full of angry space hamsters.",
+      "cs": "Vytváří velmi malou, velmi dočasnou červí díru do... někam jinam. 'Někam jinam' je zřídka tam, kam jste zamýšleli, ale je to téměř vždy zajímavé. Nebo plné naštvaných vesmírných křečků."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Short-range teleport. Destination random.",
+      "cs": "Teleport na krátkou vzdálenost. Cíl náhodný."
+    },
+    "attributes": { "short_range_teleport_unreliable": 5, "destination_accuracy": 0.1, "hamster_dimension_probability": 0.2, "charges": 1 },
+    "abilities": ["Provides emergency escape (to somewhere)", "May lead to unexpected new problems"],
+    "level": 16
+  },
+  {
+    "id": "cc_ag_compliment_generator_l17",
+    "name": {
+      "en": "Slightly Off-Kilter Compliment Generator",
+      "cs": "Generátor Lehce Nevyvážených Komplimentů"
+    },
+    "description": {
+      "en": "Dispenses compliments that are technically positive but often strangely specific or mildly unsettling. Example: 'Your aura is a fascinating shade of beige today!'",
+      "cs": "Dávkuje komplimenty, které jsou technicky pozitivní, ale často podivně specifické nebo mírně znepokojivé. Příklad: 'Vaše aura má dnes fascinující odstín béžové!'"
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Gives odd compliments. May confuse recipient.",
+      "cs": "Dává podivné komplimenty. Může zmást příjemce."
+    },
+    "attributes": { "compliment_generation_bizarre": 6, "social_interaction_modifier_awkward": 3, "charges": 5 },
+    "abilities": ["Can disarm with unexpected praise", "Compliments are rarely entirely appropriate"],
+    "level": 17
+  },
+  {
+    "id": "cc_ag_anti_plot_device_l18",
+    "name": {
+      "en": "Anti-Plot Device Detector (Mostly False Positives)",
+      "cs": "Detektor Anti-Dějových Zařízení (Většinou Falešné Poplachy)"
+    },
+    "description": {
+      "en": "Beeps insistently when near anything that might be construed as a 'convenient plot device'. Given the nature of the universe, it beeps a lot. And is usually wrong.",
+      "cs": "Trvale pípá v blízkosti čehokoli, co by mohlo být považováno za 'pohodlné dějové zařízení'. Vzhledem k povaze vesmíru pípá hodně. A obvykle se mýlí."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Detects 'plot devices'. Mostly beeps.",
+      "cs": "Detekuje 'dějová zařízení'. Většinou pípá."
+    },
+    "attributes": { "plot_device_detection_unreliable": 3, "false_positive_rate_high": 0.9, "annoyance_factor_beeping": 6, "consumable_charges": -1 },
+    "abilities": ["Beeps frequently", "Rarely identifies actual plot devices"],
+    "level": 18
+  },
+  {
+    "id": "cc_ag_cup_of_doubt_l19",
+    "name": {
+      "en": "Bottomless Cup of Existential Doubt",
+      "cs": "Bezedný Šálek Existenčních Pochybností"
+    },
+    "description": {
+      "en": "Always half-full of a lukewarm, slightly bitter liquid that induces profound, if temporary, existential doubt in anyone who sips it. Useful for derailing arguments or inspiring philosophy.",
+      "cs": "Vždy napůl plný vlažné, lehce nahořklé tekutiny, která v každém, kdo si usrkl, vyvolá hluboké, i když dočasné, existenční pochybnosti. Užitečné pro vykolejení argumentů nebo inspiraci k filozofii."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Induces existential doubt. Inspires philosophy.",
+      "cs": "Vyvolává existenční pochybnosti. Inspiruje k filozofii."
+    },
+    "attributes": { "existential_doubt_infliction": 7, "philosophical_discourse_catalyst": 5, "charges": 3 },
+    "abilities": ["Can make entities question their purpose", "May lead to lengthy philosophical discussions"],
+    "level": 19
+  },
+  {
+    "id": "cc_ag_perfectly_useless_key_l20",
+    "name": {
+      "en": "Perfectly Useless Key",
+      "cs": "Dokonale Neužitečný Klíč"
+    },
+    "description": {
+      "en": "An exquisitely crafted key that fits no known lock in this, or possibly any, universe. Its sheer, baffling uselessness can sometimes confuse automated systems or very literal-minded beings.",
+      "cs": "Nádherně zpracovaný klíč, který nepasuje do žádného známého zámku v tomto, nebo možná žádném, vesmíru. Jeho naprostá, matoucí neužitečnost může někdy zmást automatizované systémy nebo velmi doslovně smýšlející bytosti."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Fits no lock. May confuse literalists.",
+      "cs": "Nepasuje do žádného zámku. Může zmást doslovníky."
+    },
+    "attributes": { "lock_opening_capability": 0, "conceptual_confusion_literal_beings": 5, "aesthetic_value": 6, "consumable_charges": -1 },
+    "abilities": ["A testament to exquisite pointlessness", "Can be used to 'try' locked doors with baffling results"],
+    "level": 20
+  },
+  {
+    "id": "cc_ag_sentient_rubber_chicken_l21",
+    "name": {
+      "en": "Sentient Rubber Chicken (Advisor Mode)",
+      "cs": "Vnímající Gumové Kuře (Režim Poradce)"
+    },
+    "description": {
+      "en": "Offers advice that is invariably nonsensical, yet delivered with such profound conviction it occasionally works by sheer audacity. Squeaks when squeezed, obviously.",
+      "cs": "Nabízí rady, které jsou vždy nesmyslné, ale podané s tak hlubokým přesvědčením, že občas fungují pouhou drzostí. Při zmáčknutí piští, samozřejmě."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Nonsensical advice. Convincing delivery.",
+      "cs": "Nesmyslné rady. Přesvědčivé podání."
+    },
+    "attributes": { "advice_quality_low": 1, "conviction_level_high": 9, "squeak_volume": 5, "charges": -1 },
+    "abilities": ["Dispenses confidently absurd advice", "Can be squeezed for emphasis (or stress relief)"],
+    "level": 21
+  },
+  {
+    "id": "cc_ag_infinite_loop_detector_l22",
+    "name": {
+      "en": "Infinite Loop Detector (Often Gets Stuck In One)",
+      "cs": "Detektor Nekonečných Smyček (Často Se v Jedné Zasekne)"
+    },
+    "description": {
+      "en": "Designed to identify and break temporal or logical infinite loops. Ironically, it's prone to getting caught in its own diagnostic loops, repeating its last observation indefinitely.",
+      "cs": "Navržen k identifikaci a přerušení časových nebo logických nekonečných smyček. Ironicky je náchylný k uvíznutí ve vlastních diagnostických smyčkách, opakujíc své poslední pozorování donekonečna."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Detects loops. May get stuck in loops.",
+      "cs": "Detekuje smyčky. Může se zaseknout ve smyčkách."
+    },
+    "attributes": { "loop_detection_accuracy": 7, "self_looping_tendency": 6, "consumable_charges": -1 },
+    "abilities": ["Can identify repetitive temporal or logical patterns", "May itself begin repeating observations"],
+    "level": 22
+  },
+  {
+    "id": "cc_ag_mystery_flavor_snack_l23",
+    "name": {
+      "en": "Mystery Flavor Space Snack Bar",
+      "cs": "Vesmírná Tyčinka s Tajemnou Příchutí"
+    },
+    "description": {
+      "en": "Its flavor profile is a closely guarded cosmic secret, rumored to change based on the eater's deepest anxieties or favorite childhood cartoon. Effects are... unpredictable.",
+      "cs": "Její chuťový profil je přísně střeženým kosmickým tajemstvím, o kterém se šušká, že se mění podle nejhlubších úzkostí jedlíka nebo jeho oblíbeného dětského animovaného seriálu. Účinky jsou... nepředvídatelné."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Mystery flavor. Unpredictable effects.",
+      "cs": "Tajemná příchuť. Nepředvídatelné účinky."
+    },
+    "attributes": { "nutritional_value_unknown": 5, "random_temporary_effect_chance": 0.7, "flavor_description_difficulty": 10, "charges": 1 },
+    "abilities": ["Provides sustenance (of a sort)", "May grant temporary, bizarre abilities or moods"],
+    "level": 23
+  },
+  {
+    "id": "cc_ag_sock_puppet_of_authority_l24",
+    "name": {
+      "en": "Sock Puppet of Questionable Authority",
+      "cs": "Ponožková Loutka Pochybné Autority"
+    },
+    "description": {
+      "en": "A crudely made sock puppet that, when worn, grants the user an inexplicable (and usually unwarranted) air of authority. Less effective on beings without hands or a concept of socks.",
+      "cs": "Hrubě vyrobená ponožková loutka, která, když je nošena, propůjčuje uživateli nevysvětlitelný (a obvykle neoprávněný) nádech autority. Méně účinná na bytosti bez rukou nebo konceptu ponožek."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Grants unearned authority. Sock-dependent.",
+      "cs": "Propůjčuje nezaslouženou autoritu. Závislá na ponožkách."
+    },
+    "attributes": { "perceived_authority_boost_unreliable": 4, "sock_based_charisma": 6, "charges": -1 },
+    "abilities": ["Can make user seem briefly important", "Effectiveness varies based on audience's sock-awareness"],
+    "level": 24
+  },
+  {
+    "id": "cc_ag_universal_undo_button_l25",
+    "name": {
+      "en": "Universal Undo Button (Prototype - May Undo Wrong Thing)",
+      "cs": "Univerzální Tlačítko Zpět (Prototyp - Může Vrátit Špatnou Věc)"
+    },
+    "description": {
+      "en": "Attempts to undo the last minor action or cosmic mishap. Has a tendency to undo something entirely unrelated and far more significant, like the invention of Tuesdays or the concept of 'left'.",
+      "cs": "Pokouší se vrátit zpět poslední menší akci nebo kosmickou nehodu. Má tendenci vrátit zpět něco zcela nesouvisejícího a mnohem významnějšího, jako vynález úterý nebo koncept 'levé'."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Tries to undo last action. Highly risky.",
+      "cs": "Snaží se vrátit poslední akci. Vysoce riskantní."
+    },
+    "attributes": { "action_undo_potential_minor": 5, "collateral_undo_risk_major": 8, "charges": 1 },
+    "abilities": ["May reverse minor mistakes", "High chance of unintended, larger retcons"],
+    "level": 25
+  },
+  {
+    "id": "cc_ag_cosmic_rubber_duck_l26",
+    "name": {
+      "en": "Cosmic Rubber Duck of Debugging",
+      "cs": "Kosmická Gumová Kačenka Debugování"
+    },
+    "description": {
+      "en": "Explaining a complex cosmic problem to this unnervingly attentive rubber duck sometimes helps clarify the solution in your own mind. The duck offers no verbal input but quacks judgmentally.",
+      "cs": "Vysvětlení složitého kosmického problému této znepokojivě pozorné gumové kačence někdy pomůže vyjasnit řešení ve vaší vlastní mysli. Kačenka nenabízí žádný slovní vstup, ale kváká odsuzovačně."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Aids problem solving via explanation. Quacks judgmentally.",
+      "cs": "Pomáhá řešit problémy vysvětlováním. Kváká odsuzovačně."
+    },
+    "attributes": { "problem_clarification_via_explanation": 7, "judgmental_quack_frequency": 5, "charges": -1 },
+    "abilities": ["Facilitates 'rubber duck debugging' for cosmic issues", "Its silence is surprisingly insightful (or judgmental)"],
+    "level": 26
+  },
+  {
+    "id": "cc_ag_metaphor_alert_l27",
+    "name": {
+      "en": "Literalized Metaphor Early Warning System",
+      "cs": "Systém Včasného Varování Před Doslovnými Metaforami"
+    },
+    "description": {
+      "en": "Emits a series of increasingly panicked beeps when a figure of speech is in imminent danger of becoming dangerously literal. Does not prevent literalization, merely announces it.",
+      "cs": "Vydává sérii stále paničtějších pípnutí, když řečnickému obratu hrozí bezprostřední nebezpečí, že se stane nebezpečně doslovným. Nezabraňuje doslovnění, pouze ho oznamuje."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Warns of literalizing metaphors. Panicked beeps.",
+      "cs": "Varuje před doslovňujícími se metaforami. Panické pípání."
+    },
+    "attributes": { "metaphor_literalization_detection": 8, "preventative_capability": 0, "panic_level_beeps": 7, "consumable_charges": -1 },
+    "abilities": ["Provides advance warning of conceptual instability", "Does not stop the inevitable, just announces it loudly"],
+    "level": 27
+  },
+  {
+    "id": "cc_ag_plot_twist_indicator_l28",
+    "name": {
+      "en": "Imminent Plot Twist Indicator (Usually Late)",
+      "cs": "Indikátor Blížícího se Dějového Zvratu (Obvykle Opožděný)"
+    },
+    "description": {
+      "en": "Flashes a small, unassuming light approximately 3.7 seconds *after* a major plot twist has already occurred. Helpful for confirming that, yes, that was indeed a plot twist.",
+      "cs": "Zabliká malým, nenápadným světlem přibližně 3,7 sekundy *poté*, co již došlo k velkému dějovému zvratu. Užitečné pro potvrzení, že ano, to byl skutečně dějový zvrat."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Indicates plot twists (belatedly). Confirms the obvious.",
+      "cs": "Indikuje dějové zvraty (opožděně). Potvrzuje zjevné."
+    },
+    "attributes": { "plot_twist_confirmation_accuracy": 10, "timeliness_factor": -3.7, "consumable_charges": -1 },
+    "abilities": ["Confirms that a plot twist has happened", "Offers excellent hindsight"],
+    "level": 28
+  },
+  {
+    "id": "cc_ag_common_sense_dispenser_l29",
+    "name": {
+      "en": "Can of Common Sense (Contents May Have Shifted During Transit)",
+      "cs": "Plechovka Zdravého Rozumu (Obsah se Mohl Během Přepravy Posunout)"
+    },
+    "description": {
+      "en": "A single-use aerosol spray that, when applied to a confusing situation or entity, attempts to instill a brief moment of mundane, Earth-like common sense. Often rejected by the local reality.",
+      "cs": "Jednorázový aerosolový sprej, který, když je aplikován na matoucí situaci nebo entitu, se pokusí vštípit krátký okamžik všedního, pozemského zdravého rozumu. Často odmítnut místní realitou."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Sprays common sense. Often ineffective.",
+      "cs": "Stříká zdravý rozum. Často neúčinný."
+    },
+    "attributes": { "common_sense_infusion_attempt": 6, "reality_rejection_probability": 0.6, "charges": 1 },
+    "abilities": ["Attempts to introduce mundane logic to bizarre situations", "Results are highly dependent on local reality's stubbornness"],
+    "level": 29
+  },
+  {
+    "id": "cc_ag_deus_ex_machina_repellent_l30",
+    "name": {
+      "en": "Deus Ex Machina Repellent (Extra Strength)",
+      "cs": "Repelent Proti Deus Ex Machina (Extra Silný)"
+    },
+    "description": {
+      "en": "For when the universe is trying too hard to conveniently solve your problems. Emits a field that discourages improbable coincidences and overly convenient narrative resolutions. May make life significantly harder.",
+      "cs": "Pro případy, kdy se vesmír příliš snaží pohodlně vyřešit vaše problémy. Vydává pole, které odrazuje nepravděpodobné náhody a příliš pohodlná narativní řešení. Může život výrazně ztížit."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Discourages plot armor. Makes life harder.",
+      "cs": "Odrazuje dějovou zbroj. Ztěžuje život."
+    },
+    "attributes": { "narrative_convenience_suppression": 8, "problem_difficulty_increase": 5, "charges": 3 },
+    "abilities": ["Reduces likelihood of convenient coincidences", "May result in more challenging scenarios"],
+    "level": 30
+  },
+  {
+    "id": "cc_ag_existential_compass_l31",
+    "name": {
+      "en": "Existential Compass (Points Towards Tea)",
+      "cs": "Existenční Kompas (Ukazuje Směrem k Čaji)"
+    },
+    "description": {
+      "en": "Instead of True North, this compass reliably points towards the nearest source of decent tea, regardless of dimensional boundaries or inconvenient laws of physics. Its secondary function, finding one's 'true purpose', is less reliable.",
+      "cs": "Místo Pravého Severu tento kompas spolehlivě ukazuje k nejbližšímu zdroji slušného čaje, bez ohledu na dimenzionální hranice nebo nepohodlné fyzikální zákony. Jeho sekundární funkce, nalezení 'pravého smyslu života', je méně spolehlivá."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Finds tea. Purpose-finding unreliable.",
+      "cs": "Najde čaj. Hledání smyslu života nespolehlivé."
+    },
+    "attributes": { "tea_finding_accuracy": 10, "existential_guidance_accuracy": 2, "charges": -1 },
+    "abilities": ["Always locates the nearest cup of tea", "May offer vague hints about destiny (or biscuits)"],
+    "level": 31
+  },
+  {
+    "id": "cc_ag_narrative_lubricant_l32",
+    "name": {
+      "en": "Can of Narrative Lubricant",
+      "cs": "Plechovka Narativního Maziva"
+    },
+    "description": {
+      "en": "When the plot gets stuck or events refuse to progress, a small application of this conceptual grease can help move things along. Often results in unexpected tangents or character development.",
+      "cs": "Když se zápletka zasekne nebo události odmítají postupovat, malá aplikace tohoto konceptuálního maziva může pomoci věci posunout. Často vede k nečekaným odbočkám nebo vývoji postav."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Unsticks plots. May cause tangents.",
+      "cs": "Rozhýbe zápletky. Může způsobit odbočky."
+    },
+    "attributes": { "plot_progression_enhancer": 7, "narrative_tangent_probability": 0.5, "charges": 2 },
+    "abilities": ["Helps advance stalled narratives", "May introduce unforeseen subplots"],
+    "level": 32
+  },
+  {
+    "id": "cc_ag_portable_continuity_anchor_l33",
+    "name": {
+      "en": "Portable Continuity Anchor (Needs Grounding)",
+      "cs": "Přenosná Kotva Kontinuity (Potřebuje Uzemnění)"
+    },
+    "description": {
+      "en": "Attempts to maintain a consistent narrative thread in areas of high reality flux. Requires grounding to a particularly stubborn or mundane object (like a pet rock or a Union bylaw).",
+      "cs": "Pokouší se udržet konzistentní narativní vlákno v oblastech s vysokým tokem reality. Vyžaduje uzemnění k obzvláště tvrdohlavému nebo všednímu předmětu (jako je mazlíček kámen nebo odborová stanova)."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Stabilizes narrative. Needs grounding object.",
+      "cs": "Stabilizuje příběh. Potřebuje uzemňovací objekt."
+    },
+    "attributes": { "narrative_stability_local": 6, "grounding_object_dependency": 8, "charges": -1 },
+    "abilities": ["Reduces plot inconsistencies in flux areas", "Effectiveness depends on mundane anchor point"],
+    "level": 33
+  },
+  {
+    "id": "cc_ag_subtext_magnifier_l34",
+    "name": {
+      "en": "Subtext Magnifying Glass (Handle With Irony)",
+      "cs": "Lupa na Subtext (Manipulujte s Ironií)"
+    },
+    "description": {
+      "en": "Reveals the hidden meanings, unspoken grievances, and sarcastic undertones in any conversation or cosmic utterance. Prolonged use may lead to chronic cynicism.",
+      "cs": "Odhaluje skryté významy, nevyřčené stížnosti a sarkastické podtóny v jakékoli konverzaci nebo kosmickém výroku. Dlouhodobé používání může vést k chronickému cynismu."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Reveals subtext. Risk of cynicism.",
+      "cs": "Odhaluje subtext. Riziko cynismu."
+    },
+    "attributes": { "subtext_detection_level": 9, "irony_comprehension_boost": 7, "cynicism_induction_rate": 0.3, "charges": -1 },
+    "abilities": ["Uncovers hidden meanings in dialogue", "May make user overly suspicious"],
+    "level": 34
+  },
+  {
+    "id": "cc_ag_deja_vu_inducer_l35",
+    "name": {
+      "en": "Weaponized Déjà Vu Inducer",
+      "cs": "Zbraňový Induktor Déjà Vu"
+    },
+    "description": {
+      "en": "Causes target entity to experience a sudden, intense, and deeply confusing wave of déjà vu, often derailing their train of thought or causing them to repeat their last action (usually less effectively).",
+      "cs": "Způsobí cílové entitě náhlou, intenzivní a hluboce matoucí vlnu déjà vu, často vykolejí její myšlenkový pochod nebo ji přiměje zopakovat poslední akci (obvykle méně efektivně)."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Induces confusing déjà vu. Disruptive.",
+      "cs": "Vyvolává matoucí déjà vu. Rušivé."
+    },
+    "attributes": { "deja_vu_infliction_targeted": 7, "cognitive_disruption_factor": 5, "charges": 2 },
+    "abilities": ["Can temporarily confuse opponents", "May cause entities to repeat actions"],
+    "level": 35
+  },
+  {
+    "id": "cc_ag_mood_ring_cosmic_l36",
+    "name": {
+      "en": "Cosmic Mood Ring (Planetary Scale)",
+      "cs": "Kosmický Náladový Prsten (Planetární Měřítko)"
+    },
+    "description": {
+      "en": "A gigantic ring that, when placed around a small celestial body, attempts to display its overall mood (e.g., 'Feeling Peckish,' 'Contemplating the Void,' 'Slightly Gassy'). Accuracy debatable.",
+      "cs": "Gigantický prsten, který, když je umístěn kolem malého nebeského tělesa, se pokusí zobrazit jeho celkovou náladu (např. 'Cítí se Hladový,' 'Kontempluje Prázdnotu,' 'Lehce Nadmutý'). Přesnost sporná."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Reads planetary moods (allegedly). Large.",
+      "cs": "Čte planetární nálady (údajně). Velký."
+    },
+    "attributes": { "planetary_mood_detection_unreliable": 4, "size_factor_planetary": 10, "charges": 1 },
+    "abilities": ["Attempts to display emotional state of celestial bodies", "Installation may be problematic"],
+    "level": 36
+  },
+  {
+    "id": "cc_ag_emergency_teapot_l37",
+    "name": {
+      "en": "Emergency Self-Heating Teapot (Always Earl Grey)",
+      "cs": "Nouzová Samozahřívací Čajová Konvice (Vždy Earl Grey)"
+    },
+    "description": {
+      "en": "For those critical moments when tea is not just a beverage, but a fundamental law of the universe. Instantly produces a single, perfect cup of Earl Grey. No other flavors available. Ever.",
+      "cs": "Pro ty kritické okamžiky, kdy čaj není jen nápojem, ale základním zákonem vesmíru. Okamžitě vyrobí jediný, dokonalý šálek Earl Grey. Žádné jiné příchutě nejsou k dispozici. Nikdy."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Instant Earl Grey. Non-negotiable flavor.",
+      "cs": "Okamžitý Earl Grey. Nepřekročitelná příchuť."
+    },
+    "attributes": { "tea_generation_instant_earl_grey": 10, "gumption_restoration_major": 5, "flavor_variety": 0, "charges": 1 },
+    "abilities": ["Provides immediate, high-quality Earl Grey tea", "Can restore significant Gumption in a crisis"],
+    "level": 37
+  },
+  {
+    "id": "cc_ag_unask_a_question_device_l38",
+    "name": {
+      "en": "'Unask-a-Question' Device (Limited Use)",
+      "cs": "Zařízení 'Odzeptat se na Otázku' (Omezené Použití)"
+    },
+    "description": {
+      "en": "Allows the user to retroactively 'unask' a single, recently posed question, effectively erasing it from the local conversational timeline. Useful for when you've accidentally inquired about a sentient nebula's weight.",
+      "cs": "Umožňuje uživateli retroaktivně 'odzeptat se' na jedinou, nedávno položenou otázku, čímž ji účinně vymaže z místní konverzační časové osy. Užitečné, když jste se omylem zeptali vnímající mlhoviny na její váhu."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Retracts one question. For social blunders.",
+      "cs": "Stáhne jednu otázku. Pro společenské přehmaty."
+    },
+    "attributes": { "question_retraction_power": 8, "social_awkwardness_repair": 6, "charges": 1 },
+    "abilities": ["Can undo a recent verbal faux pas", "Effective for avoiding awkward answers"],
+    "level": 38
+  },
+  {
+    "id": "cc_ag_portable_red_herring_l39",
+    "name": {
+      "en": "Instant Red Herring Dispenser",
+      "cs": "Dávkovač Okamžitých Falešných Stop"
+    },
+    "description": {
+      "en": "Generates a completely irrelevant but momentarily fascinating clue, distraction, or non-sequitur. Perfect for derailing investigations, confusing opponents, or just livening up a dull Tuesday.",
+      "cs": "Generuje naprosto irelevantní, ale na okamžik fascinující stopu, rozptýlení nebo nesouvislost. Ideální pro vykolejení vyšetřování, zmatení protivníků nebo jen oživení nudného úterý."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Creates fascinating diversions. Utterly irrelevant.",
+      "cs": "Vytváří fascinující odbočky. Naprosto irelevantní."
+    },
+    "attributes": { "distraction_generation_high_quality": 7, "relevance_factor": 0, "charges": 3 },
+    "abilities": ["Generates compelling but misleading clues", "Can be used to escape awkward social situations"],
+    "level": 39
+  },
+  {
+    "id": "cc_ag_the_big_red_button_l40",
+    "name": {
+      "en": "The Other Big Red Button (DO NOT CONFUSE WITH THE PREVIOUS ONE)",
+      "cs": "To Druhé Velké Červené Tlačítko (NEPLÉST S TÍM PŘEDCHOZÍM)"
+    },
+    "description": {
+      "en": "This button, unlike its more ambiguously labeled cousin, is clearly marked 'DEFINITELY DO SOMETHING INTERESTING'. The definition of 'interesting' is, of course, entirely up to the button's rather whimsical internal logic.",
+      "cs": "Toto tlačítko, na rozdíl od svého nejednoznačněji označeného bratrance, je jasně označeno 'URČITĚ UDĚLEJ NĚCO ZAJÍMAVÉHO'. Definice 'zajímavého' je samozřejmě zcela na rozmarné vnitřní logice tlačítka."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Guaranteed 'interesting' effect. Potentially catastrophic.",
+      "cs": "Zaručený 'zajímavý' efekt. Potenciálně katastrofální."
+    },
+    "attributes": { "interesting_event_trigger_guaranteed": 10, "catastrophe_probability": 0.3, "charges": 1 },
+    "abilities": ["Always causes a significant, narratively 'interesting' event", "The nature of 'interesting' is unpredictable"],
+    "level": 40
+  },
+  {
+    "id": "cc_ag_plot_hole_filler_l41",
+    "name": {
+      "en": "Sentient Plot Hole Filler (Picky Eater)",
+      "cs": "Vnímající Vyplňovač Děr v Zápletce (Vybíravý Jedlík)"
+    },
+    "description": {
+      "en": "A small, amorphous blob that consumes narrative inconsistencies and plot holes, then excretes them as vaguely plausible (but often bizarre) exposition. Prefers paradoxes with a hint of irony.",
+      "cs": "Malá, amorfní koule, která konzumuje narativní nesrovnalosti a díry v zápletce, a poté je vylučuje jako neurčitě věrohodnou (ale často bizarní) expozici. Preferuje paradoxy s nádechem ironie."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Eats plot holes. Excretes exposition.",
+      "cs": "Žere díry v zápletce. Vylučuje expozici."
+    },
+    "attributes": { "plot_hole_consumption_rate": 7, "exposition_quality_variable": 5, "irony_preference": 6, "charges": -1 },
+    "abilities": ["Can resolve narrative inconsistencies with bizarre explanations", "Picky about the types of plot holes it consumes"],
+    "level": 41
+  },
+  {
+    "id": "cc_ag_suspense_amplifier_l42",
+    "name": {
+      "en": "Ambient Suspense Amplifier (Adjustable Ominousness)",
+      "cs": "Zesilovač Okolního Napětí (Nastavitelná Zlověstnost)"
+    },
+    "description": {
+      "en": "Subtly increases the feeling of suspense and foreboding in the immediate vicinity. Settings range from 'Mild Unease' to 'Impending Doom (Possibly Involving Tentacles)'.",
+      "cs": "Jemně zvyšuje pocit napětí a zlé předtuchy v bezprostředním okolí. Nastavení sahá od 'Mírné Úzkosti' po 'Hrozící Zkázu (Možná Zahrnující Chapadla)'."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Increases suspense. Adjustable ominousness.",
+      "cs": "Zvyšuje napětí. Nastavitelná zlověstnost."
+    },
+    "attributes": { "suspense_amplification_level": 8, "ominous_atmosphere_generation": 6, "charges": -1 },
+    "abilities": ["Can make mundane situations feel tense and dramatic", "May cause unnecessary paranoia"],
+    "level": 42
+  },
+  {
+    "id": "cc_ag_macguffin_detector_l43",
+    "name": {
+      "en": "MacGuffin Detector (Often Detects Teapots)",
+      "cs": "Detektor MacGuffinů (Často Detekuje Čajové Konvice)"
+    },
+    "description": {
+      "en": "Beeps excitedly when pointed at objects of arbitrary narrative importance. Has a strange affinity for detecting sentient teapots, regardless of their plot relevance.",
+      "cs": "Vzrušeně pípá, když je namířen na předměty libovolného narativního významu. Má podivnou afinitu k detekci vnímajících čajových konvic, bez ohledu na jejich dějovou relevanci."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Finds MacGuffins (and teapots).",
+      "cs": "Najde MacGuffiny (a čajové konvice)."
+    },
+    "attributes": { "macguffin_detection_accuracy": 6, "teapot_detection_override": 8, "charges": -1 },
+    "abilities": ["Can identify key plot items", "Frequently mistakes teapots for items of great importance"],
+    "level": 43
+  },
+  {
+    "id": "cc_ag_ deus_ex_manual_l44",
+    "name": {
+      "en": "Manual of 'Deus Ex Machina' Invocation (Highly Illegal)",
+      "cs": "Manuál Invokace 'Deus Ex Machina' (Vysoce Nelegální)"
+    },
+    "description": {
+      "en": "A heavily redacted and extremely dangerous text detailing rituals to summon convenient, reality-altering solutions. Success is not guaranteed, but cosmic retribution almost certainly is.",
+      "cs": "Silně redigovaný a extrémně nebezpečný text detailně popisující rituály k přivolání pohodlných, realitu měnících řešení. Úspěch není zaručen, ale kosmická odplata téměř jistě ano."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Summons plot solutions. Extreme risk.",
+      "cs": "Přivolává dějová řešení. Extrémní riziko."
+    },
+    "attributes": { "deus_ex_machina_invocation_power": 9, "cosmic_retribution_chance": 0.95, "charges": 1 },
+    "abilities": ["Can potentially summon a solution to any problem", "High probability of attracting unwanted cosmic attention"],
+    "level": 44
+  },
+  {
+    "id": "cc_ag_portable_narrative_void_l45",
+    "name": {
+      "en": "Portable Narrative Void",
+      "cs": "Přenosná Narativní Prázdnota"
+    },
+    "description": {
+      "en": "Creates a small, temporary zone where plot, character development, and all forms of meaningful interaction cease to exist. Perfect for avoiding awkward conversations or existential monologues from sentient mops.",
+      "cs": "Vytváří malou, dočasnou zónu, kde děj, vývoj postav a všechny formy smysluplné interakce přestávají existovat. Ideální pro vyhýbání se trapným konverzacím nebo existenciálním monologům od vnímajících mopů."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Nullifies plot locally. Avoids monologues.",
+      "cs": "Lokálně nulifikuje děj. Vyhýbá se monologům."
+    },
+    "attributes": { "narrative_nullification_field": 8, "monologue_prevention_effectiveness": 7, "charges": 2 },
+    "abilities": ["Creates a zone of temporary narrative silence", "Can be used to escape unwanted exposition"],
+    "level": 45
+  },
+  {
+    "id": "cc_ag_infinite_ improbability_drive_key_l46",
+    "name": {
+      "en": "Key to an Infinite Improbability Drive (Drive Missing)",
+      "cs": "Klíč k Nekonečnému Nepravděpodobnostnímu Pohonu (Pohon Chybí)"
+    },
+    "description": {
+      "en": "A beautifully ornate key that almost certainly belongs to an Infinite Improbability Drive. Unfortunately, the drive itself appears to be elsewhere, possibly in another narrative entirely. Still, it's a nice key.",
+      "cs": "Nádherně zdobený klíč, který téměř jistě patří k Nekonečnému Nepravděpodobnostnímu Pohonu. Bohužel se zdá, že samotný pohon je jinde, možná v úplně jiném příběhu. Přesto je to pěkný klíč."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Key to missing drive. Very shiny.",
+      "cs": "Klíč k chybějícímu pohonu. Velmi lesklý."
+    },
+    "attributes": { "drive_activation_potential_theoretical": 10, "drive_location_known": 0, "shininess_factor": 8, "consumable_charges": -1 },
+    "abilities": ["A symbol of immense, currently inaccessible power", "May attract beings interested in Infinite Improbability Drives"],
+    "level": 46
+  },
+  {
+    "id": "cc_ag_self_aware_footnote_l47",
+    "name": {
+      "en": "Self-Aware Footnote Generator",
+      "cs": "Generátor Sebeuvědomělých Poznáme Pod Čarou"
+    },
+    "description": {
+      "en": "Adds witty, sarcastic, or occasionally deeply profound footnotes to reality itself. The footnotes are only visible to those with a sufficiently ironic disposition or too much caffeine.",
+      "cs": "Přidává vtipné, sarkastické nebo občas hluboce filozofické poznámky pod čarou k samotné realitě. Poznámky jsou viditelné pouze pro ty s dostatečně ironickým založením nebo příliš velkým množstvím kofeinu."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Adds witty footnotes to reality. Caffeine helps.",
+      "cs": "Přidává vtipné poznámky k realitě. Kofein pomáhá."
+    },
+    "attributes": { "footnote_generation_quality": 7, "irony_detection_required": 6, "charges": -1 },
+    "abilities": ["Provides meta-commentary on unfolding events", "Footnotes may offer cryptic clues or sarcastic remarks"],
+    "level": 47
+  },
+  {
+    "id": "cc_ag_plot_device_of_your_choice_l48",
+    "name": {
+      "en": "Plot Device of Your Own Choosing (Once, Maybe)",
+      "cs": "Dějové Zařízení Dle Vlastního Výběru (Jednou, Možná)"
+    },
+    "description": {
+      "en": "A small, unassuming box that promises to manifest as any minor plot device the user can clearly conceptualize, just once. The universe's interpretation of 'minor' and 'clearly conceptualize' may vary. No refunds.",
+      "cs": "Malá, nenápadná krabička, která slibuje, že se projeví jako jakékoli menší dějové zařízení, které si uživatel dokáže jasně představit, pouze jednou. Interpretace vesmíru pojmů 'menší' a 'jasně si představit' se může lišit. Bez náhrady."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Summons one minor plot device. User beware.",
+      "cs": "Přivolá jedno menší dějové zařízení. Uživatel nechť je opatrný."
+    },
+    "attributes": { "custom_plot_device_generation": 9, "reliability_factor_user_conception": 4, "charges": 1 },
+    "abilities": ["Allows user to manifest a desired minor narrative convenience", "Effectiveness depends on clarity of user's intent and cosmic whim"],
+    "level": 48
+  },
+  {
+    "id": "cc_ag_narrative_unraveler_l49",
+    "name": {
+      "en": "The Grand Narrative Unraveler (Handle With Extreme Apathy)",
+      "cs": "Velký Rozplétač Příběhů (Manipulujte s Extrémní Apatií)"
+    },
+    "description": {
+      "en": "A device of last resort. When activated, it begins to gently, inexorably, and quite politely unravel the fundamental narrative threads of the local reality, reducing complex situations (and possibly the user) to a state of blissful, primordial meaninglessness. Reversible only with a truly heroic cup of tea.",
+      "cs": "Zařízení poslední záchrany. Po aktivaci začne jemně, neúprosně a zcela zdvořile rozplétat základní narativní vlákna místní reality, redukujíc složité situace (a možná i uživatele) do stavu blažené, primordiální bezvýznamnosti. Vratné pouze pomocí skutečně hrdinského šálku čaje."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "Unravels reality to meaninglessness. Tea may reverse.",
+      "cs": "Rozplétá realitu do bezvýznamnosti. Čaj může zvrátit."
+    },
+    "attributes": { "narrative_deconstruction_total": 10, "existential_reset_button": 9, "reversibility_tea_dependent": 8, "charges": 1 },
+    "abilities": ["Can reduce any situation to its simplest, most meaningless components", "Extreme caution and a good teapot advised"],
+    "level": 49
+  },
+  {
+    "id": "cc_ag_the_answer_l50",
+    "name": {
+      "en": "The Answer (To An Unspecified, Probably Trivial, Question)",
+      "cs": "Odpověď (Na Nespecifikovanou, Pravděpodobně Triviální, Otázku)"
+    },
+    "description": {
+      "en": "A small, perfectly ordinary-looking pebble that radiates an aura of profound, absolute certainty. It is, undeniably, The Answer. The question it answers, however, remains a tantalizing, and likely unimportant, mystery.",
+      "cs": "Malý, dokonale obyčejně vypadající oblázek, který vyzařuje auru hluboké, absolutní jistoty. Je to, nepopiratelně, Odpověď. Otázka, na kterou odpovídá, však zůstává lákavou, a pravděpodobně nedůležitou, záhadou."
+    },
+    "itemType": "auxiliary_gadget",
+    "itemEffectDescription": {
+      "en": "It IS The Answer. Question unknown.",
+      "cs": "JE To Odpověď. Otázka neznámá."
+    },
+    "attributes": { "certainty_aura_absolute": 10, "question_relevance_unknown": 10, "philosophical_debate_ender": 7, "consumable_charges": -1 },
+    "abilities": ["Radiates an unshakeable sense of correctness", "Can end any argument by being The Answer (question irrelevant)"],
+    "level": 50
+  }
+]

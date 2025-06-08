@@ -23,6 +23,11 @@
     "aptitude": "tooltip_attr_aptitude_grim_warden",
     "resilience": "tooltip_attr_resilience_grim_warden"
   },
+  "equipment_slots": {
+    "wardens_blade": "equipped_wardens_blade_effect",
+    "protective_gear": "equipped_protective_gear_effect",
+    "alchemical_concoction": "equipped_alchemical_concoction_effect"
+  },
   "dashboard_config_ref": "grim_warden",
   "dashboard_config": {
     "top_panel": [
@@ -145,31 +150,31 @@
             "short_description": "Warden's current stage of Blight contamination. MUST BE INTEGER (1-4). 1: Dormant, 2: Nascent, 3: Festering, 4: Critical. Affects perception, resilience, or invokes Blight-induced afflictions. AI provides numerical level."
           },
           {
-            "id": "elixir_item",
-            "label_key": "label_elixir_item_grim_warden",
-            "tooltip_key": "tooltip_item_elixir_item_grim_warden",
-            "type": "text",
-            "default_value_key": "elixirs_none_prepared",
+            "id": "equipped_wardens_blade_effect",
+            "label_key": "label_equipped_wardens_blade_grim_warden",
+            "tooltip_key": "tooltip_slot_wardens_blade_grim_warden",
+            "type": "text_long",
+            "default_value_key": "default_equipped_wardens_blade_grim_warden",
             "must_translate": true,
-            "short_description": "Count of potent restorative draughts or alchemical concoctions."
+            "short_description": "Name and effect description of the Warden's currently equipped primary weapon."
           },
           {
-            "id": "armor_item",
-            "label_key": "label_armor_item_grim_warden",
-            "tooltip_key": "tooltip_item_armor_item_grim_warden",
-            "type": "text",
-            "default_value_key": "armor_scuffed_hide",
+            "id": "equipped_protective_gear_effect",
+            "label_key": "label_equipped_protective_gear_grim_warden",
+            "tooltip_key": "tooltip_slot_protective_gear_grim_warden",
+            "type": "text_long",
+            "default_value_key": "default_equipped_protective_gear_grim_warden",
             "must_translate": true,
-            "short_description": "Warden's primary armor description and state. "
+            "short_description": "Name and effect description of the Warden's currently worn protective gear."
           },
           {
-            "id": "weapon_item",
-            "label_key": "label_weapon_item_grim_warden",
-            "tooltip_key": "tooltip_item_weapon_item_grim_warden",
-            "type": "text",
-            "default_value_key": "weapon_trusted_steel",
+            "id": "equipped_alchemical_concoction_effect",
+            "label_key": "label_equipped_alchemical_concoction_grim_warden",
+            "tooltip_key": "tooltip_slot_alchemical_concoction_grim_warden",
+            "type": "text_long",
+            "default_value_key": "default_equipped_alchemical_concoction_grim_warden",
             "must_translate": true,
-            "short_description": "Warden's primary weapon description and state. "
+            "short_description": "Name and effect description of the readied alchemical concoction or consumable."
           },
           {
             "id": "current_burden",

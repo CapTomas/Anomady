@@ -23,6 +23,11 @@
     "aptitude": "tooltip_attr_aptitude_salt_reavers",
     "resilience": "tooltip_attr_resilience_salt_reavers"
   },
+  "equipment_slots": {
+    "melee_weapon": "equipped_melee_weapon_effect",
+    "ranged_weapon": "equipped_ranged_weapon_effect",
+    "talisman": "equipped_talisman_effect"
+  },
   "dashboard_config_ref": "salt_reavers",
   "dashboard_config": {
     "top_panel": [
@@ -119,11 +124,47 @@
         ]
       },
       {
+        "id": "captain-loadout-panel-box",
+        "title_key": "title_captain_loadout_salt_reavers",
+        "type": "collapsible",
+        "initial_expanded": true,
+        "boot_delay": 400,
+        "items": [
+          {
+            "id": "equipped_melee_weapon_effect",
+            "label_key": "label_equipped_melee_weapon_salt_reavers",
+            "tooltip_key": "tooltip_slot_melee_weapon_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "default_equipped_melee_weapon_salt_reavers",
+            "must_translate": true,
+            "short_description": "Name and effect description of the Captain's currently equipped melee weapon."
+          },
+          {
+            "id": "equipped_ranged_weapon_effect",
+            "label_key": "label_equipped_ranged_weapon_salt_reavers",
+            "tooltip_key": "tooltip_slot_ranged_weapon_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "default_equipped_ranged_weapon_salt_reavers",
+            "must_translate": true,
+            "short_description": "Name and effect description of the Captain's currently equipped ranged weapon."
+          },
+          {
+            "id": "equipped_talisman_effect",
+            "label_key": "label_equipped_talisman_salt_reavers",
+            "tooltip_key": "tooltip_slot_talisman_salt_reavers",
+            "type": "text_long",
+            "default_value_key": "default_equipped_talisman_salt_reavers",
+            "must_translate": true,
+            "short_description": "Name and effect description of the currently equipped talisman, charm, or potent consumable."
+          }
+        ]
+      },
+      {
         "id": "ship-status-panel-box",
         "title_key": "title_ship_status_salt_reavers",
         "type": "collapsible",
-        "initial_expanded": true,
-        "boot_delay": 300,
+        "initial_expanded": false,
+        "boot_delay": 600,
         "items": [
           {
             "id": "ship_name",
@@ -213,7 +254,7 @@
             "type": "text_long",
             "default_value_key": "affliction_unaffected",
             "must_translate": true,
-            "short_description": "How the curse is specifically affecting the Quartermaster."
+            "short_description": "How the curse is specifically affecting the Quartermaster (Captain)."
           }
         ]
       }
@@ -242,12 +283,12 @@
             "short_description": "Rumored or stated reward for the current voyage."
           },
           {
-            "id": "quartermaster_stance",
-            "label_key": "label_quartermaster_stance_salt_reavers",
+            "id": "captain_activity",
+            "label_key": "label_captain_activity_salt_reavers",
             "type": "text",
             "default_value_key": "stance_on_deck_observing",
             "must_translate": true,
-            "short_description": "The Quartermaster's current primary activity or state."
+            "short_description": "The Captain's current primary activity or focus."
           },
           {
             "id": "sea_threat_level",

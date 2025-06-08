@@ -23,6 +23,11 @@
     "aptitude": "tooltip_attr_aptitude_celestial_custodians",
     "resilience": "tooltip_attr_resilience_celestial_custodians"
   },
+  "equipment_slots": {
+    "custodial_implement": "equipped_implement_effect",
+    "utility_suite": "equipped_utility_suite_effect",
+    "auxiliary_gadget": "equipped_auxiliary_gadget_effect"
+  },
   "dashboard_config_ref": "celestial_custodians",
   "dashboard_config": {
     "top_panel": [
@@ -145,28 +150,31 @@
         "boot_delay": 500,
         "items": [
           {
-            "id": "plasmatic_mop_status_text",
-            "label_key": "label_plasmatic_mop_celestial_custodians",
-            "type": "text",
-            "default_value_key": "mop_status_ready_celestial_custodians",
-            "must_translate": true,
-            "short_description": "Operational status of the legendary Plasmatic Mop Mk. IV (or possibly a less reliable earlier model). E.g., 'Charged & Gleaming,' 'Slightly Sticky After Unfortunate Sentient Jam Incident,' 'Currently Sulking.'"
-          },
-          {
-            "id": "toolkit_condition_text",
-            "label_key": "label_toolkit_condition_celestial_custodians",
+            "id": "equipped_implement_effect",
+            "label_key": "label_equipped_implement_celestial_custodians",
+            "tooltip_key": "tooltip_slot_custodial_implement_celestial_custodians",
             "type": "text_long",
-            "default_value_key": "toolkit_condition_stocked_celestial_custodians",
+            "default_value_key": "default_equipped_implement_celestial_custodians",
             "must_translate": true,
-            "short_description": "Condition and notable contents of the Custodian's Sarcastic Multi-Tool & General Purpose Fix-It (Or Make-It-Worse) Kit. Should mention at least one utterly useless but thematically appropriate item."
+            "short_description": "Name and effect description of the currently equipped primary Custodial Implement."
           },
           {
-            "id": "special_gadget_slot_text",
-            "label_key": "label_special_gadget_celestial_custodians",
-            "type": "text",
-            "default_value_key": "gadget_slot_empty_celestial_custodians",
+            "id": "equipped_utility_suite_effect",
+            "label_key": "label_equipped_utility_suite_celestial_custodians",
+            "tooltip_key": "tooltip_slot_utility_suite_celestial_custodians",
+            "type": "text_long",
+            "default_value_key": "default_equipped_utility_suite_celestial_custodians",
             "must_translate": true,
-            "short_description": "Current one-off or mission-specific gadget equipped, if any. E.g., 'Sentient Dust Bunny Lure (Extra Strength),' 'Anti-Gravity Spatula (Slightly Bent),' 'Emergency Tea Cosy (For Rogue Black Holes).'"
+            "short_description": "Name and effect description of the currently active Utility Suite or Multi-Tool configuration."
+          },
+          {
+            "id": "equipped_auxiliary_gadget_effect",
+            "label_key": "label_equipped_auxiliary_gadget_celestial_custodians",
+            "tooltip_key": "tooltip_slot_auxiliary_gadget_celestial_custodians",
+            "type": "text_long",
+            "default_value_key": "default_equipped_auxiliary_gadget_celestial_custodians",
+            "must_translate": true,
+            "short_description": "Name and effect description of the currently deployed Auxiliary Gadget or Experimental Prototype."
           }
         ]
       }

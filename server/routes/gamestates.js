@@ -21,6 +21,7 @@ const validateGameStatePayload = (req, res, next) => {
     last_dashboard_updates, last_game_state_indicators, current_prompt_type,
     current_narrative_language, last_suggested_actions, panel_states,
     dashboard_item_meta, user_theme_progress, is_boon_selection_pending,
+    session_inventory, equipped_items,
   } = req.body;
   const errors = [];
   if (!theme_id || typeof theme_id !== 'string' || theme_id.trim() === '') { errors.push('theme_id is required and must be a non-empty string.'); }
@@ -55,6 +56,12 @@ const validateGameStatePayload = (req, res, next) => {
   if (typeof is_boon_selection_pending === 'undefined' || typeof is_boon_selection_pending !== 'boolean') {
     errors.push('is_boon_selection_pending is required and must be a boolean.');
   }
+  if (session_inventory !== undefined && !Array.isArray(session_inventory)) {
+    errors.push('session_inventory must be an array if provided.');
+  }
+  if (equipped_items !== undefined && (typeof equipped_items !== 'object' || equipped_items === null || Array.isArray(equipped_items))) {
+    errors.push('equipped_items must be an object if provided.');
+  }
   // Validate the delta's contents
   if (game_history_delta && Array.isArray(game_history_delta)) {
     for (const turn of game_history_delta) {
@@ -77,12 +84,13 @@ const validateGameStatePayload = (req, res, next) => {
  */
 router.post('/', protect, validateGameStatePayload, async (req, res) => {
   const {
-    theme_id, player_identifier, game_history_delta, // Changed from game_history
+    theme_id, player_identifier, game_history_delta,
     last_dashboard_updates, last_game_state_indicators, current_prompt_type,
     current_narrative_language, last_suggested_actions, panel_states,
     new_persistent_lore_unlock,
     user_theme_progress: clientUserThemeProgress,
     is_boon_selection_pending,
+    session_inventory, equipped_items,
   } = req.body;
   const userId = req.user.id;
   const determinedModelName = req.user.preferred_model_name || FREE_MODEL_NAME;
@@ -93,6 +101,8 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
     dashboard_item_meta: req.body.dashboard_item_meta || {},
     is_boon_selection_pending,
     actions_before_boon_selection: req.body.actions_before_boon_selection || null,
+    session_inventory: session_inventory || [],
+    equipped_items: equipped_items || {},
   };
   try {
     const result = await prisma.$transaction(async (tx) => {
@@ -296,12 +306,10 @@ router.get('/:themeId', protect, async (req, res) => {
   if (!themeId || typeof themeId !== 'string' || themeId.trim() === '') {
     return res.status(400).json({ error: { message: 'Valid themeId parameter is required.', code: 'INVALID_THEMEID_PARAM' } });
   }
-
   try {
     const gameState = await prisma.gameState.findUnique({
       where: { userId_theme_id: { userId: userId, theme_id: themeId } },
     });
-
     let userThemeProgress = await prisma.userThemeProgress.findUnique({
         where: {
             userId_themeId: {
@@ -310,7 +318,6 @@ router.get('/:themeId', protect, async (req, res) => {
             }
         }
     });
-
     if (!gameState) {
       logger.info(`No game state found for user ${userId}, theme ${themeId}.`);
       const baseLore = await getResolvedBaseThemeLore(themeId, req.user.preferred_narrative_language || 'en');
@@ -320,19 +327,15 @@ router.get('/:themeId', protect, async (req, res) => {
         userThemeProgress: userThemeProgress
       });
     }
-
     let effectiveEvolvedLore = gameState.game_history_lore;
     if (effectiveEvolvedLore === null || typeof effectiveEvolvedLore === 'undefined' || effectiveEvolvedLore.trim() === '') {
         effectiveEvolvedLore = await getResolvedBaseThemeLore(themeId, gameState.current_narrative_language);
         logger.info(`[LivingChronicle] Lore was empty/null for user ${userId}, theme ${themeId}. Using base lore.`);
     }
-
     const clientGameHistory = Array.isArray(gameState.game_history)
         ? gameState.game_history.slice(-RECENT_INTERACTION_WINDOW_SIZE)
         : [];
-
     logger.info(`GameState retrieved for user ${userId}, theme ${themeId}. Sending ${clientGameHistory.length} recent turns.`);
-
     res.status(200).json({
         ...gameState,
         game_history: clientGameHistory,

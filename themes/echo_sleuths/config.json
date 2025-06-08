@@ -23,6 +23,11 @@
     "aptitude": "tooltip_attr_aptitude_echo_sleuths",
     "resilience": "tooltip_attr_resilience_echo_sleuths"
   },
+  "equipment_slots": {
+    "anchor_artifact": "equipped_anchor_effect",
+    "mnemosyne_device": "equipped_flask_effect",
+    "cognitive_tool": "equipped_resolver_effect"
+  },
   "dashboard_config_ref": "echo_sleuths",
   "dashboard_config": {
     "top_panel": [
@@ -148,28 +153,31 @@
             "short_description": "The Sleuth's current, likely characteristic, and perhaps slightly unsettling, outfit or appearance."
           },
           {
-            "id": "reality_anchor_item",
-            "label_key": "label_reality_anchor_item_echo_sleuths",
-            "type": "text",
-            "default_value_key": "default_reality_anchor_item_echo_sleuths",
+            "id": "equipped_anchor_effect",
+            "label_key": "label_equipped_anchor_effect_echo_sleuths",
+            "tooltip_key": "tooltip_slot_anchor_artifact_echo_sleuths",
+            "type": "text_long",
+            "default_value_key": "default_equipped_anchor_effect_echo_sleuths",
             "must_translate": true,
-            "short_description": "Name of a personal, mundane item that helps the Sleuth stay grounded amidst Reverie's flux. Its perceived state or relevance might change."
+            "short_description": "Name and effect description string of the currently attuned Anchor Artifact."
           },
           {
-            "id": "memoria_flask_item",
-            "label_key": "label_memoria_flask_item_echo_sleuths",
-            "type": "text",
-            "default_value_key": "default_memoria_flask_item_echo_sleuths",
+            "id": "equipped_flask_effect",
+            "label_key": "label_equipped_flask_effect_echo_sleuths",
+            "tooltip_key": "tooltip_slot_mnemosyne_device_echo_sleuths",
+            "type": "text_long",
+            "default_value_key": "default_equipped_flask_effect_echo_sleuths",
             "must_translate": true,
-            "short_description": "Current status of the device used to capture and examine stray memories or echoes. This should be a thematic, descriptive phrase."
+            "short_description": "Name and effect description string of the active Mnemosyne Device configuration."
           },
           {
-            "id": "paradox_resolver_charges_item",
-            "label_key": "label_paradox_resolver_charges_item_echo_sleuths",
-            "type": "text",
-            "default_value_key": "default_paradox_resolver_charges_item_echo_sleuths",
+            "id": "equipped_resolver_effect",
+            "label_key": "label_equipped_resolver_effect_echo_sleuths",
+            "tooltip_key": "tooltip_slot_cognitive_tool_echo_sleuths",
+            "type": "text_long",
+            "default_value_key": "default_equipped_resolver_effect_echo_sleuths",
             "must_translate": true,
-            "short_description": "Number of available charges for a conceptual tool that helps temporarily untangle or withstand direct logical paradoxes. Should reflect quantity (e.g., a number, or descriptive term like 'Depleted')."
+            "short_description": "Name and effect description string of the engaged Cognitive Tool."
           }
         ]
       },

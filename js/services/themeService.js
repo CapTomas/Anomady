@@ -14,6 +14,7 @@ const _PROMPT_URLS_BY_THEME = {}; // Stores prompt URLs from prompts-config.json
 const _NARRATIVE_LANG_PROMPT_PARTS_BY_THEME = {}; // Stores narrative lang parts from prompts-config.json
 const _gamePrompts = {}; // Cache for fetched prompt file contents: _gamePrompts[themeId][promptName] = content
 const _themeTraits = {}; // Cache for parsed traits: _themeTraits[themeId] = [{key, name, description}]
+const _themeItemData = {}; // Cache for parsed item data: _themeItemData[themeId][itemType] = [itemObject, ...]
 
 /**
  * Fetches and parses a JSON file.
@@ -65,12 +66,10 @@ async function _fetchText(filePath) {
 export async function loadInitialThemeManifestData() {
     log(LOG_LEVEL_INFO, 'Loading initial theme manifest data...');
     let allSuccess = true;
-
     if (!THEMES_MANIFEST || THEMES_MANIFEST.length === 0) {
         log(LOG_LEVEL_ERROR, 'THEMES_MANIFEST is empty or not defined. Cannot load theme data.');
         return false;
     }
-
     for (const themeMeta of THEMES_MANIFEST) {
         // For initial load, we might only want to process playable themes or all of them.
         // The original app.js didn't distinguish, so processing all.
@@ -231,6 +230,65 @@ export function getThemeNarrativeLangPromptPart(themeId, lang) {
 }
 
 /**
+ * Gets the equipment slot configuration for a given theme.
+ * @param {string} themeId - The ID of the theme.
+ * @returns {object|null} The theme's equipment_slots object, or null if not found/loaded.
+ */
+export function getThemeEquipmentSlots(themeId) {
+    const config = getThemeConfig(themeId);
+    return config?.equipment_slots || null;
+}
+
+/**
+ * Fetches and caches item data for a specific theme and item type (e.g., 'weapon').
+ * @param {string} themeId - The ID of the theme.
+ * @param {string} itemType - The type of items to fetch (e.g., 'weapon', 'elixir').
+ * @returns {Promise<Array|null>} A promise that resolves to an array of item objects, or null on failure.
+ */
+export async function fetchAndCacheItemData(themeId, itemType) {
+    if (!_themeItemData[themeId]) {
+        _themeItemData[themeId] = {};
+    }
+    // Check cache first
+    if (_themeItemData[themeId][itemType]) {
+        log(LOG_LEVEL_DEBUG, `Item data for ${themeId}/${itemType} found in cache.`);
+        return _themeItemData[themeId][itemType];
+    }
+    const themeManifestEntry = THEMES_MANIFEST.find((t) => t.id === themeId);
+    if (!themeManifestEntry) {
+        log(LOG_LEVEL_ERROR, `Theme ${themeId} not found in manifest. Cannot fetch item data.`);
+        return null;
+    }
+    const itemDataPath = `${themeManifestEntry.path}data/items_${itemType}.json`;
+    log(LOG_LEVEL_INFO, `Fetching item data file: ${itemDataPath}`);
+    const itemData = await _fetchJSON(itemDataPath);
+    if (itemData !== null) {
+        _themeItemData[themeId][itemType] = itemData;
+        log(LOG_LEVEL_DEBUG, `Item data for ${themeId}/${itemType} fetched and cached.`);
+    } else {
+        log(LOG_LEVEL_WARN, `Failed to fetch or no item data found for ${themeId}/${itemType} from ${itemDataPath}. This might be normal if the theme has no such items.`);
+        _themeItemData[themeId][itemType] = []; // Cache as empty array to prevent re-fetching
+    }
+    return _themeItemData[themeId][itemType];
+}
+
+/**
+ * Synchronously retrieves already loaded item definitions for a theme and item type.
+ * Relies on `fetchAndCacheItemData` having been called previously.
+ * @param {string} themeId - The ID of the theme.
+ * @param {string} itemType - The type of items to retrieve.
+ * @returns {Array|null} The cached array of item objects, or null if not loaded.
+ */
+export function getThemeItemDefinitions(themeId, itemType) {
+    const cachedData = _themeItemData[themeId]?.[itemType];
+    if (cachedData) {
+        return cachedData;
+    }
+    log(LOG_LEVEL_WARN, `Item definitions for ${themeId}/${itemType} requested from cache but not found. Ensure it was pre-loaded.`);
+    return null;
+}
+
+/**
  * Fetches the content of a specific prompt file and caches it.
  * If already cached, returns the cached content.
  * @param {string} themeId - The ID of the theme.
@@ -241,6 +299,7 @@ export async function fetchAndCachePromptFile(themeId, promptName) {
     if (!_gamePrompts[themeId]) {
         _gamePrompts[themeId] = {};
     }
+
     // Check cache first, only if it's not a "not found" marker
     if (_gamePrompts[themeId]?.[promptName] && !_gamePrompts[themeId][promptName].startsWith('HELPER_FILE_NOT_FOUND:')) {
         log(LOG_LEVEL_DEBUG, `Prompt ${themeId}/${promptName} found in cache.`);
@@ -281,17 +340,19 @@ export async function fetchAndCachePromptFile(themeId, promptName) {
  */
 export function getLoadedPromptText(themeId, promptName) {
     const cachedPrompt = _gamePrompts[themeId]?.[promptName];
+
     if (cachedPrompt && !cachedPrompt.startsWith('ERROR:') && !cachedPrompt.startsWith('HELPER_FILE_NOT_FOUND:')) {
         return cachedPrompt;
     }
+
     if (cachedPrompt && (cachedPrompt.startsWith('ERROR:') || cachedPrompt.startsWith('HELPER_FILE_NOT_FOUND:'))) {
         log(LOG_LEVEL_DEBUG, `Requested prompt ${themeId}/${promptName} was previously marked as error/not found: ${cachedPrompt}`);
         return null; // Treat errors or "not found" markers as null for the consumer
     }
+
     log(LOG_LEVEL_WARN, `Prompt ${themeId}/${promptName} requested from cache but not found. Ensure it was pre-loaded.`);
     return null;
 }
-
 
 /**
  * Ensures all prompt files listed in a theme's configuration are fetched and cached.
@@ -307,7 +368,6 @@ export async function getAllPromptsForTheme(themeId) {
              return false;
         }
     }
-
     const promptNames = Object.keys(_PROMPT_URLS_BY_THEME[themeId]);
     if (promptNames.length === 0) {
         log(LOG_LEVEL_INFO, `No prompts listed in config for theme ${themeId}.`);
@@ -343,6 +403,7 @@ export function getThemeTraits(themeId) {
     if (_themeTraits[themeId]) {
         return _themeTraits[themeId];
     }
+
     // Note: Prompts are cached as text, even if they are JSON. We need to parse them.
     const traitFileContent = getLoadedPromptText(themeId, 'traits');
     if (traitFileContent) {
@@ -356,9 +417,11 @@ export function getThemeTraits(themeId) {
             return null;
         }
     }
+
     log(LOG_LEVEL_WARN, `Trait definitions for theme '${themeId}' not found or not loaded. Ensure 'traits' is in prompts-config.json and preloaded.`);
     return null;
 }
+
 
 // --- Cache Clearing Utilities (mostly for development/testing) ---
 export function _clearThemePromptCache(themeId = null) {
@@ -379,6 +442,7 @@ export function _clearAllThemeDataCache() {
     Object.keys(_PROMPT_URLS_BY_THEME).forEach(key => delete _PROMPT_URLS_BY_THEME[key]);
     Object.keys(_NARRATIVE_LANG_PROMPT_PARTS_BY_THEME).forEach(key => delete _NARRATIVE_LANG_PROMPT_PARTS_BY_THEME[key]);
     Object.keys(_themeTraits).forEach(key => delete _themeTraits[key]);
+    Object.keys(_themeItemData).forEach(key => delete _themeItemData[key]);
     _clearThemePromptCache(); // Clears _gamePrompts
-    log(LOG_LEVEL_INFO, 'All theme data caches (configs, texts, prompt configs, prompts, traits) cleared.');
+    log(LOG_LEVEL_INFO, 'All theme data caches (configs, texts, prompt configs, prompts, traits, items) cleared.');
 }

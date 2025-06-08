@@ -1,0 +1,952 @@
+[
+  {
+    "id": "gw_pg_wornshroud_l01",
+    "name": {
+      "en": "Worn Grave Shroud",
+      "cs": "Opotřebovaný Pohřební Rubáš"
+    },
+    "description": {
+      "en": "Little more than tattered cloth, smelling faintly of crypt dust and old sorrows. Offers scant protection against the encroaching dark.",
+      "cs": "O něco víc než potrhaná látka, slabě páchnoucí kryptovým prachem a starými žaly. Poskytuje chatrnou ochranu proti dotírajícím stínům."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "3 Armor, Slightly dampens sound",
+      "cs": "3 Zbroj, Lehce tlumí zvuk"
+    },
+    "attributes": { "armor": 3 },
+    "abilities": ["Slightly Dampens Sound"],
+    "level": 1
+  },
+  {
+    "id": "gw_pg_hidepatches_l02",
+    "name": {
+      "en": "Patched Hide Scraps",
+      "cs": "Záplatované Kožené Odřezky"
+    },
+    "description": {
+      "en": "Stiff, mismatched pieces of cured animal hide, crudely stitched together. Better than nothing, but not by much.",
+      "cs": "Ztvrdlé, nesourodé kusy vydělané zvířecí kůže, nahrubo sešité. Lepší než nic, ale ne o mnoho."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "4 Armor, Minor cold resistance",
+      "cs": "4 Zbroj, Menší odolnost proti chladu"
+    },
+    "attributes": { "armor": 4 },
+    "abilities": ["Minor Cold Resistance"],
+    "level": 2
+  },
+  {
+    "id": "gw_pg_rustedlinks_l03",
+    "name": {
+      "en": "Rusted Chain Links",
+      "cs": "Zrezivělé Kroužky Brnění"
+    },
+    "description": {
+      "en": "A few lengths of corroded chainmail, perhaps salvaged from a forgotten battlefield. They clink with every movement.",
+      "cs": "Několik délek zkorodované kroužkové zbroje, možná zachráněných z zapomenutého bojiště. Při každém pohybu cinkají."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "5 Armor, Deters vermin",
+      "cs": "5 Zbroj, Odrazuje havěť"
+    },
+    "attributes": { "armor": 5 },
+    "abilities": ["Deters Small Vermin"],
+    "level": 3
+  },
+  {
+    "id": "gw_pg_thicktunic_l04",
+    "name": {
+      "en": "Thick Woolen Tunic",
+      "cs": "Hrubá Vlněná Tunika"
+    },
+    "description": {
+      "en": "A heavy, coarse garment that offers surprising warmth and some padding against blows. It carries the scent of damp earth.",
+      "cs": "Těžký, hrubý oděv, který poskytuje překvapivé teplo a určité polstrování proti úderům. Nese vůni vlhké země."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "6 Armor, Provides warmth",
+      "cs": "6 Zbroj, Poskytuje teplo"
+    },
+    "attributes": { "armor": 6 },
+    "abilities": ["Provides Warmth"],
+    "level": 4
+  },
+  {
+    "id": "gw_pg_bonewraps_l05",
+    "name": {
+      "en": "Bone-Studded Wraps",
+      "cs": "Kostmi Pobité Bandáže"
+    },
+    "description": {
+      "en": "Lengths of tough linen interwoven with sharpened animal bones. An unsettling, primitive form of armor.",
+      "cs": "Pásy pevného plátna protkané nabroušenými zvířecími kostmi. Znepokojivá, primitivní forma zbroje."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "7 Armor, Causes unease in animals",
+      "cs": "7 Zbroj, Vyvolává neklid u zvířat"
+    },
+    "attributes": { "armor": 7 },
+    "abilities": ["Causes Unease in Animals"],
+    "level": 5
+  },
+  {
+    "id": "gw_pg_leatherjerkin_l06",
+    "name": {
+      "en": "Hardened Leather Jerkin",
+      "cs": "Prošívaná Kožená Vesta"
+    },
+    "description": {
+      "en": "A sleeveless vest of boiled leather, stiff and offering decent protection to the torso. Bears the marks of long use.",
+      "cs": "Vesta bez rukávů z vařené kůže, tuhá a poskytující slušnou ochranu trupu. Nese stopy dlouhého používání."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "8 Armor, Resists minor cuts",
+      "cs": "8 Zbroj, Odolává drobným řezům"
+    },
+    "attributes": { "armor": 8 },
+    "abilities": ["Resists Minor Cuts"],
+    "level": 6
+  },
+  {
+    "id": "gw_pg_paddedgambeson_l07",
+    "name": {
+      "en": "Padded Warden's Gambeson",
+      "cs": "Polstrovaný Strážcův Gambeson"
+    },
+    "description": {
+      "en": "A thick, quilted jacket worn under armor or on its own. Its many layers absorb the force of impacts.",
+      "cs": "Tlustá, prošívaná bunda nošená pod zbrojí nebo samostatně. Její mnohé vrstvy pohlcují sílu nárazů."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "9 Armor, Reduces blunt trauma",
+      "cs": "9 Zbroj, Snižuje tupé trauma"
+    },
+    "attributes": { "armor": 9 },
+    "abilities": ["Reduces Blunt Trauma"],
+    "level": 7
+  },
+  {
+    "id": "gw_pg_ironcap_l08",
+    "name": {
+      "en": "Crude Iron Shoulderguard",
+      "cs": "Nahrubo Kovaný Železný Nákrčník"
+    },
+    "description": {
+      "en": "A roughly hammered piece of iron designed to protect one shoulder. Awkward, but better than an exposed collarbone.",
+      "cs": "Nahrubo tepaný kus železa určený k ochraně jednoho ramene. Nepohodlný, ale lepší než odhalená klíční kost."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "10 Armor, Deflects glancing blows",
+      "cs": "10 Zbroj, Odklání letmé údery"
+    },
+    "attributes": { "armor": 10 },
+    "abilities": ["Deflects Glancing Blows to Shoulder"],
+    "level": 8
+  },
+  {
+    "id": "gw_pg_watchcloak_l09",
+    "name": {
+      "en": "Heavy Watchman's Cloak",
+      "cs": "Těžký Strážní Plášť"
+    },
+    "description": {
+      "en": "A cloak of dense, dark wool, treated with oils to repel water. Its weight offers a surprising degree of protection.",
+      "cs": "Plášť z husté, tmavé vlny, ošetřený oleji k odpuzování vody. Jeho váha nabízí překvapivý stupeň ochrany."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "11 Armor, Water resistant",
+      "cs": "11 Zbroj, Voděodolný"
+    },
+    "attributes": { "armor": 11 },
+    "abilities": ["Water Resistant"],
+    "level": 9
+  },
+  {
+    "id": "gw_pg_ringmail_l10",
+    "name": {
+      "en": "Reinforced Ringmail Vest",
+      "cs": "Zesílená Kroužková Vesta"
+    },
+    "description": {
+      "en": "A vest made of large metal rings sewn onto a leather backing. Each ring bears a tiny, warding scratch mark.",
+      "cs": "Vesta z velkých kovových kroužků našitých na kožený podklad. Každý kroužek nese drobnou ochrannou rytinu."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "12 Armor, Minor ward against spirits",
+      "cs": "12 Zbroj, Menší ochrana proti duchům"
+    },
+    "attributes": { "armor": 12 },
+    "abilities": ["Minor Ward Against Spirits"],
+    "level": 10
+  },
+  {
+    "id": "gw_pg_boiledcuirass_l11",
+    "name": {
+      "en": "Boiled Leather Cuirass",
+      "cs": "Kyrys z Vařené Kůže"
+    },
+    "description": {
+      "en": "Shaped and hardened leather plates that cover the chest and back. Sturdy, if somewhat inflexible.",
+      "cs": "Tvarované a tvrzené kožené pláty kryjící hruď a záda. Pevné, i když poněkud neohebné."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "14 Armor, Good torso protection",
+      "cs": "14 Zbroj, Dobrá ochrana trupu"
+    },
+    "attributes": { "armor": 14 },
+    "abilities": ["Good Torso Protection"],
+    "level": 11
+  },
+  {
+    "id": "gw_pg_scalemail_l12",
+    "name": {
+      "en": "Iron Scale Tunic",
+      "cs": "Železná Šupinová Tunika"
+    },
+    "description": {
+      "en": "Overlapping small iron scales sewn onto a fabric base, offering flexible yet solid defense. Each scale is cold to the touch.",
+      "cs": "Překrývající se malé železné šupiny našité na látkový podklad, nabízející pružnou, avšak pevnou obranu. Každá šupina je studená na dotek."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "15 Armor, Resists piercing attacks",
+      "cs": "15 Zbroj, Odolává bodným útokům"
+    },
+    "attributes": { "armor": 15 },
+    "abilities": ["Resists Piercing Attacks"],
+    "level": 12
+  },
+  {
+    "id": "gw_pg_wardensmantle_l13",
+    "name": {
+      "en": "Warden's Sturdy Mantle",
+      "cs": "Strážcův Pevný Plášť"
+    },
+    "description": {
+      "en": "A heavy, shoulder-covering mantle of layered fabric and leather, offering protection from the elements and blows from above.",
+      "cs": "Těžký plášť kryjící ramena, z vrstvené látky a kůže, nabízející ochranu před živly a údery shora."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "17 Armor, Protects from falling debris",
+      "cs": "17 Zbroj, Chrání před padajícími sutinami"
+    },
+    "attributes": { "armor": 17 },
+    "abilities": ["Protects from Falling Debris"],
+    "level": 13
+  },
+  {
+    "id": "gw_pg_grimpauldron_l14",
+    "name": {
+      "en": "Grim Iron Pauldron",
+      "cs": "Ponurý Železný Nárameník"
+    },
+    "description": {
+      "en": "A single, large pauldron of blackened iron, designed to deflect heavy blows aimed at the shoulder and neck.",
+      "cs": "Jediný, velký nárameník z černěného železa, navržený k odklánění těžkých úderů mířených na rameno a krk."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "18 Armor, Guards vital points",
+      "cs": "18 Zbroj, Chrání životně důležitá místa"
+    },
+    "attributes": { "armor": 18 },
+    "abilities": ["Guards Neck and Shoulder"],
+    "level": 14
+  },
+  {
+    "id": "gw_pg_studdedcoat_l15",
+    "name": {
+      "en": "Steel-Studded Greatcoat",
+      "cs": "Ocelí Pobytý Dlouhý Kabát"
+    },
+    "description": {
+      "en": "A long, heavy coat reinforced with numerous steel studs. The collar can be turned up to protect the neck from chilling winds.",
+      "cs": "Dlouhý, těžký kabát zesílený četnými ocelovými nýty. Límec lze zvednout k ochraně krku před mrazivými větry."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "20 Armor, Wind resistant",
+      "cs": "20 Zbroj, Odolný proti větru"
+    },
+    "attributes": { "armor": 20 },
+    "abilities": ["Wind Resistant"],
+    "level": 15
+  },
+  {
+    "id": "gw_pg_brigandine_l16",
+    "name": {
+      "en": "Veteran's Brigandine",
+      "cs": "Veteránská Brigantina"
+    },
+    "description": {
+      "en": "Small steel plates riveted inside a canvas and leather shell. It's seen many battles and bears the scars to prove it.",
+      "cs": "Malé ocelové pláty přinýtované zevnitř plátěného a koženého pláště. Zažila mnoho bitev a nese jizvy jako důkaz."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "21 Armor, Battle-tested resilience",
+      "cs": "21 Zbroj, Bitvou prověřená odolnost"
+    },
+    "attributes": { "armor": 21 },
+    "abilities": ["Battle-Tested Resilience"],
+    "level": 16
+  },
+  {
+    "id": "gw_pg_chainhauberk_l17",
+    "name": {
+      "en": "Standard Chain Hauberk",
+      "cs": "Standardní Kroužková Košile"
+    },
+    "description": {
+      "en": "A full shirt of interlinked steel rings, offering comprehensive protection against slashing weapons. Standard issue for those who guard bleak places.",
+      "cs": "Plná košile z propletených ocelových kroužků, nabízející komplexní ochranu proti sečným zbraním. Standardní výbava pro ty, kdo střeží ponurá místa."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "23 Armor, Effective vs. blades",
+      "cs": "23 Zbroj, Účinná proti čepelím"
+    },
+    "attributes": { "armor": 23 },
+    "abilities": ["Effective Against Slashing Attacks"],
+    "level": 17
+  },
+  {
+    "id": "gw_pg_darkwoodshield_l18",
+    "name": {
+      "en": "Darkwood Heater Shield (Worn as Chestguard)",
+      "cs": "Štít z Temného Dřeva (Nošen jako Kyrys)"
+    },
+    "description": {
+      "en": "An old, iron-banded darkwood shield, repurposed and strapped to the chest for makeshift protection. Surprisingly tough.",
+      "cs": "Starý, železem okovaný štít z temného dřeva, přeměněný a připoutaný na hruď jako provizorní ochrana. Překvapivě odolný."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "24 Armor, Chance to deflect projectiles",
+      "cs": "24 Zbroj, Šance odrazit projektily"
+    },
+    "attributes": { "armor": 24 },
+    "abilities": ["Chance to Deflect Projectiles"],
+    "level": 18
+  },
+  {
+    "id": "gw_pg_silentstrider_l19",
+    "name": {
+      "en": "Silent Strider's Wraps",
+      "cs": "Ovinovačky Tichého Poutníka"
+    },
+    "description": {
+      "en": "Specially treated leather and cloth wraps that cling tight and absorb sound. Favored by those who walk unseen paths.",
+      "cs": "Speciálně ošetřené kožené a látkové ovinovačky, které těsně přiléhají a pohlcují zvuk. Oblíbené těmi, kdo kráčejí neviděnými stezkami."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "26 Armor, Greatly muffles movement",
+      "cs": "26 Zbroj, Výrazně tlumí pohyb"
+    },
+    "attributes": { "armor": 26 },
+    "abilities": ["Greatly Muffles Movement"],
+    "level": 19
+  },
+  {
+    "id": "gw_pg_heavymail_l20",
+    "name": {
+      "en": "Heavy Iron Hauberk",
+      "cs": "Těžká Železná Drátěná Košile"
+    },
+    "description": {
+      "en": "A dense coat of thick iron rings, providing substantial defense at the cost of some mobility. Each link feels cold as the grave.",
+      "cs": "Hustý plášť z tlustých železných kroužků, poskytující značnou obranu za cenu určité mobility. Každý kroužek je studený jako hrob."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "27 Armor, Resists heavy blows",
+      "cs": "27 Zbroj, Odolává těžkým úderům"
+    },
+    "attributes": { "armor": 27 },
+    "abilities": ["Resists Heavy Blows"],
+    "level": 20
+  },
+  {
+    "id": "gw_pg_steelamellar_l21",
+    "name": {
+      "en": "Steel Lamellar Armor",
+      "cs": "Ocelová Lamelová Zbroj"
+    },
+    "description": {
+      "en": "Overlapping plates of steel laced together, forming a flexible and resilient defense. The steel gleams faintly even in dim light.",
+      "cs": "Překrývající se ocelové pláty svázané dohromady, tvořící pružnou a odolnou obranu. Ocel se slabě leskne i v šerém světle."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "29 Armor, Balances protection and mobility",
+      "cs": "29 Zbroj, Vyvažuje ochranu a mobilitu"
+    },
+    "attributes": { "armor": 29 },
+    "abilities": ["Balanced Protection and Mobility"],
+    "level": 21
+  },
+  {
+    "id": "gw_pg_shadowstitchmail_l22",
+    "name": {
+      "en": "Shadow-Stitched Mail",
+      "cs": "Stínem Prošívaná Kroužková Zbroj"
+    },
+    "description": {
+      "en": "Fine chainmail interwoven with threads of solidified shadow, making the wearer harder to spot in dim conditions.",
+      "cs": "Jemná kroužková zbroj protkaná vlákny ztuhlého stínu, díky čemuž je nositel hůře viditelný v šeru."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "31 Armor, Enhanced stealth in shadows",
+      "cs": "31 Zbroj, Zlepšené plížení ve stínech"
+    },
+    "attributes": { "armor": 31 },
+    "abilities": ["Enhanced Stealth in Shadows"],
+    "level": 22
+  },
+  {
+    "id": "gw_pg_cryptbreastplate_l23",
+    "name": {
+      "en": "Crypt Warden's Breastplate",
+      "cs": "Kyrys Kryptového Strážce"
+    },
+    "description": {
+      "en": "A heavy steel breastplate, cold-forged and bearing the sigil of a forgotten order of tomb guardians. It emanates a faint chill.",
+      "cs": "Těžký ocelový kyrys, kovaný za studena a nesoucí pečeť zapomenutého řádu hrobních strážců. Vyzařuje slabý chlad."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "33 Armor, Slight resistance to necrotic energies",
+      "cs": "33 Zbroj, Mírná odolnost vůči nekrotickým energiím"
+    },
+    "attributes": { "armor": 33 },
+    "abilities": ["Slight Necrotic Resistance"],
+    "level": 23
+  },
+  {
+    "id": "gw_pg_runevambraces_l24",
+    "name": {
+      "en": "Rune-Etched Vambraces (Worn as Torso Guard)",
+      "cs": "Runami Ryté Nákrčníky (Nošeny jako Chránič Trupu)"
+    },
+    "description": {
+      "en": "A pair of ancient, oversized vambraces covered in protective runes, adapted to shield the core. They hum with faint power.",
+      "cs": "Pár starodávných, nadměrných nákrčníků pokrytých ochrannými runami, přizpůsobených k ochraně trupu. Slabě hučí energií."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "35 Armor, Deflects minor curses",
+      "cs": "35 Zbroj, Odklání menší kletby"
+    },
+    "attributes": { "armor": 35 },
+    "abilities": ["Deflects Minor Curses"],
+    "level": 24
+  },
+  {
+    "id": "gw_pg_obsidianguard_l25",
+    "name": {
+      "en": "Obsidian-Inlaid Guard",
+      "cs": "Obsidiánem Vykládaná Ochrana"
+    },
+    "description": {
+      "en": "Polished plates of volcanic glass are set into this hardened leather armor, said to absorb malevolent gazes.",
+      "cs": "Leštěné pláty vulkanického skla jsou zasazeny do této tvrzené kožené zbroje, o které se říká, že pohlcuje zlovolné pohledy."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "37 Armor, Protects against evil eye",
+      "cs": "37 Zbroj, Chrání před uhranutím"
+    },
+    "attributes": { "armor": 37 },
+    "abilities": ["Protects Against Evil Eye"],
+    "level": 25
+  },
+  {
+    "id": "gw_pg_ghastlyshroud_l26",
+    "name": {
+      "en": "Ghastly Shroud",
+      "cs": "Přízračný Rubáš"
+    },
+    "description": {
+      "en": "Woven from threads that seem to flicker and writhe like captured spirits. Those nearby feel a prickling unease.",
+      "cs": "Utkaný z vláken, která se zdají mihotat a svíjet jako zajatí duchové. Ti poblíž cítí mravenčivý neklid."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "39 Armor, Intimidates lesser undead",
+      "cs": "39 Zbroj, Zastrašuje nižší nemrtvé"
+    },
+    "attributes": { "armor": 39 },
+    "abilities": ["Intimidates Lesser Undead"],
+    "level": 26
+  },
+  {
+    "id": "gw_pg_blackironplate_l27",
+    "name": {
+      "en": "Black Iron Plate",
+      "cs": "Černý Železný Plát"
+    },
+    "description": {
+      "en": "Forged from rare black iron, this articulated plate armor is both imposing and highly protective. It seems to absorb light.",
+      "cs": "Tato kloubová plátová zbroj, kovaná ze vzácného černého železa, je impozantní a vysoce ochranná. Zdá se, že pohlcuje světlo."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "41 Armor, High physical resistance",
+      "cs": "41 Zbroj, Vysoká fyzická odolnost"
+    },
+    "attributes": { "armor": 41 },
+    "abilities": ["High Physical Resistance"],
+    "level": 27
+  },
+  {
+    "id": "gw_pg_sentinelarmor_l28",
+    "name": {
+      "en": "Sentinel's Duty Armor",
+      "cs": "Zbroj Strážcovy Povinnosti"
+    },
+    "description": {
+      "en": "This armor bears the weight of countless vigils. Its surface is marred by countless blows, yet it remains unbroken.",
+      "cs": "Tato zbroj nese tíhu nesčetných hlídek. Její povrch je poznamenán nesčetnými údery, přesto zůstává neporušená."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "43 Armor, Bolsters endurance",
+      "cs": "43 Zbroj, Posiluje výdrž"
+    },
+    "attributes": { "armor": 43 },
+    "abilities": ["Bolsters Endurance"],
+    "level": 28
+  },
+  {
+    "id": "gw_pg_runicplate_l29",
+    "name": {
+      "en": "Ancient Runic Plate",
+      "cs": "Starodávná Runová Plátová Zbroj"
+    },
+    "description": {
+      "en": "Heavy plates covered in deeply etched runes of protection and resilience. They glow with a faint, internal light when danger is near.",
+      "cs": "Těžké pláty pokryté hluboce rytými runami ochrany a odolnosti. Slabě září vnitřním světlem, když je nebezpečí blízko."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "45 Armor, Warns of immediate threats",
+      "cs": "45 Zbroj, Varuje před bezprostředními hrozbami"
+    },
+    "attributes": { "armor": 45 },
+    "abilities": ["Warns of Immediate Threats", "Strong Wardings"],
+    "level": 29
+  },
+  {
+    "id": "gw_pg_duskforged_l30",
+    "name": {
+      "en": "Dusk-Forged Carapace",
+      "cs": "Soumrakem Kovaný Krunýř"
+    },
+    "description": {
+      "en": "Fashioned from a material that seems to shift between solid metal and hardened twilight. It offers superb protection against both physical and ethereal harm.",
+      "cs": "Vyrobeno z materiálu, který se zdá přecházet mezi pevným kovem a ztvrdlým soumrakem. Nabízí vynikající ochranu proti fyzickému i éterickému poškození."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "47 Armor, Resists ethereal attacks",
+      "cs": "47 Zbroj, Odolává éterickým útokům"
+    },
+    "attributes": { "armor": 47 },
+    "abilities": ["Resists Ethereal Attacks", "Twilight Camouflage"],
+    "level": 30
+  },
+  {
+    "id": "gw_pg_darksteelplate_l31",
+    "name": {
+      "en": "Darksteel Plate Armor",
+      "cs": "Plátová Zbroj z Temné Oceli"
+    },
+    "description": {
+      "en": "Immaculately crafted plate armor made from rare darksteel, known for its incredible resilience and affinity for shadow magic.",
+      "cs": "Dokonale zpracovaná plátová zbroj z vzácné temné oceli, známá svou neuvěřitelnou odolností a afinitou k stínové magii."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "50 Armor, Absorbs shadow energy",
+      "cs": "50 Zbroj, Pohlcuje stínovou energii"
+    },
+    "attributes": { "armor": 50 },
+    "abilities": ["Absorbs Shadow Energy", "Superior Durability"],
+    "level": 31
+  },
+  {
+    "id": "gw_pg_ghostiron_l32",
+    "name": {
+      "en": "Ghost-Iron Hauberk",
+      "cs": "Hauberk z Přízračného Železa"
+    },
+    "description": {
+      "en": "A mail shirt woven from an eerie, translucent metal. It feels unnaturally light and whispers faint laments.",
+      "cs": "Kroužková košile utkaná z děsivého, průsvitného kovu. Je nepřirozeně lehká a šeptá slabé nářky."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "52 Armor, Partial incorporeality",
+      "cs": "52 Zbroj, Částečná nehmotnost"
+    },
+    "attributes": { "armor": 52 },
+    "abilities": ["Phases Through Minor Attacks", "Unsettles Spirits"],
+    "level": 32
+  },
+  {
+    "id": "gw_pg_soulforgedaegis_l33",
+    "name": {
+      "en": "Soul-Forged Aegis",
+      "cs": "Duší Kovaná Egida"
+    },
+    "description": {
+      "en": "Said to be tempered with the captured essence of a powerful guardian spirit, this armor radiates protective power.",
+      "cs": "Říká se, že je zakalena zajatou esencí mocného strážného ducha, tato zbroj vyzařuje ochrannou sílu."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "55 Armor, Fortifies willpower",
+      "cs": "55 Zbroj, Posiluje sílu vůle"
+    },
+    "attributes": { "armor": 55 },
+    "abilities": ["Fortifies Willpower", "Repels Fear Effects"],
+    "level": 33
+  },
+  {
+    "id": "gw_pg_nightweaverobes_l34",
+    "name": {
+      "en": "Nightweave Robes",
+      "cs": "Roucha Noční Tkadleny"
+    },
+    "description": {
+      "en": "Robes spun from solidified darkness and moonlight, offering surprising defense and making the wearer almost invisible in deep shadow.",
+      "cs": "Roucha utkaná ze ztuhlé tmy a měsíčního svitu, nabízející překvapivou obranu a činící nositele téměř neviditelným v hlubokém stínu."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "57 Armor, Superior stealth in darkness",
+      "cs": "57 Zbroj, Vynikající plížení ve tmě"
+    },
+    "attributes": { "armor": 57 },
+    "abilities": ["Superior Stealth in Darkness", "Silent Movement"],
+    "level": 34
+  },
+  {
+    "id": "gw_pg_blightedcarapace_l35",
+    "name": {
+      "en": "Blighted Carapace",
+      "cs": "Nakažený Krunýř"
+    },
+    "description": {
+      "en": "Armor crafted from the hardened shell of a monstrous, blighted creature. It offers formidable protection but carries a faint, corrupting aura.",
+      "cs": "Zbroj vyrobená z tvrzeného krunýře monstrózní, nakažené bytosti. Nabízí impozantní ochranu, ale nese slabou, kazící auru."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "60 Armor, Resists toxins and disease",
+      "cs": "60 Zbroj, Odolává toxinům a nemocem"
+    },
+    "attributes": { "armor": 60 },
+    "abilities": ["Resists Toxins and Disease", "Slightly Corrupting Aura"],
+    "level": 35
+  },
+  {
+    "id": "gw_pg_golemplate_l36",
+    "name": {
+      "en": "Grave Golem Plating",
+      "cs": "Plátování Hrobového Golema"
+    },
+    "description": {
+      "en": "Thick, heavy plates salvaged from an ancient tomb guardian. Imbued with an unyielding, stoic resilience.",
+      "cs": "Tlusté, těžké pláty zachráněné ze starodávného hrobového strážce. Prodchnuté neústupnou, stoickou odolností."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "62 Armor, Unflinching against impact",
+      "cs": "62 Zbroj, Neochvějný proti nárazu"
+    },
+    "attributes": { "armor": 62 },
+    "abilities": ["Unflinching Against Impact", "Extremely Durable"],
+    "level": 36
+  },
+  {
+    "id": "gw_pg_stygianmail_l37",
+    "name": {
+      "en": "Stygian Soul-Mail",
+      "cs": "Stygijská Duševní Zbroj"
+    },
+    "description": {
+      "en": "Forged in the fires of a netherworld, this mail seems to writhe with captured, despairing souls. It chills to the bone.",
+      "cs": "Kovaná v ohních podsvětí, tato kroužková zbroj se zdá svíjet zajatými, zoufalými dušemi. Chladí až do morku kostí."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "65 Armor, Drains vitality from nearby foes",
+      "cs": "65 Zbroj, Vysává vitalitu z blízkých nepřátel"
+    },
+    "attributes": { "armor": 65 },
+    "abilities": ["Drains Vitality from Nearby Foes", "Cold Aura"],
+    "level": 37
+  },
+  {
+    "id": "gw_pg_wardensbulwark_l38",
+    "name": {
+      "en": "Warden's Final Bulwark",
+      "cs": "Strážcova Poslední Bašta"
+    },
+    "description": {
+      "en": "Armor passed down through generations of Wardens, each adding their own enchantments of protection and sorrow.",
+      "cs": "Zbroj předávaná po generace Strážců, každý přidal svá vlastní očarování ochrany a žalu."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "67 Armor, Strengthened by sorrow",
+      "cs": "67 Zbroj, Posílena žalem"
+    },
+    "attributes": { "armor": 67 },
+    "abilities": ["Strengthened by Resolve", "Echoes of Past Wardens"],
+    "level": 38
+  },
+  {
+    "id": "gw_pg_obsidianheart_l39",
+    "name": {
+      "en": "Heart of the Obsidian Mountain",
+      "cs": "Srdce Obsidiánové Hory"
+    },
+    "description": {
+      "en": "Not merely inlaid, but seemingly carved from a single, massive piece of obsidian, imbued with the mountain's unyielding spirit.",
+      "cs": "Nejen vykládaná, ale zdánlivě vytesaná z jediného masivního kusu obsidiánu, prodchnutá neústupným duchem hory."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "70 Armor, Grants earthen stability",
+      "cs": "70 Zbroj, Propůjčuje zemskou stabilitu"
+    },
+    "attributes": { "armor": 70 },
+    "abilities": ["Grants Earthen Stability", "Resists Knockback"],
+    "level": 39
+  },
+  {
+    "id": "gw_pg_shadowbarrage_l40",
+    "name": {
+      "en": "Aegis of Shadowed Stars",
+      "cs": "Egida Stinných Hvězd"
+    },
+    "description": {
+      "en": "Forged from metal fallen from the darkest corners of the cosmos, this armor glitters with captured, cold starlight.",
+      "cs": "Kovaná z kovu spadlého z nejtemnějších koutů kosmu, tato zbroj se třpytí zachyceným, chladným hvězdným světlem."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "72 Armor, Resists cosmic horrors",
+      "cs": "72 Zbroj, Odolává kosmickým hrůzám"
+    },
+    "attributes": { "armor": 72 },
+    "abilities": ["Resists Cosmic Horrors", "Void Touched"],
+    "level": 40
+  },
+  {
+    "id": "gw_pg_ebondoomplate_l41",
+    "name": {
+      "en": "Ebon Doomplate",
+      "cs": "Ebenová Zbroj Zkázy"
+    },
+    "description": {
+      "en": "A suit of massive, ebon plates that seems to promise a grim fate to any who strike it. Whispers of oblivion cling to it.",
+      "cs": "Oblek masivních ebenových plátů, který jako by sliboval ponurý osud každému, kdo na něj udeří. Lpí na něm šepoty zapomnění."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "75 Armor, Reflects a portion of damage",
+      "cs": "75 Zbroj, Odráží část poškození"
+    },
+    "attributes": { "armor": 75 },
+    "abilities": ["Minor Damage Reflection", "Aura of Dread"],
+    "level": 41
+  },
+  {
+    "id": "gw_pg_celestialbulwark_l42",
+    "name": {
+      "en": "Celestial Bulwark of the Damned",
+      "cs": "Nebeská Bašta Prokletých"
+    },
+    "description": {
+      "en": "Paradoxically beautiful, this armor shines with an inner light, yet is ice-cold and bound to a sorrowful, eternal duty.",
+      "cs": "Paradoxně krásná, tato zbroj září vnitřním světlem, přesto je ledově studená a vázaná k žalostné, věčné povinnosti."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "78 Armor, Wards against holy and unholy",
+      "cs": "78 Zbroj, Chrání před svatým i nesvatým"
+    },
+    "attributes": { "armor": 78 },
+    "abilities": ["Wards Against Holy and Unholy Magic", "Bound by Duty"],
+    "level": 42
+  },
+  {
+    "id": "gw_pg_unseenshroud_l43",
+    "name": {
+      "en": "Shroud of the Unseen Keeper",
+      "cs": "Rubáš Neviděného Strážce"
+    },
+    "description": {
+      "en": "More than mere camouflage, this shroud bends light and perception, making the wearer a fleeting ghost in the world's eye.",
+      "cs": "Více než pouhé maskování, tento rubáš ohýbá světlo a vnímání, čímž činí nositele prchavým duchem v oku světa."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "81 Armor, Near invisibility when still",
+      "cs": "81 Zbroj, Téměř neviditelnost v klidu"
+    },
+    "attributes": { "armor": 81 },
+    "abilities": ["Near Invisibility When Still", "Distorts Perception"],
+    "level": 43
+  },
+  {
+    "id": "gw_pg_wardenkingregalia_l44",
+    "name": {
+      "en": "Warden-King's Regalia",
+      "cs": "Regálie Krále Strážců"
+    },
+    "description": {
+      "en": "The legendary armor of the first Warden-King, said to make its wearer an unbreakable bastion against the tides of darkness.",
+      "cs": "Legendární zbroj prvního Krále Strážců, o které se říká, že činí svého nositele neprolomitelnou baštou proti přílivům temnoty."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "84 Armor, Inspires allies, demoralizes foes",
+      "cs": "84 Zbroj, Inspiruje spojence, demoralizuje nepřátele"
+    },
+    "attributes": { "armor": 84 },
+    "abilities": ["Inspires Allies", "Demoralizes Foes", "Symbol of Authority"],
+    "level": 44
+  },
+  {
+    "id": "gw_pg_heartwoodbastion_l45",
+    "name": {
+      "en": "Heartwood Bastion",
+      "cs": "Bašta z Jádrového Dřeva"
+    },
+    "description": {
+      "en": "Crafted from the petrified heartwood of an ancient, sentient tree, this armor is surprisingly light and pulses with primal life force.",
+      "cs": "Vyrobená ze zkamenělého jádrového dřeva starodávného, vnímajícího stromu, tato zbroj je překvapivě lehká a pulzuje primární životní silou."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "87 Armor, Regenerates minor damage over time",
+      "cs": "87 Zbroj, Regeneruje menší poškození v průběhu času"
+    },
+    "attributes": { "armor": 87 },
+    "abilities": ["Slow Health Regeneration", " attuned to Nature"],
+    "level": 45
+  },
+  {
+    "id": "gw_pg_voidplate_l46",
+    "name": {
+      "en": "Plate of the Endless Void",
+      "cs": "Plát Nekonečné Prázdnoty"
+    },
+    "description": {
+      "en": "This armor seems to be a window into the starless void itself. Looking at it for too long invites madness.",
+      "cs": "Tato zbroj se zdá být oknem do samotné prázdnoty bez hvězd. Příliš dlouhé hledění na ni přivolává šílenství."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "90 Armor, Chance to banish attackers to the void",
+      "cs": "90 Zbroj, Šance vyhnat útočníky do prázdnoty"
+    },
+    "attributes": { "armor": 90 },
+    "abilities": ["Chance to Temporarily Banish Attackers", "Induces Vertigo"],
+    "level": 46
+  },
+  {
+    "id": "gw_pg_timelessguardian_l47",
+    "name": {
+      "en": "Armor of the Timeless Guardian",
+      "cs": "Zbroj Nadčasového Strážce"
+    },
+    "description": {
+      "en": "Unaffected by the passage of eons, this armor protects not just the body, but the wearer's spirit from the ravages of time and despair.",
+      "cs": "Nedotčena plynutím věků, tato zbroj nechrání jen tělo, ale i ducha nositele před zkázou času a zoufalstvím."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "93 Armor, Resists temporal distortions",
+      "cs": "93 Zbroj, Odolává časovým deformacím"
+    },
+    "attributes": { "armor": 93 },
+    "abilities": ["Resists Temporal Distortions", "Immune to Despair"],
+    "level": 47
+  },
+  {
+    "id": "gw_pg_dragonbone_l48",
+    "name": {
+      "en": "Wyrmbone Carapace",
+      "cs": "Krunýř z Dračích Kostí"
+    },
+    "description": {
+      "en": "Forged from the bones of an ancient shadow wyrm, this armor is incredibly resilient and carries an echo of the beast's terrible power.",
+      "cs": "Kovaná z kostí starodávného stínového červa, tato zbroj je neuvěřitelně odolná a nese ozvěnu strašlivé síly bestie."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "96 Armor, High elemental resistance",
+      "cs": "96 Zbroj, Vysoká elementární odolnost"
+    },
+    "attributes": { "armor": 96 },
+    "abilities": ["High Elemental Resistance", "Draconic Fear Aura"],
+    "level": 48
+  },
+  {
+    "id": "gw_pg_silentknight_l49",
+    "name": {
+      "en": "Armor of the Silent Knight",
+      "cs": "Zbroj Tichého Rytíře"
+    },
+    "description": {
+      "en": "Once worn by a knight sworn to an impossible vow of silence and vigilance, this armor is utterly soundless and grants preternatural awareness.",
+      "cs": "Kdysi nošena rytířem přísahajícím na nemožný slib mlčení a ostražitosti, tato zbroj je naprosto bezhlučná a propůjčuje nadpřirozenou ostražitost."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "99 Armor, Completely silent, heightened senses",
+      "cs": "99 Zbroj, Zcela tichá, zostřené smysly"
+    },
+    "attributes": { "armor": 99 },
+    "abilities": ["Complete Silence", "Heightened Senses", "Unwavering Vigilance"],
+    "level": 49
+  },
+  {
+    "id": "gw_pg_wardensresolve_l50",
+    "name": {
+      "en": "Aegis of the Last Warden's Resolve",
+      "cs": "Egida Odhodlání Posledního Strážce"
+    },
+    "description": {
+      "en": "The ultimate protection, forged in the heart of a dying star and quenched in the tears of a forgotten deity. It is said to hold the echoes of every soul its lineage has protected, making the wearer an embodiment of unwavering resolve.",
+      "cs": "Ultimátní ochrana, kovaná v srdci umírající hvězdy a kalená v slzách zapomenutého božstva. Říká se, že nese ozvěny každé duše, kterou její rod ochránil, čímž činí nositele ztělesněním neochvějného odhodlání."
+    },
+    "itemType": "protective_gear",
+    "itemEffectDescription": {
+      "en": "102 Armor, Defies oblivion, unbreakable will",
+      "cs": "102 Zbroj, Vzdoruje zapomnění, nezlomná vůle"
+    },
+    "attributes": { "armor": 102 },
+    "abilities": ["Defies Oblivion", "Unbreakable Will", "Sanctuary of Souls"],
+    "level": 50
+  }
+]

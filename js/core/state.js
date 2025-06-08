@@ -49,6 +49,8 @@ let _currentRunStats = { // Ephemeral stats for the current game run
     strainLevel: 1,
     conditions: [],
 };
+let _currentInventory = [];
+let _equippedItems = {}; // e.g., { weapon: itemObject, armor: itemObject }
 let _lastAiSuggestedActions = null;
 let _isBoonSelectionPending = false;
 let _isInitialTraitSelectionPending = false;
@@ -71,6 +73,15 @@ export const updateCurrentRunStat = (statName, value) => {
         // though primary stats like currentIntegrity/Willpower should be predefined.
         _currentRunStats[statName] = value;
     }
+};
+export const getCurrentInventory = () => _currentInventory;
+export const setCurrentInventory = (inventory) => {
+    _currentInventory = Array.isArray(inventory) ? inventory : [];
+};
+
+export const getEquippedItems = () => _equippedItems;
+export const setEquippedItems = (items) => {
+    _equippedItems = typeof items === 'object' && items !== null && !Array.isArray(items) ? items : {};
 };
 export const getIsBoonSelectionPending = () => _isBoonSelectionPending;
 export const setIsBoonSelectionPending = (isPending) => {
@@ -282,6 +293,10 @@ export const setIsInitialTraitSelectionPending = (isPending) => {
  * Clears all non-persistent game-specific state variables.
  * User preferences and auth state are not cleared here.
  */
+/**
+ * Clears all non-persistent game-specific state variables.
+ * User preferences and auth state are not cleared here.
+ */
 export const clearVolatileGameState = () => {
     _gameHistory = [];
     _unsavedHistoryDelta = [];
@@ -306,6 +321,8 @@ export const clearVolatileGameState = () => {
     };
     _isBoonSelectionPending = false;
     _isInitialTraitSelectionPending = false;
+    _currentInventory = [];
+    _equippedItems = {};
     clearCurrentNewGameSettings();
     _dashboardItemMeta = {};
 };

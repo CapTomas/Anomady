@@ -1,174 +1,214 @@
 
-
 ---
-This document details the interwoven systems governing character development, challenge resolution, and survival across diverse realities. It aims to provide a clear, adaptable baseline for balancing worlds that are perilous, perplexing, and rich with opportunity for the cunning, resilient, or simply bewildered.
 
-**Foundational Attributes:**
+## **Anomady: Core Mechanics & Systems Design**
 
-Every character, vessel, or significant entity is defined by four core attributes. Integrity and Willpower serve as vital pools representing endurance and expendable energy, while Aptitude and Resilience are crucial passive modifiers shaping interaction with the world.
+**Document Version:** 1.2 (Revised)
 
-*   **Integrity (INT):** Starts at a base **100**. Represents the entity's capacity to maintain wholeness—be it physical, mental, conceptual, or structural—when faced with adversarial forces, environmental hazards, or existential pressures. Loss of Integrity can stem from physical injury, psychic damage, reality fragmentation, ship hull breaches, or severe bureaucratic entanglement. Reaching zero Integrity signifies the entity is broken, incapacitated, destroyed, or otherwise narratively "taken out of action" according to the theme's context.
-    *   *Thematic Interpretation:* For a Grim Warden, it's physical health. For a Salt Reaver's ship, hull integrity. For a Celestial Custodian, it might be their personal Gumption or the ship's structural soundness against cosmic weirdness. For an Echo Sleuth, it's psychic cohesion against reality flux.
-    *   *Protective Measures (e.g., Armor, Shields, Wards):* Directly bolster Integrity by providing a buffer or increasing its effective maximum.
-
-*   **Willpower (WIL):** Starts at a base **50**. A finite reservoir of focused energy, mental fortitude, resolve, or sheer audacity. Actively expended to fuel potent abilities, perform strenuous or extraordinary actions (physical, mental, or conceptual), channel unique energies (alchemical, psychic, shanty-powered), or resist insidious influences. Recovers through rest, thematic consumables (potions, tea, grog, data-pills), or moments of profound thematic resonance (e.g., successful problem-solving, inspiring leadership, a perfectly brewed cup of Earl Grey).
-    *   *Thematic Interpretation:* A Grim Warden's stamina for signs, a Salt Reaver's "Grit" for daring feats, a Celestial Custodian's "Gumption" for operating bizarre tech, an Echo Sleuth's "Focus" for deconstructing paradoxes.
-
-*   **Aptitude (APT):** Starts at a base **10**. A measure of inherent talent, honed skill, precision, insight, and effectiveness in executing deliberate actions. This passive modifier influences the *quality and degree of success* of actions—from the lethal accuracy of a strike and the potency of a concoction, to deciphering cryptic clues, navigating treacherous social currents, or successfully reasoning with a sentient teapot.
-    *   **Effect on Action Efficacy:** Aptitude enhances the positive impact of actions. A higher Aptitude leads to more effective outcomes, overcoming greater difficulties, or achieving more nuanced results. For example, `Base Action Magnitude * (Character_Aptitude / 10)`.
-    *   *Thematic Interpretation:* A Grim Warden's combat skill, a Salt Reaver's cannon accuracy or navigational prowess, a Celestial Custodian's knack for peculiar tool usage, an Echo Sleuth's deductive power.
-
-*   **Resilience (RES):** Starts at a base **10**. A defensive modifier reflecting inner grit, inherent toughness (physical, mental, or conceptual), and the ability to passively endure or mitigate hostile effects. Higher Resilience can reduce the impact of negative consequences, increase chances to resist debilitating conditions (fear, corruption, curses, confusion), or maintain composure under pressure.
-    *   **Effect on Mitigating Negative Outcomes:** Resilience helps diminish the severity of adverse effects. For example, `Incoming Negative Magnitude * (10 / Character_Resilience)`.
-    *   *Thematic Interpretation:* A Grim Warden's resistance to Blight, a Salt Reaver's ability to weather a storm or curse, a Celestial Custodian's fortitude against existential despair or bureaucratic attrition, an Echo Sleuth's defense against psychic static.
-
-Upon achieving a new experience level, the character gains **1 Attribute Point** to allocate, enhancing one of the following:
-*   Increase Max Integrity by **25 points**.
-*   Increase Max Willpower by **10 points**.
-*   Increase Aptitude by **1 point**.
-*   Increase Resilience by **1 point**.
-
-Furthermore, each level gained presents an opportunity for deeper specialization or the acquisition of unique capabilities. Upon leveling up, the character will be presented with three randomly selected Traits, from which they may choose one to permanently add to their repertoire. This choice allows for emergent character builds and a more personalized progression.
-
-**Dynamic Gameplay Modifiers:**
-
-*   **Traits:** Unique inherent qualities or learned skills providing specific advantages, often situational. These are defined per theme and offer passive benefits, unlock unique interactions, or provide crucial edges.
-*   **Character Conditions:** Temporary states imposed by environment, adversaries, or narrative events (e.g., "Broken Arm," "Blight-Fevered," "Sea-Cursed," "Temporarily a Teapot"). Managed by the AI, these apply positive or negative effects to attributes, actions, or resource regeneration, interpreted thematically.
-*   **Strain Level (1-4):** Represents cumulative physical, mental, or existential toll. Strain impacts overall effectiveness:
-    *   **Strain 1 (Primed/Edged):** +10% to positive outgoing effect magnitudes (e.g., success efficacy, influence). Ability costs might be slightly reduced. (Multiplier: 1.1x)
-    *   **Strain 2 (Balanced/Steady):** Normal operating effectiveness. (Multiplier: 1.0x)
-    *   **Strain 3 (Faltering/Frayed):** -10% to positive outgoing effect magnitudes. Ability costs might be slightly increased. (Multiplier: 0.9x)
-    *   **Strain 4 (Broken/Overwhelmed):** -20% to positive outgoing effect magnitudes. Significant penalties to actions, resource regeneration, or defensive capabilities. (Multiplier: 0.8x)
-    The table below assumes **Strain Level 2 (Balanced)**.
-
-**Equipment, Consumables, & Thematic Tools:**
-
-*   **Primary Tools/Instruments (formerly "Weapons"):** Provide a `Avg. Player Output Magnitude (Base)` value, scaling with item level. Many also feature inherent properties or grant special abilities relevant to the theme (e.g., Warden's Blade: "Causes Bleeding," Custodial Implement: "Temporarily Pacifies Rogue Dust Bunnies," Sleuth's Memoria Flask: "Captures Vivid Emotional Echoes").
-*   **Protective Measures/Gear (formerly "Armor"):** Primarily contributes a direct bonus to **Max Integrity** (or its thematic equivalent). This bonus is assumed in the `Base Player Integrity` column. Can also possess unique qualities (e.g., Grim Warden: "Resists Fire," Salt Reavers: "Grants Greater Sure-Footedness on Deck," Celestial Custodians: "Slightly Muffles Existential Screaming").
-*   **Consumables/Reagents/Gadgets:** Single-use or rechargeable items providing immediate effects, crucial for survival, problem-solving, or tactical advantage, interpreted thematically (e.g., Warden's "Mending Poultice," Custodian's "Emergency Biscuit," Reaver's "Grog Ration," Sleuth's "Lucidity Draught").
-
-**Challenges & Progression:**
-
-Progression is driven by completing thematic "Objectives" (formerly "Quests"), categorized by scope and reward. "Adversaries" or "Obstacles" are similarly varied:
-
-*   **Objective Types:** Minor, Standard, Major, Epic (see table for XP details, names adjusted for generality).
-*   **Challenge Types:** Common Challenge (CC), Significant Challenge (SC), Apex Challenge (AC). Significant Challenges are considerably harder than Common, and Apex Challenges represent pinnacle threats or puzzles for a given tier.
+**Philosophy:** This document outlines the foundational mechanics governing character existence, progression, interaction, and the resolution of challenges within the Anomady engine. These systems are designed to be theme-agnostic, providing a robust yet flexible framework adaptable to diverse narrative settings. The core design emphasizes player agency expressed through narrative choices, with underlying mechanics providing consistent context for the AI Game Master to interpret and respond, ensuring that the world feels reactive, and progression feels meaningful across multiple playthroughs of a theme.
 
 ---
 
-**Character Progression & Challenge Benchmarks**
+### **I. Foundational Attributes**
 
-*The table below reflects baseline statistics. Player choices in attribute allocation, Traits, active Conditions, current Strain level, and specific gear/tools will dynamically alter actual performance. `Base Player Integrity` includes an assumed average Integrity bonus from thematic protective measures appropriate for the character's level.*
+Every player character, significant entity, or even vessel is defined by four core attributes. These attributes govern their fundamental capacities and interactions with the game world. Integrity and Willpower are dynamic pools, while Aptitude and Resilience are passive modifiers.
 
-| Tier | Lvl | XP to Lvl Up | Cum. XP | Avg. XP Minor Obj. | Avg. XP Std. Obj. | Avg. XP Major Obj. | Avg. XP Epic Obj. | Std. Objs to Lvl Up | Currency per Std. Obj. | Avg. Tool Price | Std. Objs to Afford Tool | Base Player Integrity (incl. Protection) | Base Player Willpower | Avg. Player Output Magnitude (Base) | CC Difficulty / Resistance | Player Efforts to Overcome CC | CC Setback Magnitude (Base) | CC Setbacks to Overwhelm Player | SC Difficulty / Resistance | Player Efforts to Overcome SC | SC Setback Magnitude (Base) | SC Setbacks to Overwhelm Player | AC Difficulty / Resistance | Player Efforts to Overcome AC | AC Setback Magnitude (Base) | AC Setbacks to Overwhelm Player |
-| :--- | :-- | :----------- | :-------- | :----------------- | :---------------- | :--------------- | :-------------- | :-------------------- | :--------------------- | :-------------- | :------------------------- | :--------------------------------------- | :-------------------- | :------------------------------------ | :------------------------- | :---------------------------- | :--------------------------- | :------------------------------ | :------------------------- | :---------------------------- | :--------------------------- | :------------------------------ | :------------------------- | :---------------------------- | :--------------------------- | :------------------------------ |
-| **1** | 1   | 100          | 100       | 18                 | 60                | 36               | 45              | 3.3                   | 15                     | 25              | 1.7                        | 120                                      | 50                    | 25                                    | 100                        | 4.0                           | 25                           | 4.8                             | 220                        | 8.8                           | 40                           | 3.0                             | 450                        | 18.0                          | 55                           | 2.2                             |
-| **1** | 2   | 150          | 250       | 26                 | 86                | 52               | 65              | 3.5                   | 20                     | 40              | 2.0                        | 144                                      | 57                    | 27                                    | 109                        | 4.0                           | 30                           | 4.8                             | 240                        | 8.9                           | 48                           | 3.0                             | 491                        | 18.2                          | 66                           | 2.2                             |
-| **1** | 3   | 200          | 450       | 34                 | 112               | 67               | 84              | 3.6                   | 25                     | 55              | 2.2                        | 168                                      | 64                    | 29                                    | 118                        | 4.1                           | 35                           | 4.8                             | 260                        | 9.0                           | 56                           | 3.0                             | 531                        | 18.3                          | 77                           | 2.2                             |
-| **1** | 4   | 250          | 700       | 41                 | 136               | 82               | 102             | 3.7                   | 30                     | 70              | 2.3                        | 192                                      | 71                    | 32                                    | 130                        | 4.1                           | 39                           | 4.9                             | 286                        | 8.9                           | 62                           | 3.1                             | 585                        | 18.3                          | 86                           | 2.2                             |
-| **1** | 5   | 300          | 1,000     | 47                 | 158               | 95               | 119             | 3.8                   | 35                     | 85              | 2.4                        | 216                                      | 78                    | 34                                    | 141                        | 4.1                           | 44                           | 4.9                             | 310                        | 9.1                           | 70                           | 3.1                             | 635                        | 18.7                          | 97                           | 2.2                             |
-| **1** | 6   | 360          | 1,360     | 55                 | 182               | 109              | 137             | 4.0                   | 40                     | 100             | 2.5                        | 240                                      | 85                    | 37                                    | 155                        | 4.2                           | 49                           | 4.9                             | 341                        | 9.2                           | 78                           | 3.1                             | 698                        | 18.9                          | 108                          | 2.2                             |
-| **1** | 7   | 420          | 1,780     | 61                 | 204               | 122              | 153             | 4.1                   | 45                     | 120             | 2.7                        | 264                                      | 92                    | 40                                    | 169                        | 4.2                           | 54                           | 4.9                             | 372                        | 9.3                           | 86                           | 3.1                             | 761                        | 19.0                          | 119                          | 2.2                             |
-| **1** | 8   | 480          | 2,260     | 67                 | 224               | 134              | 168             | 4.3                   | 50                     | 140             | 2.8                        | 288                                      | 99                    | 43                                    | 184                        | 4.3                           | 59                           | 4.9                             | 405                        | 9.4                           | 94                           | 3.1                             | 828                        | 19.3                          | 130                          | 2.2                             |
-| **1** | 9   | 540          | 2,800     | 73                 | 242               | 145              | 182             | 4.5                   | 55                     | 160             | 2.9                        | 312                                      | 106                   | 47                                    | 202                        | 4.3                           | 63                           | 5.0                             | 444                        | 9.4                           | 101                          | 3.1                             | 909                        | 19.3                          | 139                          | 2.2                             |
-| **1** | 10  | 600          | 3,400     | 72                 | 240               | 144              | 180             | 5.0                   | 60                     | 180             | 3.0                        | 336                                      | 113                   | 51                                    | 221                        | 4.3                           | 68                           | 4.9                             | 486                        | 9.5                           | 109                          | 3.1                             | 995                        | 19.5                          | 150                          | 2.2                             |
-| **2** | 11  | 800          | 4,200     | 96                 | 320               | 192              | 240             | 5.0                   | 75                     | 225             | 3.0                        | 390                                      | 120                   | 55                                    | 241                        | 4.4                           | 73                           | 5.3                             | 530                        | 9.6                           | 117                          | 3.3                             | 1085                       | 19.7                          | 161                          | 2.4                             |
-| **2** | 12  | 950          | 5,150     | 110                | 368               | 221              | 276             | 5.2                   | 85                     | 270             | 3.2                        | 416                                      | 127                   | 60                                    | 265                        | 4.4                           | 78                           | 5.3                             | 583                        | 9.7                           | 125                          | 3.3                             | 1193                       | 19.9                          | 172                          | 2.4                             |
-| **2** | 13  | 1,100        | 6,250     | 124                | 412               | 247              | 309             | 5.3                   | 95                     | 320             | 3.4                        | 442                                      | 134                   | 65                                    | 289                        | 4.4                           | 83                           | 5.3                             | 636                        | 9.8                           | 133                          | 3.3                             | 1301                       | 20.0                          | 183                          | 2.4                             |
-| **2** | 14  | 1,250        | 7,500     | 135                | 450               | 270              | 338             | 5.6                   | 105                    | 370             | 3.5                        | 468                                      | 141                   | 70                                    | 315                        | 4.5                           | 88                           | 5.3                             | 693                        | 9.9                           | 141                          | 3.3                             | 1418                       | 20.3                          | 194                          | 2.4                             |
-| **2** | 15  | 1,400        | 8,900     | 145                | 484               | 290              | 363             | 5.8                   | 115                    | 425             | 3.7                        | 494                                      | 148                   | 76                                    | 344                        | 4.5                           | 93                           | 5.3                             | 757                        | 10.0                          | 149                          | 3.3                             | 1548                       | 20.4                          | 205                          | 2.4                             |
-| **2** | 16  | 1,550        | 10,450    | 154                | 512               | 307              | 384             | 6.1                   | 125                    | 485             | 3.9                        | 520                                      | 155                   | 82                                    | 374                        | 4.6                           | 98                           | 5.3                             | 823                        | 10.0                          | 157                          | 3.3                             | 1683                       | 20.5                          | 216                          | 2.4                             |
-| **2** | 17  | 1,700        | 12,150    | 161                | 538               | 323              | 404             | 6.3                   | 135                    | 540             | 4.0                        | 546                                      | 162                   | 89                                    | 407                        | 4.6                           | 102                          | 5.4                             | 895                        | 10.1                          | 163                          | 3.3                             | 1832                       | 20.6                          | 224                          | 2.4                             |
-| **2** | 18  | 1,850        | 14,000    | 168                | 560               | 336              | 420             | 6.6                   | 145                    | 600             | 4.1                        | 572                                      | 169                   | 97                                    | 445                        | 4.6                           | 107                          | 5.3                             | 979                        | 10.1                          | 171                          | 3.3                             | 2003                       | 20.6                          | 235                          | 2.4                             |
-| **2** | 19  | 2,000        | 16,000    | 173                | 578               | 347              | 434             | 6.9                   | 155                    | 665             | 4.3                        | 598                                      | 176                   | 105                                   | 485                        | 4.6                           | 112                          | 5.3                             | 1067                       | 10.2                          | 179                          | 3.3                             | 2183                       | 20.8                          | 246                          | 2.4                             |
-| **2** | 20  | 2,200        | 18,200    | 181                | 602               | 361              | 452             | 7.3                   | 165                    | 735             | 4.5                        | 624                                      | 183                   | 113                                   | 527                        | 4.7                           | 117                          | 5.3                             | 1159                       | 10.3                          | 187                          | 3.3                             | 2372                       | 21.0                          | 257                          | 2.4                             |
-| **2** | 21  | 2,400        | 20,600    | 187                | 624               | 374              | 468             | 7.7                   | 175                    | 805             | 4.6                        | 650                                      | 190                   | 123                                   | 575                        | 4.7                           | 122                          | 5.3                             | 1265                       | 10.3                          | 195                          | 3.3                             | 2588                       | 21.0                          | 268                          | 2.4                             |
-| **2** | 22  | 2,600        | 23,200    | 193                | 642               | 385              | 482             | 8.1                   | 185                    | 880             | 4.8                        | 676                                      | 197                   | 133                                   | 627                        | 4.7                           | 127                          | 5.3                             | 1379                       | 10.4                          | 203                          | 3.3                             | 2822                       | 21.2                          | 279                          | 2.4                             |
-| **2** | 23  | 2,800        | 26,000    | 197                | 656               | 394              | 492             | 8.5                   | 195                    | 960             | 4.9                        | 702                                      | 204                   | 144                                   | 682                        | 4.7                           | 132                          | 5.3                             | 1500                       | 10.4                          | 211                          | 3.3                             | 3069                       | 21.3                          | 290                          | 2.4                             |
-| **2** | 24  | 3,000        | 29,000    | 199                | 664               | 398              | 498             | 9.0                   | 205                    | 1,050           | 5.1                        | 728                                      | 211                   | 156                                   | 741                        | 4.8                           | 137                          | 5.3                             | 1630                       | 10.5                          | 219                          | 3.3                             | 3335                       | 21.4                          | 301                          | 2.4                             |
-| **2** | 25  | 3,250        | 32,250    | 195                | 650               | 390              | 488             | 10.0                  | 220                    | 1,150           | 5.2                        | 754                                      | 218                   | 169                                   | 805                        | 4.8                           | 138                          | 5.5                             | 1771                       | 10.5                          | 221                          | 3.4                             | 3623                       | 21.4                          | 304                          | 2.5                             |
-| **3** | 26  | 3,800        | 36,050    | 228                | 760               | 456              | 570             | 10.0                  | 250                    | 1,250           | 5.0                        | 840                                      | 225                   | 183                                   | 877                        | 4.8                           | 143                          | 5.9                             | 1929                       | 10.5                          | 229                          | 3.7                             | 3947                       | 21.6                          | 315                          | 2.7                             |
-| **3** | 27  | 4,100        | 40,150    | 240                | 800               | 480              | 600             | 10.3                  | 270                    | 1,400           | 5.2                        | 868                                      | 232                   | 198                                   | 953                        | 4.8                           | 148                          | 5.9                             | 2097                       | 10.6                          | 237                          | 3.7                             | 4289                       | 21.7                          | 326                          | 2.7                             |
-| **3** | 28  | 4,400        | 44,550    | 251                | 836               | 502              | 627             | 10.5                  | 290                    | 1,550           | 5.3                        | 896                                      | 239                   | 215                                   | 1039                       | 4.8                           | 152                          | 5.9                             | 2286                       | 10.6                          | 243                          | 3.7                             | 4676                       | 21.7                          | 334                          | 2.7                             |
-| **3** | 29  | 4,700        | 49,250    | 261                | 870               | 522              | 653             | 10.8                  | 310                    | 1,700           | 5.5                        | 924                                      | 246                   | 233                                   | 1130                       | 4.9                           | 157                          | 5.9                             | 2486                       | 10.7                          | 251                          | 3.7                             | 5085                       | 21.8                          | 345                          | 2.7                             |
-| **3** | 30  | 5,000        | 54,250    | 270                | 900               | 540              | 675             | 11.1                  | 330                    | 1,850           | 5.6                        | 952                                      | 253                   | 252                                   | 1229                       | 4.9                           | 162                          | 5.9                             | 2704                       | 10.7                          | 259                          | 3.7                             | 5531                       | 22.0                          | 356                          | 2.7                             |
-| **3** | 31  | 5,350        | 59,600    | 281                | 936               | 562              | 702             | 11.4                  | 350                    | 2,000           | 5.7                        | 980                                      | 260                   | 273                                   | 1339                       | 4.9                           | 167                          | 5.9                             | 2946                       | 10.8                          | 267                          | 3.7                             | 6026                       | 22.1                          | 367                          | 2.7                             |
-| **3** | 32  | 5,700        | 65,300    | 291                | 970               | 582              | 728             | 11.8                  | 370                    | 2,175           | 5.9                        | 1008                                     | 267                   | 296                                   | 1457                       | 4.9                           | 171                          | 5.9                             | 3205                       | 10.8                          | 274                          | 3.7                             | 6557                       | 22.1                          | 376                          | 2.7                             |
-| **3** | 33  | 6,050        | 71,350    | 300                | 1000              | 600              | 750             | 12.1                  | 390                    | 2,350           | 6.0                        | 1036                                     | 274                   | 320                                   | 1584                       | 5.0                           | 176                          | 5.9                             | 3485                       | 10.9                          | 282                          | 3.7                             | 7128                       | 22.3                          | 387                          | 2.7                             |
-| **3** | 34  | 6,400        | 77,750    | 307                | 1024              | 614              | 768             | 12.5                  | 410                    | 2,525           | 6.2                        | 1064                                     | 281                   | 347                                   | 1722                       | 5.0                           | 181                          | 5.9                             | 3788                       | 10.9                          | 290                          | 3.7                             | 7749                       | 22.3                          | 398                          | 2.7                             |
-| **3** | 35  | 6,800        | 84,550    | 316                | 1054              | 632              | 791             | 12.9                  | 430                    | 2,700           | 6.3                        | 1092                                     | 288                   | 376                                   | 1872                       | 5.0                           | 186                          | 5.9                             | 4118                       | 11.0                          | 298                          | 3.7                             | 8424                       | 22.4                          | 409                          | 2.7                             |
-| **3** | 36  | 7,200        | 91,750    | 324                | 1080              | 648              | 810             | 13.3                  | 450                    | 2,900           | 6.4                        | 1120                                     | 295                   | 407                                   | 2033                       | 5.0                           | 186                          | 6.0                             | 4473                       | 11.0                          | 298                          | 3.8                             | 9149                       | 22.5                          | 409                          | 2.7                             |
-| **3** | 37  | 7,600        | 99,350    | 331                | 1102              | 661              | 827             | 13.8                  | 475                    | 3,100           | 6.5                        | 1148                                     | 302                   | 441                                   | 2208                       | 5.0                           | 191                          | 6.0                             | 4858                       | 11.0                          | 306                          | 3.8                             | 9936                       | 22.5                          | 420                          | 2.7                             |
-| **3** | 38  | 8,000        | 107,350   | 336                | 1120              | 672              | 840             | 14.3                  | 500                    | 3,300           | 6.6                        | 1176                                     | 309                   | 478                                   | 2397                       | 5.0                           | 195                          | 6.0                             | 5273                       | 11.0                          | 312                          | 3.8                             | 10787                      | 22.6                          | 429                          | 2.7                             |
-| **3** | 39  | 8,450        | 115,800   | 344                | 1146              | 688              | 860             | 14.7                  | 525                    | 3,500           | 6.7                        | 1204                                     | 316                   | 517                                   | 2597                       | 5.0                           | 200                          | 6.0                             | 5713                       | 11.1                          | 320                          | 3.8                             | 11687                      | 22.6                          | 440                          | 2.7                             |
-| **3** | 40  | 8,900        | 124,700   | 350                | 1166              | 700              | 875             | 15.3                  | 550                    | 3,750           | 6.8                        | 1232                                     | 323                   | 560                                   | 2819                       | 5.0                           | 205                          | 6.0                             | 6202                       | 11.1                          | 328                          | 3.8                             | 12686                      | 22.7                          | 451                          | 2.7                             |
-| **4** | 41  | 9,400        | 134,100   | 355                | 1184              | 710              | 888             | 15.9                  | 575                    | 4,000           | 7.0                        | 1350                                     | 330                   | 607                                   | 3059                       | 5.0                           | 209                          | 6.5                             | 6730                       | 11.1                          | 334                          | 4.0                             | 13766                      | 22.7                          | 460                          | 2.9                             |
-| **4** | 42  | 9,900        | 144,000   | 360                | 1200              | 720              | 900             | 16.5                  | 600                    | 4,250           | 7.1                        | 1380                                     | 337                   | 657                                   | 3315                       | 5.0                           | 214                          | 6.4                             | 7293                       | 11.1                          | 342                          | 4.0                             | 14918                      | 22.7                          | 471                          | 2.9                             |
-| **4** | 43  | 10,400       | 154,400   | 364                | 1214              | 728              | 911             | 17.1                  | 625                    | 4,500           | 7.2                        | 1410                                     | 344                   | 712                                   | 3594                       | 5.0                           | 219                          | 6.4                             | 7907                       | 11.1                          | 350                          | 4.0                             | 16173                      | 22.7                          | 482                          | 2.9                             |
-| **4** | 44  | 11,000       | 165,400   | 370                | 1232              | 739              | 924             | 17.9                  | 650                    | 4,800           | 7.4                        | 1440                                     | 351                   | 771                                   | 3898                       | 5.1                           | 223                          | 6.5                             | 8576                       | 11.1                          | 357                          | 4.0                             | 17541                      | 22.8                          | 491                          | 2.9                             |
-| **4** | 45  | 11,600       | 177,000   | 369                | 1230              | 738              | 923             | 18.9                  | 680                    | 5,100           | 7.5                        | 1470                                     | 358                   | 835                                   | 4226                       | 5.1                           | 228                          | 6.4                             | 9297                       | 11.1                          | 365                          | 4.0                             | 19017                      | 22.8                          | 502                          | 2.9                             |
-| **4** | 46  | 15,000       | 192,000   | 630                | 2100              | 1260             | 1575            | 14.3                  | 750                    | 6,000           | 8.0                        | 1500                                     | 365                   | 905                                   | 4582                       | 5.1                           | 227                          | 6.6                             | 10080                      | 11.1                          | 363                          | 4.1                             | 20619                      | 22.8                          | 500                          | 3.0                             |
-| **4** | 47  | 18,000       | 210,000   | 702                | 2340              | 1404             | 1755            | 15.4                  | 850                    | 7,650           | 9.0                        | 1530                                     | 372                   | 980                                   | 4968                       | 5.1                           | 232                          | 6.6                             | 10930                      | 11.2                          | 371                          | 4.1                             | 22356                      | 22.8                          | 510                          | 3.0                             |
-| **4** | 48  | 21,000       | 231,000   | 756                | 2520              | 1512             | 1890            | 16.7                  | 950                    | 9,500           | 10.0                       | 1560                                     | 379                   | 1062                                  | 5391                       | 5.1                           | 236                          | 6.6                             | 11860                      | 11.2                          | 378                          | 4.1                             | 24260                      | 22.8                          | 519                          | 3.0                             |
-| **4** | 49  | 25,000       | 256,000   | 825                | 2750              | 1650             | 2063            | 18.2                  | 1,100                  | 12,100          | 11.0                       | 1590                                     | 386                   | 1150                                  | 5843                       | 5.1                           | 241                          | 6.6                             | 12855                      | 11.2                          | 386                          | 4.1                             | 26294                      | 22.9                          | 530                          | 3.0                             |
-| **4** | 50  | 30,000       | 286,000   | 900                | 3000              | 1800             | 2250            | 20.0                  | 1,250                  | 15,000          | 12.0                       | 1620                                     | 393                   | 1246                                  | 6317                       | 5.1                           | 240                          | 6.8                             | 13897                      | 11.2                          | 384                          | 4.2                             | 28427                      | 22.8                          | 528                          | 3.1                             |
+1.  **Integrity (INT)**
+    *   **Base Value:** 100 at Level 1.
+    *   **Per Level Gain:** Automatically increases by **10 points** per character level.
+    *   **Concept:** Represents the entity's capacity to maintain wholeness—be it physical, mental, conceptual, or structural—when faced with adversarial forces, environmental hazards, or existential pressures.
+    *   **Loss:** Can stem from physical injury, psychic damage, reality fragmentation, ship hull breaches, or severe bureaucratic entanglement, depending on the theme.
+    *   **Consequence of Zero:** Reaching zero Integrity signifies the entity is broken, incapacitated, destroyed, or otherwise narratively "taken out of action" according to the theme's context.
+    *   **Protection:** Items such as armor, shields, or wards primarily bolster Integrity by providing a buffer or increasing its effective maximum (see Equipment section).
+
+2.  **Willpower (WIL)**
+    *   **Base Value:** 50 at Level 1.
+    *   **Per Level Gain:** Automatically increases by **5 points** per character level.
+    *   **Concept:** A finite reservoir of focused energy, mental fortitude, resolve, or sheer audacity.
+    *   **Expenditure:** Actively expended by the player to fuel potent abilities, perform strenuous or extraordinary actions (physical, mental, or conceptual), channel unique energies (alchemical, psychic, shanty-powered), or resist insidious influences.
+    *   **Recovery:** Recovers through rest, thematic consumables (e.g., potions, tea, grog, data-pills), or moments of profound thematic resonance (e.g., successful problem-solving, inspiring leadership).
+
+3.  **Aptitude (APT)**
+    *   **Base Value:** 10 at Level 1.
+    *   **Concept:** A measure of inherent talent, honed skill, precision, insight, and effectiveness in executing deliberate actions. This is a passive modifier that influences the *quality and degree of success* of actions.
+    *   **Effect:** Aptitude enhances the positive impact of actions. A higher Aptitude leads to more effective outcomes, overcoming greater difficulties, or achieving more nuanced results. *AI Interpretation: The AI considers Aptitude as a key factor in determining how well an action succeeds (e.g., `Base Action Magnitude * (Character_Aptitude / 10)` can be a conceptual guide for the AI).*
+
+4.  **Resilience (RES)**
+    *   **Base Value:** 10 at Level 1.
+    *   **Concept:** A defensive modifier reflecting inner grit, inherent toughness (physical, mental, or conceptual), and the ability to passively endure or mitigate hostile effects.
+    *   **Effect:** Higher Resilience can reduce the impact of negative consequences, increase chances to resist debilitating conditions (e.g., fear, corruption, curses, confusion), or maintain composure under pressure. *AI Interpretation: Resilience helps diminish the severity of adverse effects (e.g., `Incoming Negative Magnitude * (10 / Character_Resilience)` can be a conceptual guide for the AI).*
 
 ---
 
-**Key for Table Columns (Generalized Terminology):**
+### **II. Character Progression**
 
-*   **Lvl, XP to Lvl Up, Cum. XP, Std. Objs to Lvl Up, Currency per Std. Obj., Avg. Tool Price, Std. Objs to Afford Tool:** "Currency" and "Tool" are generic placeholders for theme-specific equivalents (e.g., Doubloons, Credits, Reagents; Pirate Cutlass, Starship Scanner, Alchemical Kit).
-*   **Avg. XP [Objective Type]:** XP awarded for Minor, Standard, Major, or Epic Objectives.
-    *   _"Std. Objs to Lvl Up" employs a conceptual 'standard' objective XP (Minor: 0.3x, Standard: 1x, Major: 2x, Epic: 2.5x of average level-up XP divided by Std. Objs to Lvl Up). Actual objective mix will vary progression rate._
-*   **Base Player Integrity (incl. Protection):** Player's Max Integrity from leveling *plus* an assumed average Integrity bonus from thematic protective measures appropriate for this level. This is the value used for calculating `... Setbacks to Overwhelm Player` columns.
-*   **Base Player Willpower:** Player's Max Willpower from leveling.
-*   **Avg. Player Output Magnitude (Base):** The character's average base effectiveness or impact per significant action/ability use for this level, *before* Aptitude modifier and Strain effects. This could be damage in combat, persuasiveness in dialogue, efficiency in a task, or potency of a special ability.
+Progression is marked by gaining Experience Points (XP) through overcoming challenges and completing Objectives. This progression is **persistent for each theme per user**, until the character for that theme is explicitly reset.
 
-**Challenge Benchmarks (Base Values):**
-The following represent *base values before player's Aptitude/Resilience modifiers or dynamic Strain/Condition effects are applied*. Multipliers for Significant/Apex Challenges relative to Common are: Significant (Difficulty ~2.2x, Setback ~1.6x), Apex (Difficulty ~4.5x, Setback ~2.2x).
+1.  **Experience & Levels:**
+    *   Characters start at Level 1.
+    *   XP is awarded for completing Minor, Standard, Major, and Epic Objectives, as well as overcoming significant challenges (see Section V).
+    *   The cumulative XP required for each level is predefined (as per the "Character Progression & Challenge Benchmarks" reference table).
 
-*   **CC Difficulty / Resistance:** Common Challenge's baseline toughness, complexity, or resistance to being overcome.
-*   **Player Efforts to Overcome CC:** Avg. Player significant actions/uses of Output Magnitude needed to overcome a Common Challenge (`CC Difficulty / Avg. Player Output Magnitude (Base)`).
-*   **CC Setback Magnitude (Base):** Common Challenge's average base negative impact (e.g., Integrity loss, Willpower drain, progress reversal, increased complication) if the player fails an action or faces direct opposition.
-*   **CC Setbacks to Overwhelm Player:** Avg. number of Common Challenge setbacks needed to deplete `Base Player Integrity` (`Base Player Integrity / CC Setback Magnitude (Base)`).
-
-*   **SC Difficulty / Resistance, Player Efforts to Overcome SC, SC Setback Magnitude (Base), SC Setbacks to Overwhelm Player:** As above, for Significant Challenges.
-*   **AC Difficulty / Resistance, Player Efforts to Overcome AC, AC Setback Magnitude (Base), AC Setbacks to Overwhelm Player:** As above, for Apex Challenges.
+2.  **Level-Up Benefits:**
+    *   **Automatic Gains:** Max Integrity increases by 10, Max Willpower by 5.
+    *   **Attribute Point:** The character gains **1 Attribute Point** to allocate, enhancing one of the following:
+        *   Max Integrity by an additional **20 points**.
+        *   Max Willpower by an additional **10 points**.
+        *   Aptitude by **1 point**.
+        *   Resilience by **1 point**.
+    *   **Trait Selection:** The character is presented with **three randomly selected Traits** relevant to their current theme. They may choose **one** to permanently add to their repertoire. Chosen traits are **persistent for that theme character** until a full character reset for that theme. This allows for emergent character builds and a more personalized progression across multiple game runs within the same theme.
 
 ---
-**Thematic Interpretation Guidance for AI Game Master:**
 
-This framework provides abstract mechanics. Your role as GM is to *translate these into the rich, specific vernacular and context of the active theme.*
+### **III. Dynamic Gameplay Modifiers**
 
-*   **Integrity Loss:**
-    *   *Grim Warden:* Physical wounds from a beast, corruption from a Blight-source.
-    *   *Salt Reavers:* Damage to the ship's hull from cannon fire, captain taking a sword cut.
-    *   *Celestial Custodians:* Ship's systems failing due to cosmic anomaly, Custodian's Gumption eroded by existential dread or overwhelming paperwork.
-    *   *Echo Sleuths:* Psychic cohesion fracturing from a conceptual attack, reality instability damaging one's sense of self.
-    *   *Sci-Fi:* Ship hull damage, crew casualties, critical system overload.
+Beyond core attributes, several dynamic factors influence gameplay:
 
-*   **Willpower Expenditure:**
-    *   *Grim Warden:* Fueling alchemical signs, performing tiring combat maneuvers.
-    *   *Salt Reavers:* Executing a daring boarding action, inspiring the crew through a storm.
-    *   *Celestial Custodians:* Operating a baffling piece of Custodial tech, successfully reasoning with a sentient nebula.
-    *   *Echo Sleuths:* Actively shaping a dream-memory, deconstructing a psychic assault.
-    *   *Sci-Fi:* Engaging powerful ship abilities, pushing engines beyond safe limits, complex hacking.
+1.  **Traits:**
+    *   Unique inherent qualities or learned skills defined per theme.
+    *   Provide specific advantages: passive benefits, unique interactions, or crucial situational edges.
+    *   Acquired primarily through leveling up. Traits are **persistent for the character within a specific theme** across multiple game sessions until that theme's character progress is reset.
 
-*   **Aptitude's Influence (Output Magnitude):**
-    *   *Grim Warden:* Increased combat damage, better chance to identify monster weaknesses.
-    *   *Salt Reavers:* Higher cannon accuracy, better chance to find hidden treasure.
-    *   *Celestial Custodians:* More effective use of peculiar tools, higher chance of finding a loophole in regulations.
-    *   *Echo Sleuths:* Deeper insights from clues, more effective deconstruction of paradoxes.
-    *   *Sci-Fi:* More precise targeting, more effective diplomatic arguments, faster research.
+2.  **Character Conditions:**
+    *   Temporary states imposed by the environment, adversaries, or narrative events (e.g., "Broken Arm," "Blight-Fevered," "Sea-Cursed," "Temporarily a Teapot").
+    *   Managed by the AI, these apply positive or negative effects to attributes, actions, or resource regeneration, interpreted thematically.
+    *   Displayed on the dashboard for player awareness. These are **session-specific** and do not persist between game runs.
 
-*   **Resilience's Influence (Setback Mitigation):**
-    *   *Grim Warden:* Reduced damage from attacks, slower Blight progression.
-    *   *Salt Reavers:* Reduced ship damage from storms, better chance to resist a curse's effects.
-    *   *Celestial Custodians:* Slower Gumption loss when facing absurdity, better chance to resist bureaucratic penalties.
-    *   *Echo Sleuths:* Reduced cognitive dissonance from reality shifts, better defense against psychic intrusions.
-    *   *Sci-Fi:* Reduced shield/hull damage per hit, better chance to resist system hacking or EMP effects.
+3.  **Strain Level (1-4):**
+    *   Represents cumulative physical, mental, or existential toll within the current game session. Affects overall effectiveness.
+    *   **Level 1 (Primed/Edged):** +10% to positive outgoing effect magnitudes (e.g., success efficacy, influence). Ability costs might be slightly reduced. *(Conceptual AI Multiplier: 1.1x)*
+    *   **Level 2 (Balanced/Steady):** Normal operating effectiveness. *(Conceptual AI Multiplier: 1.0x)*
+    *   **Level 3 (Faltering/Frayed):** -10% to positive outgoing effect magnitudes. Ability costs might be slightly increased. *(Conceptual AI Multiplier: 0.9x)*
+    *   **Level 4 (Broken/Overwhelmed):** -20% to positive outgoing effect magnitudes. Significant penalties to actions, resource regeneration, or defensive capabilities. *(Conceptual AI Multiplier: 0.8x)*
+    *   Strain changes based on narrative events, rest, or specific conditions. This is **session-specific**.
 
-*   **"Player Efforts to Overcome CC/SC/AC":** This isn't just "hits to kill." It can be "attempts to persuade," "investigative actions to solve," "maneuvers to navigate," "bureaucratic forms to correctly file," etc., depending on the challenge's nature within the theme.
+---
 
-*   **"Setback Magnitude":** This is the "cost" of failure or opposition. It could be Integrity loss, Willpower drain, loss of progress on an Objective, a new Complication arising, increased Strain, or a negative Condition being applied.
+### **IV. Equipment, Inventory, & Economy**
+
+The inventory and economy systems provide a dynamic loop for character enhancement and resource management, enhancing gameplay and character development. Inventory (excluding consumed items) and thematic currency are **persistent for each theme per user** until that theme's character is explicitly reset.
+
+1.  **Core Principles:**
+    *   **Slot-Driven Dashboard:** Each theme's `config.json` defines `equipment_slots`. Each slot configuration includes:
+        *   `id`: The dashboard item ID this slot's equipped item will control (e.g., "equipped_wardens_blade_effect", "silver_shards").
+        *   `type`: Defines item behavior:
+            *   `"static"`: For persistent gear like weapons or armor.
+            *   `"consumable"`: For single-use or charges-based items like potions or limited-use gadgets.
+            *   `"money"`: For thematic currency; the dashboard item typically displays a numerical value.
+        *   `reward_trigger`: A string key for a boolean game state indicator (e.g., "wardens_blade_reward_trigger"). The AI sets this to `true` to signal a reward of this item type.
+    *   **Item Types & Slots:** An item's `itemType` (defined in its JSON data) must match an `equipment_slots` key (where `type` is "static" or "consumable") to be equippable in that slot.
+    *   **Persistent Inventory:** All `static` and unconsumed `consumable` items acquired (starting gear, rewards, purchases) are stored in the `session_inventory` field of the `GameState` model. This inventory persists across game sessions for the specific theme character until a full reset.
+
+2.  **Item Structure:** All items adhere to the following JSON structure:
+    ```json
+    {
+      "id": "string", // Unique item key (e.g., "gw_blade_pitted_dirk_l1")
+      "name": { "en": "Localized Name", "cs": "Lokalizovaný název" },
+      "description": { "en": "Localized flavor text.", "cs": "Lokalizovaný popis." },
+      "itemType": "string", // Matches a key in theme's equipment_slots (e.g., "wardens_blade")
+      "attributes": { // Theme-specific, localized, quantitative stats for AI context
+        "en": { "Damage": 5, "Crit Chance": "Low" },
+        "cs": { "Zranění": 5, "Šance na Kritik": "Nízká" }
+      },
+      "abilities": { // Theme-specific, localized, qualitative effects for AI narrative prompts
+        "en": ["Causes Minor Bleeding", "Slightly Unwieldy"],
+        "cs": ["Způsobuje Drobné Krvácení", "Lehce Nemotorná"]
+      },
+      "itemEffectDescription": { // Concise, player-facing UI string combining key attributes/abilities
+         "en": "5 Dmg, Minor Bleed, Unwieldy",
+         "cs": "5 Zraň, Drobné Krvácení, Nemotorná"
+      },
+      "level": "number", // Character level at which this item might appear as starting gear or common reward
+      "buyPrice": "number", // Cost in thematic currency
+      "sellPrice": "number" // Value when sold (typically 20-30% of buyPrice)
+    }
+    ```
+
+3.  **Item Effects & AI Interpretation:**
+    *   **`attributes` (The Numbers):** Context for the AI to judge the magnitude of an outcome.
+    *   **`abilities` (The Narrative Prompts):** Creative prompts for the AI to weave into the story.
+    *   **`itemEffectDescription` (The UI Text):** Concise, localized string displayed on the dashboard item for the corresponding slot, making the equipped item's core effect tangible.
+
+4.  **Item Compendium & Starting Gear:**
+    *   Each theme has JSON data files (e.g., `themes/grim_warden/data/wardens_blade_items.json`) serving as an item compendium.
+    *   Items are assigned a character `level`.
+    *   When a new game begins, `gameController.js` uses the character's persistent level (`UserThemeProgress.level`) to randomly select appropriate starting gear from the compendium for each defined `static` or `consumable` equipment slot.
+
+5.  **Item & Currency Reward Generation (Config-Driven Backend Logic):**
+    *   The AI Game Master does **not** invent items or currency amounts directly.
+    *   Upon quest completion or significant narrative achievement, the AI is instructed to set the relevant `reward_trigger` boolean game state indicator (defined in `equipment_slots` config) to `true` if the promised reward matches that item or currency type.
+    *   **Backend Reward Process:** When the backend receives a `GameState` save where a `reward_trigger` is `true`:
+        1.  It identifies the `itemType` (for items) or confirms it's currency (for `type: "money"`) associated with that trigger.
+        2.  For **Items**: It consults the theme's item compendium for that `itemType`. It randomly selects an item based on the player's current character level and the following distribution:
+            | Player Levels | Item Level Distribution                               |
+            | :------------ | :---------------------------------------------------- |
+            | 1–10          | 40% PlayerLvl, 35% PlayerLvl+1, 15% PlayerLvl+2, 10% PlayerLvl-1 |
+            | 11–25         | 50% PlayerLvl, 25% PlayerLvl+1, 8% PlayerLvl+2, 17% PlayerLvl-1  |
+            | 26–45         | 60% PlayerLvl, 15% PlayerLvl+1, 5% PlayerLvl+2, 20% PlayerLvl-1  |
+            | 46–50         | 70% PlayerLvl, 5% PlayerLvl+1, 3% PlayerLvl+2, 22% PlayerLvl-1   |
+            *(Note: Item levels are clamped. If PlayerLvl-1 < 1, Lvl 1 items chosen. If PlayerLvl+X > max item level, max level items chosen.)*
+            The awarded item is added to the player's persistent `session_inventory`.
+        3.  For **Currency**: The backend determines an appropriate amount based on the Objective's scale (Minor, Standard, etc., referencing the "Currency per Std. Obj." column in the progression table as a guideline) and adds it to the player's persistent currency total (managed via the dashboard item linked to the `type: "money"` slot).
+        4.  The `reward_trigger` game state indicator is reset to `false` by the AI in its *next* turn response after acknowledging the reward.
+
+6.  **Item Consumption:**
+    *   For items equipped in slots marked `type: "consumable"`:
+        *   The AI's narrative description of the item being fully used is the trigger.
+        *   The AI **must** update the relevant dashboard item (e.g., `equipped_alchemical_concoction_effect`) to an "empty" or "charges depleted" state.
+        *   Client-side logic in `gameController.js` detects this state change and removes the item from `session_inventory` and `equipped_items`.
+
+7.  **The Store:**
+    *   **Unlock:** Becomes available to the player upon reaching **character Level 3** for a specific theme.
+    *   **Functionality:**
+        *   **Sell:** Players can sell `static` items and any unconsumed `consumable` items from their persistent inventory. The sell price is typically 20-30% of the item's `buyPrice`. Fully consumed items or currency itself cannot be sold.
+        *   **Buy:** Players can purchase items offered by the store using their thematic currency. Items are bought at their listed `buyPrice`.
+    *   **Currency:** Thematic currency (e.g., "Silver Shards," "Imperial Credits") is acquired through quest rewards (as per `reward_trigger` for `type: "money"` slots), selling items, or other AI-narrated means (finding, stealing, etc. – where the AI would trigger the currency `reward_trigger`).
+    *   **Stock Rotation:** The Store's inventory refreshes with new items **every 12 real-world hours**. (A backend timestamp mechanism will manage this.)
+    *   **Stock Generation:** Each refresh, the Store offers **three randomly selected items**.
+        *   Items can be of any `itemType` defined in the theme's item compendiums (e.g., weapons, armor, consumables).
+        *   The level of offered items is determined using the same player level-based distribution table as quest rewards.
+
+8.  **Inventory Interaction (UI):**
+    *   A dedicated Inventory Modal will display items from `session_inventory`, grouped by `itemType`.
+    *   Each item shows `name`, `attributes` (localized), and `description` (localized).
+    *   "Equip" button: Updates `state.equippedItems`, updates the dashboard via `dashboardManager.updateDashboardFromEquippedItems()`, re-renders modal, triggers save.
+    *   (Future) "Sell" button for `static` and unconsumed `consumable` items when interacting with the Store UI.
+
+---
+
+### **V. Challenges & Objectives**
+
+Progression is driven by engaging with and overcoming thematic challenges and completing objectives.
+
+1.  **Objective Types:** Defined by scope and typical XP reward (Minor, Standard, Major, Epic). Specific examples and XP values are outlined in the "Character Progression & Challenge Benchmarks" reference table, but the AI should dynamically generate objectives fitting the narrative.
+2.  **Challenge Types:** Abstracted difficulties that can apply to combat, puzzles, social encounters, environmental hazards, etc.
+    *   **Common Challenge (CC)**
+    *   **Significant Challenge (SC)**
+    *   **Apex Challenge (AC)**
+    The "Character Progression & Challenge Benchmarks" table provides baseline numerical relationships for how these scale in terms of `Difficulty / Resistance` and `Setback Magnitude`.
+
+---
+
+### **VI. Action Resolution & AI Guidance**
+
+The AI Game Master interprets player actions within the context of their attributes, traits, strain, conditions, and equipment.
+
+1.  **Aptitude's Role:** Higher Aptitude should lead the AI to narrate more successful, impactful, or nuanced outcomes for player actions. The conceptual formula `Base Action Magnitude * (Character_Aptitude / 10)` (adjusted by Strain) guides the AI's judgment of effectiveness.
+2.  **Resilience's Role:** Higher Resilience should lead the AI to narrate mitigated negative consequences from challenges or environmental effects. The conceptual formula `Incoming Negative Magnitude * (10 / Character_Resilience)` (adjusted by Strain) guides the AI's judgment.
+3.  **"Player Efforts to Overcome Challenge":** A conceptual measure of how many significant, successful actions are typically needed to resolve a challenge.
+4.  **"Setback Magnitude":** The "cost" of failure or opposition (e.g., Integrity loss, Willpower drain, new Complication).
+
+---
+
+### **VII. Thematic Interpretation - A Note for the AI Game Master**
+
+This framework provides abstract mechanics. Your primary role as GM is to **translate these mechanics into the rich, specific vernacular and context of the active theme.**
+
+*   **Integrity loss** is not just a number decreasing; it's a Warden's bone-jarring wound, a Salt Reaver's ship groaning under cannon fire, a Celestial Custodian's existential despair deepening, or an Echo Sleuth's perception fracturing.
+*   **Willpower expenditure** is a Warden invoking an alchemical sign, a Salt Reaver rallying their crew with a defiant roar, a Custodian wrestling with paradoxical alien technology, or an Echo Sleuth focusing their mind to pierce an illusion.
+*   **Aptitude** manifests as a Warden’s keen eye spotting a chink in monster's hide, a Reaver’s uncanny knack for navigating a storm, a Custodian’s bewildering success with a malfunctioning gadget, or a Sleuth’s sharp deduction unraveling a conceptual knot.
+*   **Resilience** is a Warden shrugging off the Blight’s chill, a Reaver enduring a spectral curse, a Custodian maintaining composure amidst cosmic absurdity, or a Sleuth filtering the psychic static of Reverie.
+
+The numbers and systems exist to provide a consistent framework for your creative narration. The player experiences the world through your descriptions; make them vivid, thematic, and reflective of the underlying mechanics.
+
 ---

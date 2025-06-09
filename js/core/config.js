@@ -57,6 +57,7 @@ export const BOON_DEFINITIONS = {
     APTITUDE_INCREASE: { value: 1, descriptionKey: "boon_desc_aptitude_increase" },
     RESILIENCE_INCREASE: { value: 1, descriptionKey: "boon_desc_resilience_increase" },
 };
+export const MIN_LEVEL_FOR_STORE = 3;
 // --- Game Logic Constants ---
 export const RECENT_INTERACTION_WINDOW_SIZE = 10; // Number of recent turns to consider for certain operations or display
 export const MAX_PLAYER_ACTION_INPUT_LENGTH = 600;

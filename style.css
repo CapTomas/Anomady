@@ -620,6 +620,9 @@ body[class*="theme-"] #center-column {
 	transition: width 0.5s ease-out;
 	background-image: url(images/app/color_noise.png);
 }
+button#char-panel-store-button:disabled {
+    opacity: 0.2;
+}
 #xp-bar-text {
     position: absolute;
     right: 20px;

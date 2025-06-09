@@ -1101,6 +1101,20 @@ export async function switchToLanding() {
     }
     log(LOG_LEVEL_INFO, "Switched to landing view. Game session state cleared.");
 }
+
+/**
+ * Public interface to show the Store modal (currently a placeholder).
+ * @param {string} themeId - The theme ID for which to show the store.
+ */
+export function showStoreModal(themeId) {
+    log(LOG_LEVEL_INFO, `Showing placeholder Store modal for theme: ${themeId}`);
+    modalManager.showCustomModal({
+        type: 'alert',
+        titleKey: 'modal_title_store',
+        messageKey: 'store_not_implemented_message'
+    });
+}
+
 /**
  * Public interface for worldShardsModalManager to call from landing page,
  * or potentially from within a game if a "Configure Shards" button is added there.

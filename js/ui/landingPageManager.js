@@ -36,6 +36,7 @@ import {
     getLandingSelectedThemeProgress
 } from '../core/state.js';
 import { getThemeConfig } from '../services/themeService.js';
+import { MIN_LEVEL_FOR_STORE } from '../core/config.js';
 import { getUIText } from '../services/localizationService.js';
 import * as apiService from '../core/apiService.js';
 import { THEMES_MANIFEST } from '../data/themesManifest.js';
@@ -337,64 +338,94 @@ export function renderLandingPageActionButtons(themeId) {
         log(LOG_LEVEL_WARN, "Landing theme actions container not found.");
         return;
     }
-    landingThemeActions.innerHTML = ""; // Clear previous buttons
-    // Change flex direction for landingThemeActions to stack Continue button above others
+    landingThemeActions.innerHTML = "";
     landingThemeActions.style.flexDirection = 'column';
     landingThemeActions.style.gap = 'var(--spacing-sm)';
+
     const themeConfig = getThemeConfig(themeId);
     const themeManifestEntry = THEMES_MANIFEST.find(t => t.id === themeId);
     if (!themeConfig || !themeManifestEntry) {
         log(LOG_LEVEL_ERROR, `Cannot render landing actions: Config or manifest entry missing for ${themeId}.`);
         return;
     }
+
     const isThemePlayed = getPlayingThemes().includes(themeId);
     const currentUser = getCurrentUser();
-    // 1. "Continue Expedition" button (if applicable)
+    const progressData = getLandingSelectedThemeProgress();
+
+    // --- Top Row: Continue & Character Progress ---
     if (isThemePlayed && themeManifestEntry.playable) {
+        const topActionRow = document.createElement('div');
+        topActionRow.className = 'landing-actions-row';
+
+        // Continue Button
         const continueButton = document.createElement("button");
         continueButton.id = "continue-theme-button";
-        continueButton.classList.add("ui-button", "primary", "full-width-action"); // New class for full width
+        continueButton.classList.add("ui-button", "primary");
+        continueButton.style.flexGrow = '1';
         continueButton.textContent = getUIText("button_continue_game", {}, { explicitThemeContext: themeId, viewContext: 'landing' });
         continueButton.addEventListener("click", () => {
             if (_gameControllerRef && typeof _gameControllerRef.changeActiveTheme === 'function') {
-                // false for forceNewGame, true for tryResume
                 _gameControllerRef.changeActiveTheme(themeId, false);
-            } else {
-                log(LOG_LEVEL_ERROR, "GameController reference or changeActiveTheme method not available for continue button.");
             }
         });
-        landingThemeActions.appendChild(continueButton);
+        topActionRow.appendChild(continueButton);
+
+        // Character Progress Button
+        const characterProgressButton = document.createElement("button");
+        characterProgressButton.id = "character-progress-button";
+        characterProgressButton.classList.add("ui-button", "icon-button", "character-progress-button");
+        const hasProgress = currentUser && progressData && progressData.currentXP > 0;
+        const progressIconSrc = hasProgress ? "images/app/icon_character.svg" : "images/app/icon_character_empty.svg";
+        const progressTooltipKey = hasProgress ? "tooltip_character_progress" : "tooltip_character_progress_empty";
+        const progressAltText = getUIText(progressTooltipKey, {}, { viewContext: 'landing' });
+        characterProgressButton.innerHTML = `<img src="${progressIconSrc}" alt="${progressAltText}" class="character-icon">`;
+        characterProgressButton.setAttribute("aria-label", progressAltText);
+        attachTooltip(characterProgressButton, progressTooltipKey, {}, { viewContext: 'landing' });
+        if (currentUser && hasProgress) {
+            characterProgressButton.disabled = false;
+            characterProgressButton.addEventListener("click", () => {
+                if (_gameControllerRef && typeof _gameControllerRef.showCharacterProgressModal === 'function') {
+                    _gameControllerRef.showCharacterProgressModal(themeId);
+                }
+            });
+        } else {
+            characterProgressButton.disabled = true;
+            characterProgressButton.classList.add("disabled");
+        }
+        topActionRow.appendChild(characterProgressButton);
+
+        landingThemeActions.appendChild(topActionRow);
     }
-    // 2. Container for "New Game", "Like", and "Configure Shards" icon buttons
+
+    // --- Bottom Row: New Game, Like, Store, Shards ---
     const standardActionsRow = document.createElement('div');
-    standardActionsRow.className = 'landing-actions-row'; // For styling this row
+    standardActionsRow.className = 'landing-actions-row';
+
     // "New Game" button
     const newGameButton = document.createElement("button");
-    newGameButton.id = "choose-theme-button"; // Existing ID, now clearly "New Game"
+    newGameButton.id = "choose-theme-button";
     newGameButton.classList.add("ui-button");
+    if (!isThemePlayed) {
+        newGameButton.classList.add("primary");
+    }
     if (themeManifestEntry.playable) {
-        // If "Continue" button is present, "New Game" is not primary. Otherwise, it is.
-        if (!isThemePlayed) {
-            newGameButton.classList.add("primary");
-        }
         const newGameButtonTextKey = themeConfig.new_game_button_text_key || "landing_choose_theme_button";
         newGameButton.textContent = getUIText(newGameButtonTextKey, {}, { explicitThemeContext: themeId, viewContext: 'landing' });
         newGameButton.addEventListener("click", () => {
             if (_gameControllerRef && typeof _gameControllerRef.initiateNewGameSessionFlow === 'function') {
                 _gameControllerRef.initiateNewGameSessionFlow(themeId);
-            } else {
-                log(LOG_LEVEL_ERROR, "GameController reference or initiateNewGameSessionFlow method not available for new game button.");
             }
         });
-        newGameButton.disabled = false;
     } else {
-        newGameButton.classList.add("disabled");
         newGameButton.textContent = getUIText("coming_soon_button", {}, { viewContext: 'landing' });
         newGameButton.disabled = true;
+        newGameButton.classList.add("disabled");
     }
     standardActionsRow.appendChild(newGameButton);
+
     // "Like" button
-    if (_userThemeControlsManagerRef && typeof _userThemeControlsManagerRef.handleLikeThemeOnLandingClick === 'function') {
+    if (_userThemeControlsManagerRef) {
         const likeButton = document.createElement("button");
         likeButton.id = "like-theme-button";
         likeButton.classList.add("ui-button", "icon-button", "like-theme-button");
@@ -409,7 +440,6 @@ export function renderLandingPageActionButtons(themeId) {
             if (isCurrentlyLiked) likeButton.classList.add("liked");
             likeButton.addEventListener("click", () => {
                  _userThemeControlsManagerRef.handleLikeThemeOnLandingClick(themeId, likeButton);
-                 renderLandingPageActionButtons(themeId); // Re-render to update button state
             });
             likeButton.disabled = false;
         } else {
@@ -421,39 +451,31 @@ export function renderLandingPageActionButtons(themeId) {
         }
         standardActionsRow.appendChild(likeButton);
     }
-    // "Character Progress" icon button
-    const characterProgressButton = document.createElement("button");
-    characterProgressButton.id = "character-progress-button";
-    characterProgressButton.classList.add("ui-button", "icon-button", "character-progress-button");
-    const progressData = getLandingSelectedThemeProgress();
-    const hasProgress = currentUser && progressData && progressData.currentXP > 0;
-    const progressIconSrc = hasProgress ? "images/app/icon_character.svg" : "images/app/icon_character_empty.svg";
-    const progressTooltipKey = hasProgress ? "tooltip_character_progress" : "tooltip_character_progress_empty";
-    const progressAltText = getUIText(progressTooltipKey, {}, { viewContext: 'landing' });
-    characterProgressButton.innerHTML = `<img src="${progressIconSrc}" alt="${progressAltText}" class="character-icon">`;
-    characterProgressButton.setAttribute("aria-label", progressAltText);
-    attachTooltip(characterProgressButton, progressTooltipKey, {}, { viewContext: 'landing' });
-    if (currentUser && hasProgress) {
-        characterProgressButton.disabled = false;
-        characterProgressButton.addEventListener("click", () => {
-            if (_gameControllerRef && typeof _gameControllerRef.showCharacterProgressModal === 'function') {
-                _gameControllerRef.showCharacterProgressModal(themeId);
-            } else {
-                 log(LOG_LEVEL_ERROR, "GameController reference or showCharacterProgressModal method not available.");
-            }
-        });
+
+    // NEW "Store" button
+    const storeButton = document.createElement("button");
+    storeButton.id = "store-button";
+    storeButton.classList.add("ui-button", "icon-button", "store-button");
+    const canAccessStore = currentUser && progressData && progressData.level >= MIN_LEVEL_FOR_STORE;
+    const storeIconSrc = canAccessStore ? "images/app/icon_store.svg" : "images/app/icon_store_empty.svg";
+    const storeTooltipKey = canAccessStore ? "tooltip_store_button" : "tooltip_store_locked_level";
+    const storeAltText = getUIText(storeTooltipKey, { MIN_LEVEL: MIN_LEVEL_FOR_STORE }, { viewContext: 'landing' });
+    storeButton.innerHTML = `<img src="${storeIconSrc}" alt="${storeAltText}" class="store-icon">`;
+    storeButton.setAttribute("aria-label", storeAltText);
+    attachTooltip(storeButton, storeTooltipKey, { MIN_LEVEL: MIN_LEVEL_FOR_STORE }, { viewContext: 'landing' });
+    if (themeManifestEntry.playable && canAccessStore && _gameControllerRef && typeof _gameControllerRef.showStoreModal === 'function') {
+        storeButton.addEventListener("click", () => _gameControllerRef.showStoreModal(themeId));
     } else {
-        characterProgressButton.disabled = true;
-        characterProgressButton.classList.add("disabled");
+        storeButton.disabled = true;
+        storeButton.classList.add("disabled");
     }
-    standardActionsRow.appendChild(characterProgressButton);
+    standardActionsRow.appendChild(storeButton);
+
     // "Configure Shards" icon button
     const themeStatus = getShapedThemeData().get(themeId);
     const configureShardsIconButton = document.createElement("button");
     configureShardsIconButton.id = "configure-shards-icon-button";
     configureShardsIconButton.classList.add("ui-button", "icon-button", "configure-shards-button");
-    const shardIconImg = document.createElement("img");
-    shardIconImg.classList.add("shard-icon");
     let shardIconSrc = "images/app/icon_world_shard_empty.svg";
     let shardTooltipKey = "tooltip_no_fragments_to_configure";
     let canConfigureShards = false;
@@ -462,22 +484,18 @@ export function renderLandingPageActionButtons(themeId) {
         shardTooltipKey = "tooltip_configure_fragments";
         canConfigureShards = true;
     }
-    shardIconImg.src = shardIconSrc;
     const shardAltText = getUIText(shardTooltipKey, {}, { viewContext: 'landing' });
-    shardIconImg.alt = shardAltText;
+    configureShardsIconButton.innerHTML = `<img src="${shardIconSrc}" alt="${shardAltText}" class="shard-icon">`;
     configureShardsIconButton.setAttribute("aria-label", shardAltText);
     attachTooltip(configureShardsIconButton, shardTooltipKey, {}, { viewContext: 'landing' });
-    configureShardsIconButton.appendChild(shardIconImg);
-    if (canConfigureShards && _gameControllerRef && typeof _gameControllerRef.showConfigureShardsModal === 'function') {
-        configureShardsIconButton.disabled = false;
-        configureShardsIconButton.addEventListener("click", () => {
-            _gameControllerRef.showConfigureShardsModal(themeId);
-        });
+    if (themeManifestEntry.playable && canConfigureShards && _gameControllerRef && typeof _gameControllerRef.showConfigureShardsModal === 'function') {
+        configureShardsIconButton.addEventListener("click", () => _gameControllerRef.showConfigureShardsModal(themeId));
     } else {
         configureShardsIconButton.disabled = true;
         configureShardsIconButton.classList.add("disabled");
     }
     standardActionsRow.appendChild(configureShardsIconButton);
+
     landingThemeActions.appendChild(standardActionsRow);
 }
 

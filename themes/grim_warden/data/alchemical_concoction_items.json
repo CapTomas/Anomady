@@ -10,12 +10,24 @@
       "cs": "Kalná, svíravá tekutina, která uklidňuje žaludek a tlumí drobné bolesti. Silně páchne vlhkou zemí a lítostí."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Slightly mends vitality",
-      "cs": "Lehce napravuje vitalitu"
+    "attributes": {
+      "en": {
+        "Minor Restoration": 1
+      },
+      "cs": {
+        "Menší Obnova": 1
+      }
     },
-    "attributes": { "restoration_minor": 1 },
-    "abilities": ["Soothes Minor Ailments", "Settles Stomach"],
+    "abilities": {
+      "en": [
+        "Soothes Minor Ailments",
+        "Settles Stomach"
+      ],
+      "cs": [
+        "Uklidňuje menší neduhy",
+        "Uklidňuje žaludek"
+      ]
+    },
     "level": 1
   },
   {
@@ -29,12 +41,26 @@
       "cs": "Uvařený z mechu seškrábaného ze starých náhrobků, tento nálev propůjčuje unaveným očím prchavou jasnost."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Briefly sharpens sight",
-      "cs": "Krátce zostřuje zrak"
+    "attributes": {
+      "en": {
+        "Sight Boost": 1,
+        "Duration": "Fleeting"
+      },
+      "cs": {
+        "Zlepšení Zraku": 1,
+        "Trvání": "Prchavé"
+      }
     },
-    "attributes": { "sensory_boost_sight": 1, "duration": "fleeting" },
-    "abilities": ["Briefly Sharpens Sight", "Reduces Eye Strain"],
+    "abilities": {
+      "en": [
+        "Briefly Sharpens Sight",
+        "Reduces Eye Strain"
+      ],
+      "cs": [
+        "Krátce zostřuje zrak",
+        "Snižuje námahu očí"
+      ]
+    },
     "level": 2
   },
   {
@@ -48,12 +74,26 @@
       "cs": "Štípavá, pronikavá mast, která po nanesení krátce povzbudí unavené svaly. Počáteční pálení je rychle zapomenuto."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Briefly boosts stamina",
-      "cs": "Krátce zvyšuje výdrž"
+    "attributes": {
+      "en": {
+        "Stamina Boost": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Zvýšení Výdrže": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "stamina_boost": 1, "duration": "brief" },
-    "abilities": ["Temporarily Invigorates Muscles", "Brief Stamina Boost"],
+    "abilities": {
+      "en": [
+        "Temporarily Invigorates Muscles",
+        "Brief Stamina Boost"
+      ],
+      "cs": [
+        "Dočasně povzbuzuje svaly",
+        "Krátké zvýšení výdrže"
+      ]
+    },
     "level": 3
   },
   {
@@ -67,12 +107,26 @@
       "cs": "Tato olejovitá, tmavá tekutina jako by pohlcovala světlo. Na krátkou chvíli činí kroky o něco tiššími."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Briefly muffles sound",
-      "cs": "Krátce tlumí zvuk"
+    "attributes": {
+      "en": {
+        "Sound Muffling": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Tlumení Zvuku": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "stealth_boost_sound": 1, "duration": "brief" },
-    "abilities": ["Briefly Muffles Footsteps", "Aids Minor Stealth"],
+    "abilities": {
+      "en": [
+        "Briefly Muffles Footsteps",
+        "Aids Minor Stealth"
+      ],
+      "cs": [
+        "Krátce tlumí kroky",
+        "Pomáhá menšímu plížení"
+      ]
+    },
     "level": 4
   },
   {
@@ -86,12 +140,24 @@
       "cs": "Rudý lektvar, který pomáhá zastavit menší krvácení a s překvapivou rychlostí sceluje malé rány. Chutná slabě kovově."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Mends minor wounds",
-      "cs": "Sceluje menší rány"
+    "attributes": {
+      "en": {
+        "Moderate Restoration": 1
+      },
+      "cs": {
+        "Střední Obnova": 1
+      }
     },
-    "attributes": { "restoration_moderate": 1 },
-    "abilities": ["Mends Minor Wounds", "Staunches Bleeding"],
+    "abilities": {
+      "en": [
+        "Mends Minor Wounds",
+        "Staunches Bleeding"
+      ],
+      "cs": [
+        "Sceluje menší rány",
+        "Zastavuje krvácení"
+      ]
+    },
     "level": 5
   },
   {
@@ -105,12 +171,26 @@
       "cs": "Hustý, písčitý lektvar, který dočasně ztvrdne kůži, čímž ji činí odolnější vůči lehkým nárazům. Pije se jako písek."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Briefly enhances resilience",
-      "cs": "Krátce zvyšuje odolnost"
+    "attributes": {
+      "en": {
+        "Physical Defense": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Fyzická Obrana": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "defense_boost_physical": 1, "duration": "brief" },
-    "abilities": ["Temporarily Hardens Skin", "Resists Minor Impacts"],
+    "abilities": {
+      "en": [
+        "Temporarily Hardens Skin",
+        "Resists Minor Impacts"
+      ],
+      "cs": [
+        "Dočasně zpevňuje kůži",
+        "Odolává menším nárazům"
+      ]
+    },
     "level": 6
   },
   {
@@ -124,12 +204,26 @@
       "cs": "Pečlivě dávkovaný extrakt, který na krátkou dobu zrychlí puls a zostří reflexy. Předávkování by bylo smrtelné."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Briefly quickens reflexes",
-      "cs": "Krátce zrychluje reflexy"
+    "attributes": {
+      "en": {
+        "Reflex Boost": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Zrychlení Reflexů": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "reflex_boost": 1, "duration": "brief" },
-    "abilities": ["Briefly Quickens Reflexes", "Heightens Alertness"],
+    "abilities": {
+      "en": [
+        "Briefly Quickens Reflexes",
+        "Heightens Alertness"
+      ],
+      "cs": [
+        "Krátce zrychluje reflexy",
+        "Zvyšuje ostražitost"
+      ]
+    },
     "level": 7
   },
   {
@@ -143,12 +237,26 @@
       "cs": "Tento elixír, vířící tmavými částicemi, propůjčuje schopnost jasně vidět v šeru po úctyhodnou dobu."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Grants dim light vision",
-      "cs": "Propůjčuje vidění v šeru"
+    "attributes": {
+      "en": {
+        "Low-Light Vision": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Vidění v Šeru": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "vision_lowlight": 1, "duration": "moderate" },
-    "abilities": ["Grants Low-Light Vision", "Improves Night Perception"],
+    "abilities": {
+      "en": [
+        "Grants Low-Light Vision",
+        "Improves Night Perception"
+      ],
+      "cs": [
+        "Propůjčuje vidění v šeru",
+        "Zlepšuje noční vnímání"
+      ]
+    },
     "level": 8
   },
   {
@@ -162,12 +270,26 @@
       "cs": "Hořký popel z ochranného kadidla po spolknutí nabízí prchavou ochranu proti menším kletbám a zlé vůli."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Brief ward against minor hexes",
-      "cs": "Krátká ochrana proti menším kletbám"
+    "attributes": {
+      "en": {
+        "Minor Hex Ward": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Ochrana proti Menším Kletbám": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "ward_minor_hex": 1, "duration": "brief" },
-    "abilities": ["Briefly Wards Against Minor Hexes", "Slightly Repels Negative Energy"],
+    "abilities": {
+      "en": [
+        "Briefly Wards Against Minor Hexes",
+        "Slightly Repels Negative Energy"
+      ],
+      "cs": [
+        "Krátce chrání před menšími kletbami",
+        "Lehce odpuzuje negativní energii"
+      ]
+    },
     "level": 9
   },
   {
@@ -181,12 +303,26 @@
       "cs": "Odporné tonikum s kovovou chutí, které dočasně posiluje tělo proti běžným jedům. Pachuť přetrvává."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Temporary poison resistance",
-      "cs": "Dočasná odolnost proti jedům"
+    "attributes": {
+      "en": {
+        "Minor Poison Resistance": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Menší Odolnost vůči Jedu": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "resistance_poison_minor": 1, "duration": "moderate" },
-    "abilities": ["Grants Minor Poison Resistance", "Fortifies Against Toxins"],
+    "abilities": {
+      "en": [
+        "Grants Minor Poison Resistance",
+        "Fortifies Against Toxins"
+      ],
+      "cs": [
+        "Poskytuje menší odolnost vůči jedům",
+        "Posiluje proti toxinům"
+      ]
+    },
     "level": 10
   },
   {
@@ -200,12 +336,24 @@
       "cs": "Silný, sladce vonící odvar, který výrazně urychluje hojení středně těžkých zranění. Teplo se šíří z místa požití."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Heals moderate wounds",
-      "cs": "Léčí středně těžká zranění"
+    "attributes": {
+      "en": {
+        "Strong Restoration": 1
+      },
+      "cs": {
+        "Silná Obnova": 1
+      }
     },
-    "attributes": { "restoration_strong": 1 },
-    "abilities": ["Heals Moderate Wounds", "Accelerates Natural Healing"],
+    "abilities": {
+      "en": [
+        "Heals Moderate Wounds",
+        "Accelerates Natural Healing"
+      ],
+      "cs": [
+        "Léčí středně těžká zranění",
+        "Urychluje přirozené hojení"
+      ]
+    },
     "level": 11
   },
   {
@@ -219,12 +367,26 @@
       "cs": "Tato křídová tekutina posiluje odhodlání a na čas usnadňuje odolávání strachu a zastrašování."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Temporarily bolsters resolve",
-      "cs": "Dočasně posiluje odhodlání"
+    "attributes": {
+      "en": {
+        "Resolve Boost": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Posílení Odhodlání": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "resolve_boost": 1, "duration": "moderate" },
-    "abilities": ["Temporarily Bolsters Resolve", "Resists Fear Effects"],
+    "abilities": {
+      "en": [
+        "Temporarily Bolsters Resolve",
+        "Resists Fear Effects"
+      ],
+      "cs": [
+        "Dočasně posiluje odhodlání",
+        "Odolává účinkům strachu"
+      ]
+    },
     "level": 12
   },
   {
@@ -238,12 +400,26 @@
       "cs": "Téměř neviditelný olej, který po požití umožňuje pozoruhodně tichý pohyb po značnou dobu."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Grants silent movement",
-      "cs": "Propůjčuje tichý pohyb"
+    "attributes": {
+      "en": {
+        "Sound Muffling": 2,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Tlumení Zvuku": 2,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "stealth_boost_sound": 2, "duration": "moderate" },
-    "abilities": ["Grants Silent Movement", "Eliminates Footfall Noise"],
+    "abilities": {
+      "en": [
+        "Grants Silent Movement",
+        "Eliminates Footfall Noise"
+      ],
+      "cs": [
+        "Propůjčuje tichý pohyb",
+        "Eliminuje hluk kroků"
+      ]
+    },
     "level": 13
   },
   {
@@ -257,12 +433,28 @@
       "cs": "Extrémně hořký, tento odvar čistí menší toxiny a chrání před slabšími magickými neduhy."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Purges minor toxins, resists weak magic",
-      "cs": "Čistí menší toxiny, odolává slabé magii"
+    "attributes": {
+      "en": {
+        "Cleanse Minor Toxin": 1,
+        "Weak Magic Resistance": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Očista od Menších Toxinů": 1,
+        "Slabá Magická Odolnost": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "cleanse_minor_toxin": 1, "resistance_magic_weak": 1, "duration": "brief" },
-    "abilities": ["Purges Minor Toxins", "Resists Weak Magical Afflictions"],
+    "abilities": {
+      "en": [
+        "Purges Minor Toxins",
+        "Resists Weak Magical Afflictions"
+      ],
+      "cs": [
+        "Čistí menší toxiny",
+        "Odolává slabým magickým neduhům"
+      ]
+    },
     "level": 14
   },
   {
@@ -276,12 +468,26 @@
       "cs": "Čirá, třpytivá tekutina, která na krátkou chvíli propůjčuje teleskopické vidění, umožňující jasně vidět vzdálené detaily."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Briefly grants telescopic vision",
-      "cs": "Krátce propůjčuje teleskopické vidění"
+    "attributes": {
+      "en": {
+        "Telescopic Vision": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Teleskopické Vidění": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "vision_telescopic": 1, "duration": "brief" },
-    "abilities": ["Briefly Grants Telescopic Vision", "Focuses on Distant Objects"],
+    "abilities": {
+      "en": [
+        "Briefly Grants Telescopic Vision",
+        "Focuses on Distant Objects"
+      ],
+      "cs": [
+        "Krátce propůjčuje teleskopické vidění",
+        "Zaměřuje se na vzdálené objekty"
+      ]
+    },
     "level": 15
   },
   {
@@ -295,12 +501,26 @@
       "cs": "Silný, i když zředěný, doušek, který dočasně zvětší svaly a dodá nával hrubé síly. Způsobuje mírnou agresivitu."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Temporary strength boost",
-      "cs": "Dočasné zvýšení síly"
+    "attributes": {
+      "en": {
+        "Strength Boost": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Zvýšení Síly": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "strength_boost": 1, "duration": "brief" },
-    "abilities": ["Temporarily Boosts Strength", "Induces Minor Aggression"],
+    "abilities": {
+      "en": [
+        "Temporarily Boosts Strength",
+        "Induces Minor Aggression"
+      ],
+      "cs": [
+        "Dočasně zvyšuje sílu",
+        "Vyvolává mírnou agresi"
+      ]
+    },
     "level": 16
   },
   {
@@ -314,12 +534,26 @@
       "cs": "Po požití tato tinktura způsobí, že piják vypadá na čas mlhavě a nejasně, čímž mate oko."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Briefly blurs form, harder to hit",
-      "cs": "Krátce rozmazává podobu, těžší zasáhnout"
+    "attributes": {
+      "en": {
+        "Visual Evasion Boost": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Zlepšení Vizuálního Vyhýbání": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "evasion_boost_visual": 1, "duration": "brief" },
-    "abilities": ["Briefly Blurs Form", "Harder to Target Visually"],
+    "abilities": {
+      "en": [
+        "Briefly Blurs Form",
+        "Harder to Target Visually"
+      ],
+      "cs": [
+        "Krátce rozmazává podobu",
+        "Těžší vizuálně zaměřit"
+      ]
+    },
     "level": 17
   },
   {
@@ -333,12 +567,26 @@
       "cs": "Tento odvar, prodchnutý esencí za studena kovaného železa, nabízí mírnou ochranu proti kouzlům víl a vlivům z jiného světa."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Resists fae magic",
-      "cs": "Odolává magii víl"
+    "attributes": {
+      "en": {
+        "Fae Magic Resistance": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Odolnost vůči Magii Víl": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "resistance_fae_magic": 1, "duration": "moderate" },
-    "abilities": ["Resists Fae Enchantments", "Wards Against Otherworldly Influences"],
+    "abilities": {
+      "en": [
+        "Resists Fae Enchantments",
+        "Wards Against Otherworldly Influences"
+      ],
+      "cs": [
+        "Odolává kouzlům víl",
+        "Chrání před vlivy z jiného světa"
+      ]
+    },
     "level": 18
   },
   {
@@ -352,12 +600,26 @@
       "cs": "Odvar předávaný Strážci, který vštěpuje mrazivou auru, jež znervózňuje nižší nemrtvé a duchy."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Unnerves lesser undead",
-      "cs": "Znervózňuje nižší nemrtvé"
+    "attributes": {
+      "en": {
+        "Minor Undead Fear Aura": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Menší Aura Strachu (Nemrtví)": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "aura_fear_undead_minor": 1, "duration": "moderate" },
-    "abilities": ["Unnerves Lesser Undead and Spirits", "Projects Chilling Presence"],
+    "abilities": {
+      "en": [
+        "Unnerves Lesser Undead and Spirits",
+        "Projects Chilling Presence"
+      ],
+      "cs": [
+        "Znervózňuje nižší nemrtvé a duchy",
+        "Vyzařuje mrazivou přítomnost"
+      ]
+    },
     "level": 19
   },
   {
@@ -371,12 +633,24 @@
       "cs": "Navzdory svým ponurým ingrediencím dokáže tento silný elixír zacelit těžká zranění a obnovit značnou míru vitality."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Heals grievous wounds",
-      "cs": "Léčí těžká zranění"
+    "attributes": {
+      "en": {
+        "Major Restoration": 1
+      },
+      "cs": {
+        "Velká Obnova": 1
+      }
     },
-    "attributes": { "restoration_major": 1 },
-    "abilities": ["Heals Grievous Wounds", "Major Vitality Restoration"],
+    "abilities": {
+      "en": [
+        "Heals Grievous Wounds",
+        "Major Vitality Restoration"
+      ],
+      "cs": [
+        "Léčí těžká zranění",
+        "Velká obnova vitality"
+      ]
+    },
     "level": 20
   },
   {
@@ -390,12 +664,26 @@
       "cs": "Tato inkoustově černá tekutina umožňuje pijákovi stát se téměř neviditelným, pokud je nehybný v hlubokém stínu. Jakýkoli pohyb efekt přeruší."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Near invisibility in shadows (still)",
-      "cs": "Téměř neviditelnost ve stínech (v klidu)"
+    "attributes": {
+      "en": {
+        "Conditional Invisibility (Shadow)": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Podmíněná Neviditelnost (Stín)": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "invisibility_conditional_shadow": 1, "duration": "moderate" },
-    "abilities": ["Grants Near Invisibility in Deep Shadow (While Still)", "Requires Stillness"],
+    "abilities": {
+      "en": [
+        "Grants Near Invisibility in Deep Shadow (While Still)",
+        "Requires Stillness"
+      ],
+      "cs": [
+        "Propůjčuje téměř neviditelnost v hlubokém stínu (v klidu)",
+        "Vyžaduje nehybnost"
+      ]
+    },
     "level": 21
   },
   {
@@ -409,12 +697,28 @@
       "cs": "Písčitý, šedý lektvar, který výrazně zvyšuje fyzickou odolnost a umožňuje snášet silné údery. Mírně zpomaluje reakční dobu."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Greatly enhances resilience, slightly slows",
-      "cs": "Výrazně zvyšuje odolnost, mírně zpomaluje"
+    "attributes": {
+      "en": {
+        "Physical Defense": 2,
+        "Reflex Penalty": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Fyzická Obrana": 2,
+        "Postih na Reflexy": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "defense_boost_physical": 2, "reflex_penalty": 1, "duration": "moderate" },
-    "abilities": ["Greatly Enhances Physical Resilience", "Slightly Slows Reactions"],
+    "abilities": {
+      "en": [
+        "Greatly Enhances Physical Resilience",
+        "Slightly Slows Reactions"
+      ],
+      "cs": [
+        "Výrazně zvyšuje fyzickou odolnost",
+        "Mírně zpomaluje reakce"
+      ]
+    },
     "level": 22
   },
   {
@@ -428,12 +732,26 @@
       "cs": "Destilováno ze vzácných bylin nalezených pouze poblíž míst velkého žalu, toto tonikum na čas propůjčuje neuvěřitelně ostrý sluch, hraničící s jasnozřivostí."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Grants supernatural hearing",
-      "cs": "Propůjčuje nadpřirozený sluch"
+    "attributes": {
+      "en": {
+        "Hearing Boost": 2,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Zlepšení Sluchu": 2,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "sensory_boost_hearing": 2, "duration": "moderate" },
-    "abilities": ["Grants Supernatural Hearing", "Detects Faint Sounds"],
+    "abilities": {
+      "en": [
+        "Grants Supernatural Hearing",
+        "Detects Faint Sounds"
+      ],
+      "cs": [
+        "Propůjčuje nadpřirozený sluch",
+        "Detekuje slabé zvuky"
+      ]
+    },
     "level": 23
   },
   {
@@ -447,12 +765,28 @@
       "cs": "Nestálý elixír, který zapaluje vnitřního ducha, propůjčuje dočasnou odolnost vůči mrazivému strachu a zoufalství a odhání slabší duchy."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Resists fear, wards minor spirits",
-      "cs": "Odolává strachu, odhání menší duchy"
+    "attributes": {
+      "en": {
+        "Fear Resistance": 2,
+        "Minor Spirit Ward": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Odolnost vůči Strachu": 2,
+        "Menší Ochrana proti Duchům": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "resistance_fear": 2, "ward_spirits_minor": 1, "duration": "moderate" },
-    "abilities": ["Resists Potent Fear Effects", "Wards Off Minor Spirits"],
+    "abilities": {
+      "en": [
+        "Resists Potent Fear Effects",
+        "Wards Off Minor Spirits"
+      ],
+      "cs": [
+        "Odolává silným účinkům strachu",
+        "Odhání menší duchy"
+      ]
+    },
     "level": 24
   },
   {
@@ -466,12 +800,26 @@
       "cs": "Složitý odvar z čištěných solí a vzácných bylin, který nabízí významnou ochranu proti kletbám a zlovolnému čarodějnictví."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Strong resistance to curses",
-      "cs": "Silná odolnost proti kletbám"
+    "attributes": {
+      "en": {
+        "Curse Resistance": 2,
+        "Duration": "Long"
+      },
+      "cs": {
+        "Odolnost vůči Kletbám": 2,
+        "Trvání": "Dlouhé"
+      }
     },
-    "attributes": { "resistance_curse": 2, "duration": "long" },
-    "abilities": ["Significant Curse Resistance", "Dispels Minor Hexes"],
+    "abilities": {
+      "en": [
+        "Significant Curse Resistance",
+        "Dispels Minor Hexes"
+      ],
+      "cs": [
+        "Významná odolnost vůči kletbám",
+        "Rozptyluje menší kletby"
+      ]
+    },
     "level": 25
   },
   {
@@ -485,12 +833,28 @@
       "cs": "Tato mrazivá, průsvitná tekutina umožňuje pijákovi stát se na krátkou dobu částečně nehmotným, schopným procházet malými prasklinami a ignorovat některé fyzické útoky."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Brief partial incorporeality",
-      "cs": "Krátká částečná nehmotnost"
+    "attributes": {
+      "en": {
+        "Partial Incorporeality": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Částečná Nehmotnost": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "incorporeality_partial": 1, "duration": "brief" },
-    "abilities": ["Brief Partial Incorporeality", "Pass Through Small Gaps", "Chance to Evade Physical Attacks"],
+    "abilities": {
+      "en": [
+        "Brief Partial Incorporeality",
+        "Pass Through Small Gaps",
+        "Chance to Evade Physical Attacks"
+      ],
+      "cs": [
+        "Krátká částečná nehmotnost",
+        "Prochází malými mezerami",
+        "Šance vyhnout se fyzickým útokům"
+      ]
+    },
     "level": 26
   },
   {
@@ -504,12 +868,32 @@
       "cs": "Ohnivý, opojný odvar, který vyvolává bojovou zuřivost, výrazně zvyšuje sílu a toleranci bolesti, ale zatemňuje úsudek."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Induces battle rage (strength up, judgment down)",
-      "cs": "Vyvolává bojovou zuřivost (síla nahoru, úsudek dolů)"
+    "attributes": {
+      "en": {
+        "Strength Boost": 2,
+        "Pain Tolerance": 2,
+        "Judgment Penalty": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Zvýšení Síly": 2,
+        "Tolerance Bolesti": 2,
+        "Postih na Úsudek": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "strength_boost": 2, "pain_tolerance": 2, "judgment_penalty": 1, "duration": "moderate" },
-    "abilities": ["Induces Battle Rage", "Greatly Boosts Strength and Pain Tolerance", "Clouds Judgment"],
+    "abilities": {
+      "en": [
+        "Induces Battle Rage",
+        "Greatly Boosts Strength and Pain Tolerance",
+        "Clouds Judgment"
+      ],
+      "cs": [
+        "Vyvolává bojovou zuřivost",
+        "Výrazně zvyšuje sílu a toleranci bolesti",
+        "Zatemňuje úsudek"
+      ]
+    },
     "level": 27
   },
   {
@@ -523,12 +907,28 @@
       "cs": "Vzácný a silný elixír, který umožňuje pijákovi na čas vidět skrze iluze, vnímat skryté duchy a detekovat neviditelné věci."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Grants true sight",
-      "cs": "Propůjčuje pravé vidění"
+    "attributes": {
+      "en": {
+        "True Sight": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Pravé Vidění": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "vision_truesight": 1, "duration": "moderate" },
-    "abilities": ["See Through Illusions", "Perceive Spirits", "Detect Invisibility"],
+    "abilities": {
+      "en": [
+        "See Through Illusions",
+        "Perceive Spirits",
+        "Detect Invisibility"
+      ],
+      "cs": [
+        "Vidí skrze iluze",
+        "Vnímá duchy",
+        "Detekuje neviditelnost"
+      ]
+    },
     "level": 28
   },
   {
@@ -542,12 +942,26 @@
       "cs": "Svatý olej, extrémně nebezpečný pro nemrtvé, který po požití propůjčuje životní síle pijáka škodlivou auru proti mocným nemrtvým."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Aura damages powerful undead",
-      "cs": "Aura poškozuje mocné nemrtvé"
+    "attributes": {
+      "en": {
+        "Major Undead Damage Aura": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Velká Aura Poškození (Nemrtví)": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "aura_damage_undead_major": 1, "duration": "brief" },
-    "abilities": ["Damaging Aura Against Powerful Undead", "Empowers Life Force Offensively"],
+    "abilities": {
+      "en": [
+        "Damaging Aura Against Powerful Undead",
+        "Empowers Life Force Offensively"
+      ],
+      "cs": [
+        "Škodlivá aura proti mocným nemrtvým",
+        "Ofenzivně posiluje životní sílu"
+      ]
+    },
     "level": 29
   },
   {
@@ -561,12 +975,32 @@
       "cs": "Tato zlatavá, inspirující tekutina dočasně propůjčuje nesmírnou odvahu, zvýšenou zdatnost v boji a neobyčejnou schopnost inspirovat spojence."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Grants immense courage & combat prowess",
-      "cs": "Propůjčuje nesmírnou odvahu a bojovou zdatnost"
+    "attributes": {
+      "en": {
+        "Major Courage Boost": 1,
+        "Major Combat Prowess": 1,
+        "Inspiration Aura": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Velké Posílení Odvahy": 1,
+        "Velká Bojová Zdatnost": 1,
+        "Inspirační Aura": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "courage_boost_major": 1, "combat_prowess_major": 1, "inspiration_aura": 1, "duration": "moderate" },
-    "abilities": ["Grants Immense Courage", "Heightens Combat Prowess", "Inspires Nearby Allies"],
+    "abilities": {
+      "en": [
+        "Grants Immense Courage",
+        "Heightens Combat Prowess",
+        "Inspires Nearby Allies"
+      ],
+      "cs": [
+        "Propůjčuje nesmírnou odvahu",
+        "Zvyšuje bojovou zdatnost",
+        "Inspiruje blízké spojence"
+      ]
+    },
     "level": 30
   },
   {
@@ -580,12 +1014,28 @@
       "cs": "Mléčná, opaleskující tekutina, která navozuje hluboký klid a zároveň rychle sceluje maso a kosti. Postupně léčí i vážná traumata."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Rapid regeneration, induces calm",
-      "cs": "Rychlá regenerace, navozuje klid"
+    "attributes": {
+      "en": {
+        "Major Regeneration": 1,
+        "Calm Inducing": 1,
+        "Duration": "Long"
+      },
+      "cs": {
+        "Velká Regenerace": 1,
+        "Navozující Klid": 1,
+        "Trvání": "Dlouhé"
+      }
     },
-    "attributes": { "regeneration_major": 1, "calm_inducing": 1, "duration": "long" },
-    "abilities": ["Rapidly Regenerates Wounds", "Induces Profound Calm"],
+    "abilities": {
+      "en": [
+        "Rapidly Regenerates Wounds",
+        "Induces Profound Calm"
+      ],
+      "cs": [
+        "Rychle regeneruje rány",
+        "Navozuje hluboký klid"
+      ]
+    },
     "level": 31
   },
   {
@@ -599,12 +1049,28 @@
       "cs": "Tento elixír, lesknoucí se jako tekutý kov, propůjčuje neuvěřitelnou rychlost a hbitost, čímž činí pijáka rozmazanou šmouhou."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Grants incredible speed and agility",
-      "cs": "Propůjčuje neuvěřitelnou rychlost a hbitost"
+    "attributes": {
+      "en": {
+        "Major Speed Boost": 1,
+        "Major Agility Boost": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Velké Zrychlení": 1,
+        "Velké Zvýšení Hbitosti": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "speed_boost_major": 1, "agility_boost_major": 1, "duration": "moderate" },
-    "abilities": ["Grants Incredible Speed", "Enhances Agility Dramatically"],
+    "abilities": {
+      "en": [
+        "Grants Incredible Speed",
+        "Enhances Agility Dramatically"
+      ],
+      "cs": [
+        "Propůjčuje neuvěřitelnou rychlost",
+        "Dramaticky zvyšuje hbitost"
+      ]
+    },
     "level": 32
   },
   {
@@ -618,12 +1084,28 @@
       "cs": "Krystalická tekutina, která projasňuje myšlenky a vytváří neprolomitelnou baštu proti mentálním vpádům, kouzlům a iluzím."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Immunity to mental attacks & illusions",
-      "cs": "Imunita vůči mentálním útokům a iluzím"
+    "attributes": {
+      "en": {
+        "Absolute Mental Fortitude": 1,
+        "Illusion Immunity": 1,
+        "Duration": "Long"
+      },
+      "cs": {
+        "Absolutní Mentální Pevnost": 1,
+        "Imunita vůči Iluzím": 1,
+        "Trvání": "Dlouhé"
+      }
     },
-    "attributes": { "mental_fortitude_absolute": 1, "illusion_immunity": 1, "duration": "long" },
-    "abilities": ["Absolute Mental Fortitude", "Immunity to Charms and Illusions"],
+    "abilities": {
+      "en": [
+        "Absolute Mental Fortitude",
+        "Immunity to Charms and Illusions"
+      ],
+      "cs": [
+        "Absolutní mentální pevnost",
+        "Imunita vůči kouzlům a iluzím"
+      ]
+    },
     "level": 33
   },
   {
@@ -637,12 +1119,26 @@
       "cs": "Zuřivě horká, nestálá tekutina. Krátce po vypití může piják vydechnout proud spalujícího plamene. Používejte s extrémní opatrností."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Allows one gout of flame breath",
-      "cs": "Umožňuje jeden výdech plamene"
+    "attributes": {
+      "en": {
+        "Fire Breath": 1,
+        "Charges": 1
+      },
+      "cs": {
+        "Ohnivý Dech": 1,
+        "Náboje": 1
+      }
     },
-    "attributes": { "elemental_attack_fire": 1, "charges": 1 },
-    "abilities": ["Exhale Searing Flame (Single Use)", "Extremely Hot"],
+    "abilities": {
+      "en": [
+        "Exhale Searing Flame (Single Use)",
+        "Extremely Hot"
+      ],
+      "cs": [
+        "Vydechnutí spalujícího plamene (jednorázové)",
+        "Extrémně horké"
+      ]
+    },
     "level": 34
   },
   {
@@ -656,12 +1152,26 @@
       "cs": "Tento elixír činí pijáka na střední dobu zcela neviditelným pro zrak, sluch i čich. Magická detekce je stále může najít."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Grants complete invisibility",
-      "cs": "Propůjčuje úplnou neviditelnost"
+    "attributes": {
+      "en": {
+        "Complete Invisibility": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Úplná Neviditelnost": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "invisibility_complete": 1, "duration": "moderate" },
-    "abilities": ["Complete Invisibility (Sight, Sound, Smell)", "Vulnerable to Magical Detection"],
+    "abilities": {
+      "en": [
+        "Complete Invisibility (Sight, Sound, Smell)",
+        "Vulnerable to Magical Detection"
+      ],
+      "cs": [
+        "Úplná neviditelnost (zrak, sluch, čich)",
+        "Zranitelný magickou detekcí"
+      ]
+    },
     "level": 35
   },
   {
@@ -675,12 +1185,26 @@
       "cs": "Po požití tento třpytivý olej ztvrdne kůži jako legendární adamant a propůjčuje nesmírnou fyzickou ochranu."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Grants immense physical protection",
-      "cs": "Propůjčuje nesmírnou fyzickou ochranu"
+    "attributes": {
+      "en": {
+        "Physical Defense": 3,
+        "Duration": "Long"
+      },
+      "cs": {
+        "Fyzická Obrana": 3,
+        "Trvání": "Dlouhé"
+      }
     },
-    "attributes": { "defense_boost_physical": 3, "duration": "long" },
-    "abilities": ["Skin Becomes Adamantine-Hard", "Immense Physical Damage Reduction"],
+    "abilities": {
+      "en": [
+        "Skin Becomes Adamantine-Hard",
+        "Immense Physical Damage Reduction"
+      ],
+      "cs": [
+        "Kůže ztvrdne jako adamant",
+        "Nesmírné snížení fyzického poškození"
+      ]
+    },
     "level": 36
   },
   {
@@ -694,12 +1218,30 @@
       "cs": "Umožňuje duchu pijáka dočasně opustit tělo a stát se neviditelným, nehmotným pozorovatelem. Tělo zůstává zranitelné."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Allows temporary astral projection",
-      "cs": "Umožňuje dočasnou astrální projekci"
+    "attributes": {
+      "en": {
+        "Astral Projection": 1,
+        "Body Vulnerable": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Astrální Projekce": 1,
+        "Zranitelné Tělo": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "astral_projection": 1, "duration": "brief", "body_vulnerable": 1 },
-    "abilities": ["Temporary Astral Projection", "Spirit Becomes Unseen and Intangible", "Physical Body Remains Vulnerable"],
+    "abilities": {
+      "en": [
+        "Temporary Astral Projection",
+        "Spirit Becomes Unseen and Intangible",
+        "Physical Body Remains Vulnerable"
+      ],
+      "cs": [
+        "Dočasná astrální projekce",
+        "Duch se stává neviditelným a nehmotným",
+        "Fyzické tělo zůstává zranitelné"
+      ]
+    },
     "level": 37
   },
   {
@@ -713,12 +1255,32 @@
       "cs": "Svatý odvar, který zostřuje všechny smysly na nadpřirozenou úroveň, propůjčuje nadpřirozené vnímání okolí a na delší dobu zahání únavu."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Supernatural senses, banishes fatigue",
-      "cs": "Nadpřirozené smysly, zahání únavu"
+    "attributes": {
+      "en": {
+        "Major Sensory Boost": 1,
+        "Preternatural Awareness": 1,
+        "Banish Fatigue": 1,
+        "Duration": "Extended"
+      },
+      "cs": {
+        "Velké Zlepšení Smyslů": 1,
+        "Nadpřirozené Vnímání": 1,
+        "Odstranění Únavy": 1,
+        "Trvání": "Prodloužené"
+      }
     },
-    "attributes": { "sensory_boost_all_major": 1, "awareness_preternatural": 1, "fatigue_banish": 1, "duration": "extended" },
-    "abilities": ["Supernaturally Heightened Senses", "Preternatural Awareness", "Banishes All Fatigue"],
+    "abilities": {
+      "en": [
+        "Supernaturally Heightened Senses",
+        "Preternatural Awareness",
+        "Banishes All Fatigue"
+      ],
+      "cs": [
+        "Nadpřirozeně zostřené smysly",
+        "Nadpřirozené vnímání",
+        "Zahání veškerou únavu"
+      ]
+    },
     "level": 38
   },
   {
@@ -732,12 +1294,30 @@
       "cs": "Nebezpečně nestabilní tinktura, která umožňuje pijákovi vnímat a reagovat na události s neuvěřitelnou rychlostí, jako by se pro něj zpomalil samotný čas."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Perceive time slowed, incredible reaction speed",
-      "cs": "Vnímá zpomalený čas, neuvěřitelná reakční rychlost"
+    "attributes": {
+      "en": {
+        "Slowed Time Perception": 1,
+        "Superhuman Reaction Speed": 1,
+        "Duration": "Very Brief"
+      },
+      "cs": {
+        "Zpomalené Vnímání Času": 1,
+        "Nadlidská Reakční Rychlost": 1,
+        "Trvání": "Velmi Krátké"
+      }
     },
-    "attributes": { "time_perception_slowed": 1, "reaction_speed_superhuman": 1, "duration": "very_brief" },
-    "abilities": ["Perceive Time as Slowed", "Superhuman Reaction Speed", "Brief, Intense Effect"],
+    "abilities": {
+      "en": [
+        "Perceive Time as Slowed",
+        "Superhuman Reaction Speed",
+        "Brief, Intense Effect"
+      ],
+      "cs": [
+        "Vnímá čas jako zpomalený",
+        "Nadlidská reakční rychlost",
+        "Krátký, intenzivní účinek"
+      ]
+    },
     "level": 39
   },
   {
@@ -751,12 +1331,30 @@
       "cs": "Obsahuje čištěnou esenci fénixova popele. Pokud se spotřebuje krátce před smrtí, přivede pijáka zpět z pokraje, plně obnoveného, ale na okamžik pohlceného éterickými plameny."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Revives from near death, full restoration",
-      "cs": "Oživuje z blízké smrti, plné obnovení"
+    "attributes": {
+      "en": {
+        "Revivification": 1,
+        "Complete Restoration": 1,
+        "Ethereal Immolation": 1
+      },
+      "cs": {
+        "Oživení": 1,
+        "Úplná Obnova": 1,
+        "Éterické Vzplanutí": 1
+      }
     },
-    "attributes": { "revivification_on_death": 1, "restoration_complete": 1, "temporary_immolation_ethereal": 1 },
-    "abilities": ["Revives from Near Death (If Consumed Prior)", "Complete Restoration of Vitality", "Briefly Wreathed in Ethereal Fire"],
+    "abilities": {
+      "en": [
+        "Revives from Near Death (If Consumed Prior)",
+        "Complete Restoration of Vitality",
+        "Briefly Wreathed in Ethereal Fire"
+      ],
+      "cs": [
+        "Oživuje z blízkosti smrti (pokud je požito předem)",
+        "Úplné obnovení vitality",
+        "Krátce zahalen éterickým ohněm"
+      ]
+    },
     "level": 40
   },
   {
@@ -770,12 +1368,30 @@
       "cs": "Mrazivý odvar, který propůjčuje pijákovi chladnou prázdnotu nicoty, čímž ho činí vysoce odolným vůči všem formám energie a magie, ale také otupuje jeho emoce."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "High resistance to energy/magic, emotional dampening",
-      "cs": "Vysoká odolnost vůči energii/magii, emoční tlumení"
+    "attributes": {
+      "en": {
+        "Major Energy Resistance": 1,
+        "Major Magic Resistance": 1,
+        "Emotion Dampening": 1,
+        "Duration": "Long"
+      },
+      "cs": {
+        "Velká Energetická Odolnost": 1,
+        "Velká Magická Odolnost": 1,
+        "Tlumení Emocí": 1,
+        "Trvání": "Dlouhé"
+      }
     },
-    "attributes": { "resistance_energy_major": 1, "resistance_magic_major": 1, "emotion_dampen": 1, "duration": "long" },
-    "abilities": ["Major Resistance to All Energy and Magic", "Dulls Emotional Responses"],
+    "abilities": {
+      "en": [
+        "Major Resistance to All Energy and Magic",
+        "Dulls Emotional Responses"
+      ],
+      "cs": [
+        "Velká odolnost vůči veškeré energii a magii",
+        "Ochabuje emoční reakce"
+      ]
+    },
     "level": 41
   },
   {
@@ -789,12 +1405,28 @@
       "cs": "Destilovaná esence jádra měňavce, umožňující pijákovi na omezenou dobu přijmout podobu běžné šelmy (např. vlka, havrana). Ovládání je obtížné."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Assume form of common beast (wolf/raven)",
-      "cs": "Přijme podobu běžné šelmy (vlk/havran)"
+    "attributes": {
+      "en": {
+        "Polymorph (Common Beast)": 1,
+        "Control Difficulty": "Moderate",
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Proměna (Běžná Šelma)": 1,
+        "Obtížnost Ovládání": "Střední",
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "polymorph_beast_common": 1, "control_difficulty": "moderate", "duration": "moderate" },
-    "abilities": ["Assume Form of Common Beast (e.g., Wolf, Raven)", "Difficult to Control Initially"],
+    "abilities": {
+      "en": [
+        "Assume Form of Common Beast (e.g., Wolf, Raven)",
+        "Difficult to Control Initially"
+      ],
+      "cs": [
+        "Přijme podobu běžné šelmy (např. vlk, havran)",
+        "Zpočátku obtížné ovládání"
+      ]
+    },
     "level": 42
   },
   {
@@ -808,12 +1440,28 @@
       "cs": "Lektvar obsahující zkapalněný kámen oživený mocnými kouzly. Propůjčuje neuvěřitelnou, téměř absolutní, fyzickou nezranitelnost, ale činí pijáka pomalým a těžkopádným jako kámen."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Near-absolute physical invulnerability, very slow",
-      "cs": "Téměř absolutní fyzická nezranitelnost, velmi pomalý"
+    "attributes": {
+      "en": {
+        "Near-Absolute Physical Invulnerability": 1,
+        "Major Speed Penalty": 1,
+        "Duration": "Moderate"
+      },
+      "cs": {
+        "Téměř Absolutní Fyzická Nezranitelnost": 1,
+        "Velký Postih na Rychlost": 1,
+        "Trvání": "Střední"
+      }
     },
-    "attributes": { "invulnerability_physical_near_absolute": 1, "speed_penalty_major": 1, "duration": "moderate" },
-    "abilities": ["Near-Absolute Physical Invulnerability", "Extremely Slow Movement and Reactions"],
+    "abilities": {
+      "en": [
+        "Near-Absolute Physical Invulnerability",
+        "Extremely Slow Movement and Reactions"
+      ],
+      "cs": [
+        "Téměř absolutní fyzická nezranitelnost",
+        "Extrémně pomalý pohyb a reakce"
+      ]
+    },
     "level": 43
   },
   {
@@ -827,12 +1475,28 @@
       "cs": "Alchymistické mistrovské dílo. Když je požito jinou osobou (dobrovolně či nikoli), nutí ji mluvit pouze absolutní pravdu a odhalovat nejhlubší tajemství. Samostatné požití nemá jiný účinek než projasnění mysli."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Compels target to speak absolute truth (if ingested by other)",
-      "cs": "Nutí cíl mluvit absolutní pravdu (pokud požito jiným)"
+    "attributes": {
+      "en": {
+        "Compel Truth (Target)": 1,
+        "Application": "External Ingestion"
+      },
+      "cs": {
+        "Vynucení Pravdy (Cíl)": 1,
+        "Aplikace": "Vnější Požití"
+      }
     },
-    "attributes": { "compel_truth_target": 1, "self_effect_clarity": 1, "application": "external_ingestion" },
-    "abilities": ["Compels Target to Speak Absolute Truth", "Reveals Deepest Secrets (On Target)", "Self-Use Grants Mental Clarity"],
+    "abilities": {
+      "en": [
+        "Compels Target to Speak Absolute Truth",
+        "Reveals Deepest Secrets (On Target)",
+        "Self-Use Grants Mental Clarity"
+      ],
+      "cs": [
+        "Nutí cíl mluvit absolutní pravdu",
+        "Odhaluje nejhlubší tajemství (na cíli)",
+        "Vlastní použití propůjčuje mentální jasnost"
+      ]
+    },
     "level": 44
   },
   {
@@ -846,12 +1510,28 @@
       "cs": "Tento třpytivý, nepředvídatelný elixír umožňuje pijákovi na velmi krátkou dobu jemně ovlivňovat pravděpodobnost bezprostředních budoucích událostí. Výsledky jsou často chaotické a nekontrolovatelné."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Subtly influence probability (chaotic)",
-      "cs": "Jemně ovlivňuje pravděpodobnost (chaotické)"
+    "attributes": {
+      "en": {
+        "Minor Probability Influence": 1,
+        "Control": "Chaotic",
+        "Duration": "Very Brief"
+      },
+      "cs": {
+        "Menší Ovlivnění Pravděpodobnosti": 1,
+        "Ovládání": "Chaotické",
+        "Trvání": "Velmi Krátké"
+      }
     },
-    "attributes": { "probability_influence_minor": 1, "control_chaotic": 1, "duration": "very_brief" },
-    "abilities": ["Subtly Influence Probability of Immediate Events", "Effects are Chaotic and Unpredictable"],
+    "abilities": {
+      "en": [
+        "Subtly Influence Probability of Immediate Events",
+        "Effects are Chaotic and Unpredictable"
+      ],
+      "cs": [
+        "Jemně ovlivňuje pravděpodobnost okamžitých událostí",
+        "Účinky jsou chaotické a nepředvídatelné"
+      ]
+    },
     "level": 45
   },
   {
@@ -865,12 +1545,26 @@
       "cs": "Tato rosa, sebraná z místa dotčeného nebeskými bytostmi, čistí všechny kletby, nemoci, jedy a negativní magické účinky a navrací pijákovi původní duchovní a fyzické zdraví."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Complete purification, full restoration",
-      "cs": "Úplné očištění, plné obnovení"
+    "attributes": {
+      "en": {
+        "Absolute Purification": 1,
+        "Complete Restoration": 1
+      },
+      "cs": {
+        "Absolutní Očištění": 1,
+        "Úplná Obnova": 1
+      }
     },
-    "attributes": { "purification_absolute": 1, "restoration_complete": 1 },
-    "abilities": ["Purges All Negative Conditions (Curses, Diseases, Poisons)", "Restores Pristine Spiritual and Physical Health"],
+    "abilities": {
+      "en": [
+        "Purges All Negative Conditions (Curses, Diseases, Poisons)",
+        "Restores Pristine Spiritual and Physical Health"
+      ],
+      "cs": [
+        "Čistí všechny negativní stavy (kletby, nemoci, jedy)",
+        "Navrací původní duchovní a fyzické zdraví"
+      ]
+    },
     "level": 46
   },
   {
@@ -884,12 +1578,30 @@
       "cs": "Podivná, těžká tekutina, která na krátkou subjektivní dobu pozastaví pijáka mimo normální tok času. Pro vnějšího pozorovatele zmizí a znovu se objeví. Během nadčasovosti nemůže interagovat."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Briefly step outside time (vanish & reappear)",
-      "cs": "Krátce vystoupí z času (zmizí a znovu se objeví)"
+    "attributes": {
+      "en": {
+        "Self Temporal Stasis": 1,
+        "Interaction Disabled": 1,
+        "Subjective Duration": "Brief"
+      },
+      "cs": {
+        "Vlastní Časová Stáze": 1,
+        "Interakce Vypnuta": 1,
+        "Subjektivní Trvání": "Krátké"
+      }
     },
-    "attributes": { "temporal_stasis_self": 1, "interaction_disabled_stasis": 1, "duration_subjective": "brief" },
-    "abilities": ["Briefly Steps Outside Normal Time Flow", "Vanishes and Reappears to Observers", "Cannot Interact While Timeless"],
+    "abilities": {
+      "en": [
+        "Briefly Steps Outside Normal Time Flow",
+        "Vanishes and Reappears to Observers",
+        "Cannot Interact While Timeless"
+      ],
+      "cs": [
+        "Krátce vystoupí z normálního toku času",
+        "Zmizí a znovu se objeví pro pozorovatele",
+        "Nemůže interagovat během nadčasovosti"
+      ]
+    },
     "level": 47
   },
   {
@@ -903,12 +1615,32 @@
       "cs": "Elixír, který v pijákovi probouzí spící, primární sílu a na krátkou dobu mu propůjčuje kolosální sílu, odolnost a děsivou, bestiální auru."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Colossal strength, resilience, terrifying aura",
-      "cs": "Kolosální síla, odolnost, děsivá aura"
+    "attributes": {
+      "en": {
+        "Colossal Strength Boost": 1,
+        "Colossal Resilience Boost": 1,
+        "Primal Terror Aura": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Kolosální Zvýšení Síly": 1,
+        "Kolosální Zvýšení Odolnosti": 1,
+        "Aura Prvotního Děsu": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "strength_boost_colossal": 1, "resilience_boost_colossal": 1, "aura_terror_primal": 1, "duration": "brief" },
-    "abilities": ["Grants Colossal Strength and Resilience", "Projects Terrifying Primal Aura", "Temporary Bestial Transformation Aspects"],
+    "abilities": {
+      "en": [
+        "Grants Colossal Strength and Resilience",
+        "Projects Terrifying Primal Aura",
+        "Temporary Bestial Transformation Aspects"
+      ],
+      "cs": [
+        "Propůjčuje kolosální sílu a odolnost",
+        "Vyzařuje děsivou primální auru",
+        "Dočasné aspekty bestiální transformace"
+      ]
+    },
     "level": 48
   },
   {
@@ -922,12 +1654,32 @@
       "cs": "Legendární a přísně zakázaný odvar, o kterém se říká, že propůjčuje dočasnou nezranitelnost vůči božské moci a schopnost zraňovat božské bytosti. Extrémně nestabilní a nese obrovské osobní riziko."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Invulnerability to divine power, harm divine (highly unstable)",
-      "cs": "Nezranitelnost vůči božské moci, zraňuje božské (vysoce nestabilní)"
+    "attributes": {
+      "en": {
+        "Divine Invulnerability": 1,
+        "Damage vs. Divine": 1,
+        "Stability": "Highly Unstable",
+        "Duration": "Very Brief"
+      },
+      "cs": {
+        "Božská Nezranitelnost": 1,
+        "Poškození vs. Božské": 1,
+        "Stabilita": "Vysoce Nestabilní",
+        "Trvání": "Velmi Krátké"
+      }
     },
-    "attributes": { "invulnerability_divine": 1, "damage_boost_divine_target": 1, "stability_highly_unstable": 1, "duration": "very_brief" },
-    "abilities": ["Temporary Invulnerability to Divine Power", "Ability to Harm Divine Entities", "Extremely Volatile, High Personal Risk"],
+    "abilities": {
+      "en": [
+        "Temporary Invulnerability to Divine Power",
+        "Ability to Harm Divine Entities",
+        "Extremely Volatile, High Personal Risk"
+      ],
+      "cs": [
+        "Dočasná nezranitelnost vůči božské moci",
+        "Schopnost zraňovat božské bytosti",
+        "Extrémně nestabilní, vysoké osobní riziko"
+      ]
+    },
     "level": 49
   },
   {
@@ -941,12 +1693,32 @@
       "cs": "Ultimátní alchymistická kreace Strážců, vyvrcholení generačních znalostí. Propůjčuje dočasný stav zvýšené existence, posouvající všechny schopnosti – fyzické, mentální i duchovní – na jejich absolutní vrchol, hraničící s polobožstvím. Zátěž je nesmírná."
     },
     "itemType": "alchemical_concoction",
-    "itemEffectDescription": {
-      "en": "Peak human potential, near demigodhood (immense strain)",
-      "cs": "Vrchol lidského potenciálu, téměř polobožství (nesmírná zátěž)"
+    "attributes": {
+      "en": {
+        "Peak Potential": 1,
+        "Transient Demigod State": 1,
+        "Immense Strain": 1,
+        "Duration": "Brief"
+      },
+      "cs": {
+        "Vrcholný Potenciál": 1,
+        "Přechodný Stav Poloboha": 1,
+        "Nesmírná Zátěž": 1,
+        "Trvání": "Krátké"
+      }
     },
-    "attributes": { "all_abilities_peak_potential": 1, "state_demigod_transient": 1, "strain_immense": 1, "duration": "brief" },
-    "abilities": ["Temporary Elevation to Peak Human Potential in All Aspects", "Transient State Bordering on Demigodhood", "Causes Immense Physical and Spiritual Strain"],
+    "abilities": {
+      "en": [
+        "Temporary Elevation to Peak Human Potential in All Aspects",
+        "Transient State Bordering on Demigodhood",
+        "Causes Immense Physical and Spiritual Strain"
+      ],
+      "cs": [
+        "Dočasné povýšení na vrchol lidského potenciálu ve všech aspektech",
+        "Přechodný stav hraničící s polobožstvím",
+        "Způsobuje nesmírnou fyzickou a duchovní zátěž"
+      ]
+    },
     "level": 50
   }
 ]

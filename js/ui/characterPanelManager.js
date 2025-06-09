@@ -7,7 +7,7 @@ import * as dom from './domElements.js';
 import * as state from '../core/state.js';
 import * as apiService from '../core/apiService.js';
 import { getUIText } from '../services/localizationService.js';
-import { XP_LEVELS, MAX_PLAYER_LEVEL } from '../core/config.js';
+import { XP_LEVELS, MAX_PLAYER_LEVEL, BOON_DEFINITIONS, MIN_LEVEL_FOR_STORE } from '../core/config.js';
 import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARN, LOG_LEVEL_ERROR } from '../core/logger.js';
 import { attachTooltip, hideCurrentTooltip } from './tooltipManager.js';
 import * as modalManager from './modalManager.js';
@@ -129,21 +129,36 @@ export function buildCharacterPanel(themeId) {
  * @param {HTMLElement} container - The container to append the buttons to.
  * @private
  */
+/**
+ * Creates the icon buttons for Inventory, Traits, Lore, and Store.
+ * @param {HTMLElement} container - The container to append the buttons to.
+ * @private
+ */
 function _createIconButtons(container) {
     if (!container) return;
-
     const buttons = [
-        { id: 'lore', icon: 'icon_lore.svg', tooltipKey: 'tooltip_lore_button', handler: _showLoreModal },
         { id: 'inventory', icon: 'icon_inventory.svg', tooltipKey: 'tooltip_inventory_button', handler: _showInventoryModal },
-        { id: 'traits', icon: 'icon_traits.svg', tooltipKey: 'tooltip_traits_button', handler: _showTraitsModal }
+        { id: 'traits', icon: 'icon_traits.svg', tooltipKey: 'tooltip_traits_button', handler: _showTraitsModal },
+        { id: 'lore', icon: 'icon_lore.svg', tooltipKey: 'tooltip_lore_button', handler: _showLoreModal },
+        { id: 'store', icon: 'icon_store_empty.svg', tooltipKey: 'tooltip_store_button', handler: _showStoreModal }
     ];
-
     buttons.forEach(btnInfo => {
         const button = document.createElement('button');
         button.id = `char-panel-${btnInfo.id}-button`;
         button.className = 'ui-button icon-button';
+        // Special logic for the store button
+        if (btnInfo.id === 'store') {
+            const currentLevel = state.getPlayerLevel();
+            if (currentLevel >= MIN_LEVEL_FOR_STORE) {
+                button.disabled = true;
+                attachTooltip(button, 'tooltip_store_locked_level', { MIN_LEVEL: MIN_LEVEL_FOR_STORE });
+            } else {
+                attachTooltip(button, btnInfo.tooltipKey);
+            }
+        } else {
+            attachTooltip(button, btnInfo.tooltipKey);
+        }
         button.innerHTML = `<img src="images/app/${btnInfo.icon}" alt="${btnInfo.id}">`;
-        attachTooltip(button, btnInfo.tooltipKey);
         button.addEventListener('click', btnInfo.handler);
         container.appendChild(button);
     });
@@ -504,6 +519,18 @@ export function retranslateCharacterPanelLabels() {
     }
     log(LOG_LEVEL_DEBUG, "Character panel labels and tooltips re-translated.");
     updateCharacterPanel(false); // Refresh values without highlight on language change
+}
+
+/**
+ * Shows a placeholder modal for the Store.
+ * @private
+ */
+function _showStoreModal() {
+    modalManager.showCustomModal({
+        type: 'alert',
+        titleKey: 'modal_title_store',
+        messageKey: 'store_not_implemented_message'
+    });
 }
 
 /**

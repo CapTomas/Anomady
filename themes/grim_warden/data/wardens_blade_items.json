@@ -10,14 +10,18 @@
       "cs": "Rezavá, nevyvážená dýka. Spíše naostřený střep zoufalství než pořádná zbraň. Lepší než nic... sotva."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "3 Dmg",
-      "cs": "3 Zran."
-    },
     "attributes": {
-      "damage": 3
+      "en": {
+        "Damage": 3
+      },
+      "cs": {
+        "Zranění": 3
+      }
     },
-    "abilities": [],
+    "abilities": {
+      "en": [],
+      "cs": []
+    },
     "level": 1
   },
   {
@@ -31,14 +35,18 @@
       "cs": "Vytažena z mrtvoly či zapomenuté bedny, ostří této sekyrky je vyštípané, ale její váha nabízí ponurou útěchu."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "5 Dmg",
-      "cs": "5 Zran."
-    },
     "attributes": {
-      "damage": 5
+      "en": {
+        "Damage": 5
+      },
+      "cs": {
+        "Zranění": 5
+      }
     },
-    "abilities": [],
+    "abilities": {
+      "en": [],
+      "cs": []
+    },
     "level": 2
   },
   {
@@ -52,16 +60,22 @@
       "cs": "Pokrytá záseky a ponurou historií. Každý zub vypráví příběh zoufalého přežití nebo hořkého konce."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "7 Dmg, Jagged Edge",
-      "cs": "7 Zran., Zubaté Ostří"
-    },
     "attributes": {
-      "damage": 7
+      "en": {
+        "Damage": 7
+      },
+      "cs": {
+        "Zranění": 7
+      }
     },
-    "abilities": [
-      "Jagged Edge"
-    ],
+    "abilities": {
+      "en": [
+        "Jagged Edge"
+      ],
+      "cs": [
+        "Zubaté Ostří"
+      ]
+    },
     "level": 3
   },
   {
@@ -75,16 +89,22 @@
       "cs": "Hrubý hrot kopí, pravděpodobně odlomený z násady v nějaké zapomenuté šarvátce. Nepohodlný, ale dost ostrý na probodnutí kůže."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "9 Dmg, Piercing",
-      "cs": "9 Zran., Průrazný"
-    },
     "attributes": {
-      "damage": 9
+      "en": {
+        "Damage": 9
+      },
+      "cs": {
+        "Zranění": 9
+      }
     },
-    "abilities": [
-      "Piercing"
-    ],
+    "abilities": {
+      "en": [
+        "Piercing"
+      ],
+      "cs": [
+        "Průrazný"
+      ]
+    },
     "level": 4
   },
   {
@@ -98,16 +118,22 @@
       "cs": "Brutální nástroj, jehož ostří je lemováno krutými ostny, navrženými k trhání masa a vštěpování hlubokého, viscerálního strachu."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "11 Dmg, Causes Bleeding",
-      "cs": "11 Zran., Způsobuje Krvácení"
-    },
     "attributes": {
-      "damage": 11
+      "en": {
+        "Damage": 11
+      },
+      "cs": {
+        "Zranění": 11
+      }
     },
-    "abilities": [
-      "Causes Bleeding"
-    ],
+    "abilities": {
+      "en": [
+        "Causes Bleeding"
+      ],
+      "cs": [
+        "Způsobuje Krvácení"
+      ]
+    },
     "level": 5
   },
   {
@@ -121,16 +147,22 @@
       "cs": "Těžká, zakřivená čepel oblíbená zoufalými žoldáky. Zpívá truchlivou píseň, když se prosekává vzduchem."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "13 Dmg, Heavy Blow",
-      "cs": "13 Zran., Těžký Úder"
-    },
     "attributes": {
-      "damage": 13
+      "en": {
+        "Damage": 13
+      },
+      "cs": {
+        "Zranění": 13
+      }
     },
-    "abilities": [
-      "Heavy Blow"
-    ],
+    "abilities": {
+      "en": [
+        "Heavy Blow"
+      ],
+      "cs": [
+        "Těžký Úder"
+      ]
+    },
     "level": 6
   },
   {
@@ -144,16 +176,22 @@
       "cs": "Štíhlá dýka s jehlovitým hrotem, navržená k proklouznutí mezi žebry nebo do očí bezbožných. Chladná na dotek."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "14 Dmg, Precise Strike",
-      "cs": "14 Zran., Přesný Úder"
-    },
     "attributes": {
-      "damage": 14
+      "en": {
+        "Damage": 14
+      },
+      "cs": {
+        "Zranění": 14
+      }
     },
-    "abilities": [
-      "Precise Strike"
-    ],
+    "abilities": {
+      "en": [
+        "Precise Strike"
+      ],
+      "cs": [
+        "Přesný Úder"
+      ]
+    },
     "level": 7
   },
   {
@@ -167,16 +205,22 @@
       "cs": "Více nástroj řezníka než bojovníka, tato pila s pilovitým ostřím žvýká maso a drtí kosti s děsivou účinností."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "16 Dmg, Grievous Wounds",
-      "cs": "16 Zran., Těžké Rány"
-    },
     "attributes": {
-      "damage": 16
+      "en": {
+        "Damage": 16
+      },
+      "cs": {
+        "Zranění": 16
+      }
     },
-    "abilities": [
-      "Grievous Wounds"
-    ],
+    "abilities": {
+      "en": [
+        "Grievous Wounds"
+      ],
+      "cs": [
+        "Těžké Rány"
+      ]
+    },
     "level": 8
   },
   {
@@ -190,16 +234,22 @@
       "cs": "Rytířský meč, jehož ostří je tence potaženo stříbrem. Strážci často nosí takové čepele proti tvorům zranitelným čistým kovem."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "19 Dmg, Silvered Edge",
-      "cs": "19 Zran., Stříbrné Ostří"
-    },
     "attributes": {
-      "damage": 19
+      "en": {
+        "Damage": 19
+      },
+      "cs": {
+        "Zranění": 19
+      }
     },
-    "abilities": [
-      "Silvered Edge"
-    ],
+    "abilities": {
+      "en": [
+        "Silvered Edge"
+      ],
+      "cs": [
+        "Stříbrné Ostří"
+      ]
+    },
     "level": 9
   },
   {
@@ -213,17 +263,24 @@
       "cs": "Standardní čepel Strážce, prostá, ale bezchybně zpracovaná. Slabě bzučí v přítomnosti intenzivní Zkázy."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "22 Dmg, True Strike, +Blighted",
-      "cs": "22 Zran., Jistý Úder, +Zkažení"
-    },
     "attributes": {
-      "damage": 22
+      "en": {
+        "Damage": 22
+      },
+      "cs": {
+        "Zranění": 22
+      }
     },
-    "abilities": [
-      "True Strike",
-      "Effective vs Blighted"
-    ],
+    "abilities": {
+      "en": [
+        "True Strike",
+        "Effective vs Blighted"
+      ],
+      "cs": [
+        "Jistý Úder",
+        "Efektivní proti Zkaženým"
+      ]
+    },
     "level": 10
   },
   {
@@ -237,16 +294,22 @@
       "cs": "Obřadní dýka, leptaná vybledlými runami. Ačkoliv není určena k válce, drží v sobě mrazivou sílu proti nehmotným nepřátelům."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "24 Dmg, Ghost Touch",
-      "cs": "24 Zran., Dotek Ducha"
-    },
     "attributes": {
-      "damage": 24
+      "en": {
+        "Damage": 24
+      },
+      "cs": {
+        "Zranění": 24
+      }
     },
-    "abilities": [
-      "Ghost Touch"
-    ],
+    "abilities": {
+      "en": [
+        "Ghost Touch"
+      ],
+      "cs": [
+        "Dotek Ducha"
+      ]
+    },
     "level": 11
   },
   {
@@ -260,16 +323,22 @@
       "cs": "Těžká a ostrá, tato sekera je navržena k usekávání končetin a lámání ducha. V ruce působí chladně a nemilosrdně."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "27 Dmg, Crippling Blow",
-      "cs": "27 Zran., Ochromující Úder"
-    },
     "attributes": {
-      "damage": 27
+      "en": {
+        "Damage": 27
+      },
+      "cs": {
+        "Zranění": 27
+      }
     },
-    "abilities": [
-      "Crippling Blow"
-    ],
+    "abilities": {
+      "en": [
+        "Crippling Blow"
+      ],
+      "cs": [
+        "Ochromující Úder"
+      ]
+    },
     "level": 12
   },
   {
@@ -283,16 +352,22 @@
       "cs": "Zlověstně vyhlížející čepel s pilovitým ostřím, dokonalá pro zasazování hlubokých, tržných ran, které se odmítají uzavřít."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "30 Dmg, Persistent Bleed",
-      "cs": "30 Zran., Přetrvávající Krvácení"
-    },
     "attributes": {
-      "damage": 30
+      "en": {
+        "Damage": 30
+      },
+      "cs": {
+        "Zranění": 30
+      }
     },
-    "abilities": [
-      "Persistent Bleed"
-    ],
+    "abilities": {
+      "en": [
+        "Persistent Bleed"
+      ],
+      "cs": [
+        "Přetrvávající Krvácení"
+      ]
+    },
     "level": 13
   },
   {
@@ -306,16 +381,22 @@
       "cs": "Ukován ze vzácného chladného železa, tento meč je anathemou pro tvory iluzí a nadpozemských klamů. Jeho dotek takové entity pálí."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "33 Dmg, Fey Bane",
-      "cs": "33 Zran., Zhouba Víl"
-    },
     "attributes": {
-      "damage": 33
+      "en": {
+        "Damage": 33
+      },
+      "cs": {
+        "Zranění": 33
+      }
     },
-    "abilities": [
-      "Fey Bane"
-    ],
+    "abilities": {
+      "en": [
+        "Fey Bane"
+      ],
+      "cs": [
+        "Zhouba Víl"
+      ]
+    },
     "level": 14
   },
   {
@@ -329,17 +410,24 @@
       "cs": "Čepel zčernalé oceli, která se zdá pít světlo kolem sebe. Šepoty tvrdí, že byla ukuta v místě, kde vládnou stíny."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "37 Dmg, Shadow Strike, Fear",
-      "cs": "37 Zran., Stínový Úder, Strach"
-    },
     "attributes": {
-      "damage": 37
+      "en": {
+        "Damage": 37
+      },
+      "cs": {
+        "Zranění": 37
+      }
     },
-    "abilities": [
-      "Shadow Strike",
-      "Induces Fear"
-    ],
+    "abilities": {
+      "en": [
+        "Shadow Strike",
+        "Induces Fear"
+      ],
+      "cs": [
+        "Stínový Úder",
+        "Vzbuzuje strach"
+      ]
+    },
     "level": 15
   },
   {
@@ -353,16 +441,22 @@
       "cs": "Tato čepel Strážce je leptána silnými alchymistickými ochrannými znaky, které prudce reagují na Zkázu a spalují nakažené maso."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "40 Dmg, Potent vs Blighted",
-      "cs": "40 Zran., Mocná proti Zkaženým"
-    },
     "attributes": {
-      "damage": 40
+      "en": {
+        "Damage": 40
+      },
+      "cs": {
+        "Zranění": 40
+      }
     },
-    "abilities": [
-      "Potent vs Blighted"
-    ],
+    "abilities": {
+      "en": [
+        "Potent vs Blighted"
+      ],
+      "cs": [
+        "Silná proti Zkaženým"
+      ]
+    },
     "level": 16
   },
   {
@@ -376,16 +470,22 @@
       "cs": "Mrazivá zbraň, která se zdá poškozovat nejen tělo, ale i ducha. Ti, kdo jsou jí zasaženi, cítí, jak jejich vůle k boji slábne."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "42 Dmg, Withering Touch",
-      "cs": "42 Zran., Uvadající Dotek"
-    },
     "attributes": {
-      "damage": 42
+      "en": {
+        "Damage": 42
+      },
+      "cs": {
+        "Zranění": 42
+      }
     },
-    "abilities": [
-      "Withering Touch"
-    ],
+    "abilities": {
+      "en": [
+        "Withering Touch"
+      ],
+      "cs": [
+        "Uvadající Dotek"
+      ]
+    },
     "level": 17
   },
   {
@@ -399,16 +499,22 @@
       "cs": "Kdysi ovládána legendárním Strážcem, tato sekera nese tíhu zapomenutých přísah. Její ostří dokáže drtit zbroj a lámat kosti."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "46 Dmg, Sunders Armor",
-      "cs": "46 Zran., Drtí Zbroj"
-    },
     "attributes": {
-      "damage": 46
+      "en": {
+        "Damage": 46
+      },
+      "cs": {
+        "Zranění": 46
+      }
     },
-    "abilities": [
-      "Sunders Armor"
-    ],
+    "abilities": {
+      "en": [
+        "Sunders Armor"
+      ],
+      "cs": [
+        "Drtí Zbroj"
+      ]
+    },
     "level": 18
   },
   {
@@ -422,16 +528,22 @@
       "cs": "Elegantně zakřivený srp, který slabě září pod měsíčním svitem. Je obzvláště účinný proti nočním a stínovým tvorům."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "49 Dmg, Nocturnal Might",
-      "cs": "49 Zran., Noční Síla"
-    },
     "attributes": {
-      "damage": 49
+      "en": {
+        "Damage": 49
+      },
+      "cs": {
+        "Zranění": 49
+      }
     },
-    "abilities": [
-      "Nocturnal Might"
-    ],
+    "abilities": {
+      "en": [
+        "Nocturnal Might"
+      ],
+      "cs": [
+        "Noční Síla"
+      ]
+    },
     "level": 19
   },
   {
@@ -445,17 +557,24 @@
       "cs": "Ukutá v zármutku a zkalená slzami, tato čepel zasazuje nejen fyzické rány, ale i zdrcující zoufalství svým obětem."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "53 Dmg, Aura of Despair, Life Leech",
-      "cs": "53 Zran., Aura Zoufalství, Odsávání Života"
-    },
     "attributes": {
-      "damage": 53
+      "en": {
+        "Damage": 53
+      },
+      "cs": {
+        "Zranění": 53
+      }
     },
-    "abilities": [
-      "Aura of Despair",
-      "Minor Life Leech"
-    ],
+    "abilities": {
+      "en": [
+        "Aura of Despair",
+        "Minor Life Leech"
+      ],
+      "cs": [
+        "Aura Zoufalství",
+        "Menší Odsávání Života"
+      ]
+    },
     "level": 20
   },
   {
@@ -469,16 +588,22 @@
       "cs": "Dlouhá, zubatá čepel připomínající monstrózní trn. Zdá se, že se v sevření nositele jemně svíjí, lačná po zkažené esenci."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "57 Dmg, Blight Devourer",
-      "cs": "57 Zran., Požírač Zkázy"
-    },
     "attributes": {
-      "damage": 57
+      "en": {
+        "Damage": 57
+      },
+      "cs": {
+        "Zranění": 57
+      }
     },
-    "abilities": [
-      "Blight Devourer"
-    ],
+    "abilities": {
+      "en": [
+        "Blight Devourer"
+      ],
+      "cs": [
+        "Požírač Zkázy"
+      ]
+    },
     "level": 21
   },
   {
@@ -492,16 +617,22 @@
       "cs": "Čepel předávaná generacemi Strážců, prodchnutá ozvěnami jejich neochvějného odhodlání. Zářivě vzdoruje nejtemnějším hrůzám."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "61 Dmg, Unbreakable Will",
-      "cs": "61 Zran., Nezlomná Vůle"
-    },
     "attributes": {
-      "damage": 61
+      "en": {
+        "Damage": 61
+      },
+      "cs": {
+        "Zranění": 61
+      }
     },
-    "abilities": [
-      "Unbreakable Will"
-    ],
+    "abilities": {
+      "en": [
+        "Unbreakable Will"
+      ],
+      "cs": [
+        "Nezlomná Vůle"
+      ]
+    },
     "level": 22
   },
   {
@@ -515,17 +646,24 @@
       "cs": "Tato kosa s dlouhou násadou se zdá šeptat tajemství hrobu těm, ke kterým se přiblíží. Její průchod zanechává nepřirozený chlad."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "65 Dmg, Soul Chill, Sweeping Arc",
-      "cs": "65 Zran., Mrazivá Duše, Široký Oblouk"
-    },
     "attributes": {
-      "damage": 65
+      "en": {
+        "Damage": 65
+      },
+      "cs": {
+        "Zranění": 65
+      }
     },
-    "abilities": [
-      "Soul Chill",
-      "Sweeping Arc"
-    ],
+    "abilities": {
+      "en": [
+        "Soul Chill",
+        "Sweeping Arc"
+      ],
+      "cs": [
+        "Mrazivá Duše",
+        "Široký Oblouk"
+      ]
+    },
     "level": 23
   },
   {
@@ -539,17 +677,24 @@
       "cs": "Fragment nějakého nemožného, temného materiálu, vybroušený do ostří břitvy. Působí cize a pulzuje slabou, zlovolnou energií."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "69 Dmg, Void Strike, Unsettling Aura",
-      "cs": "69 Zran., Úder Prázdnoty, Znepokojivá Aura"
-    },
     "attributes": {
-      "damage": 69
+      "en": {
+        "Damage": 69
+      },
+      "cs": {
+        "Zranění": 69
+      }
     },
-    "abilities": [
-      "Void Strike",
-      "Unsettling Aura"
-    ],
+    "abilities": {
+      "en": [
+        "Void Strike",
+        "Unsettling Aura"
+      ],
+      "cs": [
+        "Úder Prázdnoty",
+        "Znepokojivá Aura"
+      ]
+    },
     "level": 24
   },
   {
@@ -563,41 +708,24 @@
       "cs": "Těžký obouruční meč, jehož ocel je potřísněna životní krví nesčetných Zkažených tvorů. Říká se, že zpívá píseň čisté zkázy, když jím vládne pravý Strážce."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "75 Dmg, Annihilating Blow, Blight Purge",
-      "cs": "75 Zran., Ničivý Úder, Očista Zkázy"
-    },
     "attributes": {
-      "damage": 75
+      "en": {
+        "Damage": 75
+      },
+      "cs": {
+        "Zranění": 75
+      }
     },
-    "abilities": [
-      "Annihilating Blow",
-      "Blight Purge"
-    ],
-    "level": 25
-  },
-  {
-    "id": "gw_blade_veridian_bane_l25",
-    "name": {
-      "en": "Veridian Bane",
-      "cs": "Zhouba Veridianu"
+    "abilities": {
+      "en": [
+        "Annihilating Blow",
+        "Blight Purge"
+      ],
+      "cs": [
+        "Ničivý Úder",
+        "Očista Zkázy"
+      ]
     },
-    "description": {
-      "en": "A heavy, two-handed sword, its steel stained with the lifeblood of countless Blighted creatures. It is said to sing a song of pure destruction when wielded by a true Warden.",
-      "cs": "Těžký obouruční meč, jehož ocel je potřísněna životní krví nesčetných Zkažených tvorů. Říká se, že zpívá píseň čisté zkázy, když jím vládne pravý Strážce."
-    },
-    "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "75 Dmg, Annihilating Blow, Blight Purge",
-      "cs": "75 Zran., Ničivý Úder, Očista Zkázy"
-    },
-    "attributes": {
-      "damage": 75
-    },
-    "abilities": [
-      "Annihilating Blow",
-      "Blight Purge"
-    ],
     "level": 25
   },
   {
@@ -611,16 +739,22 @@
       "cs": "Vyrobená z meteorického železa, tato dýka se třpytí zachyceným hvězdným světlem. Jemně bzučí subtilní energií, znepokojující pro tvory hlubokého stínu."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "79 Dmg, Celestial Radiance",
-      "cs": "79 Zran., Nebeský Jas"
-    },
     "attributes": {
-      "damage": 79
+      "en": {
+        "Damage": 79
+      },
+      "cs": {
+        "Zranění": 79
+      }
     },
-    "abilities": [
-      "Celestial Radiance"
-    ],
+    "abilities": {
+      "en": [
+        "Celestial Radiance"
+      ],
+      "cs": [
+        "Nebeský Jas"
+      ]
+    },
     "level": 26
   },
   {
@@ -634,16 +768,22 @@
       "cs": "Štíhlá, elegantní čepel navržená k nacházení smrtelných zranitelností. Legendy praví, že vede ruku nositele k srdci nepřítele."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "83 Dmg, Fatal Puncture",
-      "cs": "83 Zran., Smrtící Průraz"
-    },
     "attributes": {
-      "damage": 83
+      "en": {
+        "Damage": 83
+      },
+      "cs": {
+        "Zranění": 83
+      }
     },
-    "abilities": [
-      "Fatal Puncture"
-    ],
+    "abilities": {
+      "en": [
+        "Fatal Puncture"
+      ],
+      "cs": [
+        "Smrtící Průraz"
+      ]
+    },
     "level": 27
   },
   {
@@ -657,16 +797,22 @@
       "cs": "Tento masivní sekáč je pokryt prastarými runami ochrany a hněvu. Každý švih nese zuřivost zapomenutých bitev."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "88 Dmg, Rune-Empowered Cleave",
-      "cs": "88 Zran., Runami Posílený Sek"
-    },
     "attributes": {
-      "damage": 88
+      "en": {
+        "Damage": 88
+      },
+      "cs": {
+        "Zranění": 88
+      }
     },
-    "abilities": [
-      "Rune-Empowered Cleave"
-    ],
+    "abilities": {
+      "en": [
+        "Rune-Empowered Cleave"
+      ],
+      "cs": [
+        "Runami Posílený Sek"
+      ]
+    },
     "level": 28
   },
   {
@@ -680,17 +826,24 @@
       "cs": "Čepel je zahalena éterickými plameny, které hoří chladným, spektrálním světlem, děsivým pro živé i mrtvé."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "93 Dmg, Spectral Burn, Terrifying Presence",
-      "cs": "93 Zran., Spektrální Popálení, Děsivá Přítomnost"
-    },
     "attributes": {
-      "damage": 93
+      "en": {
+        "Damage": 93
+      },
+      "cs": {
+        "Zranění": 93
+      }
     },
-    "abilities": [
-      "Spectral Burn",
-      "Terrifying Presence"
-    ],
+    "abilities": {
+      "en": [
+        "Spectral Burn",
+        "Terrifying Presence"
+      ],
+      "cs": [
+        "Spektrální Popálení",
+        "Děsivá Přítomnost"
+      ]
+    },
     "level": 29
   },
   {
@@ -704,17 +857,24 @@
       "cs": "Vyrobená ze zubu velkého draka, tato čepel je neuvěřitelně ostrá a odolná, bzučící primární silou."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "100 Dmg, Wyrm's Fury, Armor Shatter",
-      "cs": "100 Zran., Dračí Zuřivost, Drtí Zbroj"
-    },
     "attributes": {
-      "damage": 100
+      "en": {
+        "Damage": 100
+      },
+      "cs": {
+        "Zranění": 100
+      }
     },
-    "abilities": [
-      "Wyrm's Fury",
-      "Armor Shatter"
-    ],
+    "abilities": {
+      "en": [
+        "Wyrm's Fury",
+        "Armor Shatter"
+      ],
+      "cs": [
+        "Dračí Zuřivost",
+        "Drtič Zbroje"
+      ]
+    },
     "level": 30
   },
   {
@@ -728,16 +888,22 @@
       "cs": "Čepel z vulkanického skla, nepřirozeně chladná a ostrá. Zdá se, že pohlcuje teplo a naději ze svého okolí."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "105 Dmg, Soul Freeze",
-      "cs": "105 Zran., Zmrazení Duše"
-    },
     "attributes": {
-      "damage": 105
+      "en": {
+        "Damage": 105
+      },
+      "cs": {
+        "Zranění": 105
+      }
     },
-    "abilities": [
-      "Soul Freeze"
-    ],
+    "abilities": {
+      "en": [
+        "Soul Freeze"
+      ],
+      "cs": [
+        "Zmrazení Duše"
+      ]
+    },
     "level": 31
   },
   {
@@ -751,16 +917,22 @@
       "cs": "Strážcův obouruční meč, těžký a vyvážený pro spravedlivou zuřivost. Slabě září stříbrným světlem, když čelí skutečnému zlu."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "111 Dmg, Holy Smite",
-      "cs": "111 Zran., Svaté Udeření"
-    },
     "attributes": {
-      "damage": 111
+      "en": {
+        "Damage": 111
+      },
+      "cs": {
+        "Zranění": 111
+      }
     },
-    "abilities": [
-      "Holy Smite"
-    ],
+    "abilities": {
+      "en": [
+        "Holy Smite"
+      ],
+      "cs": [
+        "Svaté Udeření"
+      ]
+    },
     "level": 32
   },
   {
@@ -774,16 +946,22 @@
       "cs": "Tato pokroucená čepel z temného kovu se zdá způsobovat samotnou Zkázu, zasazujíc rány, které hnisají a šíří nákazu."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "117 Dmg, Blight Infusion",
-      "cs": "117 Zran., Infuze Zkázy"
-    },
     "attributes": {
-      "damage": 117
+      "en": {
+        "Damage": 117
+      },
+      "cs": {
+        "Zranění": 117
+      }
     },
-    "abilities": [
-      "Blight Infusion"
-    ],
+    "abilities": {
+      "en": [
+        "Blight Infusion"
+      ],
+      "cs": [
+        "Infuze Zkázy"
+      ]
+    },
     "level": 33
   },
   {
@@ -797,16 +975,22 @@
       "cs": "Prastará čepel nesoucí znak ztraceného rodu Strážců. Směruje duchy minulých hrdinů k ochraně svého nositele."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "123 Dmg, Spirit Shield",
-      "cs": "123 Zran., Duchovní Štít"
-    },
     "attributes": {
-      "damage": 123
+      "en": {
+        "Damage": 123
+      },
+      "cs": {
+        "Zranění": 123
+      }
     },
-    "abilities": [
-      "Spirit Shield"
-    ],
+    "abilities": {
+      "en": [
+        "Spirit Shield"
+      ],
+      "cs": [
+        "Duchovní Štít"
+      ]
+    },
     "level": 34
   },
   {
@@ -820,17 +1004,24 @@
       "cs": "Ukutá ze snů a strachu, tato zbraň se mění a svíjí. Její údery vyvolávají nejhlubší hrůzy oběti."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "130 Dmg, Evokes Terror, Phantasmal Wounds",
-      "cs": "130 Zran., Vyvolává Hrůzu, Fantomové Rány"
-    },
     "attributes": {
-      "damage": 130
+      "en": {
+        "Damage": 130
+      },
+      "cs": {
+        "Zranění": 130
+      }
     },
-    "abilities": [
-      "Evokes Terror",
-      "Phantasmal Wounds"
-    ],
+    "abilities": {
+      "en": [
+        "Evokes Terror",
+        "Phantasmal Wounds"
+      ],
+      "cs": [
+        "Vyvolává Hrůzu",
+        "Fantomové Rány"
+      ]
+    },
     "level": 35
   },
   {
@@ -844,16 +1035,22 @@
       "cs": "Čepel vykládaná fragmentem vzácného Slunečního kamene, hoří zachycenou sluneční zuřivostí, obzvláště účinná proti tvorům temnoty a chladu."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "137 Dmg, Solar Flare",
-      "cs": "137 Zran., Sluneční Erupce"
-    },
     "attributes": {
-      "damage": 137
+      "en": {
+        "Damage": 137
+      },
+      "cs": {
+        "Zranění": 137
+      }
     },
-    "abilities": [
-      "Solar Flare"
-    ],
+    "abilities": {
+      "en": [
+        "Solar Flare"
+      ],
+      "cs": [
+        "Sluneční Erupce"
+      ]
+    },
     "level": 36
   },
   {
@@ -867,16 +1064,22 @@
       "cs": "Tato zbraň se zdá prořezávat samotnou realitou, zanechávajíc rány, které nekrvácí krev, ale prázdnotu. Šeptá o Vnější Temnotě."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "145 Dmg, Dimensional Rift",
-      "cs": "145 Zran., Dimenziální Trhlina"
-    },
     "attributes": {
-      "damage": 145
+      "en": {
+        "Damage": 145
+      },
+      "cs": {
+        "Zranění": 145
+      }
     },
-    "abilities": [
-      "Dimensional Rift"
-    ],
+    "abilities": {
+      "en": [
+        "Dimensional Rift"
+      ],
+      "cs": [
+        "Dimenziální Trhlina"
+      ]
+    },
     "level": 37
   },
   {
@@ -890,17 +1093,24 @@
       "cs": "Říká se, že je ukuta pouze pod světlem Krvavého měsíce, tato kosa prahne po životní esenci a sílí s každým životem, který vezme."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "153 Dmg, Essence Drain, Growing Dread",
-      "cs": "153 Zran., Odsávání Esence, Rostoucí Hrůza"
-    },
     "attributes": {
-      "damage": 153
+      "en": {
+        "Damage": 153
+      },
+      "cs": {
+        "Zranění": 153
+      }
     },
-    "abilities": [
-      "Essence Drain",
-      "Growing Dread"
-    ],
+    "abilities": {
+      "en": [
+        "Essence Drain",
+        "Growing Dread"
+      ],
+      "cs": [
+        "Odsávání Esence",
+        "Rostoucí Hrůza"
+      ]
+    },
     "level": 38
   },
   {
@@ -914,16 +1124,22 @@
       "cs": "Tato čepel praská zachyceným bleskem a řve jako hrom. Její údery mohou přivolat blesky z nebes."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "162 Dmg, Lightning Strike",
-      "cs": "162 Zran., Úder Blesku"
-    },
     "attributes": {
-      "damage": 162
+      "en": {
+        "Damage": 162
+      },
+      "cs": {
+        "Zranění": 162
+      }
     },
-    "abilities": [
-      "Lightning Strike"
-    ],
+    "abilities": {
+      "en": [
+        "Lightning Strike"
+      ],
+      "cs": [
+        "Úder Blesku"
+      ]
+    },
     "level": 39
   },
   {
@@ -937,17 +1153,24 @@
       "cs": "Ponurý popravčí meč nesmírné váhy. Říká se, že uděluje rychlý, byť nemilosrdný, konec jakémukoli nepříteli, bez ohledu na jeho podstatu."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "175 Dmg, Merciless Execution, Ignores Defenses",
-      "cs": "175 Zran., Nemilosrdná Poprava, Ignoruje Obranu"
-    },
     "attributes": {
-      "damage": 175
+      "en": {
+        "Damage": 175
+      },
+      "cs": {
+        "Zranění": 175
+      }
     },
-    "abilities": [
-      "Merciless Execution",
-      "Ignores Defenses"
-    ],
+    "abilities": {
+      "en": [
+        "Merciless Execution",
+        "Ignores Defenses"
+      ],
+      "cs": [
+        "Nemilosrdná Poprava",
+        "Ignoruje Obranu"
+      ]
+    },
     "level": 40
   },
   {
@@ -961,16 +1184,22 @@
       "cs": "Krutá, pilovitá čepel, která nejen mrzačí tělo, ale také uhasíná poslední jiskřičky naděje ve svých obětech."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "183 Dmg, Crushing Despair",
-      "cs": "183 Zran., Zdrcující Zoufalství"
-    },
     "attributes": {
-      "damage": 183
+      "en": {
+        "Damage": 183
+      },
+      "cs": {
+        "Zranění": 183
+      }
     },
-    "abilities": [
-      "Crushing Despair"
-    ],
+    "abilities": {
+      "en": [
+        "Crushing Despair"
+      ],
+      "cs": [
+        "Zdrcující Zoufalství"
+      ]
+    },
     "level": 41
   },
   {
@@ -984,17 +1213,24 @@
       "cs": "Tato čepel nevydává žádný zvuk, když řeže, kradouc život s děsivou tichostí. Její oběti často umírají dříve, než si uvědomí, že byly zasaženy."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "192 Dmg, Silent Death, Unseen Strike",
-      "cs": "192 Zran., Tichá Smrt, Neviděný Úder"
-    },
     "attributes": {
-      "damage": 192
+      "en": {
+        "Damage": 192
+      },
+      "cs": {
+        "Zranění": 192
+      }
     },
-    "abilities": [
-      "Silent Death",
-      "Unseen Strike"
-    ],
+    "abilities": {
+      "en": [
+        "Silent Death",
+        "Unseen Strike"
+      ],
+      "cs": [
+        "Tichá Smrt",
+        "Neviděný Úder"
+      ]
+    },
     "level": 42
   },
   {
@@ -1008,16 +1244,22 @@
       "cs": "Meč věčně zahalený zelenými, zkaženými plameny, které pohlcují maso i duši, zanechávajíc jen popel a hrůzu."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "201 Dmg, Consuming Balefire",
-      "cs": "201 Zran., Pohlcující Zhoubný Oheň"
-    },
     "attributes": {
-      "damage": 201
+      "en": {
+        "Damage": 201
+      },
+      "cs": {
+        "Zranění": 201
+      }
     },
-    "abilities": [
-      "Consuming Balefire"
-    ],
+    "abilities": {
+      "en": [
+        "Consuming Balefire"
+      ],
+      "cs": [
+        "Pohlcující Zhoubný Oheň"
+      ]
+    },
     "level": 43
   },
   {
@@ -1031,16 +1273,22 @@
       "cs": "Střep roztříštěného času, vybroušený do čepele. Jeho dotek dokáže rozplétat okamžiky, způsobujíc, že rány stárnou a rozkládají se s nemožnou rychlostí."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "210 Dmg, Temporal Decay",
-      "cs": "210 Zran., Časový Rozklad"
-    },
     "attributes": {
-      "damage": 210
+      "en": {
+        "Damage": 210
+      },
+      "cs": {
+        "Zranění": 210
+      }
     },
-    "abilities": [
-      "Temporal Decay"
-    ],
+    "abilities": {
+      "en": [
+        "Temporal Decay"
+      ],
+      "cs": [
+        "Časový Rozklad"
+      ]
+    },
     "level": 44
   },
   {
@@ -1054,17 +1302,24 @@
       "cs": "Konec. Tato legendární čepel, o které se šušká, že je darem od zapomenutého boha smrti, přináší absolutní konečnost."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "225 Dmg, Final Judgment, Instant Kill Chance",
-      "cs": "225 Zran., Poslední Soud, Šance na Okamžité Zabíjení"
-    },
     "attributes": {
-      "damage": 225
+      "en": {
+        "Damage": 225
+      },
+      "cs": {
+        "Zranění": 225
+      }
     },
-    "abilities": [
-      "Final Judgment",
-      "Chance of Instant Kill"
-    ],
+    "abilities": {
+      "en": [
+        "Final Judgment",
+        "Chance of Instant Kill"
+      ],
+      "cs": [
+        "Poslední Soud",
+        "Šance na Okamžité Zabíjení"
+      ]
+    },
     "level": 45
   },
   {
@@ -1078,17 +1333,24 @@
       "cs": "Ukován v srdci stínové říše, tento sekáč řeže nejen maso, ale také světlo a naději ze svých obětí."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "235 Dmg, Shadow Rend, Despair",
-      "cs": "235 Zran., Trhlina Stínů, Zoufalství"
-    },
     "attributes": {
-      "damage": 235
+      "en": {
+        "Damage": 235
+      },
+      "cs": {
+        "Zranění": 235
+      }
     },
-    "abilities": [
-      "Shadow Rend",
-      "Causes Despair"
-    ],
+    "abilities": {
+      "en": [
+        "Shadow Rend",
+        "Causes Despair"
+      ],
+      "cs": [
+        "Trhlina Stínů",
+        "Způsobuje Zoufalství"
+      ]
+    },
     "level": 46
   },
   {
@@ -1102,17 +1364,24 @@
       "cs": "Rodová čepel Strážce věčně pokrytá jinovatkou, mrazí rány při kontaktu a s mrazivou lehkostí drtí slabší obranu."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "246 Dmg, Deep Freeze, Brittle Armor",
-      "cs": "246 Zran., Hluboký Mráz, Křehká Zbroj"
-    },
     "attributes": {
-      "damage": 246
+      "en": {
+        "Damage": 246
+      },
+      "cs": {
+        "Zranění": 246
+      }
     },
-    "abilities": [
-      "Deep Freeze",
-      "Makes Armor Brittle"
-    ],
+    "abilities": {
+      "en": [
+        "Deep Freeze",
+        "Makes Armor Brittle"
+      ],
+      "cs": [
+        "Hluboký Mráz",
+        "Činí Zbroj Křehkou"
+      ]
+    },
     "level": 47
   },
   {
@@ -1126,17 +1395,24 @@
       "cs": "Tento kolosální meč hoří vnitřním, bezbožným ohněm, který se živí dušemi zabitých a s každým zabitím sílí."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "258 Dmg, Soulflame Burst, Fearsome Heat",
-      "cs": "258 Zran., Výbuch Duševního Plamene, Děsivý Žár"
-    },
     "attributes": {
-      "damage": 258
+      "en": {
+        "Damage": 258
+      },
+      "cs": {
+        "Zranění": 258
+      }
     },
-    "abilities": [
-      "Soulflame Burst",
-      "Fearsome Heat"
-    ],
+    "abilities": {
+      "en": [
+        "Soulflame Burst",
+        "Fearsome Heat"
+      ],
+      "cs": [
+        "Výbuch Duševního Plamene",
+        "Děsivý Žár"
+      ]
+    },
     "level": 48
   },
   {
@@ -1150,17 +1426,24 @@
       "cs": "Čepel z absolutní tmy, pohlcující veškeré světlo. Vštěpuje hlubokou, existenciální hrůzu, která dokáže zlomit i tu nejsilnější vůli."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "270 Dmg, Consuming Darkness, Will Breaker",
-      "cs": "270 Zran., Pohlcující Temnota, Lamač Vůle"
-    },
     "attributes": {
-      "damage": 270
+      "en": {
+        "Damage": 270
+      },
+      "cs": {
+        "Zranění": 270
+      }
     },
-    "abilities": [
-      "Consuming Darkness",
-      "Will Breaker"
-    ],
+    "abilities": {
+      "en": [
+        "Consuming Darkness",
+        "Will Breaker"
+      ],
+      "cs": [
+        "Pohlcující Temnota",
+        "Lamač Vůle"
+      ]
+    },
     "level": 49
   },
   {
@@ -1174,18 +1457,26 @@
       "cs": "Legendární čepel, nebo možná jen její vzpomínka, která rezonuje silou a žalem úplně prvního Strážce. Její dotek je soudem i milostí."
     },
     "itemType": "wardens_blade",
-    "itemEffectDescription": {
-      "en": "300 Dmg, Primal Ward, True Death, Aura of Resolve",
-      "cs": "300 Zran., Prvotní Ochrana, Pravá Smrt, Aura Odhodlání"
-    },
     "attributes": {
-      "damage": 300
+      "en": {
+        "Damage": 300
+      },
+      "cs": {
+        "Zranění": 300
+      }
     },
-    "abilities": [
-      "Primal Ward",
-      "True Death",
-      "Aura of Resolve"
-    ],
+    "abilities": {
+      "en": [
+        "Primal Ward",
+        "True Death",
+        "Aura of Resolve"
+      ],
+      "cs": [
+        "Prvotní Ochrana",
+        "Pravá Smrt",
+        "Aura Odhodlání"
+      ]
+    },
     "level": 50
   }
 ]

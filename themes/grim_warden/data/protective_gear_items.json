@@ -10,12 +10,22 @@
       "cs": "O něco víc než potrhaná látka, slabě páchnoucí kryptovým prachem a starými žaly. Poskytuje chatrnou ochranu proti dotírajícím stínům."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "3 Armor, Slightly dampens sound",
-      "cs": "3 Zbroj, Lehce tlumí zvuk"
+    "attributes": {
+      "en": {
+        "Armor": 3
+      },
+      "cs": {
+        "Zbroj": 3
+      }
     },
-    "attributes": { "armor": 3 },
-    "abilities": ["Slightly Dampens Sound"],
+    "abilities": {
+      "en": [
+        "Slightly Dampens Sound"
+      ],
+      "cs": [
+        "Lehce tlumí zvuk"
+      ]
+    },
     "level": 1
   },
   {
@@ -29,12 +39,22 @@
       "cs": "Ztvrdlé, nesourodé kusy vydělané zvířecí kůže, nahrubo sešité. Lepší než nic, ale ne o mnoho."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "4 Armor, Minor cold resistance",
-      "cs": "4 Zbroj, Menší odolnost proti chladu"
+    "attributes": {
+      "en": {
+        "Armor": 4
+      },
+      "cs": {
+        "Zbroj": 4
+      }
     },
-    "attributes": { "armor": 4 },
-    "abilities": ["Minor Cold Resistance"],
+    "abilities": {
+      "en": [
+        "Minor Cold Resistance"
+      ],
+      "cs": [
+        "Menší odolnost proti chladu"
+      ]
+    },
     "level": 2
   },
   {
@@ -48,12 +68,22 @@
       "cs": "Několik délek zkorodované kroužkové zbroje, možná zachráněných z zapomenutého bojiště. Při každém pohybu cinkají."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "5 Armor, Deters vermin",
-      "cs": "5 Zbroj, Odrazuje havěť"
+    "attributes": {
+      "en": {
+        "Armor": 5
+      },
+      "cs": {
+        "Zbroj": 5
+      }
     },
-    "attributes": { "armor": 5 },
-    "abilities": ["Deters Small Vermin"],
+    "abilities": {
+      "en": [
+        "Deters Small Vermin"
+      ],
+      "cs": [
+        "Odrazuje havěť"
+      ]
+    },
     "level": 3
   },
   {
@@ -67,12 +97,22 @@
       "cs": "Těžký, hrubý oděv, který poskytuje překvapivé teplo a určité polstrování proti úderům. Nese vůni vlhké země."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "6 Armor, Provides warmth",
-      "cs": "6 Zbroj, Poskytuje teplo"
+    "attributes": {
+      "en": {
+        "Armor": 6
+      },
+      "cs": {
+        "Zbroj": 6
+      }
     },
-    "attributes": { "armor": 6 },
-    "abilities": ["Provides Warmth"],
+    "abilities": {
+      "en": [
+        "Provides Warmth"
+      ],
+      "cs": [
+        "Poskytuje teplo"
+      ]
+    },
     "level": 4
   },
   {
@@ -86,12 +126,22 @@
       "cs": "Pásy pevného plátna protkané nabroušenými zvířecími kostmi. Znepokojivá, primitivní forma zbroje."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "7 Armor, Causes unease in animals",
-      "cs": "7 Zbroj, Vyvolává neklid u zvířat"
+    "attributes": {
+      "en": {
+        "Armor": 7
+      },
+      "cs": {
+        "Zbroj": 7
+      }
     },
-    "attributes": { "armor": 7 },
-    "abilities": ["Causes Unease in Animals"],
+    "abilities": {
+      "en": [
+        "Causes Unease in Animals"
+      ],
+      "cs": [
+        "Vyvolává neklid u zvířat"
+      ]
+    },
     "level": 5
   },
   {
@@ -105,12 +155,22 @@
       "cs": "Vesta bez rukávů z vařené kůže, tuhá a poskytující slušnou ochranu trupu. Nese stopy dlouhého používání."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "8 Armor, Resists minor cuts",
-      "cs": "8 Zbroj, Odolává drobným řezům"
+    "attributes": {
+      "en": {
+        "Armor": 8
+      },
+      "cs": {
+        "Zbroj": 8
+      }
     },
-    "attributes": { "armor": 8 },
-    "abilities": ["Resists Minor Cuts"],
+    "abilities": {
+      "en": [
+        "Resists Minor Cuts"
+      ],
+      "cs": [
+        "Odolává drobným řezům"
+      ]
+    },
     "level": 6
   },
   {
@@ -124,12 +184,22 @@
       "cs": "Tlustá, prošívaná bunda nošená pod zbrojí nebo samostatně. Její mnohé vrstvy pohlcují sílu nárazů."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "9 Armor, Reduces blunt trauma",
-      "cs": "9 Zbroj, Snižuje tupé trauma"
+    "attributes": {
+      "en": {
+        "Armor": 9
+      },
+      "cs": {
+        "Zbroj": 9
+      }
     },
-    "attributes": { "armor": 9 },
-    "abilities": ["Reduces Blunt Trauma"],
+    "abilities": {
+      "en": [
+        "Reduces Blunt Trauma"
+      ],
+      "cs": [
+        "Snižuje tupé trauma"
+      ]
+    },
     "level": 7
   },
   {
@@ -143,12 +213,22 @@
       "cs": "Nahrubo tepaný kus železa určený k ochraně jednoho ramene. Nepohodlný, ale lepší než odhalená klíční kost."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "10 Armor, Deflects glancing blows",
-      "cs": "10 Zbroj, Odklání letmé údery"
+    "attributes": {
+      "en": {
+        "Armor": 10
+      },
+      "cs": {
+        "Zbroj": 10
+      }
     },
-    "attributes": { "armor": 10 },
-    "abilities": ["Deflects Glancing Blows to Shoulder"],
+    "abilities": {
+      "en": [
+        "Deflects Glancing Blows to Shoulder"
+      ],
+      "cs": [
+        "Odklání letmé údery"
+      ]
+    },
     "level": 8
   },
   {
@@ -162,12 +242,22 @@
       "cs": "Plášť z husté, tmavé vlny, ošetřený oleji k odpuzování vody. Jeho váha nabízí překvapivý stupeň ochrany."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "11 Armor, Water resistant",
-      "cs": "11 Zbroj, Voděodolný"
+    "attributes": {
+      "en": {
+        "Armor": 11
+      },
+      "cs": {
+        "Zbroj": 11
+      }
     },
-    "attributes": { "armor": 11 },
-    "abilities": ["Water Resistant"],
+    "abilities": {
+      "en": [
+        "Water Resistant"
+      ],
+      "cs": [
+        "Voděodolný"
+      ]
+    },
     "level": 9
   },
   {
@@ -181,12 +271,22 @@
       "cs": "Vesta z velkých kovových kroužků našitých na kožený podklad. Každý kroužek nese drobnou ochrannou rytinu."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "12 Armor, Minor ward against spirits",
-      "cs": "12 Zbroj, Menší ochrana proti duchům"
+    "attributes": {
+      "en": {
+        "Armor": 12
+      },
+      "cs": {
+        "Zbroj": 12
+      }
     },
-    "attributes": { "armor": 12 },
-    "abilities": ["Minor Ward Against Spirits"],
+    "abilities": {
+      "en": [
+        "Minor Ward Against Spirits"
+      ],
+      "cs": [
+        "Menší ochrana proti duchům"
+      ]
+    },
     "level": 10
   },
   {
@@ -200,12 +300,22 @@
       "cs": "Tvarované a tvrzené kožené pláty kryjící hruď a záda. Pevné, i když poněkud neohebné."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "14 Armor, Good torso protection",
-      "cs": "14 Zbroj, Dobrá ochrana trupu"
+    "attributes": {
+      "en": {
+        "Armor": 14
+      },
+      "cs": {
+        "Zbroj": 14
+      }
     },
-    "attributes": { "armor": 14 },
-    "abilities": ["Good Torso Protection"],
+    "abilities": {
+      "en": [
+        "Good Torso Protection"
+      ],
+      "cs": [
+        "Dobrá ochrana trupu"
+      ]
+    },
     "level": 11
   },
   {
@@ -219,12 +329,22 @@
       "cs": "Překrývající se malé železné šupiny našité na látkový podklad, nabízející pružnou, avšak pevnou obranu. Každá šupina je studená na dotek."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "15 Armor, Resists piercing attacks",
-      "cs": "15 Zbroj, Odolává bodným útokům"
+    "attributes": {
+      "en": {
+        "Armor": 15
+      },
+      "cs": {
+        "Zbroj": 15
+      }
     },
-    "attributes": { "armor": 15 },
-    "abilities": ["Resists Piercing Attacks"],
+    "abilities": {
+      "en": [
+        "Resists Piercing Attacks"
+      ],
+      "cs": [
+        "Odolává bodným útokům"
+      ]
+    },
     "level": 12
   },
   {
@@ -238,12 +358,22 @@
       "cs": "Těžký plášť kryjící ramena, z vrstvené látky a kůže, nabízející ochranu před živly a údery shora."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "17 Armor, Protects from falling debris",
-      "cs": "17 Zbroj, Chrání před padajícími sutinami"
+    "attributes": {
+      "en": {
+        "Armor": 17
+      },
+      "cs": {
+        "Zbroj": 17
+      }
     },
-    "attributes": { "armor": 17 },
-    "abilities": ["Protects from Falling Debris"],
+    "abilities": {
+      "en": [
+        "Protects from Falling Debris"
+      ],
+      "cs": [
+        "Chrání před padajícími sutinami"
+      ]
+    },
     "level": 13
   },
   {
@@ -257,12 +387,22 @@
       "cs": "Jediný, velký nárameník z černěného železa, navržený k odklánění těžkých úderů mířených na rameno a krk."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "18 Armor, Guards vital points",
-      "cs": "18 Zbroj, Chrání životně důležitá místa"
+    "attributes": {
+      "en": {
+        "Armor": 18
+      },
+      "cs": {
+        "Zbroj": 18
+      }
     },
-    "attributes": { "armor": 18 },
-    "abilities": ["Guards Neck and Shoulder"],
+    "abilities": {
+      "en": [
+        "Guards Neck and Shoulder"
+      ],
+      "cs": [
+        "Chrání životně důležitá místa"
+      ]
+    },
     "level": 14
   },
   {
@@ -276,12 +416,22 @@
       "cs": "Dlouhý, těžký kabát zesílený četnými ocelovými nýty. Límec lze zvednout k ochraně krku před mrazivými větry."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "20 Armor, Wind resistant",
-      "cs": "20 Zbroj, Odolný proti větru"
+    "attributes": {
+      "en": {
+        "Armor": 20
+      },
+      "cs": {
+        "Zbroj": 20
+      }
     },
-    "attributes": { "armor": 20 },
-    "abilities": ["Wind Resistant"],
+    "abilities": {
+      "en": [
+        "Wind Resistant"
+      ],
+      "cs": [
+        "Odolný proti větru"
+      ]
+    },
     "level": 15
   },
   {
@@ -295,12 +445,22 @@
       "cs": "Malé ocelové pláty přinýtované zevnitř plátěného a koženého pláště. Zažila mnoho bitev a nese jizvy jako důkaz."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "21 Armor, Battle-tested resilience",
-      "cs": "21 Zbroj, Bitvou prověřená odolnost"
+    "attributes": {
+      "en": {
+        "Armor": 21
+      },
+      "cs": {
+        "Zbroj": 21
+      }
     },
-    "attributes": { "armor": 21 },
-    "abilities": ["Battle-Tested Resilience"],
+    "abilities": {
+      "en": [
+        "Battle-Tested Resilience"
+      ],
+      "cs": [
+        "Bitvou prověřená odolnost"
+      ]
+    },
     "level": 16
   },
   {
@@ -314,12 +474,22 @@
       "cs": "Plná košile z propletených ocelových kroužků, nabízející komplexní ochranu proti sečným zbraním. Standardní výbava pro ty, kdo střeží ponurá místa."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "23 Armor, Effective vs. blades",
-      "cs": "23 Zbroj, Účinná proti čepelím"
+    "attributes": {
+      "en": {
+        "Armor": 23
+      },
+      "cs": {
+        "Zbroj": 23
+      }
     },
-    "attributes": { "armor": 23 },
-    "abilities": ["Effective Against Slashing Attacks"],
+    "abilities": {
+      "en": [
+        "Effective Against Slashing Attacks"
+      ],
+      "cs": [
+        "Účinná proti čepelím"
+      ]
+    },
     "level": 17
   },
   {
@@ -333,12 +503,22 @@
       "cs": "Starý, železem okovaný štít z temného dřeva, přeměněný a připoutaný na hruď jako provizorní ochrana. Překvapivě odolný."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "24 Armor, Chance to deflect projectiles",
-      "cs": "24 Zbroj, Šance odrazit projektily"
+    "attributes": {
+      "en": {
+        "Armor": 24
+      },
+      "cs": {
+        "Zbroj": 24
+      }
     },
-    "attributes": { "armor": 24 },
-    "abilities": ["Chance to Deflect Projectiles"],
+    "abilities": {
+      "en": [
+        "Chance to Deflect Projectiles"
+      ],
+      "cs": [
+        "Šance odrazit projektily"
+      ]
+    },
     "level": 18
   },
   {
@@ -352,12 +532,22 @@
       "cs": "Speciálně ošetřené kožené a látkové ovinovačky, které těsně přiléhají a pohlcují zvuk. Oblíbené těmi, kdo kráčejí neviděnými stezkami."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "26 Armor, Greatly muffles movement",
-      "cs": "26 Zbroj, Výrazně tlumí pohyb"
+    "attributes": {
+      "en": {
+        "Armor": 26
+      },
+      "cs": {
+        "Zbroj": 26
+      }
     },
-    "attributes": { "armor": 26 },
-    "abilities": ["Greatly Muffles Movement"],
+    "abilities": {
+      "en": [
+        "Greatly Muffles Movement"
+      ],
+      "cs": [
+        "Výrazně tlumí pohyb"
+      ]
+    },
     "level": 19
   },
   {
@@ -371,12 +561,22 @@
       "cs": "Hustý plášť z tlustých železných kroužků, poskytující značnou obranu za cenu určité mobility. Každý kroužek je studený jako hrob."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "27 Armor, Resists heavy blows",
-      "cs": "27 Zbroj, Odolává těžkým úderům"
+    "attributes": {
+      "en": {
+        "Armor": 27
+      },
+      "cs": {
+        "Zbroj": 27
+      }
     },
-    "attributes": { "armor": 27 },
-    "abilities": ["Resists Heavy Blows"],
+    "abilities": {
+      "en": [
+        "Resists Heavy Blows"
+      ],
+      "cs": [
+        "Odolává těžkým úderům"
+      ]
+    },
     "level": 20
   },
   {
@@ -390,12 +590,22 @@
       "cs": "Překrývající se ocelové pláty svázané dohromady, tvořící pružnou a odolnou obranu. Ocel se slabě leskne i v šerém světle."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "29 Armor, Balances protection and mobility",
-      "cs": "29 Zbroj, Vyvažuje ochranu a mobilitu"
+    "attributes": {
+      "en": {
+        "Armor": 29
+      },
+      "cs": {
+        "Zbroj": 29
+      }
     },
-    "attributes": { "armor": 29 },
-    "abilities": ["Balanced Protection and Mobility"],
+    "abilities": {
+      "en": [
+        "Balanced Protection and Mobility"
+      ],
+      "cs": [
+        "Vyvažuje ochranu a mobilitu"
+      ]
+    },
     "level": 21
   },
   {
@@ -409,12 +619,22 @@
       "cs": "Jemná kroužková zbroj protkaná vlákny ztuhlého stínu, díky čemuž je nositel hůře viditelný v šeru."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "31 Armor, Enhanced stealth in shadows",
-      "cs": "31 Zbroj, Zlepšené plížení ve stínech"
+    "attributes": {
+      "en": {
+        "Armor": 31
+      },
+      "cs": {
+        "Zbroj": 31
+      }
     },
-    "attributes": { "armor": 31 },
-    "abilities": ["Enhanced Stealth in Shadows"],
+    "abilities": {
+      "en": [
+        "Enhanced Stealth in Shadows"
+      ],
+      "cs": [
+        "Zlepšené plížení ve stínech"
+      ]
+    },
     "level": 22
   },
   {
@@ -428,12 +648,22 @@
       "cs": "Těžký ocelový kyrys, kovaný za studena a nesoucí pečeť zapomenutého řádu hrobních strážců. Vyzařuje slabý chlad."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "33 Armor, Slight resistance to necrotic energies",
-      "cs": "33 Zbroj, Mírná odolnost vůči nekrotickým energiím"
+    "attributes": {
+      "en": {
+        "Armor": 33
+      },
+      "cs": {
+        "Zbroj": 33
+      }
     },
-    "attributes": { "armor": 33 },
-    "abilities": ["Slight Necrotic Resistance"],
+    "abilities": {
+      "en": [
+        "Slight Necrotic Resistance"
+      ],
+      "cs": [
+        "Mírná odolnost vůči nekrotickým energiím"
+      ]
+    },
     "level": 23
   },
   {
@@ -447,12 +677,22 @@
       "cs": "Pár starodávných, nadměrných nákrčníků pokrytých ochrannými runami, přizpůsobených k ochraně trupu. Slabě hučí energií."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "35 Armor, Deflects minor curses",
-      "cs": "35 Zbroj, Odklání menší kletby"
+    "attributes": {
+      "en": {
+        "Armor": 35
+      },
+      "cs": {
+        "Zbroj": 35
+      }
     },
-    "attributes": { "armor": 35 },
-    "abilities": ["Deflects Minor Curses"],
+    "abilities": {
+      "en": [
+        "Deflects Minor Curses"
+      ],
+      "cs": [
+        "Odklání menší kletby"
+      ]
+    },
     "level": 24
   },
   {
@@ -466,12 +706,22 @@
       "cs": "Leštěné pláty vulkanického skla jsou zasazeny do této tvrzené kožené zbroje, o které se říká, že pohlcuje zlovolné pohledy."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "37 Armor, Protects against evil eye",
-      "cs": "37 Zbroj, Chrání před uhranutím"
+    "attributes": {
+      "en": {
+        "Armor": 37
+      },
+      "cs": {
+        "Zbroj": 37
+      }
     },
-    "attributes": { "armor": 37 },
-    "abilities": ["Protects Against Evil Eye"],
+    "abilities": {
+      "en": [
+        "Protects Against Evil Eye"
+      ],
+      "cs": [
+        "Chrání před uhranutím"
+      ]
+    },
     "level": 25
   },
   {
@@ -485,12 +735,22 @@
       "cs": "Utkaný z vláken, která se zdají mihotat a svíjet jako zajatí duchové. Ti poblíž cítí mravenčivý neklid."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "39 Armor, Intimidates lesser undead",
-      "cs": "39 Zbroj, Zastrašuje nižší nemrtvé"
+    "attributes": {
+      "en": {
+        "Armor": 39
+      },
+      "cs": {
+        "Zbroj": 39
+      }
     },
-    "attributes": { "armor": 39 },
-    "abilities": ["Intimidates Lesser Undead"],
+    "abilities": {
+      "en": [
+        "Intimidates Lesser Undead"
+      ],
+      "cs": [
+        "Zastrašuje nižší nemrtvé"
+      ]
+    },
     "level": 26
   },
   {
@@ -504,12 +764,22 @@
       "cs": "Tato kloubová plátová zbroj, kovaná ze vzácného černého železa, je impozantní a vysoce ochranná. Zdá se, že pohlcuje světlo."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "41 Armor, High physical resistance",
-      "cs": "41 Zbroj, Vysoká fyzická odolnost"
+    "attributes": {
+      "en": {
+        "Armor": 41
+      },
+      "cs": {
+        "Zbroj": 41
+      }
     },
-    "attributes": { "armor": 41 },
-    "abilities": ["High Physical Resistance"],
+    "abilities": {
+      "en": [
+        "High Physical Resistance"
+      ],
+      "cs": [
+        "Vysoká fyzická odolnost"
+      ]
+    },
     "level": 27
   },
   {
@@ -523,12 +793,22 @@
       "cs": "Tato zbroj nese tíhu nesčetných hlídek. Její povrch je poznamenán nesčetnými údery, přesto zůstává neporušená."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "43 Armor, Bolsters endurance",
-      "cs": "43 Zbroj, Posiluje výdrž"
+    "attributes": {
+      "en": {
+        "Armor": 43
+      },
+      "cs": {
+        "Zbroj": 43
+      }
     },
-    "attributes": { "armor": 43 },
-    "abilities": ["Bolsters Endurance"],
+    "abilities": {
+      "en": [
+        "Bolsters Endurance"
+      ],
+      "cs": [
+        "Posiluje výdrž"
+      ]
+    },
     "level": 28
   },
   {
@@ -542,12 +822,24 @@
       "cs": "Těžké pláty pokryté hluboce rytými runami ochrany a odolnosti. Slabě září vnitřním světlem, když je nebezpečí blízko."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "45 Armor, Warns of immediate threats",
-      "cs": "45 Zbroj, Varuje před bezprostředními hrozbami"
+    "attributes": {
+      "en": {
+        "Armor": 45
+      },
+      "cs": {
+        "Zbroj": 45
+      }
     },
-    "attributes": { "armor": 45 },
-    "abilities": ["Warns of Immediate Threats", "Strong Wardings"],
+    "abilities": {
+      "en": [
+        "Warns of Immediate Threats",
+        "Strong Wardings"
+      ],
+      "cs": [
+        "Varuje před bezprostředními hrozbami",
+        "Silná Ochrana"
+      ]
+    },
     "level": 29
   },
   {
@@ -561,12 +853,24 @@
       "cs": "Vyrobeno z materiálu, který se zdá přecházet mezi pevným kovem a ztvrdlým soumrakem. Nabízí vynikající ochranu proti fyzickému i éterickému poškození."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "47 Armor, Resists ethereal attacks",
-      "cs": "47 Zbroj, Odolává éterickým útokům"
+    "attributes": {
+      "en": {
+        "Armor": 47
+      },
+      "cs": {
+        "Zbroj": 47
+      }
     },
-    "attributes": { "armor": 47 },
-    "abilities": ["Resists Ethereal Attacks", "Twilight Camouflage"],
+    "abilities": {
+      "en": [
+        "Resists Ethereal Attacks",
+        "Twilight Camouflage"
+      ],
+      "cs": [
+        "Odolává éterickým útokům",
+        "Soumrakové maskování"
+      ]
+    },
     "level": 30
   },
   {
@@ -580,12 +884,24 @@
       "cs": "Dokonale zpracovaná plátová zbroj z vzácné temné oceli, známá svou neuvěřitelnou odolností a afinitou k stínové magii."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "50 Armor, Absorbs shadow energy",
-      "cs": "50 Zbroj, Pohlcuje stínovou energii"
+    "attributes": {
+      "en": {
+        "Armor": 50
+      },
+      "cs": {
+        "Zbroj": 50
+      }
     },
-    "attributes": { "armor": 50 },
-    "abilities": ["Absorbs Shadow Energy", "Superior Durability"],
+    "abilities": {
+      "en": [
+        "Absorbs Shadow Energy",
+        "Superior Durability"
+      ],
+      "cs": [
+        "Pohlcuje stínovou energii",
+        "Vynikající odolnost"
+      ]
+    },
     "level": 31
   },
   {
@@ -599,12 +915,24 @@
       "cs": "Kroužková košile utkaná z děsivého, průsvitného kovu. Je nepřirozeně lehká a šeptá slabé nářky."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "52 Armor, Partial incorporeality",
-      "cs": "52 Zbroj, Částečná nehmotnost"
+    "attributes": {
+      "en": {
+        "Armor": 52
+      },
+      "cs": {
+        "Zbroj": 52
+      }
     },
-    "attributes": { "armor": 52 },
-    "abilities": ["Phases Through Minor Attacks", "Unsettles Spirits"],
+    "abilities": {
+      "en": [
+        "Phases Through Minor Attacks",
+        "Unsettles Spirits"
+      ],
+      "cs": [
+        "Fázuje Skrz Menší Útoky",
+        "Znepokojuje Duchy"
+      ]
+    },
     "level": 32
   },
   {
@@ -618,12 +946,24 @@
       "cs": "Říká se, že je zakalena zajatou esencí mocného strážného ducha, tato zbroj vyzařuje ochrannou sílu."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "55 Armor, Fortifies willpower",
-      "cs": "55 Zbroj, Posiluje sílu vůle"
+    "attributes": {
+      "en": {
+        "Armor": 55
+      },
+      "cs": {
+        "Zbroj": 55
+      }
     },
-    "attributes": { "armor": 55 },
-    "abilities": ["Fortifies Willpower", "Repels Fear Effects"],
+    "abilities": {
+      "en": [
+        "Fortifies Willpower",
+        "Repels Fear Effects"
+      ],
+      "cs": [
+        "Posiluje sílu vůle",
+        "Odpuzuje efekty strachu"
+      ]
+    },
     "level": 33
   },
   {
@@ -637,12 +977,24 @@
       "cs": "Roucha utkaná ze ztuhlé tmy a měsíčního svitu, nabízející překvapivou obranu a činící nositele téměř neviditelným v hlubokém stínu."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "57 Armor, Superior stealth in darkness",
-      "cs": "57 Zbroj, Vynikající plížení ve tmě"
+    "attributes": {
+      "en": {
+        "Armor": 57
+      },
+      "cs": {
+        "Zbroj": 57
+      }
     },
-    "attributes": { "armor": 57 },
-    "abilities": ["Superior Stealth in Darkness", "Silent Movement"],
+    "abilities": {
+      "en": [
+        "Superior Stealth in Darkness",
+        "Silent Movement"
+      ],
+      "cs": [
+        "Vynikající plížení ve tmě",
+        "Tichý pohyb"
+      ]
+    },
     "level": 34
   },
   {
@@ -656,12 +1008,24 @@
       "cs": "Zbroj vyrobená z tvrzeného krunýře monstrózní, nakažené bytosti. Nabízí impozantní ochranu, ale nese slabou, kazící auru."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "60 Armor, Resists toxins and disease",
-      "cs": "60 Zbroj, Odolává toxinům a nemocem"
+    "attributes": {
+      "en": {
+        "Armor": 60
+      },
+      "cs": {
+        "Zbroj": 60
+      }
     },
-    "attributes": { "armor": 60 },
-    "abilities": ["Resists Toxins and Disease", "Slightly Corrupting Aura"],
+    "abilities": {
+      "en": [
+        "Resists Toxins and Disease",
+        "Slightly Corrupting Aura"
+      ],
+      "cs": [
+        "Odolává toxinům a nemocem",
+        "Mírně kazící aura"
+      ]
+    },
     "level": 35
   },
   {
@@ -675,12 +1039,24 @@
       "cs": "Tlusté, těžké pláty zachráněné ze starodávného hrobového strážce. Prodchnuté neústupnou, stoickou odolností."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "62 Armor, Unflinching against impact",
-      "cs": "62 Zbroj, Neochvějný proti nárazu"
+    "attributes": {
+      "en": {
+        "Armor": 62
+      },
+      "cs": {
+        "Zbroj": 62
+      }
     },
-    "attributes": { "armor": 62 },
-    "abilities": ["Unflinching Against Impact", "Extremely Durable"],
+    "abilities": {
+      "en": [
+        "Unflinching Against Impact",
+        "Extremely Durable"
+      ],
+      "cs": [
+        "Neochvějný proti nárazu",
+        "Extrémně odolný"
+      ]
+    },
     "level": 36
   },
   {
@@ -694,12 +1070,24 @@
       "cs": "Kovaná v ohních podsvětí, tato kroužková zbroj se zdá svíjet zajatými, zoufalými dušemi. Chladí až do morku kostí."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "65 Armor, Drains vitality from nearby foes",
-      "cs": "65 Zbroj, Vysává vitalitu z blízkých nepřátel"
+    "attributes": {
+      "en": {
+        "Armor": 65
+      },
+      "cs": {
+        "Zbroj": 65
+      }
     },
-    "attributes": { "armor": 65 },
-    "abilities": ["Drains Vitality from Nearby Foes", "Cold Aura"],
+    "abilities": {
+      "en": [
+        "Drains Vitality from Nearby Foes",
+        "Cold Aura"
+      ],
+      "cs": [
+        "Vysává vitalitu z blízkých nepřátel",
+        "Chladná aura"
+      ]
+    },
     "level": 37
   },
   {
@@ -713,12 +1101,24 @@
       "cs": "Zbroj předávaná po generace Strážců, každý přidal svá vlastní očarování ochrany a žalu."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "67 Armor, Strengthened by sorrow",
-      "cs": "67 Zbroj, Posílena žalem"
+    "attributes": {
+      "en": {
+        "Armor": 67
+      },
+      "cs": {
+        "Zbroj": 67
+      }
     },
-    "attributes": { "armor": 67 },
-    "abilities": ["Strengthened by Resolve", "Echoes of Past Wardens"],
+    "abilities": {
+      "en": [
+        "Strengthened by Resolve",
+        "Echoes of Past Wardens"
+      ],
+      "cs": [
+        "Posílena odhodláním",
+        "Ozvěny minulých Strážců"
+      ]
+    },
     "level": 38
   },
   {
@@ -732,12 +1132,24 @@
       "cs": "Nejen vykládaná, ale zdánlivě vytesaná z jediného masivního kusu obsidiánu, prodchnutá neústupným duchem hory."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "70 Armor, Grants earthen stability",
-      "cs": "70 Zbroj, Propůjčuje zemskou stabilitu"
+    "attributes": {
+      "en": {
+        "Armor": 70
+      },
+      "cs": {
+        "Zbroj": 70
+      }
     },
-    "attributes": { "armor": 70 },
-    "abilities": ["Grants Earthen Stability", "Resists Knockback"],
+    "abilities": {
+      "en": [
+        "Grants Earthen Stability",
+        "Resists Knockback"
+      ],
+      "cs": [
+        "Propůjčuje zemskou stabilitu",
+        "Odolává odražení"
+      ]
+    },
     "level": 39
   },
   {
@@ -751,12 +1163,24 @@
       "cs": "Kovaná z kovu spadlého z nejtemnějších koutů kosmu, tato zbroj se třpytí zachyceným, chladným hvězdným světlem."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "72 Armor, Resists cosmic horrors",
-      "cs": "72 Zbroj, Odolává kosmickým hrůzám"
+    "attributes": {
+      "en": {
+        "Armor": 72
+      },
+      "cs": {
+        "Zbroj": 72
+      }
     },
-    "attributes": { "armor": 72 },
-    "abilities": ["Resists Cosmic Horrors", "Void Touched"],
+    "abilities": {
+      "en": [
+        "Resists Cosmic Horrors",
+        "Void Touched"
+      ],
+      "cs": [
+        "Odolává kosmickým hrůzám",
+        "Dotčen prázdnotou"
+      ]
+    },
     "level": 40
   },
   {
@@ -770,12 +1194,24 @@
       "cs": "Oblek masivních ebenových plátů, který jako by sliboval ponurý osud každému, kdo na něj udeří. Lpí na něm šepoty zapomnění."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "75 Armor, Reflects a portion of damage",
-      "cs": "75 Zbroj, Odráží část poškození"
+    "attributes": {
+      "en": {
+        "Armor": 75
+      },
+      "cs": {
+        "Zbroj": 75
+      }
     },
-    "attributes": { "armor": 75 },
-    "abilities": ["Minor Damage Reflection", "Aura of Dread"],
+    "abilities": {
+      "en": [
+        "Minor Damage Reflection",
+        "Aura of Dread"
+      ],
+      "cs": [
+        "Menší odraz poškození",
+        "Aura hrůzy"
+      ]
+    },
     "level": 41
   },
   {
@@ -789,12 +1225,24 @@
       "cs": "Paradoxně krásná, tato zbroj září vnitřním světlem, přesto je ledově studená a vázaná k žalostné, věčné povinnosti."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "78 Armor, Wards against holy and unholy",
-      "cs": "78 Zbroj, Chrání před svatým i nesvatým"
+    "attributes": {
+      "en": {
+        "Armor": 78
+      },
+      "cs": {
+        "Zbroj": 78
+      }
     },
-    "attributes": { "armor": 78 },
-    "abilities": ["Wards Against Holy and Unholy Magic", "Bound by Duty"],
+    "abilities": {
+      "en": [
+        "Wards Against Holy and Unholy Magic",
+        "Bound by Duty"
+      ],
+      "cs": [
+        "Chrání před svatou i nesvatou magií",
+        "Vázán povinností"
+      ]
+    },
     "level": 42
   },
   {
@@ -808,12 +1256,24 @@
       "cs": "Více než pouhé maskování, tento rubáš ohýbá světlo a vnímání, čímž činí nositele prchavým duchem v oku světa."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "81 Armor, Near invisibility when still",
-      "cs": "81 Zbroj, Téměř neviditelnost v klidu"
+    "attributes": {
+      "en": {
+        "Armor": 81
+      },
+      "cs": {
+        "Zbroj": 81
+      }
     },
-    "attributes": { "armor": 81 },
-    "abilities": ["Near Invisibility When Still", "Distorts Perception"],
+    "abilities": {
+      "en": [
+        "Near Invisibility When Still",
+        "Distorts Perception"
+      ],
+      "cs": [
+        "Téměř neviditelnost v klidu",
+        "Zkresluje vnímání"
+      ]
+    },
     "level": 43
   },
   {
@@ -827,12 +1287,26 @@
       "cs": "Legendární zbroj prvního Krále Strážců, o které se říká, že činí svého nositele neprolomitelnou baštou proti přílivům temnoty."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "84 Armor, Inspires allies, demoralizes foes",
-      "cs": "84 Zbroj, Inspiruje spojence, demoralizuje nepřátele"
+    "attributes": {
+      "en": {
+        "Armor": 84
+      },
+      "cs": {
+        "Zbroj": 84
+      }
     },
-    "attributes": { "armor": 84 },
-    "abilities": ["Inspires Allies", "Demoralizes Foes", "Symbol of Authority"],
+    "abilities": {
+      "en": [
+        "Inspires Allies",
+        "Demoralizes Foes",
+        "Symbol of Authority"
+      ],
+      "cs": [
+        "Inspiruje spojence",
+        "Demoralizuje nepřátele",
+        "Symbol autority"
+      ]
+    },
     "level": 44
   },
   {
@@ -846,12 +1320,24 @@
       "cs": "Vyrobená ze zkamenělého jádrového dřeva starodávného, vnímajícího stromu, tato zbroj je překvapivě lehká a pulzuje primární životní silou."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "87 Armor, Regenerates minor damage over time",
-      "cs": "87 Zbroj, Regeneruje menší poškození v průběhu času"
+    "attributes": {
+      "en": {
+        "Armor": 87
+      },
+      "cs": {
+        "Zbroj": 87
+      }
     },
-    "attributes": { "armor": 87 },
-    "abilities": ["Slow Health Regeneration", " attuned to Nature"],
+    "abilities": {
+      "en": [
+        "Slow Health Regeneration",
+        "Attuned to Nature"
+      ],
+      "cs": [
+        "Pomalá regenerace zdraví",
+        "Naladěn na přírodu"
+      ]
+    },
     "level": 45
   },
   {
@@ -865,12 +1351,24 @@
       "cs": "Tato zbroj se zdá být oknem do samotné prázdnoty bez hvězd. Příliš dlouhé hledění na ni přivolává šílenství."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "90 Armor, Chance to banish attackers to the void",
-      "cs": "90 Zbroj, Šance vyhnat útočníky do prázdnoty"
+    "attributes": {
+      "en": {
+        "Armor": 90
+      },
+      "cs": {
+        "Zbroj": 90
+      }
     },
-    "attributes": { "armor": 90 },
-    "abilities": ["Chance to Temporarily Banish Attackers", "Induces Vertigo"],
+    "abilities": {
+      "en": [
+        "Chance to Temporarily Banish Attackers",
+        "Induces Vertigo"
+      ],
+      "cs": [
+        "Šance dočasně vyhnat útočníky",
+        "Vyvolává závrať"
+      ]
+    },
     "level": 46
   },
   {
@@ -884,12 +1382,24 @@
       "cs": "Nedotčena plynutím věků, tato zbroj nechrání jen tělo, ale i ducha nositele před zkázou času a zoufalstvím."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "93 Armor, Resists temporal distortions",
-      "cs": "93 Zbroj, Odolává časovým deformacím"
+    "attributes": {
+      "en": {
+        "Armor": 93
+      },
+      "cs": {
+        "Zbroj": 93
+      }
     },
-    "attributes": { "armor": 93 },
-    "abilities": ["Resists Temporal Distortions", "Immune to Despair"],
+    "abilities": {
+      "en": [
+        "Resists Temporal Distortions",
+        "Immune to Despair"
+      ],
+      "cs": [
+        "Odolává časovým deformacím",
+        "Imunní vůči zoufalství"
+      ]
+    },
     "level": 47
   },
   {
@@ -903,12 +1413,24 @@
       "cs": "Kovaná z kostí starodávného stínového červa, tato zbroj je neuvěřitelně odolná a nese ozvěnu strašlivé síly bestie."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "96 Armor, High elemental resistance",
-      "cs": "96 Zbroj, Vysoká elementární odolnost"
+    "attributes": {
+      "en": {
+        "Armor": 96
+      },
+      "cs": {
+        "Zbroj": 96
+      }
     },
-    "attributes": { "armor": 96 },
-    "abilities": ["High Elemental Resistance", "Draconic Fear Aura"],
+    "abilities": {
+      "en": [
+        "High Elemental Resistance",
+        "Draconic Fear Aura"
+      ],
+      "cs": [
+        "Vysoká elementární odolnost",
+        "Dračí aura strachu"
+      ]
+    },
     "level": 48
   },
   {
@@ -922,12 +1444,26 @@
       "cs": "Kdysi nošena rytířem přísahajícím na nemožný slib mlčení a ostražitosti, tato zbroj je naprosto bezhlučná a propůjčuje nadpřirozenou ostražitost."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "99 Armor, Completely silent, heightened senses",
-      "cs": "99 Zbroj, Zcela tichá, zostřené smysly"
+    "attributes": {
+      "en": {
+        "Armor": 99
+      },
+      "cs": {
+        "Zbroj": 99
+      }
     },
-    "attributes": { "armor": 99 },
-    "abilities": ["Complete Silence", "Heightened Senses", "Unwavering Vigilance"],
+    "abilities": {
+      "en": [
+        "Complete Silence",
+        "Heightened Senses",
+        "Unwavering Vigilance"
+      ],
+      "cs": [
+        "Naprosté ticho",
+        "Zostřené smysly",
+        "Neochvějná ostražitost"
+      ]
+    },
     "level": 49
   },
   {
@@ -941,12 +1477,26 @@
       "cs": "Ultimátní ochrana, kovaná v srdci umírající hvězdy a kalená v slzách zapomenutého božstva. Říká se, že nese ozvěny každé duše, kterou její rod ochránil, čímž činí nositele ztělesněním neochvějného odhodlání."
     },
     "itemType": "protective_gear",
-    "itemEffectDescription": {
-      "en": "102 Armor, Defies oblivion, unbreakable will",
-      "cs": "102 Zbroj, Vzdoruje zapomnění, nezlomná vůle"
+    "attributes": {
+      "en": {
+        "Armor": 102
+      },
+      "cs": {
+        "Zbroj": 102
+      }
     },
-    "attributes": { "armor": 102 },
-    "abilities": ["Defies Oblivion", "Unbreakable Will", "Sanctuary of Souls"],
+    "abilities": {
+      "en": [
+        "Defies Oblivion",
+        "Unbreakable Will",
+        "Sanctuary of Souls"
+      ],
+      "cs": [
+        "Vzdoruje zapomnění",
+        "Nezlomná vůle",
+        "Svatyně duší"
+      ]
+    },
     "level": 50
   }
 ]

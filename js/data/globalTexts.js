@@ -280,6 +280,8 @@ export const globalTextData = {
             "lore_modal_base_lore_title": "Founding Lore",
             "lore_modal_fragments_title": "Unlocked World Fragments",
             "lore_modal_no_fragments_unlocked": "No World Fragments have been unlocked for this theme yet.",
+            "tooltip_store_button": "Open Store",
+            "tooltip_store_locked_level": "Store unlocks at Level {MIN_LEVEL}.",
         },
         cs: {
             // --- General Status & UI ---
@@ -555,6 +557,8 @@ export const globalTextData = {
             "lore_modal_base_lore_title": "Základní příběh",
             "lore_modal_fragments_title": "Odemčené Fragmenty Světa",
             "lore_modal_no_fragments_unlocked": "Pro toto téma zatím nebyly odemčeny žádné fragmenty světa.",
+            "tooltip_store_button": "Otevřít Obchod",
+            "tooltip_store_locked_level": "Obchod se odemkne na Úrovni {MIN_LEVEL}.",
         }
     },
     // --- Landing Page Specific Text ---
@@ -574,6 +578,7 @@ export const globalTextData = {
             "aria_label_like_theme": "Add to Favorites",
             "aria_label_unlike_theme": "Remove from Favorites",
             "toggle_language": "Česky" // Text of button when current app lang is EN (to switch TO CS)
+
         },
         cs: {
             // --- Generic Landing Page UI ---

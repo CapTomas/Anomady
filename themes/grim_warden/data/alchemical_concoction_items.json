@@ -1,2024 +1,502 @@
 [
   {
     "id": "gw_ac_bitterrootdraught_l01",
-    "name": {
-      "en": "Bitter Root Draught",
-      "cs": "Odvar z Hořkého Kořene"
-    },
-    "description": {
-      "en": "A murky, astringent liquid that settles the stomach and dulls minor aches. Smells strongly of damp earth and regret.",
-      "cs": "Kalná, svíravá tekutina, která uklidňuje žaludek a tlumí drobné bolesti. Silně páchne vlhkou zemí a lítostí."
-    },
+    "name": { "en": "Bitter Root Draught", "cs": "Odvar z Hořkého Kořene" },
+    "description": { "en": "A murky, astringent liquid that settles the stomach and dulls minor aches. Smells strongly of damp earth and regret.", "cs": "Kalná, svíravá tekutina, která uklidňuje žaludek a tlumí drobné bolesti. Silně páchne vlhkou zemí a lítostí." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Minor Restoration": 1
-      },
-      "cs": {
-        "Menší Obnova": 1
-      }
-    },
-    "abilities": {
-      "en": [
-        "Soothes Minor Ailments",
-        "Settles Stomach"
-      ],
-      "cs": [
-        "Uklidňuje menší neduhy",
-        "Uklidňuje žaludek"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Minor Restore, Soothes Ailments",
-      "cs": "Menší Obnova, Uklidňuje Neduhy"
-    },
-    "level": 1,
-    "buyPrice": 5,
-    "sellPrice": 2
+    "attributes": { "en": { "Minor Restoration": 1 }, "cs": { "Menší Obnova": 1 } },
+    "abilities": { "en": [ "Soothes Minor Ailments", "Settles Stomach" ], "cs": [ "Uklidňuje menší neduhy", "Uklidňuje žaludek" ] },
+    "itemEffectDescription": { "en": "Minor Restore, Soothes Ailments", "cs": "Menší Obnova, Uklidňuje Neduhy" },
+    "level": 1, "buyPrice": 5, "sellPrice": 2
+  },
+  {
+    "id": "gw_ac_mudpoultice_l01",
+    "name": { "en": "Mud Poultice", "cs": "Bahenní Obklad" },
+    "description": { "en": "A simple poultice of clay and river moss, held together with spit and a prayer. Applied to a wound, it helps staunch the bleeding.", "cs": "Jednoduchý obklad z jílu a říčního mechu, držený pohromadě slinou a modlitbou. Aplikován na ránu, pomáhá zastavit krvácení." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Stops Minor Bleeding": 1 }, "cs": { "Zastavuje Menší Krvácení": 1 } },
+    "abilities": { "en": [ "Applied to wound to stop bleeding" ], "cs": [ "Aplikuje se na ránu k zastavení krvácení" ] },
+    "itemEffectDescription": { "en": "Stops Minor Bleeding", "cs": "Zastavuje Menší Krvácení" },
+    "level": 1, "buyPrice": 5, "sellPrice": 1
+  },
+  {
+    "id": "gw_ac_tallowsalve_l01",
+    "name": { "en": "Tallow Salve", "cs": "Lojová Mast" },
+    "description": { "en": "A greasy salve made from rendered animal fat and crushed marigold. Offers minor protection against burns, whether from fire or acidic spit.", "cs": "Mastná mast z taveného zvířecího tuku a drceného měsíčku. Nabízí menší ochranu proti popáleninám, ať už od ohně nebo kyselých slin." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Minor Burn Resistance": 1, "Duration": "Brief" }, "cs": { "Menší Odolnost vůči Popálení": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Soothes and protects from burns" ], "cs": [ "Uklidňuje a chrání před popáleninami" ] },
+    "itemEffectDescription": { "en": "Minor Burn Resist (Brief)", "cs": "Menší Odol. Popálení (Krát.)" },
+    "level": 1, "buyPrice": 6, "sellPrice": 2
+  },
+  {
+    "id": "gw_ac_sharpbinebrew_l01",
+    "name": { "en": "Sharp-bine Brew", "cs": "Odvar z Ostrolodyhy" },
+    "description": { "en": "A shockingly bitter tea that jolts the nerves awake. Restores a small amount of focus at the cost of making one's hands tremble.", "cs": "Šokujícně hořký čaj, který probudí nervy. Obnovuje malé množství soustředění za cenu roztřesených rukou." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Minor Willpower Restore": 1, "Minor Dexterity Penalty": 1 }, "cs": { "Menší Obnova Vůle": 1, "Menší Postih na Obratnost": 1 } },
+    "abilities": { "en": [ "Restores Willpower", "Causes Tremors" ], "cs": [ "Obnovuje Vůli", "Způsobuje Třes" ] },
+    "itemEffectDescription": { "en": "Minor Will Restore, Dex Penalty", "cs": "Menší Obn. Vůle, Postih Obrat." },
+    "level": 1, "buyPrice": 5, "sellPrice": 2
+  },
+  {
+    "id": "gw_ac_stillwaterphial_l01",
+    "name": { "en": "Phial of Still Water", "cs": "Lahvička Klidné Vody" },
+    "description": { "en": "A phial of perfectly clear, unnaturally still water. When splashed on the ground, it deadens sound in a small area for a few moments.", "cs": "Lahvička dokonale čisté, nepřirozeně klidné vody. Když se vylije na zem, na několik okamžiků utlumí zvuk v malé oblasti." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Area Sound Dampening": 1, "Application": "External" }, "cs": { "Oblastní Tlumení Zvuku": 1, "Aplikace": "Vnější" } },
+    "abilities": { "en": [ "Creates a small zone of silence" ], "cs": [ "Vytváří malou zónu ticha" ] },
+    "itemEffectDescription": { "en": "Area of Silence (Brief)", "cs": "Oblast Ticha (Krát.)" },
+    "level": 1, "buyPrice": 6, "sellPrice": 2
   },
   {
     "id": "gw_ac_gravemossinfusion_l02",
-    "name": {
-      "en": "Gravemoss Infusion",
-      "cs": "Nálev z Hrobového Mechu"
-    },
-    "description": {
-      "en": "Brewed from moss scraped from ancient tombstones, this infusion grants a fleeting clarity to tired eyes.",
-      "cs": "Uvařený z mechu seškrábaného ze starých náhrobků, tento nálev propůjčuje unaveným očím prchavou jasnost."
-    },
+    "name": { "en": "Gravemoss Infusion", "cs": "Nálev z Hrobového Mechu" },
+    "description": { "en": "Brewed from moss scraped from ancient tombstones, this infusion grants a fleeting clarity to tired eyes.", "cs": "Uvařený z mechu seškrábaného ze starých náhrobků, tento nálev propůjčuje unaveným očím prchavou jasnost." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Sight Boost": 1,
-        "Duration": "Fleeting"
-      },
-      "cs": {
-        "Zlepšení Zraku": 1,
-        "Trvání": "Prchavé"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Briefly Sharpens Sight",
-        "Reduces Eye Strain"
-      ],
-      "cs": [
-        "Krátce zostřuje zrak",
-        "Snižuje námahu očí"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+1 Sight (Fleeting), Sharpens Sight",
-      "cs": "+1 Zrak (Prch.), Zostřuje Zrak"
-    },
-    "level": 2,
-    "buyPrice": 8,
-    "sellPrice": 2
+    "attributes": { "en": { "Sight Boost": 1, "Duration": "Fleeting" }, "cs": { "Zlepšení Zraku": 1, "Trvání": "Prchavé" } },
+    "abilities": { "en": [ "Briefly Sharpens Sight", "Reduces Eye Strain" ], "cs": [ "Krátce zostřuje zrak", "Snižuje námahu očí" ] },
+    "itemEffectDescription": { "en": "+1 Sight (Fleeting), Sharpens Sight", "cs": "+1 Zrak (Prch.), Zostřuje Zrak" },
+    "level": 2, "buyPrice": 8, "sellPrice": 2
+  },
+  {
+    "id": "gw_ac_gritpaste_l02",
+    "name": { "en": "Grit Paste", "cs": "Pasta Odvahy" },
+    "description": { "en": "A thick, sandy paste of ground river stone and horsetail. When chewed, it bolsters resolve and helps one ignore minor pain.", "cs": "Hustá, písčitá pasta z drceného říčního kamene a přesličky. Po rozžvýkání posiluje odhodlání a pomáhá ignorovat menší bolest." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Minor Pain Tolerance": 1, "Duration": "Brief" }, "cs": { "Menší Tolerance Bolesti": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Temporarily ignore minor wounds" ], "cs": [ "Dočasně ignoruje menší zranění" ] },
+    "itemEffectDescription": { "en": "Minor Pain Tolerance (Brief)", "cs": "Menší Tol. Bolesti (Krát.)" },
+    "level": 2, "buyPrice": 9, "sellPrice": 3
+  },
+  {
+    "id": "gw_ac_scentmaskingloam_l02",
+    "name": { "en": "Scent-Masking Loam", "cs": "Hlína Maskující Pach" },
+    "description": { "en": "A pungent loam mixed with pine resin and crushed mint. Applied to the skin, it masks the wearer's scent from common beasts.", "cs": "Pronikavá hlína smíchaná s borovou pryskyřicí a drcenou mátou. Nanesena na kůži, maskuje pach nositele před běžnými šelmami." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Masks Scent (Beasts)": 1, "Duration": "Moderate" }, "cs": { "Maskuje Pach (Šelmy)": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Hides scent from beasts" ], "cs": [ "Skrývá pach před šelmami" ] },
+    "itemEffectDescription": { "en": "Masks Scent (Beasts, Mod.)", "cs": "Maskuje Pach (Šelmy, Stř.)" },
+    "level": 2, "buyPrice": 8, "sellPrice": 2
+  },
+  {
+    "id": "gw_ac_saltpoultice_l02",
+    "name": { "en": "Salt Poultice", "cs": "Solný Obklad" },
+    "description": { "en": "A brutally effective, stinging poultice of salt and alcohol. Cleanses wounds and provides a minor ward against infection and restless spirits.", "cs": "Brutálně účinný, štípavý obklad ze soli a alkoholu. Čistí rány a poskytuje menší ochranu proti infekci a neklidným duchům." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Cleanses Wounds": 1, "Minor Spirit Ward": 1 }, "cs": { "Čistí Rány": 1, "Menší Ochrana proti Duchům": 1 } },
+    "abilities": { "en": [ "Disinfects", "Wards minor spirits" ], "cs": [ "Dezinfikuje", "Chrání před menšími duchy" ] },
+    "itemEffectDescription": { "en": "Cleanses Wounds, Minor Spirit Ward", "cs": "Čistí Rány, Menší Ochr. Duchů" },
+    "level": 2, "buyPrice": 9, "sellPrice": 3
+  },
+  {
+    "id": "gw_ac_sourberrytincture_l02",
+    "name": { "en": "Sourberry Tincture", "cs": "Tinktura z Kyselých Bobulí" },
+    "description": { "en": "The juice of fermented sourberries. The taste is profoundly unpleasant, but it sharpens the mind and restores a measure of willpower.", "cs": "Šťáva z kvašených kyselých bobulí. Chuť je hluboce nepříjemná, ale brousí mysl a obnovuje míru vůle." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Moderate Willpower Restore": 1 }, "cs": { "Střední Obnova Vůle": 1 } },
+    "abilities": { "en": [ "Restores Willpower" ], "cs": [ "Obnovuje Vůli" ] },
+    "itemEffectDescription": { "en": "Moderate Willpower Restore", "cs": "Střední Obnova Vůle" },
+    "level": 2, "buyPrice": 8, "sellPrice": 3
   },
   {
     "id": "gw_ac_nettleburnsalve_l03",
-    "name": {
-      "en": "Nettleburn Salve",
-      "cs": "Mast z Kopřivového Spálení"
-    },
-    "description": {
-      "en": "A stinging, pungent salve that, when applied, briefly invigorates tired muscles. The initial burn is quickly forgotten.",
-      "cs": "Štípavá, pronikavá mast, která po nanesení krátce povzbudí unavené svaly. Počáteční pálení je rychle zapomenuto."
-    },
+    "name": { "en": "Nettleburn Salve", "cs": "Mast z Kopřivového Spálení" },
+    "description": { "en": "A stinging, pungent salve that, when applied, briefly invigorates tired muscles. The initial burn is quickly forgotten.", "cs": "Štípavá, pronikavá mast, která po nanesení krátce povzbudí unavené svaly. Počáteční pálení je rychle zapomenuto." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Stamina Boost": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Zvýšení Výdrže": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Temporarily Invigorates Muscles",
-        "Brief Stamina Boost"
-      ],
-      "cs": [
-        "Dočasně povzbuzuje svaly",
-        "Krátké zvýšení výdrže"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+1 Stamina (Brief), Invigorates",
-      "cs": "+1 Výdrž (Krát.), Povzbuzuje"
-    },
-    "level": 3,
-    "buyPrice": 11,
-    "sellPrice": 3
+    "attributes": { "en": { "Stamina Boost": 1, "Duration": "Brief" }, "cs": { "Zvýšení Výdrže": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Temporarily Invigorates Muscles", "Brief Stamina Boost" ], "cs": [ "Dočasně povzbuzuje svaly", "Krátké zvýšení výdrže" ] },
+    "itemEffectDescription": { "en": "+1 Stamina (Brief), Invigorates", "cs": "+1 Výdrž (Krát.), Povzbuzuje" },
+    "level": 3, "buyPrice": 11, "sellPrice": 3
+  },
+  {
+    "id": "gw_ac_coagulantpowder_l03",
+    "name": { "en": "Coagulant Powder", "cs": "Srážecí Prášek" },
+    "description": { "en": "A grey powder made from dried bloodmoss and iron filings. Applied to a wound, it clots blood with shocking speed.", "cs": "Šedý prášek z usušeného krvavého mechu a železných pilin. Aplikován na ránu, sráží krev šokující rychlostí." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Stops Moderate Bleeding": 1, "Application": "External" }, "cs": { "Zastavuje Střední Krvácení": 1, "Aplikace": "Vnější" } },
+    "abilities": { "en": [ "Instantly clots moderate wounds" ], "cs": [ "Okamžitě sráží střední rány" ] },
+    "itemEffectDescription": { "en": "Stops Moderate Bleeding", "cs": "Zastavuje Stř. Krvácení" },
+    "level": 3, "buyPrice": 12, "sellPrice": 4
+  },
+  {
+    "id": "gw_ac_irongritoil_l03",
+    "name": { "en": "Iron-Grit Oil", "cs": "Olej Železné Odvahy" },
+    "description": { "en": "A thick, black oil that feels like liquid sandpaper. When swallowed, it briefly hardens the skin, helping to turn aside blows.", "cs": "Hustý, černý olej, který na omak připomíná tekutý smirkový papír. Po spolknutí krátce zpevní kůži a pomáhá odrážet údery." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Minor Physical Defense": 1, "Duration": "Brief" }, "cs": { "Menší Fyzická Obrana": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Briefly hardens skin" ], "cs": [ "Krátce zpevní kůži" ] },
+    "itemEffectDescription": { "en": "+1 Phys Def (Brief)", "cs": "+1 Fyz Obr (Krát.)" },
+    "level": 3, "buyPrice": 11, "sellPrice": 3
+  },
+  {
+    "id": "gw_ac_hawkeyetonic_l03",
+    "name": { "en": "Hawkeye Tonic", "cs": "Tonikum Jestřábího Oka" },
+    "description": { "en": "A clear, sharp-tasting liquid that makes colours seem more vibrant and edges crisper. Allows one to spot details at a distance.", "cs": "Čirá tekutina s ostrou chutí, která způsobuje, že barvy se zdají živější a hrany ostřejší. Umožňuje spatřit detaily na dálku." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Enhanced Vision": 1, "Duration": "Moderate" }, "cs": { "Zlepšené Vidění": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Sharpens vision for details" ], "cs": [ "Zostřuje zrak pro detaily" ] },
+    "itemEffectDescription": { "en": "Enhanced Vision (Mod.)", "cs": "Zlepšené Vidění (Stř.)" },
+    "level": 3, "buyPrice": 12, "sellPrice": 4
+  },
+  {
+    "id": "gw_ac_glimmerdustpouch_l03",
+    "name": { "en": "Glimmer-Dust Pouch", "cs": "Váček Třpytivého Prachu" },
+    "description": { "en": "A pouch of crushed, phosphorescent crystals. When thrown, it creates a brief, blinding flash to disorient foes.", "cs": "Váček drcených, fosforeskujících krystalů. Když se hodí, vytvoří krátký, oslepující záblesk k dezorientaci nepřátel." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Flashbang Effect": 1, "Application": "Thrown" }, "cs": { "Efekt Oslepujícího Záblesku": 1, "Aplikace": "Hozením" } },
+    "abilities": { "en": [ "Creates a blinding flash" ], "cs": [ "Vytváří oslepující záblesk" ] },
+    "itemEffectDescription": { "en": "Blinding Flash", "cs": "Oslepující Záblesk" },
+    "level": 3, "buyPrice": 10, "sellPrice": 3
   },
   {
     "id": "gw_ac_shadowslipelixir_l04",
-    "name": {
-      "en": "Shadowslip Draught",
-      "cs": "Lektvar Stínového Skluzu"
-    },
-    "description": {
-      "en": "This oily, dark liquid seems to absorb light. For a short while, it makes one's footsteps fall a little softer.",
-      "cs": "Tato olejovitá, tmavá tekutina jako by pohlcovala světlo. Na krátkou chvíli činí kroky o něco tiššími."
-    },
+    "name": { "en": "Shadowslip Draught", "cs": "Lektvar Stínového Skluzu" },
+    "description": { "en": "This oily, dark liquid seems to absorb light. For a short while, it makes one's footsteps fall a little softer.", "cs": "Tato olejovitá, tmavá tekutina jako by pohlcovala světlo. Na krátkou chvíli činí kroky o něco tiššími." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Sound Muffling": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Tlumení Zvuku": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Briefly Muffles Footsteps",
-        "Aids Minor Stealth"
-      ],
-      "cs": [
-        "Krátce tlumí kroky",
-        "Pomáhá menšímu plížení"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Muffles Sound (Brief), Aids Stealth",
-      "cs": "Tlumí Zvuk (Krát.), Pomáhá Plížení"
-    },
-    "level": 4,
-    "buyPrice": 14,
-    "sellPrice": 4
+    "attributes": { "en": { "Sound Muffling": 1, "Duration": "Brief" }, "cs": { "Tlumení Zvuku": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Briefly Muffles Footsteps", "Aids Minor Stealth" ], "cs": [ "Krátce tlumí kroky", "Pomáhá menšímu plížení" ] },
+    "itemEffectDescription": { "en": "Muffles Sound (Brief), Aids Stealth", "cs": "Tlumí Zvuk (Krát.), Pomáhá Plížení" },
+    "level": 4, "buyPrice": 14, "sellPrice": 4
+  },
+  {
+    "id": "gw_ac_trollbloodbalm_l04",
+    "name": { "en": "Trollblood Balm (Diluted)", "cs": "Balzám z Trolí Krve (Zředěný)" },
+    "description": { "en": "A greenish, foul-smelling balm that promotes slow but steady regeneration of minor wounds over time. Must be applied liberally.", "cs": "Zelenavý, odporně páchnoucí balzám, který podporuje pomalou, ale stabilní regeneraci menších ran v průběhu času. Musí se aplikovat hojně." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Minor Regeneration": 1, "Duration": "Moderate" }, "cs": { "Menší Regenerace": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Slowly regenerates minor wounds" ], "cs": [ "Pomalu regeneruje menší rány" ] },
+    "itemEffectDescription": { "en": "Minor Regeneration (Mod.)", "cs": "Menší Regenerace (Stř.)" },
+    "level": 4, "buyPrice": 15, "sellPrice": 5
+  },
+  {
+    "id": "gw_ac_steadfastbrew_l04",
+    "name": { "en": "Steadfast Brew", "cs": "Odvar Pevnosti" },
+    "description": { "en": "A chalky, tasteless brew that settles the nerves and helps to quiet a hammering heart. Aids in resisting fear.", "cs": "Křídový, bez chuti, odvar, který uklidňuje nervy a pomáhá ztišit bušící srdce. Pomáhá odolávat strachu." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Minor Fear Resistance": 1, "Duration": "Moderate" }, "cs": { "Menší Odolnost vůči Strachu": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Bolsters courage", "Resists minor fear effects" ], "cs": [ "Posiluje odvahu", "Odolává menším účinkům strachu" ] },
+    "itemEffectDescription": { "en": "Minor Fear Resist (Mod.)", "cs": "Menší Odol. Strachu (Stř.)" },
+    "level": 4, "buyPrice": 14, "sellPrice": 4
+  },
+  {
+    "id": "gw_ac_cinderpowder_l04",
+    "name": { "en": "Cinder-Powder Pouch", "cs": "Váček Popelavého Prachu" },
+    "description": { "en": "A pouch of volatile dust. When thrown at a flame, it erupts in a burst of thick, choking smoke.", "cs": "Váček nestabilního prachu. Když se hodí do plamene, vybuchne v gejzíru hustého, dusivého kouře." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Creates Smokescreen": 1, "Application": "Thrown at fire" }, "cs": { "Vytváří Kouřovou Clonu": 1, "Aplikace": "Hozením do ohně" } },
+    "abilities": { "en": [ "Creates a dense smokescreen" ], "cs": [ "Vytváří hustou kouřovou clonu" ] },
+    "itemEffectDescription": { "en": "Creates Smokescreen (Requires Fire)", "cs": "Vytvoří Kouř. Clonu (Vyžad. Oheň)" },
+    "level": 4, "buyPrice": 13, "sellPrice": 4
+  },
+  {
+    "id": "gw_ac_muleskickdraught_l04",
+    "name": { "en": "Mule's Kick Draught", "cs": "Odvar Kopnutí Muly" },
+    "description": { "en": "A fiery, throat-scorching liquor that floods the body with a brief, powerful surge of strength for a single great effort.", "cs": "Ohnivý, hrdlo spalující alkohol, který zaplaví tělo krátkým, silným náporem síly pro jediný velký výkon." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Brief Strength Boost": 1, "Duration": "Very Brief" }, "cs": { "Krátké Zvýšení Síly": 1, "Trvání": "Velmi Krátké" } },
+    "abilities": { "en": [ "Brief surge of great strength" ], "cs": [ "Krátký nával velké síly" ] },
+    "itemEffectDescription": { "en": "+Strength (V. Brief)", "cs": "+Síla (V. Krát.)" },
+    "level": 4, "buyPrice": 15, "sellPrice": 5
   },
   {
     "id": "gw_ac_bloodwortpotion_l05",
-    "name": {
-      "en": "Bloodwort Potion",
-      "cs": "Lektvar z Krvavníku"
-    },
-    "description": {
-      "en": "A crimson potion that helps staunch minor bleeding and knits small wounds with surprising speed. Tastes faintly metallic.",
-      "cs": "Rudý lektvar, který pomáhá zastavit menší krvácení a s překvapivou rychlostí sceluje malé rány. Chutná slabě kovově."
-    },
+    "name": { "en": "Bloodwort Potion", "cs": "Lektvar z Krvavníku" },
+    "description": { "en": "A crimson potion that helps staunch minor bleeding and knits small wounds with surprising speed. Tastes faintly metallic.", "cs": "Rudý lektvar, který pomáhá zastavit menší krvácení a s překvapivou rychlostí sceluje malé rány. Chutná slabě kovově." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Moderate Restoration": 1
-      },
-      "cs": {
-        "Střední Obnova": 1
-      }
-    },
-    "abilities": {
-      "en": [
-        "Mends Minor Wounds",
-        "Staunches Bleeding"
-      ],
-      "cs": [
-        "Sceluje menší rány",
-        "Zastavuje krvácení"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Moderate Restore, Mends Wounds",
-      "cs": "Střední Obnova, Sceluje Rány"
-    },
-    "level": 5,
-    "buyPrice": 17,
-    "sellPrice": 5
+    "attributes": { "en": { "Moderate Restoration": 1 }, "cs": { "Střední Obnova": 1 } },
+    "abilities": { "en": [ "Mends Minor Wounds", "Staunches Bleeding" ], "cs": [ "Sceluje menší rány", "Zastavuje krvácení" ] },
+    "itemEffectDescription": { "en": "Moderate Restore, Mends Wounds", "cs": "Střední Obnova, Sceluje Rány" },
+    "level": 5, "buyPrice": 17, "sellPrice": 5
+  },
+  {
+    "id": "gw_ac_foxglovephiltre_l05",
+    "name": { "en": "Foxglove Philtre", "cs": "Filt z Náprstníku" },
+    "description": { "en": "A carefully dosed poison that, in small amounts, quickens the heart and sharpens reflexes for a short time. An extra drop would be fatal.", "cs": "Pečlivě dávkovaný jed, který v malém množství na krátkou dobu zrychlí srdce a zostří reflexy. Kapka navíc by byla smrtelná." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Reflex Boost": 1, "Duration": "Brief" }, "cs": { "Zrychlení Reflexů": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Briefly quickens reflexes" ], "cs": [ "Krátce zrychluje reflexy" ] },
+    "itemEffectDescription": { "en": "+1 Reflex (Brief)", "cs": "+1 Reflex (Krát.)" },
+    "level": 5, "buyPrice": 18, "sellPrice": 5
+  },
+  {
+    "id": "gw_ac_listeningconeelixir_l05",
+    "name": { "en": "Listening Cone Elixir", "cs": "Elixír Naslouchacího Trychtýře" },
+    "description": { "en": "Made from the pollen of certain cave fungi, this elixir makes the ears preternaturally sensitive to faint sounds like whispers or distant footsteps.", "cs": "Tento elixír, vyrobený z pylu určitých jeskynních hub, činí uši nadpřirozeně citlivými na slabé zvuky, jako je šepot nebo vzdálené kroky." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Hearing Boost": 1, "Duration": "Moderate" }, "cs": { "Zlepšení Sluchu": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Greatly enhances hearing" ], "cs": [ "Výrazně zlepšuje sluch" ] },
+    "itemEffectDescription": { "en": "+1 Hearing (Mod.)", "cs": "+1 Sluch (Stř.)" },
+    "level": 5, "buyPrice": 16, "sellPrice": 5
+  },
+  {
+    "id": "gw_ac_stickysap_l05",
+    "name": { "en": "Sticky Sap Grenade", "cs": "Granát z Lepkavé Mízy" },
+    "description": { "en": "A gourd filled with the incredibly sticky sap of the Iron-bark tree. Bursts on impact, covering a small area in a substance that can immobilize foes.", "cs": "Tykev naplněná neuvěřitelně lepkavou mízou stromu Železné kůry. Při nárazu praskne a pokryje malou oblast látkou, která může znehybnit nepřátele." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Area Immobilization": 1, "Application": "Thrown" }, "cs": { "Oblastní Znehybnění": 1, "Aplikace": "Hozením" } },
+    "abilities": { "en": [ "Immobilizes foes in an area" ], "cs": [ "Znehybňuje nepřátele v oblasti" ] },
+    "itemEffectDescription": { "en": "Area Snare", "cs": "Oblastní Past" },
+    "level": 5, "buyPrice": 17, "sellPrice": 5
+  },
+  {
+    "id": "gw_ac_couragebrew_l05",
+    "name": { "en": "Liquid Courage", "cs": "Tekutá Odvaha" },
+    "description": { "en": "Less an alchemical marvel and more just a very strong, very cheap spirit. Dulls fear and reason in equal measure.", "cs": "Méně alchymistický zázrak a více jen velmi silný, velmi levný alkohol. Otupuje strach i rozum ve stejné míře." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Resist Fear": 1, "Penalty to Aptitude": 1, "Duration": "Brief" }, "cs": { "Odolnost Strachu": 1, "Postih na Zdatnost": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Dulls fear", "Clouds judgment" ], "cs": [ "Otupuje strach", "Zatemňuje úsudek" ] },
+    "itemEffectDescription": { "en": "Fear Resist, -1 Aptitude (Brief)", "cs": "Odol. Strachu, -1 Zdatnost (Krát.)" },
+    "level": 5, "buyPrice": 16, "sellPrice": 5
   },
   {
     "id": "gw_ac_stoneskintonic_l06",
-    "name": {
-      "en": "Stoneskin Brew",
-      "cs": "Odvar Kamenné Kůže"
-    },
-    "description": {
-      "en": "A thick, gritty concoction that temporarily hardens the skin, making it more resilient to light impacts. Feels like drinking sand.",
-      "cs": "Hustý, písčitý lektvar, který dočasně ztvrdne kůži, čímž ji činí odolnější vůči lehkým nárazům. Pije se jako písek."
-    },
+    "name": { "en": "Stoneskin Brew", "cs": "Odvar Kamenné Kůže" },
+    "description": { "en": "A thick, gritty concoction that temporarily hardens the skin, making it more resilient to light impacts. Feels like drinking sand.", "cs": "Hustý, písčitý lektvar, který dočasně ztvrdne kůži, čímž ji činí odolnější vůči lehkým nárazům. Pije se jako písek." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Physical Defense": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Fyzická Obrana": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Temporarily Hardens Skin",
-        "Resists Minor Impacts"
-      ],
-      "cs": [
-        "Dočasně zpevňuje kůži",
-        "Odolává menším nárazům"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+1 Phys Def (Brief), Hardens Skin",
-      "cs": "+1 Fyz Obr (Krát.), Zpevňuje Kůži"
-    },
-    "level": 6,
-    "buyPrice": 20,
-    "sellPrice": 6
+    "attributes": { "en": { "Physical Defense": 1, "Duration": "Brief" }, "cs": { "Fyzická Obrana": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Temporarily Hardens Skin", "Resists Minor Impacts" ], "cs": [ "Dočasně zpevňuje kůži", "Odolává menším nárazům" ] },
+    "itemEffectDescription": { "en": "+1 Phys Def (Brief), Hardens Skin", "cs": "+1 Fyz Obr (Krát.), Zpevňuje Kůži" },
+    "level": 6, "buyPrice": 20, "sellPrice": 6
+  },
+  {
+    "id": "gw_ac_ghostpepperdraught_l06",
+    "name": { "en": "Ghost Pepper Draught", "cs": "Odvar z Přízračné Papričky" },
+    "description": { "en": "An intensely spicy draught that makes the body burn with an inner fire, granting minor resistance to cold and chilling effects.", "cs": "Intenzivně pálivý odvar, který rozzáří tělo vnitřním ohněm, propůjčující menší odolnost vůči chladu a mrazivým účinkům." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Minor Cold Resistance": 2, "Duration": "Moderate" }, "cs": { "Menší Odolnost vůči Chladu": 2, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Grants resistance to cold" ], "cs": [ "Poskytuje odolnost vůči chladu" ] },
+    "itemEffectDescription": { "en": "Cold Resist (Mod.)", "cs": "Odol. Chladu (Stř.)" },
+    "level": 6, "buyPrice": 19, "sellPrice": 6
+  },
+  {
+    "id": "gw_ac_wardensfocus_l06",
+    "name": { "en": "Warden's Focus", "cs": "Strážcovo Soustředění" },
+    "description": { "en": "A cool, minty brew that clears the head and significantly restores one's reserves of willpower for the grim tasks ahead.", "cs": "Chladný, mátový odvar, který pročišťuje hlavu a významně obnovuje zásoby vůle pro ponuré úkoly, jež čekají." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Strong Willpower Restore": 1 }, "cs": { "Silná Obnova Vůle": 1 } },
+    "abilities": { "en": [ "Significantly restores willpower" ], "cs": [ "Významně obnovuje vůli" ] },
+    "itemEffectDescription": { "en": "Strong Willpower Restore", "cs": "Silná Obnova Vůle" },
+    "level": 6, "buyPrice": 21, "sellPrice": 6
+  },
+  {
+    "id": "gw_ac_bloodscentpowder_l06",
+    "name": { "en": "Bloodscent Powder", "cs": "Prášek Krvavého Pachu" },
+    "description": { "en": "A fine red powder that, when inhaled, grants the user the ability to smell traces of blood with supernatural acuity, aiding in tracking.", "cs": "Jemný červený prášek, který po vdechnutí propůjčuje uživateli schopnost cítit stopy krve s nadpřirozenou ostrostí, což pomáhá při stopování." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Scent Tracking (Blood)": 1, "Duration": "Moderate" }, "cs": { "Stopování pachu (Krev)": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Supernatural sense of smell for blood" ], "cs": [ "Nadpřirozený čich na krev" ] },
+    "itemEffectDescription": { "en": "Scent Tracking (Mod.)", "cs": "Stopování Pachu (Stř.)" },
+    "level": 6, "buyPrice": 20, "sellPrice": 6
+  },
+  {
+    "id": "gw_ac_cleansingtincture_l06",
+    "name": { "en": "Cleansing Tincture", "cs": "Očistná Tinktura" },
+    "description": { "en": "A biting, alcoholic tincture that purges the body of minor toxins and poisons. The aftertaste is atrocious.", "cs": "Štípavá, alkoholická tinktura, která čistí tělo od menších toxinů a jedů. Pachuť je otřesná." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Cures Minor Poisons": 1 }, "cs": { "Léčí Menší Jedy": 1 } },
+    "abilities": { "en": [ "Purges minor poisons from the body" ], "cs": [ "Čistí tělo od menších jedů" ] },
+    "itemEffectDescription": { "en": "Cures Minor Poisons", "cs": "Léčí Menší Jedy" },
+    "level": 6, "buyPrice": 22, "sellPrice": 7
   },
   {
     "id": "gw_ac_foxgloveextract_l07",
-    "name": {
-      "en": "Foxglove Heartstim",
-      "cs": "Stimulant z Náprstníku"
-    },
-    "description": {
-      "en": "A carefully dosed extract that quickens the pulse and sharpens reflexes for a short period. An overdose would be fatal.",
-      "cs": "Pečlivě dávkovaný extrakt, který na krátkou dobu zrychlí puls a zostří reflexy. Předávkování by bylo smrtelné."
-    },
+    "name": { "en": "Foxglove Heartstim", "cs": "Stimulant z Náprstníku" },
+    "description": { "en": "A carefully dosed extract that quickens the pulse and sharpens reflexes for a short period. An overdose would be fatal.", "cs": "Pečlivě dávkovaný extrakt, který na krátkou dobu zrychlí puls a zostří reflexy. Předávkování by bylo smrtelné." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Reflex Boost": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Zrychlení Reflexů": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Briefly Quickens Reflexes",
-        "Heightens Alertness"
-      ],
-      "cs": [
-        "Krátce zrychluje reflexy",
-        "Zvyšuje ostražitost"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+1 Reflex (Brief), Heightens Alertness",
-      "cs": "+1 Reflex (Krát.), Zvyš. Ostražitost"
-    },
-    "level": 7,
-    "buyPrice": 24,
-    "sellPrice": 7
+    "attributes": { "en": { "Reflex Boost": 1, "Duration": "Brief" }, "cs": { "Zrychlení Reflexů": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Briefly Quickens Reflexes", "Heightens Alertness" ], "cs": [ "Krátce zrychluje reflexy", "Zvyšuje ostražitost" ] },
+    "itemEffectDescription": { "en": "+1 Reflex (Brief), Heightens Alertness", "cs": "+1 Reflex (Krát.), Zvyš. Ostražitost" },
+    "level": 7, "buyPrice": 24, "sellPrice": 7
+  },
+  {
+    "id": "gw_ac_fleshmenddraught_l07",
+    "name": { "en": "Fleshmend Draught", "cs": "Odvar Scelení Masa" },
+    "description": { "en": "A thick, savory-smelling draught that promotes rapid tissue growth, healing moderate wounds and closing gashes.", "cs": "Hustý odvar se slanou vůní, který podporuje rychlý růst tkáně, léčí středně těžké rány a uzavírá tržné rány." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Strong Restoration": 1 }, "cs": { "Silná Obnova": 1 } },
+    "abilities": { "en": [ "Heals moderate wounds" ], "cs": [ "Léčí středně těžké rány" ] },
+    "itemEffectDescription": { "en": "Strong Restoration", "cs": "Silná Obnova" },
+    "level": 7, "buyPrice": 25, "sellPrice": 8
+  },
+  {
+    "id": "gw_ac_ghastlightoil_l07",
+    "name": { "en": "Ghastlight Oil", "cs": "Olej Přízračného Světla" },
+    "description": { "en": "An oil distilled from phosphorescent fungi. When applied to a surface, it glows with a cold, eerie green light for a considerable time.", "cs": "Olej destilovaný z fosforeskujících hub. Po nanesení na povrch svítí chladným, děsivým zeleným světlem po značnou dobu." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Creates Light Source": 1, "Duration": "Long" }, "cs": { "Vytváří Zdroj Světla": 1, "Trvání": "Dlouhé" } },
+    "abilities": { "en": [ "Creates a long-lasting light source" ], "cs": [ "Vytváří dlouhotrvající zdroj světla" ] },
+    "itemEffectDescription": { "en": "Creates Light (Long)", "cs": "Vytváří Světlo (Dlouhé)" },
+    "level": 7, "buyPrice": 22, "sellPrice": 7
+  },
+  {
+    "id": "gw_ac_blurringbrew_l07",
+    "name": { "en": "Blurring Brew", "cs": "Rozmazávací Odvar" },
+    "description": { "en": "This concoction makes the drinker's form appear hazy and indistinct, making them harder to hit with ranged attacks.", "cs": "Tento odvar způsobuje, že podoba pijáka se zdá mlhavá a nejasná, což ztěžuje jeho zasažení útoky na dálku." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Ranged Evasion": 1, "Duration": "Brief" }, "cs": { "Vyhýbání se Střelám": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Harder to hit with ranged attacks" ], "cs": [ "Těžší zasáhnout útoky na dálku" ] },
+    "itemEffectDescription": { "en": "Ranged Evasion (Brief)", "cs": "Vyhýb. Střelám (Krát.)" },
+    "level": 7, "buyPrice": 24, "sellPrice": 7
+  },
+  {
+    "id": "gw_ac_venomwardbalm_l07",
+    "name": { "en": "Venom-Ward Balm", "cs": "Balzám proti Jedu" },
+    "description": { "en": "A thick, waxy balm made from the glands of venom-resistant moles. Provides moderate resistance to common beast and insect venoms.", "cs": "Hustý, voskový balzám vyrobený ze žláz krtků odolných vůči jedu. Poskytuje mírnou odolnost vůči běžným jedům zvířat a hmyzu." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Minor Poison Resistance": 1, "Duration": "Moderate" }, "cs": { "Menší Odolnost vůči Jedu": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Resists common venoms" ], "cs": [ "Odolává běžným jedům" ] },
+    "itemEffectDescription": { "en": "Minor Poison Resist (Mod.)", "cs": "Menší Odol. Jedu (Stř.)" },
+    "level": 7, "buyPrice": 25, "sellPrice": 8
   },
   {
     "id": "gw_ac_nightseyeelixir_l08",
-    "name": {
-      "en": "Nightseye Elixir",
-      "cs": "Elixír Nočního Oka"
-    },
-    "description": {
-      "en": "Swirling with dark particles, this elixir grants the ability to see clearly in dim light for a respectable duration.",
-      "cs": "Tento elixír, vířící tmavými částicemi, propůjčuje schopnost jasně vidět v šeru po úctyhodnou dobu."
-    },
+    "name": { "en": "Nightseye Elixir", "cs": "Elixír Nočního Oka" },
+    "description": { "en": "Swirling with dark particles, this elixir grants the ability to see clearly in dim light for a respectable duration.", "cs": "Tento elixír, vířící tmavými částicemi, propůjčuje schopnost jasně vidět v šeru po úctyhodnou dobu." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Low-Light Vision": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Vidění v Šeru": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Grants Low-Light Vision",
-        "Improves Night Perception"
-      ],
-      "cs": [
-        "Propůjčuje vidění v šeru",
-        "Zlepšuje noční vnímání"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Low-Light Vision (Mod.), Improves Night Perc.",
-      "cs": "Vidění v Šeru (Stř.), Zlepš. Noční Vním."
-    },
-    "level": 8,
-    "buyPrice": 28,
-    "sellPrice": 8
+    "attributes": { "en": { "Low-Light Vision": 1, "Duration": "Moderate" }, "cs": { "Vidění v Šeru": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Grants Low-Light Vision", "Improves Night Perception" ], "cs": [ "Propůjčuje vidění v šeru", "Zlepšuje noční vnímání" ] },
+    "itemEffectDescription": { "en": "Low-Light Vision (Mod.)", "cs": "Vidění v Šeru (Stř.)" },
+    "level": 8, "buyPrice": 28, "sellPrice": 8
+  },
+  {
+    "id": "gw_ac_berserkersrage_l08",
+    "name": { "en": "Berserker's Rage (Minor)", "cs": "Berserkova Zuřivost (Menší)" },
+    "description": { "en": "A foul brew of fermented mushrooms and animal blood that induces a brief, uncontrolled rage. Increases strength but impairs defense.", "cs": "Odporný odvar z kvašených hub a zvířecí krve, který vyvolává krátkou, nekontrolovanou zuřivost. Zvyšuje sílu, ale zhoršuje obranu." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Minor Strength Boost": 1, "Minor Defense Penalty": 1, "Duration": "Brief" }, "cs": { "Menší Zvýšení Síly": 1, "Menší Postih na Obranu": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Boosts strength", "Lowers defense" ], "cs": [ "Zvyšuje sílu", "Snižuje obranu" ] },
+    "itemEffectDescription": { "en": "+Strength, -Defense (Brief)", "cs": "+Síla, -Obrana (Krát.)" },
+    "level": 8, "buyPrice": 29, "sellPrice": 9
+  },
+  {
+    "id": "gw_ac_stillheartdraught_l08",
+    "name": { "en": "Still-Heart Draught", "cs": "Odvar Klidného Srdce" },
+    "description": { "en": "This draught slows the heart to a crawl, making the drinker appear dead to mundane senses. Useful for feigning death, but risky.", "cs": "Tento odvar zpomaluje srdce na minimum, takže piják se jeví mrtvý pro běžné smysly. Užitečné pro předstírání smrti, ale riskantní." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Feign Death": 1, "Duration": "Brief" }, "cs": { "Předstírání Smrti": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Appear dead to mundane senses" ], "cs": [ "Jeví se mrtvý pro běžné smysly" ] },
+    "itemEffectDescription": { "en": "Feign Death (Brief)", "cs": "Předstírat Smrt (Krát.)" },
+    "level": 8, "buyPrice": 27, "sellPrice": 8
+  },
+  {
+    "id": "gw_ac_causticoil_l08",
+    "name": { "en": "Caustic Oil Flask", "cs": "Lahvička Žíravého Oleje" },
+    "description": { "en": "A flask of bubbling, acidic oil. When thrown, it shatters and corrodes armor or tough hide on contact.", "cs": "Lahvička bublajícího, kyselého oleje. Když se hodí, roztříští se a při kontaktu koroduje zbroj nebo pevnou kůži." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Armor Reduction (Target)": 1, "Application": "Thrown" }, "cs": { "Snížení Zbroje (Cíl)": 1, "Aplikace": "Hozením" } },
+    "abilities": { "en": [ "Corrodes armor on target" ], "cs": [ "Koroduje zbroj na cíli" ] },
+    "itemEffectDescription": { "en": "Corrodes Armor (Target)", "cs": "Koroduje Zbroj (Cíl)" },
+    "level": 8, "buyPrice": 30, "sellPrice": 9
+  },
+  {
+    "id": "gw_ac_soulsapbrew_l08",
+    "name": { "en": "Soulsap Brew", "cs": "Odvar Duševní Mízy" },
+    "description": { "en": "A cloying, sweet brew that restores a significant amount of vitality, but leaves the drinker feeling emotionally numb and detached.", "cs": "Přeslazený, sladký odvar, který obnovuje značné množství vitality, ale zanechává pijáka citově otupělého a odtažitého." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Major Restoration": 1, "Emotion Dampening": 1 }, "cs": { "Velká Obnova": 1, "Tlumení Emocí": 1 } },
+    "abilities": { "en": [ "Majorly restores vitality", "Dulls emotions" ], "cs": [ "Výrazně obnovuje vitalitu", "Otupuje emoce" ] },
+    "itemEffectDescription": { "en": "Major Restore, Dulls Emotions", "cs": "Velká Obnova, Tlumí Emoce" },
+    "level": 8, "buyPrice": 26, "sellPrice": 8
   },
   {
     "id": "gw_ac_wardingincense_l09",
-    "name": {
-      "en": "Warding Incense Ash (Ingested)",
-      "cs": "Popel z Ochranného Kadidla (Požitý)"
-    },
-    "description": {
-      "en": "The bitter ashes of a protective incense, when swallowed, offer a fleeting ward against minor hexes and ill will.",
-      "cs": "Hořký popel z ochranného kadidla po spolknutí nabízí prchavou ochranu proti menším kletbám a zlé vůli."
-    },
+    "name": { "en": "Warding Incense Ash (Ingested)", "cs": "Popel z Ochranného Kadidla (Požitý)" },
+    "description": { "en": "The bitter ashes of a protective incense, when swallowed, offer a fleeting ward against minor hexes and ill will.", "cs": "Hořký popel z ochranného kadidla po spolknutí nabízí prchavou ochranu proti menším kletbám a zlé vůli." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Minor Hex Ward": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Ochrana proti Menším Kletbám": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Briefly Wards Against Minor Hexes",
-        "Slightly Repels Negative Energy"
-      ],
-      "cs": [
-        "Krátce chrání před menšími kletbami",
-        "Lehce odpuzuje negativní energii"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Minor Hex Ward (Brief), Repels Neg. Energy",
-      "cs": "Ochr. Menší Kletby (Krát.), Odpuz. Neg. Energii"
-    },
-    "level": 9,
-    "buyPrice": 32,
-    "sellPrice": 10
+    "attributes": { "en": { "Minor Hex Ward": 1, "Duration": "Brief" }, "cs": { "Ochrana proti Menším Kletbám": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Briefly Wards Against Minor Hexes", "Slightly Repels Negative Energy" ], "cs": [ "Krátce chrání před menšími kletbami", "Lehce odpuzuje negativní energii" ] },
+    "itemEffectDescription": { "en": "Minor Hex Ward (Brief)", "cs": "Ochr. Menší Kletby (Krát.)" },
+    "level": 9, "buyPrice": 32, "sellPrice": 10
+  },
+  {
+    "id": "gw_ac_ghostfootoil_l09",
+    "name": { "en": "Ghostfoot Oil", "cs": "Olej Přízračných Nohou" },
+    "description": { "en": "An almost invisible oil that, when ingested, allows for remarkably silent movement for a significant duration.", "cs": "Téměř neviditelný olej, který po požití umožňuje pozoruhodně tichý pohyb po značnou dobu." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Sound Muffling": 2, "Duration": "Moderate" }, "cs": { "Tlumení Zvuku": 2, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Grants very silent movement" ], "cs": [ "Propůjčuje velmi tichý pohyb" ] },
+    "itemEffectDescription": { "en": "Silent Movement (Mod.)", "cs": "Tichý Pohyb (Stř.)" },
+    "level": 9, "buyPrice": 34, "sellPrice": 10
+  },
+  {
+    "id": "gw_ac_truthseekerelixir_l09",
+    "name": { "en": "Truth-Seeker's Elixir", "cs": "Elixír Hledače Pravdy" },
+    "description": { "en": "A clear liquid that sharpens the senses to perceive subtle tells, lies, and deceptions in others. It does not compel truth, only reveals falsehood.", "cs": "Čirá tekutina, která zostřuje smysly k vnímání jemných náznaků, lží a klamů u ostatních. Nenutí k pravdě, pouze odhaluje faleš." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Detect Deception": 1, "Duration": "Moderate" }, "cs": { "Detekce Klamu": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Aids in detecting lies" ], "cs": [ "Pomáhá v detekci lží" ] },
+    "itemEffectDescription": { "en": "Detect Deception (Mod.)", "cs": "Detekce Klamu (Stř.)" },
+    "level": 9, "buyPrice": 31, "sellPrice": 9
+  },
+  {
+    "id": "gw_ac_gravechillinfusion_l09",
+    "name": { "en": "Grave-Chill Infusion", "cs": "Nálev Hrobového Chladu" },
+    "description": { "en": "An infusion that suffuses the drinker's body with the cold of the grave, granting strong resistance to fire but making them vulnerable to holy effects.", "cs": "Nálev, který prostoupí tělo pijáka chladem hrobu, poskytující silnou odolnost vůči ohni, ale činí ho zranitelným vůči svatým účinkům." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Fire Resistance": 2, "Holy Vulnerability": 1, "Duration": "Moderate" }, "cs": { "Odolnost vůči Ohni": 2, "Zranitelnost Svatým": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Grants strong fire resistance", "Vulnerable to holy power" ], "cs": [ "Poskytuje silnou odolnost vůči ohni", "Zranitelný svatou mocí" ] },
+    "itemEffectDescription": { "en": "Fire Resist, Holy Vuln. (Mod.)", "cs": "Odol. Ohni, Svatá Zran. (Stř.)" },
+    "level": 9, "buyPrice": 33, "sellPrice": 10
+  },
+  {
+    "id": "gw_ac_giantsbloodphial_l09",
+    "name": { "en": "Giant's Blood Phial (Diluted)", "cs": "Lahvička Obří Krve (Zředěná)" },
+    "description": { "en": "A potent, if diluted, draught that temporarily swells the muscles and imparts a surge of brute strength. Causes mild aggression.", "cs": "Silný, i když zředěný, doušek, který dočasně zvětší svaly a dodá nával hrubé síly. Způsobuje mírnou agresivitu." },
+    "itemType": "alchemical_concoction",
+    "attributes": { "en": { "Strength Boost": 1, "Duration": "Brief" }, "cs": { "Zvýšení Síly": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Temporarily boosts strength", "Induces minor aggression" ], "cs": [ "Dočasně zvyšuje sílu", "Vyvolává mírnou agresi" ] },
+    "itemEffectDescription": { "en": "+1 Str (Brief), Minor Aggression", "cs": "+1 Síla (Krát.), Mírná Agrese" },
+    "level": 9, "buyPrice": 32, "sellPrice": 10
   },
   {
     "id": "gw_ac_ironbiletonic_l10",
-    "name": {
-      "en": "Ironbile Tonic",
-      "cs": "Tonikum Železné Žluči"
-    },
-    "description": {
-      "en": "A vile, metallic-tasting tonic that temporarily fortifies the body against common poisons. The aftertaste lingers.",
-      "cs": "Odporné tonikum s kovovou chutí, které dočasně posiluje tělo proti běžným jedům. Pachuť přetrvává."
-    },
+    "name": { "en": "Ironbile Tonic", "cs": "Tonikum Železné Žluči" },
+    "description": { "en": "A vile, metallic-tasting tonic that temporarily fortifies the body against common poisons. The aftertaste lingers.", "cs": "Odporné tonikum s kovovou chutí, které dočasně posiluje tělo proti běžným jedům. Pachuť přetrvává." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Minor Poison Resistance": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Menší Odolnost vůči Jedu": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Grants Minor Poison Resistance",
-        "Fortifies Against Toxins"
-      ],
-      "cs": [
-        "Poskytuje menší odolnost vůči jedům",
-        "Posiluje proti toxinům"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Minor Poison Resist (Mod.), Fortifies vs Toxins",
-      "cs": "Menší Odol. Jedu (Stř.), Posiluje vs Toxiny"
-    },
-    "level": 10,
-    "buyPrice": 36,
-    "sellPrice": 11
+    "attributes": { "en": { "Minor Poison Resistance": 1, "Duration": "Moderate" }, "cs": { "Menší Odolnost vůči Jedu": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Grants Minor Poison Resistance", "Fortifies Against Toxins" ], "cs": [ "Poskytuje menší odolnost vůči jedům", "Posiluje proti toxinům" ] },
+    "itemEffectDescription": { "en": "Minor Poison Resist (Mod.)", "cs": "Menší Odol. Jedu (Stř.)" },
+    "level": 10, "buyPrice": 36, "sellPrice": 11
   },
   {
-    "id": "gw_ac_mendersdraught_l11",
-    "name": {
-      "en": "Mender's Draught",
-      "cs": "Léčitelský Odvar"
-    },
-    "description": {
-      "en": "A potent, sweet-smelling brew that significantly accelerates healing for moderate injuries. Warmth spreads from where it's consumed.",
-      "cs": "Silný, sladce vonící odvar, který výrazně urychluje hojení středně těžkých zranění. Teplo se šíří z místa požití."
-    },
+    "id": "gw_ac_mendersdraught_l10",
+    "name": { "en": "Mender's Draught", "cs": "Léčitelský Odvar" },
+    "description": { "en": "A potent, sweet-smelling brew that significantly accelerates healing for moderate injuries. Warmth spreads from where it's consumed.", "cs": "Silný, sladce vonící odvar, který výrazně urychluje hojení středně těžkých zranění. Teplo se šíří z místa požití." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Strong Restoration": 1
-      },
-      "cs": {
-        "Silná Obnova": 1
-      }
-    },
-    "abilities": {
-      "en": [
-        "Heals Moderate Wounds",
-        "Accelerates Natural Healing"
-      ],
-      "cs": [
-        "Léčí středně těžká zranění",
-        "Urychluje přirozené hojení"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Strong Restore, Heals Mod. Wounds",
-      "cs": "Silná Obnova, Léčí Stř. Rány"
-    },
-    "level": 11,
-    "buyPrice": 45,
-    "sellPrice": 14
+    "attributes": { "en": { "Major Restoration": 1 }, "cs": { "Velká Obnova": 1 } },
+    "abilities": { "en": [ "Heals moderate wounds quickly" ], "cs": [ "Rychle léčí středně těžká zranění" ] },
+    "itemEffectDescription": { "en": "Major Restore, Heals Mod. Wounds", "cs": "Velká Obnova, Léčí Stř. Rány" },
+    "level": 10, "buyPrice": 38, "sellPrice": 11
   },
   {
-    "id": "gw_ac_steadfastphiltre_l12",
-    "name": {
-      "en": "Steadfast Philtre",
-      "cs": "Filt Pevnosti"
-    },
-    "description": {
-      "en": "This chalky liquid bolsters one's resolve, making it easier to resist fear and intimidation for a time.",
-      "cs": "Tato křídová tekutina posiluje odhodlání a na čas usnadňuje odolávání strachu a zastrašování."
-    },
+    "id": "gw_ac_steadfastphiltre_l10",
+    "name": { "en": "Steadfast Philtre", "cs": "Filt Pevnosti" },
+    "description": { "en": "This chalky liquid bolsters one's resolve, making it easier to resist fear and intimidation for a time.", "cs": "Tato křídová tekutina posiluje odhodlání a na čas usnadňuje odolávání strachu a zastrašování." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Resolve Boost": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Posílení Odhodlání": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Temporarily Bolsters Resolve",
-        "Resists Fear Effects"
-      ],
-      "cs": [
-        "Dočasně posiluje odhodlání",
-        "Odolává účinkům strachu"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+1 Resolve (Mod.), Resists Fear",
-      "cs": "+1 Odhodlání (Stř.), Odol. Strachu"
-    },
-    "level": 12,
-    "buyPrice": 54,
-    "sellPrice": 16
+    "attributes": { "en": { "Resolve Boost": 1, "Duration": "Moderate" }, "cs": { "Posílení Odhodlání": 1, "Trvání": "Střední" } },
+    "abilities": { "en": [ "Temporarily Bolsters Resolve", "Resists Fear Effects" ], "cs": [ "Dočasně posiluje odhodlání", "Odolává účinkům strachu" ] },
+    "itemEffectDescription": { "en": "+1 Resolve (Mod.), Resists Fear", "cs": "+1 Odhodlání (Stř.), Odol. Strachu" },
+    "level": 10, "buyPrice": 35, "sellPrice": 11
   },
   {
-    "id": "gw_ac_ghostfootoil_l13",
-    "name": {
-      "en": "Ghostfoot Oil",
-      "cs": "Olej Přízračných Nohou"
-    },
-    "description": {
-      "en": "An almost invisible oil that, when ingested, allows for remarkably silent movement for a significant duration.",
-      "cs": "Téměř neviditelný olej, který po požití umožňuje pozoruhodně tichý pohyb po značnou dobu."
-    },
+    "id": "gw_ac_wyrmwoodbrew_l10",
+    "name": { "en": "Wyrmwood Brew", "cs": "Odvar z Pelyňku" },
+    "description": { "en": "Extremely bitter, this brew purges minor toxins and protects against weaker magical afflictions.", "cs": "Extrémně hořký, tento odvar čistí menší toxiny a chrání před slabšími magickými neduhy." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Sound Muffling": 2,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Tlumení Zvuku": 2,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Grants Silent Movement",
-        "Eliminates Footfall Noise"
-      ],
-      "cs": [
-        "Propůjčuje tichý pohyb",
-        "Eliminuje hluk kroků"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Silent Movement (Mod.), Eliminates Footfall",
-      "cs": "Tichý Pohyb (Stř.), Eliminuje Kroky"
-    },
-    "level": 13,
-    "buyPrice": 64,
-    "sellPrice": 19
+    "attributes": { "en": { "Cleanse Minor Toxin": 1, "Weak Magic Resistance": 1, "Duration": "Brief" }, "cs": { "Očista od Menších Toxinů": 1, "Slabá Magická Odolnost": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Purges Minor Toxins", "Resists Weak Magical Afflictions" ], "cs": [ "Čistí menší toxiny", "Odolává slabým magickým neduhům" ] },
+    "itemEffectDescription": { "en": "Cleanse Toxin, Weak Magic Resist (Brief)", "cs": "Čistí Toxiny, Slabá Mag. Odol. (Krát.)" },
+    "level": 10, "buyPrice": 37, "sellPrice": 11
   },
   {
-    "id": "gw_ac_wyrmwoodbrew_l14",
-    "name": {
-      "en": "Wyrmwood Brew",
-      "cs": "Odvar z Pelyňku"
-    },
-    "description": {
-      "en": "Extremely bitter, this brew purges minor toxins and protects against weaker magical afflictions.",
-      "cs": "Extrémně hořký, tento odvar čistí menší toxiny a chrání před slabšími magickými neduhy."
-    },
+    "id": "gw_ac_farsightinfusion_l10",
+    "name": { "en": "Farsight Infusion", "cs": "Nálev Dalekozrakosti" },
+    "description": { "en": "A clear, shimmering liquid that grants telescopic vision for a short while, allowing one to see distant details with clarity.", "cs": "Čirá, třpytivá tekutina, která na krátkou chvíli propůjčuje teleskopické vidění, umožňující jasně vidět vzdálené detaily." },
     "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Cleanse Minor Toxin": 1,
-        "Weak Magic Resistance": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Očista od Menších Toxinů": 1,
-        "Slabá Magická Odolnost": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Purges Minor Toxins",
-        "Resists Weak Magical Afflictions"
-      ],
-      "cs": [
-        "Čistí menší toxiny",
-        "Odolává slabým magickým neduhům"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Cleanse Toxin, Weak Magic Resist (Brief)",
-      "cs": "Čistí Toxiny, Slabá Mag. Odol. (Krát.)"
-    },
-    "level": 14,
-    "buyPrice": 74,
-    "sellPrice": 22
-  },
-  {
-    "id": "gw_ac_farsightinfusion_l15",
-    "name": {
-      "en": "Farsight Infusion",
-      "cs": "Nálev Dalekozrakosti"
-    },
-    "description": {
-      "en": "A clear, shimmering liquid that grants telescopic vision for a short while, allowing one to see distant details with clarity.",
-      "cs": "Čirá, třpytivá tekutina, která na krátkou chvíli propůjčuje teleskopické vidění, umožňující jasně vidět vzdálené detaily."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Telescopic Vision": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Teleskopické Vidění": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Briefly Grants Telescopic Vision",
-        "Focuses on Distant Objects"
-      ],
-      "cs": [
-        "Krátce propůjčuje teleskopické vidění",
-        "Zaměřuje se na vzdálené objekty"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Telescopic Vision (Brief), Focus Distant",
-      "cs": "Teleskop. Vidění (Krát.), Zaměř. Vzdálené"
-    },
-    "level": 15,
-    "buyPrice": 85,
-    "sellPrice": 26
-  },
-  {
-    "id": "gw_ac_giantsbloadelixir_l16",
-    "name": {
-      "en": "Giant's Blood Elixir (Diluted)",
-      "cs": "Elixír Obří Krve (Zředěný)"
-    },
-    "description": {
-      "en": "A potent, if diluted, draught that temporarily swells the muscles and imparts a surge of brute strength. Causes mild aggression.",
-      "cs": "Silný, i když zředěný, doušek, který dočasně zvětší svaly a dodá nával hrubé síly. Způsobuje mírnou agresivitu."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Strength Boost": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Zvýšení Síly": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Temporarily Boosts Strength",
-        "Induces Minor Aggression"
-      ],
-      "cs": [
-        "Dočasně zvyšuje sílu",
-        "Vyvolává mírnou agresi"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+1 Str (Brief), Minor Aggression",
-      "cs": "+1 Síla (Krát.), Mírná Agrese"
-    },
-    "level": 16,
-    "buyPrice": 97,
-    "sellPrice": 29
-  },
-  {
-    "id": "gw_ac_spectralshroudmist_l17",
-    "name": {
-      "en": "Spectral Shroud Tincture",
-      "cs": "Tinktura Spektrálního Rubáše"
-    },
-    "description": {
-      "en": "When consumed, this tincture makes the imbiber appear hazy and indistinct for a time, confusing the eye.",
-      "cs": "Po požití tato tinktura způsobí, že piják vypadá na čas mlhavě a nejasně, čímž mate oko."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Visual Evasion Boost": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Zlepšení Vizuálního Vyhýbání": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Briefly Blurs Form",
-        "Harder to Target Visually"
-      ],
-      "cs": [
-        "Krátce rozmazává podobu",
-        "Těžší vizuálně zaměřit"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+1 Vis. Evasion (Brief), Blurs Form",
-      "cs": "+1 Viz. Vyhýb. (Krát.), Rozmaz. Podobu"
-    },
-    "level": 17,
-    "buyPrice": 108,
-    "sellPrice": 32
-  },
-  {
-    "id": "gw_ac_coldirondraught_l18",
-    "name": {
-      "en": "Cold Iron Draught",
-      "cs": "Odvar Studeného Železa"
-    },
-    "description": {
-      "en": "Infused with the essence of cold-forged iron, this draught offers moderate protection against fae enchantments and otherworldly influences.",
-      "cs": "Tento odvar, prodchnutý esencí za studena kovaného železa, nabízí mírnou ochranu proti kouzlům víl a vlivům z jiného světa."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Fae Magic Resistance": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Odolnost vůči Magii Víl": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Resists Fae Enchantments",
-        "Wards Against Otherworldly Influences"
-      ],
-      "cs": [
-        "Odolává kouzlům víl",
-        "Chrání před vlivy z jiného světa"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Fae Magic Resist (Mod.), Wards Otherworldly",
-      "cs": "Odol. Magii Víl (Stř.), Chrání Jinosvět."
-    },
-    "level": 18,
-    "buyPrice": 120,
-    "sellPrice": 36
-  },
-  {
-    "id": "gw_ac_gravewardensbrew_l19",
-    "name": {
-      "en": "Grave Warden's Brew",
-      "cs": "Odvar Hrobového Strážce"
-    },
-    "description": {
-      "en": "A concoction passed down by Wardens, it instills a chilling aura that unnerves lesser undead and spirits.",
-      "cs": "Odvar předávaný Strážci, který vštěpuje mrazivou auru, jež znervózňuje nižší nemrtvé a duchy."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Minor Undead Fear Aura": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Menší Aura Strachu (Nemrtví)": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Unnerves Lesser Undead and Spirits",
-        "Projects Chilling Presence"
-      ],
-      "cs": [
-        "Znervózňuje nižší nemrtvé a duchy",
-        "Vyzařuje mrazivou přítomnost"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Undead Fear Aura (Mod.), Chilling Presence",
-      "cs": "Aura Strachu Nemrt. (Stř.), Mrazivá Přítom."
-    },
-    "level": 19,
-    "buyPrice": 133,
-    "sellPrice": 40
-  },
-  {
-    "id": "gw_ac_panaceaofsoot_l20",
-    "name": {
-      "en": "Panacea of Soot and Sorrow",
-      "cs": "Všelek ze Sazí a Žalu"
-    },
-    "description": {
-      "en": "Despite its grim ingredients, this potent elixir can mend grievous wounds and restore a significant measure of vitality.",
-      "cs": "Navzdory svým ponurým ingrediencím dokáže tento silný elixír zacelit těžká zranění a obnovit značnou míru vitality."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Major Restoration": 1
-      },
-      "cs": {
-        "Velká Obnova": 1
-      }
-    },
-    "abilities": {
-      "en": [
-        "Heals Grievous Wounds",
-        "Major Vitality Restoration"
-      ],
-      "cs": [
-        "Léčí těžká zranění",
-        "Velká obnova vitality"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Major Restore, Heals Grievous Wounds",
-      "cs": "Velká Obnova, Léčí Těžké Rány"
-    },
-    "level": 20,
-    "buyPrice": 147,
-    "sellPrice": 44
-  },
-  {
-    "id": "gw_ac_shadowmeldelixir_l21",
-    "name": {
-      "en": "Shadowmeld Elixir",
-      "cs": "Elixír Splynutí se Stínem"
-    },
-    "description": {
-      "en": "This inky black liquid allows the imbiber to become nearly invisible while motionless in deep shadow. Any movement breaks the effect.",
-      "cs": "Tato inkoustově černá tekutina umožňuje pijákovi stát se téměř neviditelným, pokud je nehybný v hlubokém stínu. Jakýkoli pohyb efekt přeruší."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Conditional Invisibility (Shadow)": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Podmíněná Neviditelnost (Stín)": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Grants Near Invisibility in Deep Shadow (While Still)",
-        "Requires Stillness"
-      ],
-      "cs": [
-        "Propůjčuje téměř neviditelnost v hlubokém stínu (v klidu)",
-        "Vyžaduje nehybnost"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Shadow Invisibility (Still, Mod.)",
-      "cs": "Stínová Nevid. (V Klidu, Stř.)"
-    },
-    "level": 21,
-    "buyPrice": 161,
-    "sellPrice": 48
-  },
-  {
-    "id": "gw_ac_heartofstonepotion_l22",
-    "name": {
-      "en": "Heart-of-Stone Potion",
-      "cs": "Lektvar Kamenného Srdce"
-    },
-    "description": {
-      "en": "A gritty, grey potion that greatly enhances physical resilience, allowing one to endure powerful blows. Slows reaction time slightly.",
-      "cs": "Písčitý, šedý lektvar, který výrazně zvyšuje fyzickou odolnost a umožňuje snášet silné údery. Mírně zpomaluje reakční dobu."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Physical Defense": 2,
-        "Reflex Penalty": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Fyzická Obrana": 2,
-        "Postih na Reflexy": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Greatly Enhances Physical Resilience",
-        "Slightly Slows Reactions"
-      ],
-      "cs": [
-        "Výrazně zvyšuje fyzickou odolnost",
-        "Mírně zpomaluje reakce"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+2 Phys Def, -1 Reflex (Mod.), Slows React.",
-      "cs": "+2 Fyz Obr, -1 Reflex (Stř.), Zpom. Reakce"
-    },
-    "level": 22,
-    "buyPrice": 176,
-    "sellPrice": 53
-  },
-  {
-    "id": "gw_ac_bansheeskeentonic_l23",
-    "name": {
-      "en": "Banshee's Keen Tonic",
-      "cs": "Tonikum Teskného Nářku Banshee"
-    },
-    "description": {
-      "en": "Distilled from rare herbs found only near places of great sorrow, this tonic grants incredibly sharp hearing for a time, bordering on clairaudience.",
-      "cs": "Destilováno ze vzácných bylin nalezených pouze poblíž míst velkého žalu, toto tonikum na čas propůjčuje neuvěřitelně ostrý sluch, hraničící s jasnozřivostí."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Hearing Boost": 2,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Zlepšení Sluchu": 2,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Grants Supernatural Hearing",
-        "Detects Faint Sounds"
-      ],
-      "cs": [
-        "Propůjčuje nadpřirozený sluch",
-        "Detekuje slabé zvuky"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+2 Hearing (Mod.), Supernatural Hearing",
-      "cs": "+2 Sluch (Stř.), Nadpřiroz. Sluch"
-    },
-    "level": 23,
-    "buyPrice": 192,
-    "sellPrice": 58
-  },
-  {
-    "id": "gw_ac_soulfireelixir_l24",
-    "name": {
-      "en": "Soulfire Elixir",
-      "cs": "Elixír Ohně Duše"
-    },
-    "description": {
-      "en": "A volatile elixir that ignites one's inner spirit, granting temporary resistance to chilling fear and despair, and warding off weaker spirits.",
-      "cs": "Nestálý elixír, který zapaluje vnitřního ducha, propůjčuje dočasnou odolnost vůči mrazivému strachu a zoufalství a odhání slabší duchy."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Fear Resistance": 2,
-        "Minor Spirit Ward": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Odolnost vůči Strachu": 2,
-        "Menší Ochrana proti Duchům": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Resists Potent Fear Effects",
-        "Wards Off Minor Spirits"
-      ],
-      "cs": [
-        "Odolává silným účinkům strachu",
-        "Odhání menší duchy"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+2 Fear Resist, Minor Spirit Ward (Mod.)",
-      "cs": "+2 Odol. Strachu, Menší Ochr. Duchů (Stř.)"
-    },
-    "level": 24,
-    "buyPrice": 210,
-    "sellPrice": 63
-  },
-  {
-    "id": "gw_ac_witchbanebrew_l25",
-    "name": {
-      "en": "Witchbane Brew",
-      "cs": "Odvar Proti Čarodějnicím"
-    },
-    "description": {
-      "en": "A complex concoction of purified salts and rare herbs that offers significant protection against curses and malevolent witchcraft.",
-      "cs": "Složitý odvar z čištěných solí a vzácných bylin, který nabízí významnou ochranu proti kletbám a zlovolnému čarodějnictví."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Curse Resistance": 2,
-        "Duration": "Long"
-      },
-      "cs": {
-        "Odolnost vůči Kletbám": 2,
-        "Trvání": "Dlouhé"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Significant Curse Resistance",
-        "Dispels Minor Hexes"
-      ],
-      "cs": [
-        "Významná odolnost vůči kletbám",
-        "Rozptyluje menší kletby"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+2 Curse Resist (Long), Dispels Hexes",
-      "cs": "+2 Odol. Kletbám (Dlouhé), Rozpt. Kletby"
-    },
-    "level": 25,
-    "buyPrice": 230,
-    "sellPrice": 69
-  },
-  {
-    "id": "gw_ac_wraithformdraught_l26",
-    "name": {
-      "en": "Wraithform Draught",
-      "cs": "Odvar Přízračné Podoby"
-    },
-    "description": {
-      "en": "This chilling, translucent liquid allows the drinker to become partially incorporeal for a short time, able to pass through small cracks and ignore some physical attacks.",
-      "cs": "Tato mrazivá, průsvitná tekutina umožňuje pijákovi stát se na krátkou dobu částečně nehmotným, schopným procházet malými prasklinami a ignorovat některé fyzické útoky."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Partial Incorporeality": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Částečná Nehmotnost": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Brief Partial Incorporeality",
-        "Pass Through Small Gaps",
-        "Chance to Evade Physical Attacks"
-      ],
-      "cs": [
-        "Krátká částečná nehmotnost",
-        "Prochází malými mezerami",
-        "Šance vyhnout se fyzickým útokům"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Part. Incorporeal (Brief), Evade Attacks",
-      "cs": "Část. Nehmot. (Krát.), Vyhne se Útokům"
-    },
-    "level": 26,
-    "buyPrice": 250,
-    "sellPrice": 75
-  },
-  {
-    "id": "gw_ac_berserkersrage_l27",
-    "name": {
-      "en": "Berserker's Fury Brew",
-      "cs": "Odvar Berserkovy Zuřivosti"
-    },
-    "description": {
-      "en": "A fiery, intoxicating brew that induces a battle rage, greatly increasing strength and pain tolerance but clouding judgment.",
-      "cs": "Ohnivý, opojný odvar, který vyvolává bojovou zuřivost, výrazně zvyšuje sílu a toleranci bolesti, ale zatemňuje úsudek."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Strength Boost": 2,
-        "Pain Tolerance": 2,
-        "Judgment Penalty": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Zvýšení Síly": 2,
-        "Tolerance Bolesti": 2,
-        "Postih na Úsudek": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Induces Battle Rage",
-        "Greatly Boosts Strength and Pain Tolerance",
-        "Clouds Judgment"
-      ],
-      "cs": [
-        "Vyvolává bojovou zuřivost",
-        "Výrazně zvyšuje sílu a toleranci bolesti",
-        "Zatemňuje úsudek"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+2 Str, +2 Pain Tol., -1 Judg. (Mod.)",
-      "cs": "+2 Síla, +2 Tol. Bol., -1 Úsudek (Stř.)"
-    },
-    "level": 27,
-    "buyPrice": 280,
-    "sellPrice": 84
-  },
-  {
-    "id": "gw_ac_truesightelixir_l28",
-    "name": {
-      "en": "Elixir of True Sight",
-      "cs": "Elixír Pravého Vidění"
-    },
-    "description": {
-      "en": "A rare and potent elixir that allows the imbiber to see through illusions, perceive hidden spirits, and detect invisible things for a time.",
-      "cs": "Vzácný a silný elixír, který umožňuje pijákovi na čas vidět skrze iluze, vnímat skryté duchy a detekovat neviditelné věci."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "True Sight": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Pravé Vidění": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "See Through Illusions",
-        "Perceive Spirits",
-        "Detect Invisibility"
-      ],
-      "cs": [
-        "Vidí skrze iluze",
-        "Vnímá duchy",
-        "Detekuje neviditelnost"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "True Sight (Mod.), See Illusions/Spirits",
-      "cs": "Pravé Vidění (Stř.), Vidí Iluze/Duchy"
-    },
-    "level": 28,
-    "buyPrice": 310,
-    "sellPrice": 93
-  },
-  {
-    "id": "gw_ac_lichbaneoil_l29",
-    "name": {
-      "en": "Lichbane Oil (Ingested)",
-      "cs": "Olej Proti Lichům (Požitý)"
-    },
-    "description": {
-      "en": "A sacred oil, extremely dangerous to undead, that when ingested grants the imbiber's own life force a damaging aura against powerful undead.",
-      "cs": "Svatý olej, extrémně nebezpečný pro nemrtvé, který po požití propůjčuje životní síle pijáka škodlivou auru proti mocným nemrtvým."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Major Undead Damage Aura": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Velká Aura Poškození (Nemrtví)": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Damaging Aura Against Powerful Undead",
-        "Empowers Life Force Offensively"
-      ],
-      "cs": [
-        "Škodlivá aura proti mocným nemrtvým",
-        "Ofenzivně posiluje životní sílu"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Major Undead Dmg Aura (Brief)",
-      "cs": "Velká Aura Zraň. Nemrt. (Krát.)"
-    },
-    "level": 29,
-    "buyPrice": 340,
-    "sellPrice": 102
-  },
-  {
-    "id": "gw_ac_draughtofheroism_l30",
-    "name": {
-      "en": "Draught of Forgotten Heroism",
-      "cs": "Odvar Zapomenutého Hrdinství"
-    },
-    "description": {
-      "en": "This golden, inspiring liquid temporarily grants immense courage, heightened prowess in combat, and an uncanny ability to inspire allies.",
-      "cs": "Tato zlatavá, inspirující tekutina dočasně propůjčuje nesmírnou odvahu, zvýšenou zdatnost v boji a neobyčejnou schopnost inspirovat spojence."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Major Courage Boost": 1,
-        "Major Combat Prowess": 1,
-        "Inspiration Aura": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Velké Posílení Odvahy": 1,
-        "Velká Bojová Zdatnost": 1,
-        "Inspirační Aura": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Grants Immense Courage",
-        "Heightens Combat Prowess",
-        "Inspires Nearby Allies"
-      ],
-      "cs": [
-        "Propůjčuje nesmírnou odvahu",
-        "Zvyšuje bojovou zdatnost",
-        "Inspiruje blízké spojence"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Major Courage & Prowess, Inspires Allies (Mod.)",
-      "cs": "Velká Odvaha & Zdatnost, Inspiruje Spoj. (Stř.)"
-    },
-    "level": 30,
-    "buyPrice": 370,
-    "sellPrice": 111
-  },
-  {
-    "id": "gw_ac_regenserenity_l31",
-    "name": {
-      "en": "Regenerative Serenity",
-      "cs": "Regenerační Klid"
-    },
-    "description": {
-      "en": "A milky, opalescent fluid that induces a deep calm while rapidly knitting flesh and bone. Heals even severe trauma over time.",
-      "cs": "Mléčná, opaleskující tekutina, která navozuje hluboký klid a zároveň rychle sceluje maso a kosti. Postupně léčí i vážná traumata."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Major Regeneration": 1,
-        "Calm Inducing": 1,
-        "Duration": "Long"
-      },
-      "cs": {
-        "Velká Regenerace": 1,
-        "Navozující Klid": 1,
-        "Trvání": "Dlouhé"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Rapidly Regenerates Wounds",
-        "Induces Profound Calm"
-      ],
-      "cs": [
-        "Rychle regeneruje rány",
-        "Navozuje hluboký klid"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Major Regen, Induces Calm (Long)",
-      "cs": "Velká Regen., Navozuje Klid (Dlouhé)"
-    },
-    "level": 31,
-    "buyPrice": 400,
-    "sellPrice": 120
-  },
-  {
-    "id": "gw_ac_quicksilverstep_l32",
-    "name": {
-      "en": "Quicksilver Step Elixir",
-      "cs": "Elixír Rtuťového Kroku"
-    },
-    "description": {
-      "en": "Shining like liquid metal, this elixir grants incredible speed and agility, making the imbiber a blur of motion.",
-      "cs": "Tento elixír, lesknoucí se jako tekutý kov, propůjčuje neuvěřitelnou rychlost a hbitost, čímž činí pijáka rozmazanou šmouhou."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Major Speed Boost": 1,
-        "Major Agility Boost": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Velké Zrychlení": 1,
-        "Velké Zvýšení Hbitosti": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Grants Incredible Speed",
-        "Enhances Agility Dramatically"
-      ],
-      "cs": [
-        "Propůjčuje neuvěřitelnou rychlost",
-        "Dramaticky zvyšuje hbitost"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Major Speed & Agility (Mod.)",
-      "cs": "Velká Rychl. & Hbitost (Stř.)"
-    },
-    "level": 32,
-    "buyPrice": 435,
-    "sellPrice": 131
-  },
-  {
-    "id": "gw_ac_mindfortress_l33",
-    "name": {
-      "en": "Mind Fortress Phial",
-      "cs": "Lahvička Pevnosti Mysli"
-    },
-    "description": {
-      "en": "A crystalline fluid that clarifies thought and creates an unbreachable bulwark against mental intrusion, charms, and illusions.",
-      "cs": "Krystalická tekutina, která projasňuje myšlenky a vytváří neprolomitelnou baštu proti mentálním vpádům, kouzlům a iluzím."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Absolute Mental Fortitude": 1,
-        "Illusion Immunity": 1,
-        "Duration": "Long"
-      },
-      "cs": {
-        "Absolutní Mentální Pevnost": 1,
-        "Imunita vůči Iluzím": 1,
-        "Trvání": "Dlouhé"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Absolute Mental Fortitude",
-        "Immunity to Charms and Illusions"
-      ],
-      "cs": [
-        "Absolutní mentální pevnost",
-        "Imunita vůči kouzlům a iluzím"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Absolute Mental Fortitude, Illusion/Charm Immune (Long)",
-      "cs": "Abs. Ment. Pevnost, Imun. Iluze/Kouzla (Dlouhé)"
-    },
-    "level": 33,
-    "buyPrice": 470,
-    "sellPrice": 141
-  },
-  {
-    "id": "gw_ac_dragonbreathdraught_l34",
-    "name": {
-      "en": "Dragon's Breath Tincture",
-      "cs": "Tinktura Dračího Dechu"
-    },
-    "description": {
-      "en": "A fiercely hot, volatile liquid. For a short time after drinking, the imbiber can exhale a gout of searing flame. Use with extreme caution.",
-      "cs": "Zuřivě horká, nestálá tekutina. Krátce po vypití může piják vydechnout proud spalujícího plamene. Používejte s extrémní opatrností."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Fire Breath": 1,
-        "Charges": 1
-      },
-      "cs": {
-        "Ohnivý Dech": 1,
-        "Náboje": 1
-      }
-    },
-    "abilities": {
-      "en": [
-        "Exhale Searing Flame (Single Use)",
-        "Extremely Hot"
-      ],
-      "cs": [
-        "Vydechnutí spalujícího plamene (jednorázové)",
-        "Extrémně horké"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Fire Breath (1 Charge)",
-      "cs": "Ohnivý Dech (1 Náboj)"
-    },
-    "level": 34,
-    "buyPrice": 505,
-    "sellPrice": 152
-  },
-  {
-    "id": "gw_ac_unseenpassage_l35",
-    "name": {
-      "en": "Elixir of Unseen Passage",
-      "cs": "Elixír Neviditelného Průchodu"
-    },
-    "description": {
-      "en": "This elixir renders the drinker completely invisible to sight, sound, and smell for a moderate duration. Magical detection may still find them.",
-      "cs": "Tento elixír činí pijáka na střední dobu zcela neviditelným pro zrak, sluch i čich. Magická detekce je stále může najít."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Complete Invisibility": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Úplná Neviditelnost": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Complete Invisibility (Sight, Sound, Smell)",
-        "Vulnerable to Magical Detection"
-      ],
-      "cs": [
-        "Úplná neviditelnost (zrak, sluch, čich)",
-        "Zranitelný magickou detekcí"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Complete Invisibility (Mod.)",
-      "cs": "Úplná Neviditelnost (Stř.)"
-    },
-    "level": 35,
-    "buyPrice": 540,
-    "sellPrice": 162
-  },
-  {
-    "id": "gw_ac_adamantineskin_l36",
-    "name": {
-      "en": "Adamantine Skin Oil",
-      "cs": "Olej Adamantové Kůže"
-    },
-    "description": {
-      "en": "When ingested, this shimmering oil turns the skin as hard as legendary adamant, granting immense physical protection.",
-      "cs": "Po požití tento třpytivý olej ztvrdne kůži jako legendární adamant a propůjčuje nesmírnou fyzickou ochranu."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Physical Defense": 3,
-        "Duration": "Long"
-      },
-      "cs": {
-        "Fyzická Obrana": 3,
-        "Trvání": "Dlouhé"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Skin Becomes Adamantine-Hard",
-        "Immense Physical Damage Reduction"
-      ],
-      "cs": [
-        "Kůže ztvrdne jako adamant",
-        "Nesmírné snížení fyzického poškození"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "+3 Phys Def (Long), Adamantine Skin",
-      "cs": "+3 Fyz Obr (Dlouhé), Adamant. Kůže"
-    },
-    "level": 36,
-    "buyPrice": 580,
-    "sellPrice": 174
-  },
-  {
-    "id": "gw_ac_spiritwalkelixir_l37",
-    "name": {
-      "en": "Spirit-Walk Elixir",
-      "cs": "Elixír Duchovní Pouti"
-    },
-    "description": {
-      "en": "Allows the drinker's spirit to temporarily leave their body, becoming an unseen, intangible observer. The body remains vulnerable.",
-      "cs": "Umožňuje duchu pijáka dočasně opustit tělo a stát se neviditelným, nehmotným pozorovatelem. Tělo zůstává zranitelné."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Astral Projection": 1,
-        "Body Vulnerable": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Astrální Projekce": 1,
-        "Zranitelné Tělo": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Temporary Astral Projection",
-        "Spirit Becomes Unseen and Intangible",
-        "Physical Body Remains Vulnerable"
-      ],
-      "cs": [
-        "Dočasná astrální projekce",
-        "Duch se stává neviditelným a nehmotným",
-        "Fyzické tělo zůstává zranitelné"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Astral Projection (Brief), Body Vulnerable",
-      "cs": "Astrální Projekce (Krát.), Tělo Zranitelné"
-    },
-    "level": 37,
-    "buyPrice": 620,
-    "sellPrice": 186
-  },
-  {
-    "id": "gw_ac_wardensvigil_l38",
-    "name": {
-      "en": "Draught of the Warden's Vigil",
-      "cs": "Odvar Strážcovy Vigilie"
-    },
-    "description": {
-      "en": "A sacred concoction that heightens all senses to a supernatural degree, grants preternatural awareness of surroundings, and banishes fatigue for an extended period.",
-      "cs": "Svatý odvar, který zostřuje všechny smysly na nadpřirozenou úroveň, propůjčuje nadpřirozené vnímání okolí a na delší dobu zahání únavu."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Major Sensory Boost": 1,
-        "Preternatural Awareness": 1,
-        "Banish Fatigue": 1,
-        "Duration": "Extended"
-      },
-      "cs": {
-        "Velké Zlepšení Smyslů": 1,
-        "Nadpřirozené Vnímání": 1,
-        "Odstranění Únavy": 1,
-        "Trvání": "Prodloužené"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Supernaturally Heightened Senses",
-        "Preternatural Awareness",
-        "Banishes All Fatigue"
-      ],
-      "cs": [
-        "Nadpřirozeně zostřené smysly",
-        "Nadpřirozené vnímání",
-        "Zahání veškerou únavu"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Major Senses, Pretern. Aware, Banish Fatigue (Ext.)",
-      "cs": "Velké Smysly, Nadpřir. Vním., Odstr. Únavu (Prodl.)"
-    },
-    "level": 38,
-    "buyPrice": 660,
-    "sellPrice": 198
-  },
-  {
-    "id": "gw_ac_chronosliptincture_l39",
-    "name": {
-      "en": "Chrono-Slip Tincture",
-      "cs": "Tinktura Časového Skluzu"
-    },
-    "description": {
-      "en": "A dangerously unstable tincture that allows the imbiber to perceive and react to events with incredible speed, as if time itself has slowed for them.",
-      "cs": "Nebezpečně nestabilní tinktura, která umožňuje pijákovi vnímat a reagovat na události s neuvěřitelnou rychlostí, jako by se pro něj zpomalil samotný čas."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Slowed Time Perception": 1,
-        "Superhuman Reaction Speed": 1,
-        "Duration": "Very Brief"
-      },
-      "cs": {
-        "Zpomalené Vnímání Času": 1,
-        "Nadlidská Reakční Rychlost": 1,
-        "Trvání": "Velmi Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Perceive Time as Slowed",
-        "Superhuman Reaction Speed",
-        "Brief, Intense Effect"
-      ],
-      "cs": [
-        "Vnímá čas jako zpomalený",
-        "Nadlidská reakční rychlost",
-        "Krátký, intenzivní účinek"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Slows Time, Superhuman React. (V. Brief)",
-      "cs": "Zpom. Čas, Nadlid. Reakce (V. Krát.)"
-    },
-    "level": 39,
-    "buyPrice": 700,
-    "sellPrice": 210
-  },
-  {
-    "id": "gw_ac_phoenixashphial_l40",
-    "name": {
-      "en": "Phial of Phoenix Ash",
-      "cs": "Lahvička Fénixova Popele"
-    },
-    "description": {
-      "en": "Contains the purified essence of phoenix ash. If consumed shortly before death, it will bring the imbiber back from the brink, fully restored but consumed by ethereal flames for a moment.",
-      "cs": "Obsahuje čištěnou esenci fénixova popele. Pokud se spotřebuje krátce před smrtí, přivede pijáka zpět z pokraje, plně obnoveného, ale na okamžik pohlceného éterickými plameny."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Revivification": 1,
-        "Complete Restoration": 1,
-        "Ethereal Immolation": 1
-      },
-      "cs": {
-        "Oživení": 1,
-        "Úplná Obnova": 1,
-        "Éterické Vzplanutí": 1
-      }
-    },
-    "abilities": {
-      "en": [
-        "Revives from Near Death (If Consumed Prior)",
-        "Complete Restoration of Vitality",
-        "Briefly Wreathed in Ethereal Fire"
-      ],
-      "cs": [
-        "Oživuje z blízkosti smrti (pokud je požito předem)",
-        "Úplné obnovení vitality",
-        "Krátce zahalen éterickým ohněm"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Revives (Near Death), Full Restore, Ethereal Fire",
-      "cs": "Oživí (Blízko Smrti), Plná Obnova, Éter. Oheň"
-    },
-    "level": 40,
-    "buyPrice": 750,
-    "sellPrice": 225
-  },
-  {
-    "id": "gw_ac_voidessence_l41",
-    "name": {
-      "en": "Void Essence Draught",
-      "cs": "Odvar Esence Prázdnoty"
-    },
-    "description": {
-      "en": "A chilling draught that imbues the drinker with the cold emptiness of the void, rendering them highly resistant to all forms of energy and magic, but also dulling their emotions.",
-      "cs": "Mrazivý odvar, který propůjčuje pijákovi chladnou prázdnotu nicoty, čímž ho činí vysoce odolným vůči všem formám energie a magie, ale také otupuje jeho emoce."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Major Energy Resistance": 1,
-        "Major Magic Resistance": 1,
-        "Emotion Dampening": 1,
-        "Duration": "Long"
-      },
-      "cs": {
-        "Velká Energetická Odolnost": 1,
-        "Velká Magická Odolnost": 1,
-        "Tlumení Emocí": 1,
-        "Trvání": "Dlouhé"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Major Resistance to All Energy and Magic",
-        "Dulls Emotional Responses"
-      ],
-      "cs": [
-        "Velká odolnost vůči veškeré energii a magii",
-        "Ochabuje emoční reakce"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Major Energy/Magic Resist, Dulls Emotions (Long)",
-      "cs": "Velká Energ./Mag. Odol., Tlumí Emoce (Dlouhé)"
-    },
-    "level": 41,
-    "buyPrice": 800,
-    "sellPrice": 240
-  },
-  {
-    "id": "gw_ac_shapeshifterheart_l42",
-    "name": {
-      "en": "Shapeshifter's Heart (Distilled)",
-      "cs": "Srdce Měňavce (Destilované)"
-    },
-    "description": {
-      "en": "The distilled essence of a shapeshifter's core, allowing the imbiber to assume the form of a common beast (e.g. wolf, raven) for a limited time. Control is difficult.",
-      "cs": "Destilovaná esence jádra měňavce, umožňující pijákovi na omezenou dobu přijmout podobu běžné šelmy (např. vlka, havrana). Ovládání je obtížné."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Polymorph (Common Beast)": 1,
-        "Control Difficulty": "Moderate",
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Proměna (Běžná Šelma)": 1,
-        "Obtížnost Ovládání": "Střední",
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Assume Form of Common Beast (e.g., Wolf, Raven)",
-        "Difficult to Control Initially"
-      ],
-      "cs": [
-        "Přijme podobu běžné šelmy (např. vlk, havran)",
-        "Zpočátku obtížné ovládání"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Polymorph: Beast (Mod.), Difficult Control",
-      "cs": "Proměna: Šelma (Stř.), Obtížné Ovlád."
-    },
-    "level": 42,
-    "buyPrice": 850,
-    "sellPrice": 255
-  },
-  {
-    "id": "gw_ac_golemsbloodpotion_l43",
-    "name": {
-      "en": "Golem's Blood Potion (Living Stone)",
-      "cs": "Lektvar Golemovy Krve (Živý Kámen)"
-    },
-    "description": {
-      "en": "A potion containing liquified stone animated by potent enchantments. Grants incredible, almost absolute, physical invulnerability but renders the drinker slow and ponderous as stone.",
-      "cs": "Lektvar obsahující zkapalněný kámen oživený mocnými kouzly. Propůjčuje neuvěřitelnou, téměř absolutní, fyzickou nezranitelnost, ale činí pijáka pomalým a těžkopádným jako kámen."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Near-Absolute Physical Invulnerability": 1,
-        "Major Speed Penalty": 1,
-        "Duration": "Moderate"
-      },
-      "cs": {
-        "Téměř Absolutní Fyzická Nezranitelnost": 1,
-        "Velký Postih na Rychlost": 1,
-        "Trvání": "Střední"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Near-Absolute Physical Invulnerability",
-        "Extremely Slow Movement and Reactions"
-      ],
-      "cs": [
-        "Téměř absolutní fyzická nezranitelnost",
-        "Extrémně pomalý pohyb a reakce"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Near-Abs. Phys. Invuln., Major Speed Penalty (Mod.)",
-      "cs": "Téměř Abs. Fyz. Nezran., Velký Postih Rychl. (Stř.)"
-    },
-    "level": 43,
-    "buyPrice": 900,
-    "sellPrice": 270
-  },
-  {
-    "id": "gw_ac_truthserumprime_l44",
-    "name": {
-      "en": "Truth Serum Prime",
-      "cs": "Prvotřídní Sérum Pravdy"
-    },
-    "description": {
-      "en": "An alchemical masterpiece. When ingested by another (willingly or not), it compels them to speak only the absolute truth, revealing their deepest secrets. Self-ingestion has no effect other than clarity.",
-      "cs": "Alchymistické mistrovské dílo. Když je požito jinou osobou (dobrovolně či nikoli), nutí ji mluvit pouze absolutní pravdu a odhalovat nejhlubší tajemství. Samostatné požití nemá jiný účinek než projasnění mysli."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Compel Truth (Target)": 1,
-        "Application": "External Ingestion"
-      },
-      "cs": {
-        "Vynucení Pravdy (Cíl)": 1,
-        "Aplikace": "Vnější Požití"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Compels Target to Speak Absolute Truth",
-        "Reveals Deepest Secrets (On Target)",
-        "Self-Use Grants Mental Clarity"
-      ],
-      "cs": [
-        "Nutí cíl mluvit absolutní pravdu",
-        "Odhaluje nejhlubší tajemství (na cíli)",
-        "Vlastní použití propůjčuje mentální jasnost"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Compels Truth (Target), Self: Clarity",
-      "cs": "Vynucuje Pravdu (Cíl), Sobě: Jasnost"
-    },
-    "level": 44,
-    "buyPrice": 960,
-    "sellPrice": 288
-  },
-  {
-    "id": "gw_ac_elixiroffateweaving_l45",
-    "name": {
-      "en": "Elixir of Fate-Weaving (Minor)",
-      "cs": "Elixír Tkaní Osudu (Menší)"
-    },
-    "description": {
-      "en": "This shimmering, unpredictable elixir allows the imbiber to subtly influence the probability of immediate future events for a very short time. The results are often chaotic and uncontrollable.",
-      "cs": "Tento třpytivý, nepředvídatelný elixír umožňuje pijákovi na velmi krátkou dobu jemně ovlivňovat pravděpodobnost bezprostředních budoucích událostí. Výsledky jsou často chaotické a nekontrolovatelné."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Minor Probability Influence": 1,
-        "Control": "Chaotic",
-        "Duration": "Very Brief"
-      },
-      "cs": {
-        "Menší Ovlivnění Pravděpodobnosti": 1,
-        "Ovládání": "Chaotické",
-        "Trvání": "Velmi Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Subtly Influence Probability of Immediate Events",
-        "Effects are Chaotic and Unpredictable"
-      ],
-      "cs": [
-        "Jemně ovlivňuje pravděpodobnost okamžitých událostí",
-        "Účinky jsou chaotické a nepředvídatelné"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Minor Probability Influence (Chaotic, V. Brief)",
-      "cs": "Menší Vliv Pravděp. (Chaotické, V. Krát.)"
-    },
-    "level": 45,
-    "buyPrice": 1020,
-    "sellPrice": 306
-  },
-  {
-    "id": "gw_ac_celestialdew_l46",
-    "name": {
-      "en": "Phial of Celestial Dew",
-      "cs": "Lahvička Nebeské Rosy"
-    },
-    "description": {
-      "en": "Collected from a place touched by celestial beings, this dew purges all curses, diseases, poisons, and negative magical effects, restoring the imbiber to pristine spiritual and physical health.",
-      "cs": "Tato rosa, sebraná z místa dotčeného nebeskými bytostmi, čistí všechny kletby, nemoci, jedy a negativní magické účinky a navrací pijákovi původní duchovní a fyzické zdraví."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Absolute Purification": 1,
-        "Complete Restoration": 1
-      },
-      "cs": {
-        "Absolutní Očištění": 1,
-        "Úplná Obnova": 1
-      }
-    },
-    "abilities": {
-      "en": [
-        "Purges All Negative Conditions (Curses, Diseases, Poisons)",
-        "Restores Pristine Spiritual and Physical Health"
-      ],
-      "cs": [
-        "Čistí všechny negativní stavy (kletby, nemoci, jedy)",
-        "Navrací původní duchovní a fyzické zdraví"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Absolute Purification, Full Restore",
-      "cs": "Absolutní Očištění, Plná Obnova"
-    },
-    "level": 46,
-    "buyPrice": 1200,
-    "sellPrice": 360
-  },
-  {
-    "id": "gw_ac_timelessform_l47",
-    "name": {
-      "en": "Draught of Timeless Form",
-      "cs": "Odvar Nadčasové Podoby"
-    },
-    "description": {
-      "en": "A strange, heavy liquid that suspends the drinker outside the normal flow of time for a brief subjective period. To an outside observer, they vanish and reappear. Cannot interact while timeless.",
-      "cs": "Podivná, těžká tekutina, která na krátkou subjektivní dobu pozastaví pijáka mimo normální tok času. Pro vnějšího pozorovatele zmizí a znovu se objeví. Během nadčasovosti nemůže interagovat."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Self Temporal Stasis": 1,
-        "Interaction Disabled": 1,
-        "Subjective Duration": "Brief"
-      },
-      "cs": {
-        "Vlastní Časová Stáze": 1,
-        "Interakce Vypnuta": 1,
-        "Subjektivní Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Briefly Steps Outside Normal Time Flow",
-        "Vanishes and Reappears to Observers",
-        "Cannot Interact While Timeless"
-      ],
-      "cs": [
-        "Krátce vystoupí z normálního toku času",
-        "Zmizí a znovu se objeví pro pozorovatele",
-        "Nemůže interagovat během nadčasovosti"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Temporal Stasis (Brief), No Interaction",
-      "cs": "Časová Stáze (Krát.), Bez Interakce"
-    },
-    "level": 47,
-    "buyPrice": 1530,
-    "sellPrice": 459
-  },
-  {
-    "id": "gw_ac_primordialmight_l48",
-    "name": {
-      "en": "Elixir of Primordial Might",
-      "cs": "Elixír Prvotní Síly"
-    },
-    "description": {
-      "en": "An elixir that awakens dormant, primal power within the drinker, granting them colossal strength, resilience, and a terrifying, bestial aura for a short time.",
-      "cs": "Elixír, který v pijákovi probouzí spící, primární sílu a na krátkou dobu mu propůjčuje kolosální sílu, odolnost a děsivou, bestiální auru."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Colossal Strength Boost": 1,
-        "Colossal Resilience Boost": 1,
-        "Primal Terror Aura": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Kolosální Zvýšení Síly": 1,
-        "Kolosální Zvýšení Odolnosti": 1,
-        "Aura Prvotního Děsu": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Grants Colossal Strength and Resilience",
-        "Projects Terrifying Primal Aura",
-        "Temporary Bestial Transformation Aspects"
-      ],
-      "cs": [
-        "Propůjčuje kolosální sílu a odolnost",
-        "Vyzařuje děsivou primální auru",
-        "Dočasné aspekty bestiální transformace"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Colossal Str & Res, Terror Aura (Brief)",
-      "cs": "Kolos. Síla & Odol., Aura Děsu (Krát.)"
-    },
-    "level": 48,
-    "buyPrice": 1900,
-    "sellPrice": 570
-  },
-  {
-    "id": "gw_ac_godsbanebrew_l49",
-    "name": {
-      "en": "Godsbane Brew (Unstable)",
-      "cs": "Odvar Zhouby Bohů (Nestabilní)"
-    },
-    "description": {
-      "en": "A legendary and highly forbidden concoction said to grant temporary invulnerability to divine power and the ability to harm godlike entities. Extremely volatile and carries immense personal risk.",
-      "cs": "Legendární a přísně zakázaný odvar, o kterém se říká, že propůjčuje dočasnou nezranitelnost vůči božské moci a schopnost zraňovat božské bytosti. Extrémně nestabilní a nese obrovské osobní riziko."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Divine Invulnerability": 1,
-        "Damage vs. Divine": 1,
-        "Stability": "Highly Unstable",
-        "Duration": "Very Brief"
-      },
-      "cs": {
-        "Božská Nezranitelnost": 1,
-        "Poškození vs. Božské": 1,
-        "Stabilita": "Vysoce Nestabilní",
-        "Trvání": "Velmi Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Temporary Invulnerability to Divine Power",
-        "Ability to Harm Divine Entities",
-        "Extremely Volatile, High Personal Risk"
-      ],
-      "cs": [
-        "Dočasná nezranitelnost vůči božské moci",
-        "Schopnost zraňovat božské bytosti",
-        "Extrémně nestabilní, vysoké osobní riziko"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Divine Invuln., Dmg vs Divine (Unstable, V. Brief)",
-      "cs": "Božská Nezran., Zraň. vs Božské (Nestabilní, V. Krát.)"
-    },
-    "level": 49,
-    "buyPrice": 2420,
-    "sellPrice": 726
-  },
-  {
-    "id": "gw_ac_elixirofascent_l50",
-    "name": {
-      "en": "Elixir of Warden's Ascent",
-      "cs": "Elixír Strážcova Vzestupu"
-    },
-    "description": {
-      "en": "The ultimate alchemical creation of the Wardens, a culmination of generations of knowledge. It grants a temporary state of heightened existence, pushing all abilities—physical, mental, and spiritual—to their absolute peak, bordering on demigodhood. The strain is immense.",
-      "cs": "Ultimátní alchymistická kreace Strážců, vyvrcholení generačních znalostí. Propůjčuje dočasný stav zvýšené existence, posouvající všechny schopnosti – fyzické, mentální i duchovní – na jejich absolutní vrchol, hraničící s polobožstvím. Zátěž je nesmírná."
-    },
-    "itemType": "alchemical_concoction",
-    "attributes": {
-      "en": {
-        "Peak Potential": 1,
-        "Transient Demigod State": 1,
-        "Immense Strain": 1,
-        "Duration": "Brief"
-      },
-      "cs": {
-        "Vrcholný Potenciál": 1,
-        "Přechodný Stav Poloboha": 1,
-        "Nesmírná Zátěž": 1,
-        "Trvání": "Krátké"
-      }
-    },
-    "abilities": {
-      "en": [
-        "Temporary Elevation to Peak Human Potential in All Aspects",
-        "Transient State Bordering on Demigodhood",
-        "Causes Immense Physical and Spiritual Strain"
-      ],
-      "cs": [
-        "Dočasné povýšení na vrchol lidského potenciálu ve všech aspektech",
-        "Přechodný stav hraničící s polobožstvím",
-        "Způsobuje nesmírnou fyzickou a duchovní zátěž"
-      ]
-    },
-    "itemEffectDescription": {
-      "en": "Peak Potential, Demigod State (Brief), Immense Strain",
-      "cs": "Vrch. Potenc., Stav Poloboha (Krát.), Nesmír. Zátěž"
-    },
-    "level": 50,
-    "buyPrice": 3000,
-    "sellPrice": 900
+    "attributes": { "en": { "Telescopic Vision": 1, "Duration": "Brief" }, "cs": { "Teleskopické Vidění": 1, "Trvání": "Krátké" } },
+    "abilities": { "en": [ "Briefly Grants Telescopic Vision", "Focuses on Distant Objects" ], "cs": [ "Krátce propůjčuje teleskopické vidění", "Zaměřuje se na vzdálené objekty" ] },
+    "itemEffectDescription": { "en": "Telescopic Vision (Brief)", "cs": "Teleskop. Vidění (Krát.)" },
+    "level": 10, "buyPrice": 36, "sellPrice": 11
   }
 ]

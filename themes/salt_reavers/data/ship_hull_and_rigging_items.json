@@ -1,0 +1,1828 @@
+[
+  {
+    "id": "sr_shr_tarredplanks_l01",
+    "name": {
+      "en": "Tarred & Patched Planks",
+      "cs": "Dehtovaná & Záplatovaná Prkna"
+    },
+    "description": {
+      "en": "More tar than timber, these planks are a testament to desperation. They keep most of the sea on the outside. Most of the time.",
+      "cs": "Více dehtu než dřeva, tato prkna jsou svědectvím zoufalství. Udržují většinu moře venku. Většinu času."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 21
+      },
+      "cs": {
+        "Bonus k Trupu": 21
+      }
+    },
+    "abilities": {
+      "en": [
+        "Prone to Leaks"
+      ],
+      "cs": [
+        "Náchylné k Průsakům"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+21 Hull, Prone to Leaks",
+      "cs": "+21 Trup, Náchylné k Průsakům"
+    },
+    "level": 1,
+    "buyPrice": 24,
+    "sellPrice": 7
+  },
+  {
+    "id": "sr_shr_scrapsails_l02",
+    "name": {
+      "en": "Scrap Canvas Sails",
+      "cs": "Plachty z Odřezků"
+    },
+    "description": {
+      "en": "A motley collection of stolen laundry, old tarps, and hope, stitched together to catch a breeze. They billow more than they pull.",
+      "cs": "Pestrá sbírka ukradeného prádla, starých plachet a naděje, sešitá dohromady, aby chytila vánek. Více se nadouvají, než táhnou."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 35,
+        "Maneuverability": "Poor"
+      },
+      "cs": {
+        "Bonus k Trupu": 35,
+        "Manévrovatelnost": "Špatná"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Poor Handling"
+      ],
+      "cs": [
+        "Špatná Ovladatelnost"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+35 Hull, Poor Handling",
+      "cs": "+35 Trup, Špatná Ovladatelnost"
+    },
+    "level": 2,
+    "buyPrice": 41,
+    "sellPrice": 12
+  },
+  {
+    "id": "sr_shr_barnaclestudded_l03",
+    "name": {
+      "en": "Barnacle-Studded Plating",
+      "cs": "Plátování Pobité Vilejši"
+    },
+    "description": {
+      "en": "Crude iron plates covered in a thick layer of razor-sharp barnacles. An accidental, yet surprisingly effective, deterrent to boarders.",
+      "cs": "Hrubé železné pláty pokryté tlustou vrstvou ostrých vilejšů. Náhodný, leč překvapivě účinný odstrašující prostředek pro abordáž."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 46
+      },
+      "cs": {
+        "Bonus k Trupu": 46
+      }
+    },
+    "abilities": {
+      "en": [
+        "Deters Boarders"
+      ],
+      "cs": [
+        "Odrazuje Nájezdníky"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+46 Hull, Deters Boarders",
+      "cs": "+46 Trup, Odrazuje Nájezdníky"
+    },
+    "level": 3,
+    "buyPrice": 59,
+    "sellPrice": 18
+  },
+  {
+    "id": "sr_shr_kelpwrappedrig_l04",
+    "name": {
+      "en": "Kelp-Wrapped Rigging",
+      "cs": "Lanoví Obalené Chaluhami"
+    },
+    "description": {
+      "en": "The ropes are slick with a strange, deep-sea kelp that makes them unnervingly quiet. Useful for slipping through a blockade on a foggy night.",
+      "cs": "Lana jsou kluzká od podivné hlubokomořské chaluhy, která je činí znepokojivě tichými. Užitečné pro proklouznutí blokádou za mlhavé noci."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 65
+      },
+      "cs": {
+        "Bonus k Trupu": 65
+      }
+    },
+    "abilities": {
+      "en": [
+        "Quieter Sailing"
+      ],
+      "cs": [
+        "Tišší Plavba"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+65 Hull, Quieter Sailing",
+      "cs": "+65 Trup, Tišší Plavba"
+    },
+    "level": 4,
+    "buyPrice": 68,
+    "sellPrice": 20
+  },
+  {
+    "id": "sr_shr_saltedwalnut_l05",
+    "name": {
+      "en": "Salted Walnut Hull",
+      "cs": "Prosolený Ořechový Trup"
+    },
+    "description": {
+      "en": "A cheap but sturdy timber, cured in salt until it's as tough as an old sea dog's boot. Resists the rot of the sea.",
+      "cs": "Levné, ale pevné dřevo, naložené v soli, dokud není tvrdé jako bota starého mořského vlka. Odolává mořské hnilobě."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 79
+      },
+      "cs": {
+        "Bonus k Trupu": 79
+      }
+    },
+    "abilities": {
+      "en": [
+        "Minor Rot Resistance"
+      ],
+      "cs": [
+        "Menší Odolnost Proti Hnilobě"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+79 Hull, Rot Resist",
+      "cs": "+79 Trup, Odol. Hnilobě"
+    },
+    "level": 5,
+    "buyPrice": 81,
+    "sellPrice": 24
+  },
+  {
+    "id": "sr_shr_reinforcedjib_l06",
+    "name": {
+      "en": "Reinforced Jib & Staysail",
+      "cs": "Zesílená Kosatka & Stěhovka"
+    },
+    "description": {
+      "en": "These forward sails have been reinforced with leather, allowing for sharper, more aggressive turns. For captains who like to live on the edge.",
+      "cs": "Tyto přední plachty byly zesíleny kůží, což umožňuje ostřejší, agresivnější zatáčky. Pro kapitány, kteří rádi žijí na hraně."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 88,
+        "Maneuverability": "Improved"
+      },
+      "cs": {
+        "Bonus k Trupu": 88,
+        "Manévrovatelnost": "Zlepšená"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Faster Turning"
+      ],
+      "cs": [
+        "Rychlejší Zatáčení"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+88 Hull, Faster Turning",
+      "cs": "+88 Trup, Rychl. Zatáčení"
+    },
+    "level": 6,
+    "buyPrice": 108,
+    "sellPrice": 32
+  },
+  {
+    "id": "sr_shr_grogsoakedoak_l07",
+    "name": {
+      "en": "Grog-Soaked Oak Plating",
+      "cs": "Dubové Pláty Napuštěné Grogem"
+    },
+    "description": {
+      "en": "Some mad carpenter claimed soaking oak in cheap grog made it tougher. He was half-right; it's tougher, but the ship constantly smells like a tavern floor.",
+      "cs": "Jeden šílený tesař tvrdil, že namáčení dubu v levném grogu ho činí tvrdším. Měl poloviční pravdu; je tvrdší, ale loď neustále páchne jako podlaha v krčmě."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 109
+      },
+      "cs": {
+        "Bonus k Trupu": 109
+      }
+    },
+    "abilities": {
+      "en": [
+        "Boosts Crew Morale Slightly",
+        "Pungent Aroma"
+      ],
+      "cs": [
+        "Lehce Zvyšuje Morálku Posádky",
+        "Pronikavé Aroma"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+109 Hull, Morale Boost",
+      "cs": "+109 Trup, Zvyšuje Morálku"
+    },
+    "level": 7,
+    "buyPrice": 125,
+    "sellPrice": 38
+  },
+  {
+    "id": "sr_shr_ironbanded_l08",
+    "name": {
+      "en": "Iron-Banded Hull",
+      "cs": "Železem Okovaný Trup"
+    },
+    "description": {
+      "en": "Thick bands of crude iron reinforce the hull, making it resilient to glancing blows and minor impacts from reef-strewn shallows.",
+      "cs": "Tlusté pásy hrubého železa zpevňují trup, činí ho odolným vůči letmým úderům a menším nárazům v útesovitých mělčinách."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 124
+      },
+      "cs": {
+        "Bonus k Trupu": 124
+      }
+    },
+    "abilities": {
+      "en": [
+        "Resists Minor Impacts"
+      ],
+      "cs": [
+        "Odolává Menším Nárazům"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+124 Hull, Resists Minor Impacts",
+      "cs": "+124 Trup, Odol. Menším Nárazům"
+    },
+    "level": 8,
+    "buyPrice": 139,
+    "sellPrice": 42
+  },
+  {
+    "id": "sr_shr_crowsnest_l09",
+    "name": {
+      "en": "Fortified Crow's Nest",
+      "cs": "Opevněné Vraní Hnízdo"
+    },
+    "description": {
+      "en": "A sturdy crow's nest with a small, protective shield for the lookout. Allows for spotting ships and storms from a greater distance.",
+      "cs": "Pevné vraní hnízdo s malým ochranným štítem pro hlídku. Umožňuje spatřit lodě a bouře z větší vzdálenosti."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 135,
+        "Lookout Range": "Improved"
+      },
+      "cs": {
+        "Bonus k Trupu": 135,
+        "Dosah Hlídky": "Zlepšený"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Enhanced Lookout Range"
+      ],
+      "cs": [
+        "Zvýšený Dosah Hlídky"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+135 Hull, Enhanced Lookout",
+      "cs": "+135 Trup, Zlepšená Hlídka"
+    },
+    "level": 9,
+    "buyPrice": 152,
+    "sellPrice": 46
+  },
+  {
+    "id": "sr_shr_sirenfigurehead_l10",
+    "name": {
+      "en": "Crude Siren Figurehead",
+      "cs": "Hrubá Figura Sirény"
+    },
+    "description": {
+      "en": "A crudely carved figurehead of a screaming siren. It's ugly as sin, but sailors whisper that it wards off the siren's deadly song.",
+      "cs": "Hrubě vyřezávaná figura křičící sirény. Je ošklivá jako hřích, ale námořníci si šeptají, že odhání smrtící zpěv sirén."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 151
+      },
+      "cs": {
+        "Bonus k Trupu": 151
+      }
+    },
+    "abilities": {
+      "en": [
+        "Minor Ward Against Sirens"
+      ],
+      "cs": [
+        "Menší Ochrana Proti Sirénám"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+151 Hull, Siren Ward",
+      "cs": "+151 Trup, Ochrana Proti Sirénám"
+    },
+    "level": 10,
+    "buyPrice": 179,
+    "sellPrice": 54
+  },
+  {
+    "id": "sr_shr_stormfastsails_l11",
+    "name": {
+      "en": "Storm-Fast Sails",
+      "cs": "Bouři Odolné Plachty"
+    },
+    "description": {
+      "en": "Canvas treated with shark oil and reinforced with tight-woven hemp, designed to withstand the fury of an Azure squall.",
+      "cs": "Plátno ošetřené žraločím olejem a zesílené pevně tkaným konopím, navržené tak, aby odolalo zuřivosti azurových hůlav."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 195,
+        "Storm Resistance": "Fair"
+      },
+      "cs": {
+        "Bonus k Trupu": 195,
+        "Odolnost v Bouři": "Dobrá"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Increased Storm Resistance"
+      ],
+      "cs": [
+        "Zvýšená Odolnost v Bouři"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+195 Hull, Storm Resist",
+      "cs": "+195 Trup, Odol. Bouři"
+    },
+    "level": 11,
+    "buyPrice": 215,
+    "sellPrice": 65
+  },
+  {
+    "id": "sr_shr_ironwoodplating_l12",
+    "name": {
+      "en": "Ironwood Plating",
+      "cs": "Plátování z Železného Dřeva"
+    },
+    "description": {
+      "en": "Sourced from the deep jungles of Isla Perdida, ironwood is nearly as tough as steel, offering excellent protection against cannon fire.",
+      "cs": "Železné dřevo, pocházející z hlubokých džunglí Isla Perdida, je téměř stejně tvrdé jako ocel a nabízí vynikající ochranu proti dělové palbě."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 218
+      },
+      "cs": {
+        "Bonus k Trupu": 218
+      }
+    },
+    "abilities": {
+      "en": [
+        "High Cannonball Resistance"
+      ],
+      "cs": [
+        "Vysoká Odolnost Proti Děl. Koulím"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+218 Hull, Cannonball Resist",
+      "cs": "+218 Trup, Odol. Děl. Koulím"
+    },
+    "level": 12,
+    "buyPrice": 250,
+    "sellPrice": 75
+  },
+  {
+    "id": "sr_shr_quickrigging_l13",
+    "name": {
+      "en": "Quick-Reef Rigging",
+      "cs": "Rychlorefovací Takeláž"
+    },
+    "description": {
+      "en": "A complex system of pulleys and ropes that allows the sails to be reefed or unfurled with astonishing speed, perfect for nimble combat maneuvers.",
+      "cs": "Složitý systém kladek a lan, který umožňuje refovat nebo rozvinout plachty s úžasnou rychlostí, ideální pro hbité bojové manévry."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 231,
+        "Maneuverability": "Excellent"
+      },
+      "cs": {
+        "Bonus k Trupu": 231,
+        "Manévrovatelnost": "Vynikající"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Superior Maneuverability"
+      ],
+      "cs": [
+        "Vynikající Manévrovatelnost"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+231 Hull, Superior Maneuverability",
+      "cs": "+231 Trup, Vynikající Manévrovatelnost"
+    },
+    "level": 13,
+    "buyPrice": 300,
+    "sellPrice": 90
+  },
+  {
+    "id": "sr_shr_falsegunports_l14",
+    "name": {
+      "en": "Painted Gunports",
+      "cs": "Namalované Střílny"
+    },
+    "description": {
+      "en": "A clever ruse. From a distance, your ship appears to have twice as many cannons as it actually does. An intimidating sight for merchants and cowards.",
+      "cs": "Chytrá lest. Z dálky se zdá, že vaše loď má dvakrát tolik děl, než ve skutečnosti. Zastrašující pohled pro kupce a zbabělce."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 242
+      },
+      "cs": {
+        "Bonus k Trupu": 242
+      }
+    },
+    "abilities": {
+      "en": [
+        "Intimidating Profile",
+        "May Cause Enemies to Hesitate"
+      ],
+      "cs": [
+        "Zastrašující Profil",
+        "Může Způsobit Váhání Nepřátel"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+242 Hull, Intimidating Profile",
+      "cs": "+242 Trup, Zastrašující Profil"
+    },
+    "level": 14,
+    "buyPrice": 350,
+    "sellPrice": 105
+  },
+  {
+    "id": "sr_shr_sacrificialtimber_l15",
+    "name": {
+      "en": "Sacrificial Outer Planking",
+      "cs": "Obětní Vnější Obložení"
+    },
+    "description": {
+      "en": "A layer of softer wood over the main hull, designed to absorb the initial shock of cannon fire and splinter away, preserving the core structure.",
+      "cs": "Vrstva měkčího dřeva přes hlavní trup, navržená tak, aby absorbovala počáteční šok z dělové palby a odštěpila se, čímž chrání hlavní strukturu."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 275
+      },
+      "cs": {
+        "Bonus k Trupu": 275
+      }
+    },
+    "abilities": {
+      "en": [
+        "Ablative Armor"
+      ],
+      "cs": [
+        "Ablativní Pancíř"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+275 Hull, Ablative Armor",
+      "cs": "+275 Trup, Ablativní Pancíř"
+    },
+    "level": 15,
+    "buyPrice": 445,
+    "sellPrice": 134
+  },
+  {
+    "id": "sr_shr_gildedfigurehead_l16",
+    "name": {
+      "en": "Gilded Dragon Figurehead",
+      "cs": "Pozlacená Dračí Figura"
+    },
+    "description": {
+      "en": "An ostentatious, gold-leafed dragon figurehead. It serves as a symbol of prosperity and defiance, bolstering the crew's pride and spirits.",
+      "cs": "Okázalá, zlatem pokrytá dračí figura. Slouží jako symbol prosperity a vzdoru, posilující hrdost a ducha posádky."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 281
+      },
+      "cs": {
+        "Bonus k Trupu": 281
+      }
+    },
+    "abilities": {
+      "en": [
+        "Greatly Boosts Crew Morale",
+        "Attracts Unwanted Attention"
+      ],
+      "cs": [
+        "Výrazně Zvyšuje Morálku Posádky",
+        "Přitahuje Nežádoucí Pozornost"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+281 Hull, Great Morale Boost",
+      "cs": "+281 Trup, Velké Zvýšení Morálky"
+    },
+    "level": 16,
+    "buyPrice": 510,
+    "sellPrice": 153
+  },
+  {
+    "id": "sr_shr_silksails_l17",
+    "name": {
+      "en": "Solarian Silk Sails",
+      "cs": "Solariánské Hedvábné Plachty"
+    },
+    "description": {
+      "en": "Looted from an Imperial galleon, these sails are incredibly light and strong, catching even the faintest whisper of wind.",
+      "cs": "Ukořistěné z imperiální galeony, tyto plachty jsou neuvěřitelně lehké a pevné, chytající i ten nejslabší závan větru."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 299,
+        "Speed": "Excellent"
+      },
+      "cs": {
+        "Bonus k Trupu": 299,
+        "Rychlost": "Vynikající"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Catches Faint Winds",
+        "Superior Speed"
+      ],
+      "cs": [
+        "Chytá Slabý Vítr",
+        "Vynikající Rychlost"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+299 Hull, Superior Speed",
+      "cs": "+299 Trup, Vynikající Rychlost"
+    },
+    "level": 17,
+    "buyPrice": 580,
+    "sellPrice": 174
+  },
+  {
+    "id": "sr_shr_coralwarding_l18",
+    "name": {
+      "en": "Living Coral Plating",
+      "cs": "Plátování z Živého Korálu"
+    },
+    "description": {
+      "en": "A strange, living coral that slowly regrows over damaged sections of the hull. It pulses with a faint, turquoise light.",
+      "cs": "Podivný, živý korál, který pomalu dorůstá přes poškozené části trupu. Pulzuje slabým, tyrkysovým světlem."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 320
+      },
+      "cs": {
+        "Bonus k Trupu": 320
+      }
+    },
+    "abilities": {
+      "en": [
+        "Slow Hull Regeneration"
+      ],
+      "cs": [
+        "Pomalá Regenerace Trupu"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+320 Hull, Slow Regeneration",
+      "cs": "+320 Trup, Pomalá Regenerace"
+    },
+    "level": 18,
+    "buyPrice": 630,
+    "sellPrice": 189
+  },
+  {
+    "id": "sr_shr_ghostwood_l19",
+    "name": {
+      "en": "Ghostwood Keel",
+      "cs": "Kýl z Přízračného Dřeva"
+    },
+    "description": {
+      "en": "Harvested from a cursed isle, this pale, eerily light wood makes the ship slightly translucent in moonlight, muffling its presence from mystical detection.",
+      "cs": "Toto bledé, strašidelně lehké dřevo, sklizené z prokletého ostrova, činí loď v měsíčním světle mírně průsvitnou a tlumí její přítomnost před mystickou detekcí."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 333
+      },
+      "cs": {
+        "Bonus k Trupu": 333
+      }
+    },
+    "abilities": {
+      "en": [
+        "Resists Magical Detection"
+      ],
+      "cs": [
+        "Odolává Magické Detekci"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+333 Hull, Resists Magical Detection",
+      "cs": "+333 Trup, Odol. Magické Detekci"
+    },
+    "level": 19,
+    "buyPrice": 699,
+    "sellPrice": 210
+  },
+  {
+    "id": "sr_shr_krakenshide_l20",
+    "name": {
+      "en": "Kraken Hide Sheathing",
+      "cs": "Opláštění z Kůže Krakena"
+    },
+    "description": {
+      "en": "The tough, rubbery hide of a kraken, wrapped around the hull. It's incredibly resilient to crushing pressure and shocks.",
+      "cs": "Pevná, gumovitá kůže krakena, omotaná kolem trupu. Je neuvěřitelně odolná vůči drtivému tlaku a otřesům."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 357
+      },
+      "cs": {
+        "Bonus k Trupu": 357
+      }
+    },
+    "abilities": {
+      "en": [
+        "Immense Pressure Resistance"
+      ],
+      "cs": [
+        "Nesmírná Odolnost Vůči Tlaku"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+357 Hull, Pressure Resist",
+      "cs": "+357 Trup, Odol. Tlaku"
+    },
+    "level": 20,
+    "buyPrice": 750,
+    "sellPrice": 225
+  },
+  {
+    "id": "sr_shr_shroudedmist_l21",
+    "name": {
+      "en": "Mist-Shrouded Sails",
+      "cs": "Plachty Zahalené Mlhou"
+    },
+    "description": {
+      "en": "Enchanted sails that seem to trail a constant, thin mist, partially obscuring the ship from view even on a clear day.",
+      "cs": "Očarované plachty, které za sebou táhnou stálou, tenkou mlhu a částečně zakrývají loď před zraky i za jasného dne."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 361
+      },
+      "cs": {
+        "Bonus k Trupu": 361
+      }
+    },
+    "abilities": {
+      "en": [
+        "Partial Concealment"
+      ],
+      "cs": [
+        "Částečné Skrytí"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+361 Hull, Partial Concealment",
+      "cs": "+361 Trup, Částečné Skrytí"
+    },
+    "level": 21,
+    "buyPrice": 820,
+    "sellPrice": 246
+  },
+  {
+    "id": "sr_shr_runicshielding_l22",
+    "name": {
+      "en": "Runic Shield-Plates",
+      "cs": "Runové Ochranné Pláty"
+    },
+    "description": {
+      "en": "Salvaged from an ancient ruin, these stone plates are covered in glowing runes that flare to life to deflect cannon fire.",
+      "cs": "Tyto kamenné pláty, zachráněné z prastaré ruiny, jsou pokryty zářícími runami, které ožívají, aby odrazily dělovou palbu."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 395
+      },
+      "cs": {
+        "Bonus k Trupu": 395
+      }
+    },
+    "abilities": {
+      "en": [
+        "Chance to Deflect Cannonballs"
+      ],
+      "cs": [
+        "Šance Odrazit Dělové Koule"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+395 Hull, Chance to Deflect",
+      "cs": "+395 Trup, Šance na Odražení"
+    },
+    "level": 22,
+    "buyPrice": 925,
+    "sellPrice": 278
+  },
+  {
+    "id": "sr_shr_sea_serpent_figurehead_l23",
+    "name": {
+      "en": "Sea Serpent Figurehead",
+      "cs": "Figura Mořského Hada"
+    },
+    "description": {
+      "en": "A masterfully carved figurehead of a roaring sea serpent, its eyes inlaid with jade. Its fearsome visage unnerves enemy crews.",
+      "cs": "Mistrovsky vyřezávaná figura řvoucího mořského hada, s očima vykládanýma nefritem. Její děsivý vzhled znervózňuje nepřátelské posádky."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 401
+      },
+      "cs": {
+        "Bonus k Trupu": 401
+      }
+    },
+    "abilities": {
+      "en": [
+        "Demoralizes Enemy Crews"
+      ],
+      "cs": [
+        "Demoralizuje Nepřátelské Posádky"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+401 Hull, Demoralizes Enemies",
+      "cs": "+401 Trup, Demoralizuje Nepřátele"
+    },
+    "level": 23,
+    "buyPrice": 1000,
+    "sellPrice": 300
+  },
+  {
+    "id": "sr_shr_imperialsteel_l24",
+    "name": {
+      "en": "Veridian Imperial Steel Plating",
+      "cs": "Plátování z Veridiánské Imperiální Oceli"
+    },
+    "description": {
+      "en": "'Liberated' from an Imperial shipyard, this high-quality steel plating offers formidable, professionally-crafted protection.",
+      "cs": "Tato vysoce kvalitní ocelová plátování, 'osvobozená' z imperiální loděnice, nabízí impozantní, profesionálně zpracovanou ochranu."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 430
+      },
+      "cs": {
+        "Bonus k Trupu": 430
+      }
+    },
+    "abilities": {
+      "en": [
+        "Superior Physical Resistance"
+      ],
+      "cs": [
+        "Vynikající Fyzická Odolnost"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+430 Hull, Superior Phys. Resist",
+      "cs": "+430 Trup, Vynikající Fyz. Odol."
+    },
+    "level": 24,
+    "buyPrice": 1100,
+    "sellPrice": 330
+  },
+  {
+    "id": "sr_shr_cursedcaptainhelm_l25",
+    "name": {
+      "en": "Cursed Captain's Helm",
+      "cs": "Kormidlo Prokletého Kapitána"
+    },
+    "description": {
+      "en": "The helm of a legendary ghost ship. It seems to steer itself at times, dodging threats with unnatural grace, but whispers dark thoughts to the helmsman.",
+      "cs": "Kormidlo legendární lodi duchů. Občas se zdá, že se řídí samo, uhýbajíc hrozbám s nepřirozenou grácií, ale šeptá temné myšlenky kormidelníkovi."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 450,
+        "Auto-Evasion": "Minor"
+      },
+      "cs": {
+        "Bonus k Trupu": 450,
+        "Automatické Uhýbání": "Menší"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Chance to Automatically Dodge",
+        "Whispers Madness"
+      ],
+      "cs": [
+        "Šance Automaticky Uhnout",
+        "Šeptá Šílenství"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+450 Hull, Minor Auto-Evasion, Cursed",
+      "cs": "+450 Trup, Menší Auto-Úhyb, Prokleté"
+    },
+    "level": 25,
+    "buyPrice": 1210,
+    "sellPrice": 363
+  },
+  {
+    "id": "sr_shr_wyrmscale_l26",
+    "name": {
+      "en": "Sea Wyrm Scale Sails",
+      "cs": "Plachty ze Šupin Mořského Červa"
+    },
+    "description": {
+      "en": "Iridescent scales from a great sea wyrm have been sewn into these sails, making them fire-resistant and unnervingly beautiful.",
+      "cs": "Duhové šupiny z velkého mořského červa byly všity do těchto plachet, což je činí ohnivzdornými a znepokojivě krásnými."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 520
+      },
+      "cs": {
+        "Bonus k Trupu": 520
+      }
+    },
+    "abilities": {
+      "en": [
+        "Fire Resistant",
+        "Impressive Appearance"
+      ],
+      "cs": [
+        "Ohnivzdorné",
+        "Impozantní Vzhled"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+520 Hull, Fire Resistant",
+      "cs": "+520 Trup, Ohnivzdorné"
+    },
+    "level": 26,
+    "buyPrice": 1300,
+    "sellPrice": 390
+  },
+  {
+    "id": "sr_shr_leviathanbone_l27",
+    "name": {
+      "en": "Leviathan Bone Frame",
+      "cs": "Kostra z Leviatana"
+    },
+    "description": {
+      "en": "The ship's frame has been replaced with the colossal, fossilized bones of a leviathan. It's incredibly sturdy and resonates with ancient sea-power.",
+      "cs": "Kostra lodi byla nahrazena kolosálními, zkamenělými kostmi leviatana. Je neuvěřitelně pevná a rezonuje prastarou mořskou silou."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 545
+      },
+      "cs": {
+        "Bonus k Trupu": 545
+      }
+    },
+    "abilities": {
+      "en": [
+        "Immense Structural Integrity",
+        "Echoes of the Deep"
+      ],
+      "cs": [
+        "Nesmírná Strukturální Integrita",
+        "Ozvěny Hlubin"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+545 Hull, Immense Integrity",
+      "cs": "+545 Trup, Nesmírná Integrita"
+    },
+    "level": 27,
+    "buyPrice": 1450,
+    "sellPrice": 435
+  },
+  {
+    "id": "sr_shr_whisperingsails_l28",
+    "name": {
+      "en": "Sails of Whispering Wind",
+      "cs": "Plachty Šeptajícího Větru"
+    },
+    "description": {
+      "en": "These sails are woven with captured air elementals, allowing the ship to sail even in a dead calm and respond instantly to the helm.",
+      "cs": "Tyto plachty jsou utkány se zajatými vzdušnými elementály, což umožňuje lodi plout i v naprostém bezvětří a okamžitě reagovat na kormidlo."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 560,
+        "Maneuverability": "Uncanny"
+      },
+      "cs": {
+        "Bonus k Trupu": 560,
+        "Manévrovatelnost": "Neskutečná"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Sails in Dead Calm",
+        "Instantaneous Response"
+      ],
+      "cs": [
+        "Pluje v Bezvětří",
+        "Okamžitá Reakce"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+560 Hull, Sails in Calm, Instant Response",
+      "cs": "+560 Trup, Pluje v Bezvětří, Okamžitá Reakce"
+    },
+    "level": 28,
+    "buyPrice": 1600,
+    "sellPrice": 480
+  },
+  {
+    "id": "sr_shr_mirroredhull_l29",
+    "name": {
+      "en": "Mirrored Hull",
+      "cs": "Zrcadlový Trup"
+    },
+    "description": {
+      "en": "The hull is sheathed in polished, enchanted silver that reflects the sea and sky, creating a near-perfect camouflage.",
+      "cs": "Trup je opláštěn leštěným, očarovaným stříbrem, které odráží moře a oblohu, vytvářejíc téměř dokonalé maskování."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 590
+      },
+      "cs": {
+        "Bonus k Trupu": 590
+      }
+    },
+    "abilities": {
+      "en": [
+        "Optical Camouflage",
+        "Hard to Target at Range"
+      ],
+      "cs": [
+        "Optické Maskování",
+        "Těžké Zaměřit na Dálku"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+590 Hull, Optical Camouflage",
+      "cs": "+590 Trup, Optické Maskování"
+    },
+    "level": 29,
+    "buyPrice": 1850,
+    "sellPrice": 555
+  },
+  {
+    "id": "sr_shr_heartofvolcano_l30",
+    "name": {
+      "en": "Heart of the Volcano Plating",
+      "cs": "Plátování ze Srdce Sopky"
+    },
+    "description": {
+      "en": "Obsidian plating, still warm to the touch. It was forged in a volcanic caldera and can absorb immense heat, rendering it resistant to fire ships and alchemical flames.",
+      "cs": "Obsidiánové plátování, stále teplé na dotek. Bylo ukuto v sopečné kaldeře a dokáže absorbovat obrovské teplo, což ho činí odolným vůči zápalným lodím a alchymistickým plamenům."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 610
+      },
+      "cs": {
+        "Bonus k Trupu": 610
+      }
+    },
+    "abilities": {
+      "en": [
+        "Exceptional Fire Resistance"
+      ],
+      "cs": [
+        "Výjimečná Odolnost Proti Ohni"
+      ]
+    },
+    "level": 30,
+    "buyPrice": 1900,
+    "sellPrice": 570
+  },
+  {
+    "id": "sr_shr_symbioticbarnacles_l31",
+    "name": {
+      "en": "Symbiotic Void Barnacles",
+      "cs": "Symbiotické Prázdnotové Vilejše"
+    },
+    "description": {
+      "en": "These strange, crystalline barnacles seem to feed on kinetic energy, hardening the hull in response to cannon fire.",
+      "cs": "Tyto podivné, krystalické vilejše se zdají živit kinetickou energií a v reakci na dělovou palbu zpevňují trup."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 625,
+        "Reactive Hardening": "High"
+      },
+      "cs": {
+        "Bonus k Trupu": 625,
+        "Reaktivní Tvrzení": "Vysoké"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Hull hardens when hit"
+      ],
+      "cs": [
+        "Trup tvrdne při zásahu"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+625 Hull, Reactive Hardening",
+      "cs": "+625 Trup, Reaktivní Tvrzení"
+    },
+    "level": 31,
+    "buyPrice": 2100,
+    "sellPrice": 630
+  },
+  {
+    "id": "sr_shr_atlantisrunes_l32",
+    "name": {
+      "en": "Atlantean Warding Runes",
+      "cs": "Atlantské Ochranné Runy"
+    },
+    "description": {
+      "en": "Ancient, pre-human runes that cover the keel and masts. They create a protective field that dampens the effect of curses and hostile magic.",
+      "cs": "Prastaré, předlidské runy pokrývající kýl a stěžně. Vytvářejí ochranné pole, které tlumí účinky kleteb a nepřátelské magie."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 650
+      },
+      "cs": {
+        "Bonus k Trupu": 650
+      }
+    },
+    "abilities": {
+      "en": [
+        "Strong Anti-Magic Field"
+      ],
+      "cs": [
+        "Silné Protimagické Pole"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+650 Hull, Strong Anti-Magic Field",
+      "cs": "+650 Trup, Silné Protimagické Pole"
+    },
+    "level": 32,
+    "buyPrice": 2350,
+    "sellPrice": 705
+  },
+  {
+    "id": "sr_shr_livingfigurehead_l33",
+    "name": {
+      "en": "Living Figurehead of the Grove",
+      "cs": "Živoucí Figura z Hájku"
+    },
+    "description": {
+      "en": "This figurehead is a living, sentient treant bound to the ship. It can lash out with thorny vines and repair minor damage with its own living wood.",
+      "cs": "Tato figura je živoucí, vnímající treant spojený s lodí. Může švihat trnitými liánami a opravovat menší poškození svým vlastním živým dřevem."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 665
+      },
+      "cs": {
+        "Bonus k Trupu": 665
+      }
+    },
+    "abilities": {
+      "en": [
+        "Active Defense (Vines)",
+        "Self-Repairing"
+      ],
+      "cs": [
+        "Aktivní Obrana (Liány)",
+        "Samoopravná"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+665 Hull, Vine Defense, Self-Repair",
+      "cs": "+665 Trup, Obrana Liánami, Samoopravná"
+    },
+    "level": 33,
+    "buyPrice": 2500,
+    "sellPrice": 750
+  },
+  {
+    "id": "sr_shr_starsails_l34",
+    "name": {
+      "en": "Constellation Sails",
+      "cs": "Plachty Souhvězdí"
+    },
+    "description": {
+      "en": "Woven from starlight and shadow, these sails depict shifting constellations. They allow for unnaturally swift, silent travel at night.",
+      "cs": "Utkané z hvězdného světla a stínu, tyto plachty zobrazují měnící se souhvězdí. Umožňují nepřirozeně rychlou a tichou plavbu v noci."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 700,
+        "Night Speed": "Unrivaled"
+      },
+      "cs": {
+        "Bonus k Trupu": 700,
+        "Noční Rychlost": "Bezkonkurenční"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Unrivaled Night Speed",
+        "Silent Night Travel"
+      ],
+      "cs": [
+        "Bezkonkurenční Noční Rychlost",
+        "Tichá Noční Plavba"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+700 Hull, Unrivaled Night Speed",
+      "cs": "+700 Trup, Bezkonkurenční Noční Rychlost"
+    },
+    "level": 34,
+    "buyPrice": 2600,
+    "sellPrice": 780
+  },
+  {
+    "id": "sr_shr_davyjoneshull_l35",
+    "name": {
+      "en": "Davy Jones' Own Timber",
+      "cs": "Dřevo Samotného Davyho Jonese"
+    },
+    "description": {
+      "en": "Planks salvaged from ships dragged to the Locker. They are perpetually damp, covered in spectral seaweed, and unnervingly resistant to destruction.",
+      "cs": "Prkna zachráněná z lodí stažených do Skříňky Davyho Jonese. Jsou věčně vlhká, pokrytá spektrálními mořskými řasami a znepokojivě odolná proti zničení."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 720
+      },
+      "cs": {
+        "Bonus k Trupu": 720
+      }
+    },
+    "abilities": {
+      "en": [
+        "Supernatural Durability",
+        "Aura of Dread"
+      ],
+      "cs": [
+        "Nadpřirozená Odolnost",
+        "Aura Hrůzy"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+720 Hull, Supernatural Durability",
+      "cs": "+720 Trup, Nadpřirozená Odolnost"
+    },
+    "level": 35,
+    "buyPrice": 2900,
+    "sellPrice": 870
+  },
+  {
+    "id": "sr_shr_sea_king_ram_l36",
+    "name": {
+      "en": "Sea King's Ram",
+      "cs": "Beranidlo Mořského Krále"
+    },
+    "description": {
+      "en": "A massive, adamantine-tipped ram that can shatter the hull of an Imperial Man-o'-War. Its use is a declaration of total war.",
+      "cs": "Masivní beranidlo s adamantinovým hrotem, které dokáže roztříštit trup imperiální válečné lodi. Jeho použití je vyhlášením totální války."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 740,
+        "Ramming Damage": "Devastating"
+      },
+      "cs": {
+        "Bonus k Trupu": 740,
+        "Poškození Beranidlem": "Ničivé"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Devastating Ramming Attack"
+      ],
+      "cs": [
+        "Ničivý Útok Beranidlem"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+740 Hull, Devastating Ram",
+      "cs": "+740 Trup, Ničivé Beranidlo"
+    },
+    "level": 36,
+    "buyPrice": 3100,
+    "sellPrice": 930
+  },
+  {
+    "id": "sr_shr_windweaversails_l37",
+    "name": {
+      "en": "Wind-Weaver's Sails",
+      "cs": "Plachty Tkalce Větru"
+    },
+    "description": {
+      "en": "These sails do not catch the wind; they command it. A skilled captain can make the ship dance upon the waves, defying physics.",
+      "cs": "Tyto plachty nechytají vítr; ony mu poroučejí. Zkušený kapitán dokáže přimět loď tančit na vlnách a vzdorovat fyzice."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 750,
+        "Maneuverability": "Impossible"
+      },
+      "cs": {
+        "Bonus k Trupu": 750,
+        "Manévrovatelnost": "Nemožná"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Impossible Maneuverability",
+        "Commands the Wind"
+      ],
+      "cs": [
+        "Nemožná Manévrovatelnost",
+        "Poroučí Větru"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+750 Hull, Impossible Maneuverability",
+      "cs": "+750 Trup, Nemožná Manévrovatelnost"
+    },
+    "level": 37,
+    "buyPrice": 3350,
+    "sellPrice": 1005
+  },
+  {
+    "id": "sr_shr_turtlebackhull_l38",
+    "name": {
+      "en": "World-Turtle Shell Plating",
+      "cs": "Plátování z Krunýře Světové Želvy"
+    },
+    "description": {
+      "en": "Plates from the shell of a juvenile World-Turtle, imbued with cosmic resilience. It makes the ship virtually immune to mundane cannon fire.",
+      "cs": "Pláty z krunýře mladé Světové Želvy, prodchnuté kosmickou odolností. Činí loď prakticky imunní vůči běžné dělové palbě."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 790
+      },
+      "cs": {
+        "Bonus k Trupu": 790
+      }
+    },
+    "abilities": {
+      "en": [
+        "Near-Immunity to Cannon Fire"
+      ],
+      "cs": [
+        "Téměř Imunní Vůči Dělové Palbě"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+790 Hull, Near-Immunity to Cannons",
+      "cs": "+790 Trup, Téměř Imunní Vůči Dělům"
+    },
+    "level": 38,
+    "buyPrice": 3500,
+    "sellPrice": 1050
+  },
+  {
+    "id": "sr_shr_phantomhull_l39",
+    "name": {
+      "en": "Phantom Hull",
+      "cs": "Fantomový Trup"
+    },
+    "description": {
+      "en": "This ship's hull is semi-corporeal, allowing it to briefly phase through solid objects like cannonballs, reefs, or even other ships.",
+      "cs": "Trup této lodi je polohmnotný, což jí umožňuje krátce fázovat skrze pevné objekty jako dělové koule, útesy nebo dokonce jiné lodě."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 800
+      },
+      "cs": {
+        "Bonus k Trupu": 800
+      }
+    },
+    "abilities": {
+      "en": [
+        "Brief Incorporeality",
+        "Phase Through Obstacles"
+      ],
+      "cs": [
+        "Krátká Nehmotnost",
+        "Fázování Skrze Překážky"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+800 Hull, Brief Incorporeality",
+      "cs": "+800 Trup, Krátká Nehmotnost"
+    },
+    "level": 39,
+    "buyPrice": 3800,
+    "sellPrice": 1140
+  },
+  {
+    "id": "sr_shr_krakenfigurehead_l40",
+    "name": {
+      "en": "Living Kraken Figurehead",
+      "cs": "Živoucí Figura Krakena"
+    },
+    "description": {
+      "en": "A juvenile kraken has been bound to the prow. Its tentacles can lash out to crush enemy ships or drag sailors into the depths.",
+      "cs": "Mládě krakena bylo připoutáno k přídi. Jeho chapadla mohou švihat, aby drtila nepřátelské lodě nebo stahovala námořníky do hlubin."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 820,
+        "Tentacle Attack": "Powerful"
+      },
+      "cs": {
+        "Bonus k Trupu": 820,
+        "Útok Chapadly": "Mocný"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Powerful Tentacle Attack"
+      ],
+      "cs": [
+        "Mocný Útok Chapadly"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+820 Hull, Powerful Tentacle Attack",
+      "cs": "+820 Trup, Mocný Útok Chapadly"
+    },
+    "level": 40,
+    "buyPrice": 4000,
+    "sellPrice": 1200
+  },
+  {
+    "id": "sr_shr_stormsbreath_l41",
+    "name": {
+      "en": "Storm's Breath Rigging",
+      "cs": "Takeláž Dechu Bouře"
+    },
+    "description": {
+      "en": "A full set of rigging woven from the heart of a hurricane. Allows the ship to summon and command localized squalls.",
+      "cs": "Kompletní takeláž utkaná ze srdce hurikánu. Umožňuje lodi přivolávat a ovládat lokalizované hůlavy."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 890
+      },
+      "cs": {
+        "Bonus k Trupu": 890
+      }
+    },
+    "abilities": {
+      "en": [
+        "Summon Squalls"
+      ],
+      "cs": [
+        "Přivolává Hůlavy"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+890 Hull, Summon Squalls",
+      "cs": "+890 Trup, Přivolává Hůlavy"
+    },
+    "level": 41,
+    "buyPrice": 4300,
+    "sellPrice": 1290
+  },
+  {
+    "id": "sr_shr_timelesswood_l42",
+    "name": {
+      "en": "Timeless Driftwood Hull",
+      "cs": "Trup z Nadčasového Naplaveného Dřeva"
+    },
+    "description": {
+      "en": "Constructed from driftwood that has floated for eons, untouched by time or rot. The ship itself seems to resist the worst of time's passage.",
+      "cs": "Postaven z naplaveného dřeva, které plulo po eony, nedotčeno časem ani hnilobou. Loď samotná se zdá odolávat nejhorším zubům času."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 920
+      },
+      "cs": {
+        "Bonus k Trupu": 920
+      }
+    },
+    "abilities": {
+      "en": [
+        "Resists Aging and Decay",
+        "Unaffected by Temporal Anomalies"
+      ],
+      "cs": [
+        "Odolává Stárnutí a Rozkladu",
+        "Neovlivněno Časovými Anomáliemi"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+920 Hull, Resists Decay & Time",
+      "cs": "+920 Trup, Odol. Rozkladu & Času"
+    },
+    "level": 42,
+    "buyPrice": 4500,
+    "sellPrice": 1350
+  },
+  {
+    "id": "sr_shr_voidkeel_l43",
+    "name": {
+      "en": "The Void Keel",
+      "cs": "Kýl Prázdnoty"
+    },
+    "description": {
+      "en": "The keel is replaced by a shard of solidified nothingness. The ship cuts through water silently, leaving no wake, for it is not truly there.",
+      "cs": "Kýl je nahrazen střepem ztuhlé nicoty. Loď řeže vodu tiše, nezanechávajíc žádnou brázdu, neboť tam ve skutečnosti není."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 950,
+        "Stealth": "Absolute"
+      },
+      "cs": {
+        "Bonus k Trupu": 950,
+        "Nenápadnost": "Absolutní"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Leaves No Wake",
+        "Utterly Silent"
+      ],
+      "cs": [
+        "Nezanechává Brázdu",
+        "Naprosto Tichá"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+950 Hull, Absolute Stealth",
+      "cs": "+950 Trup, Absolutní Nenápadnost"
+    },
+    "level": 43,
+    "buyPrice": 4800,
+    "sellPrice": 1440
+  },
+  {
+    "id": "sr_shr_dimensionalrigging_l44",
+    "name": {
+      "en": "Dimensional Rigging",
+      "cs": "Dimenzionální Takeláž"
+    },
+    "description": {
+      "en": "This rigging seems to fold space, allowing the sails to catch winds from other realities. The ship can make impossible leaps of speed.",
+      "cs": "Tato takeláž se zdá skládat prostor, což umožňuje plachtám chytat větry z jiných realit. Loď dokáže provádět nemožné skoky v rychlosti."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 960,
+        "Speed": "Reality-Bending"
+      },
+      "cs": {
+        "Bonus k Trupu": 960,
+        "Rychlost": "Ohýbající Realitu"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Short-Range Teleportation"
+      ],
+      "cs": [
+        "Teleportace na Krátkou Vzdálenost"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+960 Hull, Short-Range Teleport",
+      "cs": "+960 Trup, Krátká Teleportace"
+    },
+    "level": 44,
+    "buyPrice": 5200,
+    "sellPrice": 1560
+  },
+  {
+    "id": "sr_shr_sovereignsgrace_l45",
+    "name": {
+      "en": "The Sovereign's Grace",
+      "cs": "Milost Panovníka"
+    },
+    "description": {
+      "en": "A complete outfitting from the Pirate King's personal shipwright. Perfect balance, flawless craftsmanship, and an aura of undisputed authority.",
+      "cs": "Kompletní vybavení od osobního loďaře Pirátského krále. Dokonalá rovnováha, bezchybné zpracování a aura nesporné autority."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 1000
+      },
+      "cs": {
+        "Bonus k Trupu": 1000
+      }
+    },
+    "abilities": {
+      "en": [
+        "Aura of Command",
+        "Inspires Awe and Fear"
+      ],
+      "cs": [
+        "Aura Velení",
+        "Vzbuzuje Úctu a Strach"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+1000 Hull, Aura of Command",
+      "cs": "+1000 Trup, Aura Velení"
+    },
+    "level": 45,
+    "buyPrice": 5400,
+    "sellPrice": 1620
+  },
+  {
+    "id": "sr_shr_celestialchart_l46",
+    "name": {
+      "en": "Celestial Chart-Hull",
+      "cs": "Trup Nebeské Mapy"
+    },
+    "description": {
+      "en": "The hull is inscribed with a living star chart that predicts enemy movements and safe passages, guided by fate itself.",
+      "cs": "Trup je popsán živoucí hvězdnou mapou, která předpovídá pohyby nepřátel a bezpečné průplavy, vedena samotným osudem."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 1030,
+        "Precognition": "Minor"
+      },
+      "cs": {
+        "Bonus k Trupu": 1030,
+        "Předvídání": "Menší"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Minor Precognitive Navigation",
+        "Always Finds Safe Passage"
+      ],
+      "cs": [
+        "Menší Předvídavá Navigace",
+        "Vždy Najde Bezpečný Průplav"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+1030 Hull, Precognitive Navigation",
+      "cs": "+1030 Trup, Předvídavá Navigace"
+    },
+    "level": 46,
+    "buyPrice": 6100,
+    "sellPrice": 1830
+  },
+  {
+    "id": "sr_shr_sea_god_blessing_l47",
+    "name": {
+      "en": "Blessing of the Sea God",
+      "cs": "Požehnání Mořského Boha"
+    },
+    "description": {
+      "en": "The ship itself has been blessed by a forgotten sea deity. It calms storms, parts fogs, and sea monsters give it a wide berth.",
+      "cs": "Loď samotná byla požehnána zapomenutým mořským božstvem. Uklidňuje bouře, rozhání mlhy a mořské příšery se jí vyhýbají."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 1060
+      },
+      "cs": {
+        "Bonus k Trupu": 1060
+      }
+    },
+    "abilities": {
+      "en": [
+        "Commands Weather",
+        "Repels Sea Monsters"
+      ],
+      "cs": [
+        "Poroučí Počasí",
+        "Odpuzuje Mořské Příšery"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+1060 Hull, Commands Weather, Repels Monsters",
+      "cs": "+1060 Trup, Poroučí Počasí, Odpuzuje Příšery"
+    },
+    "level": 47,
+    "buyPrice": 8000,
+    "sellPrice": 2400
+  },
+  {
+    "id": "sr_shr_heart_of_the_maelstrom_l48",
+    "name": {
+      "en": "Heart of the Maelstrom",
+      "cs": "Srdce Malströmu"
+    },
+    "description": {
+      "en": "The ship's core contains the bound heart of a living hurricane. The ship is an extension of the storm's fury, wreathed in wind and lightning.",
+      "cs": "Jádro lodi obsahuje spoutané srdce živého hurikánu. Loď je prodloužením zuřivosti bouře, zahalená větrem a blesky."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 1090
+      },
+      "cs": {
+        "Bonus k Trupu": 1090
+      }
+    },
+    "abilities": {
+      "en": [
+        "Wreathed in Lightning",
+        "Immune to Storms"
+      ],
+      "cs": [
+        "Zahalená Blesky",
+        "Imunní Vůči Bouřím"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+1090 Hull, Lightning Wreath, Storm Immune",
+      "cs": "+1090 Trup, Bleskový Věnec, Imunní Bouřím"
+    },
+    "level": 48,
+    "buyPrice": 10000,
+    "sellPrice": 3000
+  },
+  {
+    "id": "sr_shr_ghost_ship_essence_l49",
+    "name": {
+      "en": "Essence of the Flying Dutchman",
+      "cs": "Esence Létajícího Holanďana"
+    },
+    "description": {
+      "en": "Your ship is no longer entirely of this world. It can sail beneath the waves or through the stormy skies, a harbinger of doom crewed by spectral sailors.",
+      "cs": "Vaše loď již není zcela z tohoto světa. Může plout pod vlnami nebo skrz bouřlivá nebesa, zvěstovatel zkázy s posádkou spektrálních námořníků."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 1100
+      },
+      "cs": {
+        "Bonus k Trupu": 1100
+      }
+    },
+    "abilities": {
+      "en": [
+        "Can Sail Underwater",
+        "Can Sail Through Storms",
+        "Spectral Crew"
+      ],
+      "cs": [
+        "Může Plout Pod Vodou",
+        "Může Plout Skrz Bouře",
+        "Spektrální Posádka"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+1100 Hull, Sails Underwater/Through Storms",
+      "cs": "+1100 Trup, Pluje Pod Vodou/Skrz Bouře"
+    },
+    "level": 49,
+    "buyPrice": 13000,
+    "sellPrice": 3900
+  },
+  {
+    "id": "sr_shr_libertanias_pride_l50",
+    "name": {
+      "en": "Libertania's Pride",
+      "cs": "Pýcha Libertanie"
+    },
+    "description": {
+      "en": "The pinnacle of pirate shipcraft. Not merely a ship, but a moving fortress, a symbol of ultimate freedom, and a legend whispered in every port. The ship itself is a sovereign nation on the waves.",
+      "cs": "Vrchol pirátského loďařství. Nejen loď, ale pohyblivá pevnost, symbol absolutní svobody a legenda šeptaná v každém přístavu. Loď samotná je suverénním národem na vlnách."
+    },
+    "itemType": "ship_hull_and_rigging",
+    "attributes": {
+      "en": {
+        "Hull Bonus": 1150
+      },
+      "cs": {
+        "Bonus k Trupu": 1150
+      }
+    },
+    "abilities": {
+      "en": [
+        "Unquestioned Authority",
+        "Legendary Presence",
+        "Mobile Pirate Haven"
+      ],
+      "cs": [
+        "Nezpochybnitelná Autorita",
+        "Legendární Přítomnost",
+        "Pohyblivý Pirátský Přístav"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "+1150 Hull, Legendary Presence, Mobile Haven",
+      "cs": "+1150 Trup, Legendární Přítomnost, Mobilní Přístav"
+    },
+    "level": 50,
+    "buyPrice": 16000,
+    "sellPrice": 4800
+  }
+]

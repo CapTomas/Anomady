@@ -1,0 +1,1352 @@
+[
+  {
+    "id": "cc_us_stained_coveralls_l01",
+    "name": {
+      "en": "Standard-Issue Coveralls (Slightly Stained)",
+      "cs": "Standardní Montérky (Lehce Ušpiněné)"
+    },
+    "description": {
+      "en": "The classic beige. Comes pre-equipped with mystery stains and a faint air of resignation. Union-approved for minimal protection and maximum conformity.",
+      "cs": "Klasická béžová. Dodává se s předinstalovanými záhadnými skvrnami a lehkým odérem rezignace. Schváleno Unií pro minimální ochranu a maximální konformitu."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 21 },
+      "cs": { "Zvýšení Soudržnosti": 21 }
+    },
+    "abilities": {
+      "en": ["Resists minor tea spills"],
+      "cs": ["Odolává menšímu rozlití čaje"]
+    },
+    "itemEffectDescription": {
+      "en": "+21 Cohesion, Tea Resistant",
+      "cs": "+21 Soudržnost, Odolné čaji"
+    },
+    "level": 1,
+    "buyPrice": 24,
+    "sellPrice": 6
+  },
+  {
+    "id": "cc_us_reinforced_galoshes_l02",
+    "name": {
+      "en": "Reinforced Galoshes (Worn as a Suit)",
+      "cs": "Zesílené Galoše (Nošené jako Oblek)"
+    },
+    "description": {
+      "en": "Through a bureaucratic loophole, these oversized, surprisingly durable galoshes are classified as a full utility suite. Protects against puddles of a questionable nature.",
+      "cs": "Díky byrokratické skulince jsou tyto nadměrné, překvapivě odolné galoše klasifikovány jako plnohodnotná užitková sada. Chrání před kalužemi pochybné povahy."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 36 },
+      "cs": { "Zvýšení Soudržnosti": 36 }
+    },
+    "abilities": {
+      "en": ["Prevents existential dampness"],
+      "cs": ["Zabraňuje existenční vlhkosti"]
+    },
+    "itemEffectDescription": {
+      "en": "+36 Cohesion, Dampness Prevention",
+      "cs": "+36 Soudržnost, Prevence vlhkosti"
+    },
+    "level": 2,
+    "buyPrice": 41,
+    "sellPrice": 10
+  },
+  {
+    "id": "cc_us_padded_boiler_suit_l03",
+    "name": {
+      "en": "Padded Boiler Suit",
+      "cs": "Polstrovaný Pracovní Overal"
+    },
+    "description": {
+      "en": "A slight upgrade featuring what the manual calls 'strategic fluff.' Offers moderate comfort during minor temporal paradoxes.",
+      "cs": "Mírné vylepšení obsahující to, co manuál nazývá 'strategické chmýří'. Nabízí mírné pohodlí během menších časových paradoxů."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 52 },
+      "cs": { "Zvýšení Soudržnosti": 52 }
+    },
+    "abilities": {
+      "en": ["Slightly muffles the sound of screaming voids"],
+      "cs": ["Lehce tlumí zvuk křičících prázdnot"]
+    },
+    "itemEffectDescription": {
+      "en": "+52 Cohesion, Muffles Voids",
+      "cs": "+52 Soudržnost, Tlumí prázdnoty"
+    },
+    "level": 3,
+    "buyPrice": 53,
+    "sellPrice": 13
+  },
+  {
+    "id": "cc_us_asbestos_lined_apron_l04",
+    "name": {
+      "en": "Asbestos-Lined Apron",
+      "cs": "Azbestem Podšitá Zástěra"
+    },
+    "description": {
+      "en": "An older model from a less... litigious era of custodial service. Surprisingly effective against low-level thermal and existential hazards.",
+      "cs": "Starší model z méně... soudně sporné éry údržbářských služeb. Překvapivě účinná proti nízkoúrovňovým tepelným a existenčním rizikům."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 65 },
+      "cs": { "Zvýšení Soudržnosti": 65 }
+    },
+    "abilities": {
+      "en": ["Questionably safe", "Adds a vintage charm"],
+      "cs": ["Pochybně bezpečná", "Dodává vintage šarm"]
+    },
+    "itemEffectDescription": {
+      "en": "+65 Cohesion, Questionably Safe",
+      "cs": "+65 Soudržnost, Pochybně bezpečná"
+    },
+    "level": 4,
+    "buyPrice": 75,
+    "sellPrice": 19
+  },
+  {
+    "id": "cc_us_anti_static_jumpsuit_l05",
+    "name": {
+      "en": "Anti-Static Jumpsuit",
+      "cs": "Antistatická Kombinéza"
+    },
+    "description": {
+      "en": "Guaranteed to reduce unwanted static cling by up to 80%, even when wrestling with sentient carpets or negotiating with beings of pure energy.",
+      "cs": "Zaručeně snižuje nežádoucí statickou přilnavost až o 80 %, i při zápasení s vnímajícími koberci nebo vyjednávání s bytostmi z čisté energie."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 74 },
+      "cs": { "Zvýšení Soudržnosti": 74 }
+    },
+    "abilities": {
+      "en": ["Prevents minor reality shocks"],
+      "cs": ["Zabraňuje menším šokům z reality"]
+    },
+    "itemEffectDescription": {
+      "en": "+74 Cohesion, Prevents Shocks",
+      "cs": "+74 Soudržnost, Zabraňuje šokům"
+    },
+    "level": 5,
+    "buyPrice": 89,
+    "sellPrice": 22
+  },
+  {
+    "id": "cc_us_gravity_wellies_l06",
+    "name": {
+      "en": "Gravity Wellies",
+      "cs": "Gravitační Gumáky"
+    },
+    "description": {
+      "en": "These boots ensure you remain vaguely 'down' relative to the most convenient large object. Results may vary in areas with indecisive gravity.",
+      "cs": "Tyto boty zajišťují, že zůstanete vágně 'dole' vzhledem k nejvhodnějšímu velkému objektu. Výsledky se mohou lišit v oblastech s nerozhodnou gravitací."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 95 },
+      "cs": { "Zvýšení Soudržnosti": 95 }
+    },
+    "abilities": {
+      "en": ["Resists sudden upward movement"],
+      "cs": ["Odolává náhlému pohybu vzhůru"]
+    },
+    "itemEffectDescription": {
+      "en": "+95 Cohesion, Resists Up",
+      "cs": "+95 Soudržnost, Odolává vzhůru"
+    },
+    "level": 6,
+    "buyPrice": 99,
+    "sellPrice": 25
+  },
+  {
+    "id": "cc_us_self_ironing_tunic_l07",
+    "name": {
+      "en": "Self-Ironing Tunic",
+      "cs": "Samožehlicí Tunika"
+    },
+    "description": {
+      "en": "Maintains a crisp, professional crease even when reality itself is fraying at the edges. Professionalism is key, even during a containment breach.",
+      "cs": "Udržuje si ostrý, profesionální puky, i když se samotná realita třepí na okrajích. Profesionalita je klíčová, i během narušení kontejnmentu."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 108 },
+      "cs": { "Zvýšení Soudržnosti": 108 }
+    },
+    "abilities": {
+      "en": ["Boosts morale through neatness"],
+      "cs": ["Zvyšuje morálku úhledností"]
+    },
+    "itemEffectDescription": {
+      "en": "+108 Cohesion, Morale Boost",
+      "cs": "+108 Soudržnost, Zvyšuje morálku"
+    },
+    "level": 7,
+    "buyPrice": 125,
+    "sellPrice": 31
+  },
+  {
+    "id": "cc_us_bureaucratic_bulwark_l08",
+    "name": {
+      "en": "Bureaucratic Bulwark Vest",
+      "cs": "Vesta Byrokratické Bašty"
+    },
+    "description": {
+      "en": "Lined with layers of rejected forms and triplicate copies, this vest can absorb a surprising amount of kinetic energy and administrative oversight.",
+      "cs": "Tato vesta, podšitá vrstvami zamítnutých formulářů a trojmo vyhotovených kopií, dokáže pohltit překvapivé množství kinetické energie a administrativního dohledu."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 121 },
+      "cs": { "Zvýšení Soudržnosti": 121 }
+    },
+    "abilities": {
+      "en": ["Confuses auditors", "Smells faintly of ink"],
+      "cs": ["Mate auditory", "Slabě voní inkoustem"]
+    },
+    "itemEffectDescription": {
+      "en": "+121 Cohesion, Confuses Auditors",
+      "cs": "+121 Soudržnost, Mate auditory"
+    },
+    "level": 8,
+    "buyPrice": 145,
+    "sellPrice": 36
+  },
+  {
+    "id": "cc_us_pocket_protector_plus_l09",
+    "name": {
+      "en": "Pocket Protector Plus™",
+      "cs": "Chránič Kapes Plus™"
+    },
+    "description": {
+      "en": "Not just a pocket protector, but a full-body hazmat suit woven from the same indestructible plastic. Protects against leaky pens and minor cosmic rays.",
+      "cs": "Nejen chránič kapes, ale celotělový ochranný oblek utkaný ze stejného nezničitelného plastu. Chrání před tekoucími pery a menšími kosmickými paprsky."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 135 },
+      "cs": { "Zvýšení Soudržnosti": 135 }
+    },
+    "abilities": {
+      "en": ["Impervious to ink-based lifeforms"],
+      "cs": ["Nepropustný pro životní formy na bázi inkoustu"]
+    },
+    "itemEffectDescription": {
+      "en": "+135 Cohesion, Ink-Proof",
+      "cs": "+135 Soudržnost, Odolné inkoustu"
+    },
+    "level": 9,
+    "buyPrice": 158,
+    "sellPrice": 40
+  },
+  {
+    "id": "cc_us_hazard_pay_vest_l10",
+    "name": {
+      "en": "Hazard-Pay Vest with Extra Pockets",
+      "cs": "Vesta pro Rizikové Práce s Extra Kapsami"
+    },
+    "description": {
+      "en": "Reinforced with what the manual calls 'Semi-Pliable Carbon,' this vest has enough pockets to lose several small pets and a surprising number of forms (Form 37B not included).",
+      "cs": "Zesílená materiálem, který manuál nazývá 'polo-ohebný karbon', tato vesta má dost kapes na ztracení několika malých domácích mazlíčků a překvapivého množství formulářů (formulář 37B není součástí)."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 149 },
+      "cs": { "Zvýšení Soudržnosti": 149 }
+    },
+    "abilities": {
+      "en": ["Slightly reduces papercut severity"],
+      "cs": ["Mírně snižuje závažnost říznutí papírem"]
+    },
+    "itemEffectDescription": {
+      "en": "+149 Cohesion, Reduces Papercuts",
+      "cs": "+149 Soudržnost, Snižuje říznutí"
+    },
+    "level": 10,
+    "buyPrice": 176,
+    "sellPrice": 44
+  },
+  {
+    "id": "cc_us_plausibility_cloak_l11",
+    "name": {
+      "en": "Plausibility Cloak",
+      "cs": "Plášť Pravděpodobnosti"
+    },
+    "description": {
+      "en": "Doesn't make you invisible, but makes your presence seem perfectly normal and unremarkable, even if you're mopping the ceiling of a supernova.",
+      "cs": "Nečiní vás neviditelným, ale vaše přítomnost se zdá být naprosto normální a nezajímavá, i když vytíráte strop supernovy."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 195 },
+      "cs": { "Zvýšení Soudržnosti": 195 }
+    },
+    "abilities": {
+      "en": ["Averts unwanted social interaction"],
+      "cs": ["Odvrací nechtěnou sociální interakci"]
+    },
+    "itemEffectDescription": {
+      "en": "+195 Cohesion, Averts Interaction",
+      "cs": "+195 Soudržnost, Odvrací interakci"
+    },
+    "level": 11,
+    "buyPrice": 220,
+    "sellPrice": 55
+  },
+  {
+    "id": "cc_us_mood_sweater_l12",
+    "name": {
+      "en": "Mood-Sensing Sweater",
+      "cs": "Svetr Snímající Náladu"
+    },
+    "description": {
+      "en": "Changes color based on the ambient emotional state. Mostly displays shades of 'Mildly Anxious' or 'Confused Beige.' Provides excellent insulation.",
+      "cs": "Mění barvu podle okolního emočního stavu. Většinou zobrazuje odstíny 'Mírně Úzkostlivá' nebo 'Zmatená Béžová'. Poskytuje vynikající izolaci."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 210 },
+      "cs": { "Zvýšení Soudržnosti": 210 }
+    },
+    "abilities": {
+      "en": ["Warns of impending group panic"],
+      "cs": ["Varuje před hrozící skupinovou panikou"]
+    },
+    "itemEffectDescription": {
+      "en": "+210 Cohesion, Panic Warning",
+      "cs": "+210 Soudržnost, Varování před panikou"
+    },
+    "level": 12,
+    "buyPrice": 275,
+    "sellPrice": 69
+  },
+  {
+    "id": "cc_us_narrativium_weave_overalls_l13",
+    "name": {
+      "en": "Narrativium-Weave Overalls",
+      "cs": "Kombinéza z Narativiového Vlákna"
+    },
+    "description": {
+      "en": "Woven with trace amounts of Narrativium, this suit subtly encourages reality to adhere to standard story structures, making outcomes slightly more predictable. Usually.",
+      "cs": "Tento oblek, utkaný se stopovým množstvím Narativia, jemně povzbuzuje realitu, aby se držela standardních příběhových struktur, čímž se výsledky stávají o něco předvídatelnějšími. Obvykle."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 226 },
+      "cs": { "Zvýšení Soudržnosti": 226 }
+    },
+    "abilities": {
+      "en": ["Increases chance of dramatic timing"],
+      "cs": ["Zvyšuje šanci na dramatické načasování"]
+    },
+    "itemEffectDescription": {
+      "en": "+226 Cohesion, Dramatic Timing",
+      "cs": "+226 Soudržnost, Dramatické načasování"
+    },
+    "level": 13,
+    "buyPrice": 310,
+    "sellPrice": 78
+  },
+  {
+    "id": "cc_us_tinfoil_fatigues_l14",
+    "name": {
+      "en": "Quantum Tinfoil Fatigues",
+      "cs": "Kvantové Alobalové Maskáče"
+    },
+    "description": {
+      "en": "This shimmering suit provides excellent protection against mind-reading, telepathic advertising, and attempts by the universe to know what you're thinking. Also makes a crinkly sound.",
+      "cs": "Tento třpytivý oblek poskytuje vynikající ochranu proti čtení myšlenek, telepatické reklamě a pokusům vesmíru zjistit, co si myslíte. Také vydává šustivý zvuk."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 243 },
+      "cs": { "Zvýšení Soudržnosti": 243 }
+    },
+    "abilities": {
+      "en": ["Resists psionic influence", "Crinkles reassuringly"],
+      "cs": ["Odolává psionickému vlivu", "Uklidňujícím způsobem šustí"]
+    },
+    "itemEffectDescription": {
+      "en": "+243 Cohesion, Psionic Resist",
+      "cs": "+243 Soudržnost, Psionická odolnost"
+    },
+    "level": 14,
+    "buyPrice": 366,
+    "sellPrice": 92
+  },
+  {
+    "id": "cc_us_janitorial_harness_l15",
+    "name": {
+      "en": "Senior Janitor's Utility Harness",
+      "cs": "Užitkový Postroj Staršího Údržbáře"
+    },
+    "description": {
+      "en": "A complex web of straps, pouches, and magnetic holsters for holding every conceivable tool. Wearing it grants an air of knowing exactly where the master water shutoff valve is.",
+      "cs": "Složitá síť popruhů, kapes a magnetických pouzder pro držení každého myslitelného nástroje. Jeho nošení propůjčuje auru přesného vědění, kde je hlavní uzávěr vody."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 259 },
+      "cs": { "Zvýšení Soudržnosti": 259 }
+    },
+    "abilities": {
+      "en": ["Looks vaguely important"],
+      "cs": ["Vypadá vágně důležitě"]
+    },
+    "itemEffectDescription": {
+      "en": "+259 Cohesion, Looks Important",
+      "cs": "+259 Soudržnost, Vypadá důležitě"
+    },
+    "level": 15,
+    "buyPrice": 421,
+    "sellPrice": 105
+  },
+  {
+    "id": "cc_us_hazard_suit_mk2_l16",
+    "name": {
+      "en": "Hazard Suit Mk. II",
+      "cs": "Ochranný Oblek Mk. II"
+    },
+    "description": {
+      "en": "This model features a reinforced helmet (to protect against falling grammar) and self-sealing seams. The voice synthesizer, however, only speaks in haikus.",
+      "cs": "Tento model má zesílenou helmu (k ochraně proti padající gramatice) a samouzavírací švy. Hlasový syntezátor však mluví pouze v haiku."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 265 },
+      "cs": { "Zvýšení Soudržnosti": 265 }
+    },
+    "abilities": {
+      "en": ["Resists linguistic anomalies", "Speaks in haikus"],
+      "cs": ["Odolává lingvistickým anomáliím", "Mluví v haiku"]
+    },
+    "itemEffectDescription": {
+      "en": "+265 Cohesion, Resists Grammar",
+      "cs": "+265 Soudržnost, Odolává gramatice"
+    },
+    "level": 16,
+    "buyPrice": 475,
+    "sellPrice": 119
+  },
+  {
+    "id": "cc_us_non_euclidean_poncho_l17",
+    "name": {
+      "en": "Non-Euclidean Poncho",
+      "cs": "Neeuklidovské Pončo"
+    },
+    "description": {
+      "en": "A poncho that is somehow larger on the inside. Excellent for smuggling snacks, hiding from responsibilities, and baffling geometrists.",
+      "cs": "Pončo, které je nějakým způsobem větší zevnitř. Vynikající pro pašování svačin, schovávání se před povinnostmi a matení geometrů."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 292 },
+      "cs": { "Zvýšení Soudržnosti": 292 }
+    },
+    "abilities": {
+      "en": ["Extra-dimensional storage"],
+      "cs": ["Extradimenzionální úložiště"]
+    },
+    "itemEffectDescription": {
+      "en": "+292 Cohesion, Extra Storage",
+      "cs": "+292 Soudržnost, Extra úložiště"
+    },
+    "level": 17,
+    "buyPrice": 535,
+    "sellPrice": 134
+  },
+  {
+    "id": "cc_us_chrono_retardant_coat_l18",
+    "name": {
+      "en": "Chrono-Retardant Coat",
+      "cs": "Chrono-retardantní Kabát"
+    },
+    "description": {
+      "en": "Slows the effect of localized time dilation on the wearer, ensuring your tea doesn't get cold (or boil away) too quickly. Also slightly resistant to spoilers.",
+      "cs": "Zpomaluje účinek lokalizované časové dilatace na nositele, což zajišťuje, že váš čaj nevychladne (nebo se nevypaří) příliš rychle. Také mírně odolný vůči spoilerům."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 308 },
+      "cs": { "Zvýšení Soudržnosti": 308 }
+    },
+    "abilities": {
+      "en": ["Resists temporal shenanigans"],
+      "cs": ["Odolává časovým šarádám"]
+    },
+    "itemEffectDescription": {
+      "en": "+308 Cohesion, Temporal Resist",
+      "cs": "+308 Soudržnost, Časová odolnost"
+    },
+    "level": 18,
+    "buyPrice": 594,
+    "sellPrice": 149
+  },
+  {
+    "id": "cc_us_empathy_damper_l19",
+    "name": {
+      "en": "Empathy-Dampening Field Suit",
+      "cs": "Oblek s Polem Tlumícím Empatii"
+    },
+    "description": {
+      "en": "For dealing with beings of profound cosmic sadness or planets going through a messy breakup. Keeps you emotionally detached and focused on the paperwork.",
+      "cs": "Pro jednání s bytostmi hlubokého kosmického smutku nebo planetami procházejícími ošklivým rozchodem. Udržuje vás emočně odtažité a soustředěné na papírování."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 313 },
+      "cs": { "Zvýšení Soudržnosti": 313 }
+    },
+    "abilities": {
+      "en": ["Protects from psychic sorrow"],
+      "cs": ["Chrání před psychickým žalem"]
+    },
+    "itemEffectDescription": {
+      "en": "+313 Cohesion, Sorrow Protection",
+      "cs": "+313 Soudržnost, Ochrana před žalem"
+    },
+    "level": 19,
+    "buyPrice": 678,
+    "sellPrice": 170
+  },
+  {
+    "id": "cc_us_plot_armor_l20",
+    "name": {
+      "en": "Plot Armor Plating (Rental)",
+      "cs": "Plátová Zbroj Scénáře (Pronájem)"
+    },
+    "description": {
+      "en": "A rental set of plates that significantly increases your chances of surviving events that would otherwise be instantly fatal, so long as it's narratively convenient. Late fees are astronomical.",
+      "cs": "Pronajatá sada plátů, která výrazně zvyšuje vaše šance na přežití událostí, které by jinak byly okamžitě smrtelné, pokud je to narativně výhodné. Poplatky za pozdní vrácení jsou astronomické."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 341 },
+      "cs": { "Zvýšení Soudržnosti": 341 }
+    },
+    "abilities": {
+      "en": ["Defies certain doom (sometimes)"],
+      "cs": ["Vzdoruje jisté zkáze (někdy)"]
+    },
+    "itemEffectDescription": {
+      "en": "+341 Cohesion, Defies Doom",
+      "cs": "+341 Soudržnost, Vzdoruje zkáze"
+    },
+    "level": 20,
+    "buyPrice": 718,
+    "sellPrice": 180
+  },
+  {
+    "id": "cc_us_fourth_wall_vest_l21",
+    "name": {
+      "en": "Fourth-Wall Reinforcement Vest",
+      "cs": "Vesta na Zesílení Čtvrté Stěny"
+    },
+    "description": {
+      "en": "Protects the wearer from jarring meta-references and existential awareness of being in a simulation. The universe feels more real, if slightly less amusing.",
+      "cs": "Chrání nositele před rušivými meta-odkazy a existenčním uvědoměním si, že je v simulaci. Vesmír se zdá být skutečnější, i když o něco méně zábavný."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 347 },
+      "cs": { "Zvýšení Soudržnosti": 347 }
+    },
+    "abilities": {
+      "en": ["Maintains narrative immersion"],
+      "cs": ["Udržuje narativní ponoření"]
+    },
+    "itemEffectDescription": {
+      "en": "+347 Cohesion, Immersion Field",
+      "cs": "+347 Soudržnost, Pole ponoření"
+    },
+    "level": 21,
+    "buyPrice": 821,
+    "sellPrice": 205
+  },
+  {
+    "id": "cc_us_irony_shielding_l22",
+    "name": {
+      "en": "Irony Shielding Underwear",
+      "cs": "Spodní Prádlo s Ironickým Stíněním"
+    },
+    "description": {
+      "en": "Worn on the outside for maximum effect, this lead-lined suit protects against cosmic irony, poetic justice, and situations where the thing you said would never happen, happens.",
+      "cs": "Nošeno zvenku pro maximální účinek, tento olovem podšitý oblek chrání před kosmickou ironií, poetickou spravedlností a situacemi, kdy se stane to, co jste řekli, že se nikdy nestane."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 359 },
+      "cs": { "Zvýšení Soudržnosti": 359 }
+    },
+    "abilities": {
+      "en": ["Deflects inconvenient truths"],
+      "cs": ["Odklání nepohodlné pravdy"]
+    },
+    "itemEffectDescription": {
+      "en": "+359 Cohesion, Deflects Irony",
+      "cs": "+359 Soudržnost, Odklání ironii"
+    },
+    "level": 22,
+    "buyPrice": 862,
+    "sellPrice": 216
+  },
+  {
+    "id": "cc_us_paradox_pajamas_l23",
+    "name": {
+      "en": "Paradox-Proof Pajamas",
+      "cs": "Pyžamo Odolné Paradoxům"
+    },
+    "description": {
+      "en": "Extremely comfortable and causality-resistant. Allows one to survive being one's own grandfather, provided one doesn't think about it too hard.",
+      "cs": "Extrémně pohodlné a odolné vůči kauzalitě. Umožňuje přežít, i když jste svým vlastním dědečkem, pokud o tom příliš nepřemýšlíte."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 374 },
+      "cs": { "Zvýšení Soudržnosti": 374 }
+    },
+    "abilities": {
+      "en": ["Stabilizes temporal loops"],
+      "cs": ["Stabilizuje časové smyčky"]
+    },
+    "itemEffectDescription": {
+      "en": "+374 Cohesion, Stabilizes Loops",
+      "cs": "+374 Soudržnost, Stabilizuje smyčky"
+    },
+    "level": 23,
+    "buyPrice": 941,
+    "sellPrice": 235
+  },
+  {
+    "id": "cc_us_supervisor_suit_l24",
+    "name": {
+      "en": "Middle Management Supervisor Suit",
+      "cs": "Oblek Vedoucího Středního Managementu"
+    },
+    "description": {
+      "en": "A beige suit that grants the wearer an uncanny ability to delegate tasks, look vaguely busy, and speak entirely in corporate buzzwords. Does not actually increase productivity.",
+      "cs": "Béžový oblek, který propůjčuje nositeli podivuhodnou schopnost delegovat úkoly, vypadat vágně zaneprázdněně a mluvit výhradně v korporátních frázích. Ve skutečnosti nezvyšuje produktivitu."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 390 },
+      "cs": { "Zvýšení Soudržnosti": 390 }
+    },
+    "abilities": {
+      "en": ["Can synergize core competencies"],
+      "cs": ["Dokáže synergizovat klíčové kompetence"]
+    },
+    "itemEffectDescription": {
+      "en": "+390 Cohesion, Synergizes",
+      "cs": "+390 Soudržnost, Synergizuje"
+    },
+    "level": 24,
+    "buyPrice": 1071,
+    "sellPrice": 268
+  },
+  {
+    "id": "cc_us_smart_uniform_l25",
+    "name": {
+      "en": "Self-Starching Smart Uniform",
+      "cs": "Samoškrobící Chytrá Uniforma"
+    },
+    "description": {
+      "en": "Maintains a crisp, professional look even during reality collapses. Integrated micro-servos provide support against sudden gravitational whims. Tends to hum patriotic Union anthems when bored.",
+      "cs": "Udržuje si ostrý, profesionální vzhled i během kolapsů reality. Integrované mikrosystémy poskytují podporu proti náhlým gravitačním rozmarům. Má tendenci si broukat vlastenecké hymny Unie, když se nudí."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 408 },
+      "cs": { "Zvýšení Soudržnosti": 408 }
+    },
+    "abilities": {
+      "en": ["Resists existential wrinkling", "Humming may deter small vermin"],
+      "cs": ["Odolává existenčnímu mačkání", "Broukání může odradit drobné škůdce"]
+    },
+    "itemEffectDescription": {
+      "en": "+408 Cohesion, Wrinkle Resist, Hums",
+      "cs": "+408 Soudržnost, Odol. zmačkání, Brouká si"
+    },
+    "level": 25,
+    "buyPrice": 1127,
+    "sellPrice": 282
+  },
+  {
+    "id": "cc_us_antimeme_coveralls_l26",
+    "name": {
+      "en": "Antimemetic Coveralls",
+      "cs": "Antimemetické Montérky"
+    },
+    "description": {
+      "en": "A suit that is impossible to remember clearly. People forget you were there moments after you leave. Extremely useful for avoiding blame.",
+      "cs": "Oblek, který si nelze jasně zapamatovat. Lidé zapomenou, že jste tam byli, chvíli poté, co odejdete. Extrémně užitečné pro vyhýbání se vině."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 499 },
+      "cs": { "Zvýšení Soudržnosti": 499 }
+    },
+    "abilities": {
+      "en": ["Induces convenient amnesia"],
+      "cs": ["Vyvolává příhodnou amnézii"]
+    },
+    "itemEffectDescription": {
+      "en": "+499 Cohesion, Induces Amnesia",
+      "cs": "+499 Soudržnost, Vyvolává amnézii"
+    },
+    "level": 26,
+    "buyPrice": 1225,
+    "sellPrice": 306
+  },
+  {
+    "id": "cc_us_probability_vest_l27",
+    "name": {
+      "en": "Improbability-Field Vest",
+      "cs": "Vesta s Polem Nepravděpodobnosti"
+    },
+    "description": {
+      "en": "Doesn't stop attacks, but makes it infinitely improbable they will hit you. Instead, they are more likely to turn into a bowl of petunias.",
+      "cs": "Nezastavuje útoky, ale činí nekonečně nepravděpodobným, že vás zasáhnou. Místo toho se pravděpodobněji promění v mísu petúnií."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 501 },
+      "cs": { "Zvýšení Soudržnosti": 501 }
+    },
+    "abilities": {
+      "en": ["Generates convenient coincidences"],
+      "cs": ["Generuje příhodné náhody"]
+    },
+    "itemEffectDescription": {
+      "en": "+501 Cohesion, Generates Coincidence",
+      "cs": "+501 Soudržnost, Generuje náhody"
+    },
+    "level": 27,
+    "buyPrice": 1372,
+    "sellPrice": 343
+  },
+  {
+    "id": "cc_us_comfort_onesie_l28",
+    "name": {
+      "en": "Existential Comfort Onesie",
+      "cs": "Existenčně Pohodlný Overal"
+    },
+    "description": {
+      "en": "Made from the fleece of a Schrödinger's sheep, this onesie is both warm and not warm, providing perfect comfort in any contradictory thermal environment.",
+      "cs": "Tento overal, vyrobený z rouna Schrödingerovy ovce, je zároveň teplý i neteplý a poskytuje dokonalé pohodlí v jakémkoli rozporuplném tepelném prostředí."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 536 },
+      "cs": { "Zvýšení Soudržnosti": 536 }
+    },
+    "abilities": {
+      "en": ["Soothes existential dread"],
+      "cs": ["Uklidňuje existenční hrůzu"]
+    },
+    "itemEffectDescription": {
+      "en": "+536 Cohesion, Soothes Dread",
+      "cs": "+536 Soudržnost, Uklidňuje hrůzu"
+    },
+    "level": 28,
+    "buyPrice": 1581,
+    "sellPrice": 395
+  },
+  {
+    "id": "cc_us_deus_ex_macrame_l29",
+    "name": {
+      "en": "Deus Ex Macrame Armor",
+      "cs": "Zbroj Deus Ex Makramé"
+    },
+    "description": {
+      "en": "A surprisingly resilient suit made of knotted string that has a tendency to unravel at the most opportune moments to provide a convenient solution to an unsolvable problem.",
+      "cs": "Překvapivě odolný oblek z uzlovaného provázku, který má tendenci se rozmotat v nejvhodnějších okamžicích a poskytnout pohodlné řešení neřešitelného problému."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 549 },
+      "cs": { "Zvýšení Soudržnosti": 549 }
+    },
+    "abilities": {
+      "en": ["Provides convenient plot devices"],
+      "cs": ["Poskytuje příhodné dějové berličky"]
+    },
+    "itemEffectDescription": {
+      "en": "+549 Cohesion, Convenient Plots",
+      "cs": "+549 Soudržnost, Příhodné zápletky"
+    },
+    "level": 29,
+    "buyPrice": 1666,
+    "sellPrice": 417
+  },
+  {
+    "id": "cc_us_janitor_generals_fatigues_l30",
+    "name": {
+      "en": "Janitor-General's Fatigues",
+      "cs": "Pracovní Oděv Generálního Domovníka"
+    },
+    "description": {
+      "en": "The formal combat attire of the Union's highest (and only) military rank. Woven with Teflon to deflect blame and a special fiber that repels responsibility.",
+      "cs": "Formální bojový oděv nejvyšší (a jediné) vojenské hodnosti Unie. Utkán s teflonem pro odklánění viny a speciálním vláknem, které odpuzuje odpovědnost."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 556 },
+      "cs": { "Zvýšení Soudržnosti": 556 }
+    },
+    "abilities": {
+      "en": ["Deflects blame", "Repels responsibility"],
+      "cs": ["Odklání vinu", "Odpuzuje odpovědnost"]
+    },
+    "itemEffectDescription": {
+      "en": "+556 Cohesion, Deflects Blame",
+      "cs": "+556 Soudržnost, Odklání vinu"
+    },
+    "level": 30,
+    "buyPrice": 1813,
+    "sellPrice": 453
+  },
+  {
+    "id": "cc_us_meta_stabilizing_suit_l31",
+    "name": {
+      "en": "Meta-Stabilizing Suit",
+      "cs": "Meta-stabilizační oblek"
+    },
+    "description": {
+      "en": "For missions in sectors where the rules of narrative are weak. This suit reinforces tropes, prevents genre shifts, and emits a low hum that sounds suspiciously like a theme song.",
+      "cs": "Pro mise v sektorech, kde jsou pravidla vyprávění slabá. Tento oblek posiluje tropy, zabraňuje žánrovým posunům a vydává nízké hučení, které zní podezřele jako úvodní znělka."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 586 },
+      "cs": { "Zvýšení Soudržnosti": 586 }
+    },
+    "abilities": {
+      "en": ["Prevents genre-shifting"],
+      "cs": ["Zabraňuje žánrovým posunům"]
+    },
+    "itemEffectDescription": {
+      "en": "+586 Cohesion, Prevents Genre Shifts",
+      "cs": "+586 Soudržnost, Zabraňuje posunům"
+    },
+    "level": 31,
+    "buyPrice": 2040,
+    "sellPrice": 510
+  },
+  {
+    "id": "cc_us_void_proof_vest_l32",
+    "name": {
+      "en": "Void-Proof Vest",
+      "cs": "Vesta odolná vůči prázdnotě"
+    },
+    "description": {
+      "en": "Guaranteed to protect against the existential despair of staring into the abyss. The abyss may, however, still stare into you and judge your fashion choices.",
+      "cs": "Zaručeně chrání před existenčním zoufalstvím z pohledu do propasti. Propast však může stále hledět do vás a soudit vaše módní volby."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 604 },
+      "cs": { "Zvýšení Soudržnosti": 604 }
+    },
+    "abilities": {
+      "en": ["Resists nihilism"],
+      "cs": ["Odolává nihilismu"]
+    },
+    "itemEffectDescription": {
+      "en": "+604 Cohesion, Resists Nihilism",
+      "cs": "+604 Soudržnost, Odolává nihilismu"
+    },
+    "level": 32,
+    "buyPrice": 2132,
+    "sellPrice": 533
+  },
+  {
+    "id": "cc_us_conceptual_armor_l33",
+    "name": {
+      "en": "Conceptual Armor",
+      "cs": "Konceptuální zbroj"
+    },
+    "description": {
+      "en": "This armor doesn't physically exist, but protects you by making the *idea* of you being harmed conceptually unsound to any aggressor with a philosophical inclination.",
+      "cs": "Tato zbroj fyzicky neexistuje, ale chrání vás tím, že *myšlenka* na vaše zranění se stane konceptuálně nesmyslnou pro každého agresora s filozofickým sklonem."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 610 },
+      "cs": { "Zvýšení Soudržnosti": 610 }
+    },
+    "abilities": {
+      "en": ["Baffles intelligent foes"],
+      "cs": ["Mate inteligentní nepřátele"]
+    },
+    "itemEffectDescription": {
+      "en": "+610 Cohesion, Baffles Foes",
+      "cs": "+610 Soudržnost, Mate nepřátele"
+    },
+    "level": 33,
+    "buyPrice": 2397,
+    "sellPrice": 599
+  },
+  {
+    "id": "cc_us_apathetic_field_generator_l34",
+    "name": {
+      "en": "Apathetic Field Generator",
+      "cs": "Generátor apatického pole"
+    },
+    "description": {
+      "en": "Projects a field that makes cosmic horrors and universe-ending threats feel it's 'really not worth the effort' to bother you. Also great at parties.",
+      "cs": "Projektuje pole, díky kterému kosmické hrůzy a hrozby konce vesmíru cítí, že 'to opravdu nestojí za námahu' se s vámi obtěžovat. Skvělé i na večírcích."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 628 },
+      "cs": { "Zvýšení Soudržnosti": 628 }
+    },
+    "abilities": {
+      "en": ["Deters through sheer indifference"],
+      "cs": ["Odrazuje čirou lhostejností"]
+    },
+    "itemEffectDescription": {
+      "en": "+628 Cohesion, Indifference Field",
+      "cs": "+628 Soudržnost, Pole lhostejnosti"
+    },
+    "level": 34,
+    "buyPrice": 2499,
+    "sellPrice": 625
+  },
+  {
+    "id": "cc_us_infinite_pockets_coat_l35",
+    "name": {
+      "en": "Coat of Infinite Pockets",
+      "cs": "Kabát nekonečných kapes"
+    },
+    "description": {
+      "en": "It has an infinite number of pockets, though finding the one with your keys in it requires navigating a pocket-dimension and solving the riddle of a grumpy badger.",
+      "cs": "Má nekonečný počet kapes, i když najít tu s vašimi klíči vyžaduje navigaci v kapesní dimenzi a vyřešení hádanky mrzutého jezevce."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 662 },
+      "cs": { "Zvýšení Soudržnosti": 662 }
+    },
+    "abilities": {
+      "en": ["Can hold literally anything", "Item retrieval is a side-quest"],
+      "cs": ["Pojme doslova cokoli", "Nalezení předmětu je vedlejší úkol"]
+    },
+    "itemEffectDescription": {
+      "en": "+662 Cohesion, Infinite Pockets",
+      "cs": "+662 Soudržnost, Nekonečné kapsy"
+    },
+    "level": 35,
+    "buyPrice": 2727,
+    "sellPrice": 682
+  },
+  {
+    "id": "cc_us_camouflage_suit_l36",
+    "name": {
+      "en": "Perfectly Normal Camouflage Suit",
+      "cs": "Dokonale normální maskovací oblek"
+    },
+    "description": {
+      "en": "Disguises you as a perfectly normal, non-threatening potted plant. Extremely effective, provided your opponents don't have allergies or a sudden urge to redecorate.",
+      "cs": "Maskuje vás jako dokonale normální, neohrožující pokojovou rostlinu. Extrémně účinné, pokud vaši protivníci nemají alergie nebo náhlou touhu po změně interiéru."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 677 },
+      "cs": { "Zvýšení Soudržnosti": 677 }
+    },
+    "abilities": {
+      "en": ["Botanical stealth"],
+      "cs": ["Botanické plížení"]
+    },
+    "itemEffectDescription": {
+      "en": "+677 Cohesion, Botanical Stealth",
+      "cs": "+677 Soudržnost, Botanické plížení"
+    },
+    "level": 36,
+    "buyPrice": 2871,
+    "sellPrice": 718
+  },
+  {
+    "id": "cc_us_causality_braces_l37",
+    "name": {
+      "en": "Causality-Resistant Braces",
+      "cs": "Kšandy odolné kauzalitě"
+    },
+    "description": {
+      "en": "These stylish braces hold up your trousers and your personal timeline, preventing unfortunate paradoxes from causing your trousers (or you) to vanish.",
+      "cs": "Tyto stylové kšandy drží vaše kalhoty i vaši osobní časovou osu a zabraňují nešťastným paradoxům, aby vaše kalhoty (nebo vy) zmizely."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 695 },
+      "cs": { "Zvýšení Soudržnosti": 695 }
+    },
+    "abilities": {
+      "en": ["Maintains temporal integrity", "Fashionable"],
+      "cs": ["Udržuje časovou integritu", "Módní"]
+    },
+    "itemEffectDescription": {
+      "en": "+695 Cohesion, Temporal Integrity",
+      "cs": "+695 Soudržnost, Časová integrita"
+    },
+    "level": 37,
+    "buyPrice": 3069,
+    "sellPrice": 767
+  },
+  {
+    "id": "cc_us_auditor_repellent_armor_l38",
+    "name": {
+      "en": "Auditor-Repellent Armor",
+      "cs": "Zbroj odpuzující auditory"
+    },
+    "description": {
+      "en": "Emits a high-frequency whine that is imperceptible to most lifeforms but profoundly irritating to cosmic auditors, accountants, and anyone carrying a clipboard.",
+      "cs": "Vydává vysokofrekvenční pískání, které je pro většinu životních forem nepostřehnutelné, ale hluboce dráždivé pro kosmické auditory, účetní a kohokoli s psací podložkou."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 713 },
+      "cs": { "Zvýšení Soudržnosti": 713 }
+    },
+    "abilities": {
+      "en": ["Prevents bureaucratic entanglement"],
+      "cs": ["Zabraňuje byrokratickému zapletení"]
+    },
+    "itemEffectDescription": {
+      "en": "+713 Cohesion, Repels Auditors",
+      "cs": "+713 Soudržnost, Odpuzuje auditory"
+    },
+    "level": 38,
+    "buyPrice": 3333,
+    "sellPrice": 833
+  },
+  {
+    "id": "cc_us_subjectivity_shield_l39",
+    "name": {
+      "en": "Subjectivity Shielding",
+      "cs": "Stínění subjektivity"
+    },
+    "description": {
+      "en": "A personal reality bubble that insists things are 'probably fine'. Protects against maddening truths and inconvenient facts by filtering them through a lens of stubborn optimism.",
+      "cs": "Osobní bublina reality, která trvá na tom, že věci jsou 'pravděpodobně v pohodě'. Chrání před šílenými pravdami a nepohodlnými fakty tím, že je filtruje přes optiku tvrdohlavého optimismu."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 731 },
+      "cs": { "Zvýšení Soudržnosti": 731 }
+    },
+    "abilities": {
+      "en": ["Forces a positive outlook"],
+      "cs": ["Vnucuje pozitivní náhled"]
+    },
+    "itemEffectDescription": {
+      "en": "+731 Cohesion, Forced Optimism",
+      "cs": "+731 Soudržnost, Vynucený optimismus"
+    },
+    "level": 39,
+    "buyPrice": 3465,
+    "sellPrice": 866
+  },
+  {
+    "id": "cc_us_deja_vu_trenchcoat_l40",
+    "name": {
+      "en": "Deja Vu Trenchcoat",
+      "cs": "Trenčkot Déjà Vu"
+    },
+    "description": {
+      "en": "A coat that makes your enemies feel like they've fought you before and lost. The psychological advantage is considerable, as is the nagging feeling you've left the kettle on.",
+      "cs": "Kabát, který dává vašim nepřátelům pocit, že s vámi už bojovali a prohráli. Psychologická výhoda je značná, stejně jako vtíravý pocit, že jste nechali zapnutou konvici."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 749 },
+      "cs": { "Zvýšení Soudržnosti": 749 }
+    },
+    "abilities": {
+      "en": ["Causes preemptive despair in foes"],
+      "cs": ["Způsobuje preventivní zoufalství u nepřátel"]
+    },
+    "itemEffectDescription": {
+      "en": "+749 Cohesion, Preemptive Despair",
+      "cs": "+749 Soudržnost, Preventivní zoufalství"
+    },
+    "level": 40,
+    "buyPrice": 3713,
+    "sellPrice": 928
+  },
+  {
+    "id": "cc_us_plaid_plating_l41",
+    "name": {
+      "en": "Plaid Plating",
+      "cs": "Kostkované plátování"
+    },
+    "description": {
+      "en": "Armor so stylistically confusing it can induce vertigo in attackers. Its pattern is mathematically proven to be 'aggressively unfashionable' in at least twelve dimensions.",
+      "cs": "Zbroj tak stylisticky matoucí, že může u útočníků vyvolat závrať. Její vzor je matematicky prokázán jako 'agresivně nemódní' v nejméně dvanácti dimenzích."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 841 },
+      "cs": { "Zvýšení Soudržnosti": 841 }
+    },
+    "abilities": {
+      "en": ["Dazzles and confuses"],
+      "cs": ["Oslňuje a mate"]
+    },
+    "itemEffectDescription": {
+      "en": "+841 Cohesion, Dazzles",
+      "cs": "+841 Soudržnost, Oslňuje"
+    },
+    "level": 41,
+    "buyPrice": 3960,
+    "sellPrice": 990
+  },
+  {
+    "id": "cc_us_admin_rights_armor_l42",
+    "name": {
+      "en": "Administrator's Rights Armor",
+      "cs": "Zbroj administrátorských práv"
+    },
+    "description": {
+      "en": "A suit that grants you override privileges over minor laws of physics. Not recommended for use near black holes or during sensitive software updates.",
+      "cs": "Oblek, který vám dává oprávnění k přepsání menších fyzikálních zákonů. Nedoporučuje se používat v blízkosti černých děr nebo během citlivých aktualizací softwaru."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 879 },
+      "cs": { "Zvýšení Soudržnosti": 879 }
+    },
+    "abilities": {
+      "en": ["Bypass minor inconveniences"],
+      "cs": ["Obchází menší nepříjemnosti"]
+    },
+    "itemEffectDescription": {
+      "en": "+879 Cohesion, Admin Rights",
+      "cs": "+879 Soudržnost, Admin práva"
+    },
+    "level": 42,
+    "buyPrice": 4208,
+    "sellPrice": 1052
+  },
+  {
+    "id": "cc_us_procrastinators_shield_l43",
+    "name": {
+      "en": "Procrastinator's Shielding",
+      "cs": "Stínění prokrastinátora"
+    },
+    "description": {
+      "en": "This field doesn't stop incoming threats, but delays their arrival until a more convenient time. Side effects include a growing pile of 'things to do later'.",
+      "cs": "Toto pole nezastaví příchozí hrozby, ale odloží jejich příchod na vhodnější dobu. Vedlejší účinky zahrnují rostoucí hromadu 'věcí na později'."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 881 },
+      "cs": { "Zvýšení Soudržnosti": 881 }
+    },
+    "abilities": {
+      "en": ["Delays the inevitable"],
+      "cs": ["Oddaluje nevyhnutelné"]
+    },
+    "itemEffectDescription": {
+      "en": "+881 Cohesion, Delays Inevitable",
+      "cs": "+881 Soudržnost, Oddaluje nevyhnutelné"
+    },
+    "level": 43,
+    "buyPrice": 4545,
+    "sellPrice": 1136
+  },
+  {
+    "id": "cc_us_editors_armor_l44",
+    "name": {
+      "en": "Editor's Armor of Retcon",
+      "cs": "Editorova zbroj retconu"
+    },
+    "description": {
+      "en": "Allows the wearer to retroactively declare that an unfortunate event 'never actually happened that way.' Requires significant paperwork to be filed with the Department of Canon.",
+      "cs": "Umožňuje nositeli retroaktivně prohlásit, že se nešťastná událost 'vlastně takhle nestala'. Vyžaduje podání značného množství papírů na Oddělení kánonu."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 919 },
+      "cs": { "Zvýšení Soudržnosti": 919 }
+    },
+    "abilities": {
+      "en": ["Can edit past mistakes"],
+      "cs": ["Může upravovat minulé chyby"]
+    },
+    "itemEffectDescription": {
+      "en": "+919 Cohesion, Edits Mistakes",
+      "cs": "+919 Soudržnost, Upravuje chyby"
+    },
+    "level": 44,
+    "buyPrice": 4752,
+    "sellPrice": 1188
+  },
+  {
+    "id": "cc_us_literalist_suit_l45",
+    "name": {
+      "en": "The Literalist Suit",
+      "cs": "Oblek doslovnosti"
+    },
+    "description": {
+      "en": "A strange suit that forces all metaphors and figures of speech in its vicinity to become literally true. Extremely dangerous in the hands of a poet.",
+      "cs": "Podivný oblek, který nutí všechny metafory a řečnické obraty ve svém okolí, aby se staly doslova pravdivými. V rukou básníka extrémně nebezpečný."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 921 },
+      "cs": { "Zvýšení Soudržnosti": 921 }
+    },
+    "abilities": {
+      "en": ["Weaponizes metaphors"],
+      "cs": ["Zbraňuje metafory"]
+    },
+    "itemEffectDescription": {
+      "en": "+921 Cohesion, Weaponized Metaphors",
+      "cs": "+921 Soudržnost, Zbraňové metafory"
+    },
+    "level": 45,
+    "buyPrice": 5151,
+    "sellPrice": 1288
+  },
+  {
+    "id": "cc_us_continuity_armor_l46",
+    "name": {
+      "en": "Continuity Maintenance Armor",
+      "cs": "Zbroj pro údržbu kontinuity"
+    },
+    "description": {
+      "en": "The ultimate protection for long-running sagas. This armor automatically patches plot holes, explains away inconsistencies, and ensures the user's backstory remains vaguely coherent.",
+      "cs": "Ultimátní ochrana pro dlouhotrvající ságy. Tato zbroj automaticky záplatuje díry v ději, vysvětluje nesrovnalosti a zajišťuje, že pozadí uživatele zůstane vágně koherentní."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 969 },
+      "cs": { "Zvýšení Soudržnosti": 969 }
+    },
+    "abilities": {
+      "en": ["Patches plot holes"],
+      "cs": ["Záplatuje díry v ději"]
+    },
+    "itemEffectDescription": {
+      "en": "+969 Cohesion, Patches Plot Holes",
+      "cs": "+969 Soudržnost, Záplatuje díry"
+    },
+    "level": 46,
+    "buyPrice": 5940,
+    "sellPrice": 1485
+  },
+  {
+    "id": "cc_us_sentient_wardrobe_l47",
+    "name": {
+      "en": "The Sentient Wardrobe",
+      "cs": "Vnímající šatník"
+    },
+    "description": {
+      "en": "This suit is actually a gateway to a pocket dimension inhabited by a single, immensely powerful, and fashion-conscious entity who provides the perfect outfit for any situation.",
+      "cs": "Tento oblek je ve skutečnosti bránou do kapesní dimenze obývané jedinou, nesmírně mocnou a módně uvědomělou entitou, která poskytuje dokonalý outfit pro každou situaci."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 980 },
+      "cs": { "Zvýšení Soudržnosti": 980 }
+    },
+    "abilities": {
+      "en": ["Always dressed appropriately", "Offers unsolicited fashion advice"],
+      "cs": ["Vždy vhodně oblečen", "Nabízí nevyžádané módní rady"]
+    },
+    "itemEffectDescription": {
+      "en": "+980 Cohesion, Perfect Outfit",
+      "cs": "+980 Soudržnost, Dokonalý outfit"
+    },
+    "level": 47,
+    "buyPrice": 7803,
+    "sellPrice": 1951
+  },
+  {
+    "id": "cc_us_authors_intent_armor_l48",
+    "name": {
+      "en": "Armor of Authorial Intent",
+      "cs": "Zbroj autorského záměru"
+    },
+    "description": {
+      "en": "A mythical suit that makes things happen 'because the story needs them to.' It is the ultimate form of plot armor, rendering the wearer immune to anticlimax.",
+      "cs": "Mýtický oblek, který způsobuje, že se věci dějí, 'protože to příběh potřebuje.' Je to ultimátní forma dějové zbroje, činící nositele imunním vůči antiklimaxu."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 1010 },
+      "cs": { "Zvýšení Soudržnosti": 1010 }
+    },
+    "abilities": {
+      "en": ["Immune to anticlimax", "Narratively invincible"],
+      "cs": ["Imunní vůči antiklimaxu", "Narativně neporazitelný"]
+    },
+    "itemEffectDescription": {
+      "en": "+1010 Cohesion, Immune to Anticlimax",
+      "cs": "+1010 Soudržnost, Imunní vůči antiklimaxu"
+    },
+    "level": 48,
+    "buyPrice": 9405,
+    "sellPrice": 2351
+  },
+  {
+    "id": "cc_us_exposition_deflector_l49",
+    "name": {
+      "en": "Exposition Deflector Field",
+      "cs": "Pole odklánějící expozici"
+    },
+    "description": {
+      "en": "Protects the wearer from long, tedious explanations of backstory by causing villains to monologue inefficiently or for crucial data pads to be conveniently summarized.",
+      "cs": "Chrání nositele před dlouhými, únavnými vysvětleními pozadí tím, že způsobuje, že padouši monologizují neefektivně nebo že klíčové datové podložky jsou pohodlně shrnuty."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 1000 },
+      "cs": { "Zvýšení Soudržnosti": 1000 }
+    },
+    "abilities": {
+      "en": ["Gets to the point", "Skips unskippable cutscenes"],
+      "cs": ["Jde k věci", "Přeskakuje nepřeskočitelné scény"]
+    },
+    "itemEffectDescription": {
+      "en": "+1000 Cohesion, Skips Exposition",
+      "cs": "+1000 Soudržnost, Přeskakuje expozici"
+    },
+    "level": 49,
+    "buyPrice": 12221,
+    "sellPrice": 3055
+  },
+  {
+    "id": "cc_us_janitor_generals_best_l50",
+    "name": {
+      "en": "The Janitor-General's Sunday Best",
+      "cs": "Sváteční Oblek Generálního Domovníka"
+    },
+    "description": {
+      "en": "Woven from threads of pure probability and reinforced with the distilled concept of 'tidiness.' This suit doesn't just protect you; it subtly suggests to the universe that making a mess here would be a regrettable social faux pas. It is, of course, beige.",
+      "cs": "Utkáno z vláken čisté pravděpodobnosti a zesíleno destilovaným konceptem 'pořádku'. Tento oblek vás nejen chrání; jemně naznačuje vesmíru, že dělat zde nepořádek by bylo politováníhodné společenské faux pas. Je, samozřejmě, béžový."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 1055 },
+      "cs": { "Zvýšení Soudržnosti": 1055 }
+    },
+    "abilities": {
+      "en": ["Emits an Aura of Mild Disapproval", "Paradox-Proof Pockets"],
+      "cs": ["Vyzařuje auru mírného nesouhlasu", "Kapsy odolné paradoxům"]
+    },
+    "itemEffectDescription": {
+      "en": "+1055 Cohesion, Aura of Disapproval",
+      "cs": "+1055 Soudržnost, Aura nesouhlasu"
+    },
+    "level": 50,
+    "buyPrice": 14850,
+    "sellPrice": 3713
+  }
+]

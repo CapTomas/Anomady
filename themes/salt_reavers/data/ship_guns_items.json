@@ -1,0 +1,1918 @@
+[
+  {
+    "id": "sr_gun_rusty_swivel_gun_l01",
+    "name": {
+      "en": "Rusty Swivel Gun",
+      "cs": "Rezavé Otočné Dělo"
+    },
+    "description": {
+      "en": "A small, poorly-maintained swivel gun, likely liberated from a rotting merchantman. It's prone to misfires and its report is more of a sad cough than a proud roar.",
+      "cs": "Malé, špatně udržované otočné dělo, pravděpodobně uloupené z hnijící kupecké lodi. Je náchylné k selhání a jeho výstřel je spíše smutným zakašláním než hrdým řevem."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 25,
+        "Accuracy": "Poor"
+      },
+      "cs": {
+        "Poškození": 25,
+        "Přesnost": "Špatná"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Slow to Reload",
+        "Prone to Misfire"
+      ],
+      "cs": [
+        "Pomalé nabíjení",
+        "Náchylné k selhání"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "25 Dmg, Poor Accuracy, Slow Reload",
+      "cs": "25 Pošk, Špatná Přesnost, Pomalé Nabíjení"
+    },
+    "level": 1,
+    "buyPrice": 25,
+    "sellPrice": 7
+  },
+  {
+    "id": "sr_gun_cracked_4_pounder_l02",
+    "name": {
+      "en": "Cracked 4-Pounder",
+      "cs": "Prasklá 4liberka"
+    },
+    "description": {
+      "en": "An old cast-iron cannon with a visible hairline crack near the breech. Firing it is an act of faith as much as aggression.",
+      "cs": "Staré litinové dělo s viditelnou vlasovou prasklinou u závěru. Střelba z něj je aktem víry stejně jako agrese."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 28,
+        "Range": "Short"
+      },
+      "cs": {
+        "Poškození": 28,
+        "Dostřel": "Krátký"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Unreliable"
+      ],
+      "cs": [
+        "Nespolehlivé"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "28 Dmg, Short Range, Unreliable",
+      "cs": "28 Pošk, Krátký Dostřel, Nespolehlivé"
+    },
+    "level": 2,
+    "buyPrice": 44,
+    "sellPrice": 12
+  },
+  {
+    "id": "sr_gun_scavenged_carronade_l03",
+    "name": {
+      "en": "Scavenged Carronade",
+      "cs": "Nalezená Karronáda"
+    },
+    "description": {
+      "en": "A short-barreled, large-bore cannon ripped from the deck of a wreck. Devastating at close range, but hopelessly inaccurate beyond a pistol shot.",
+      "cs": "Dělo s krátkou hlavní a velkým kalibrem, vytržené z paluby vraku. Ničivé na blízko, ale beznadějně nepřesné dál než na dostřel pistole."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 33,
+        "Range": "Very Short"
+      },
+      "cs": {
+        "Poškození": 33,
+        "Dostřel": "Velmi Krátký"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Shreds Hulls"
+      ],
+      "cs": [
+        "Trhá Trupy"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "33 Dmg, V. Short Range, Hull Shredder",
+      "cs": "33 Pošk, V. Krát. Dostřel, Trhač Trupů"
+    },
+    "level": 3,
+    "buyPrice": 52,
+    "sellPrice": 15
+  },
+  {
+    "id": "sr_gun_weathered_long_gun_l04",
+    "name": {
+      "en": "Weathered Long Gun",
+      "cs": "Ošlehané Dlouhé Dělo"
+    },
+    "description": {
+      "en": "A long-barreled cannon that shows its age, but was clearly well-made once. It can still reach out and touch a distant foe, if the gunner squints.",
+      "cs": "Dělo s dlouhou hlavní, které ukazuje svůj věk, ale kdysi bylo zjevně dobře vyrobeno. Stále dokáže zasáhnout vzdáleného nepřítele, pokud dělostřelec přimhouří oči."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 31,
+        "Range": "Long"
+      },
+      "cs": {
+        "Poškození": 31,
+        "Dostřel": "Dlouhý"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Inaccurate at Range"
+      ],
+      "cs": [
+        "Nepřesné na dálku"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "31 Dmg, Long Range, Inaccurate",
+      "cs": "31 Pošk, Dlouhý Dostřel, Nepřesné"
+    },
+    "level": 4,
+    "buyPrice": 75,
+    "sellPrice": 22
+  },
+  {
+    "id": "sr_gun_decent_6_pounder_l05",
+    "name": {
+      "en": "Decent 6-Pounder",
+      "cs": "Slušná 6liberka"
+    },
+    "description": {
+      "en": "The workhorse of many a pirate vessel. Not exceptional, but it loads reliably and sends a cannonball where it's pointed. Most of the time.",
+      "cs": "Tahoun mnoha pirátských lodí. Není výjimečné, ale spolehlivě se nabíjí a posílá dělovou kouli tam, kam je namířeno. Většinou."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 35,
+        "Accuracy": "Standard"
+      },
+      "cs": {
+        "Poškození": 35,
+        "Přesnost": "Standardní"
+      }
+    },
+    "abilities": {
+      "en": [],
+      "cs": []
+    },
+    "itemEffectDescription": {
+      "en": "35 Dmg, Standard Accuracy",
+      "cs": "35 Pošk, Standardní Přesnost"
+    },
+    "level": 5,
+    "buyPrice": 88,
+    "sellPrice": 25
+  },
+  {
+    "id": "sr_gun_navy_culverin_l06",
+    "name": {
+      "en": "Veridian Navy Culverin",
+      "cs": "Veridiánská Námořní Kolubrina"
+    },
+    "description": {
+      "en": "'Liberated' from an Imperial patrol, this long cannon is built for range and accuracy. The Emperor's seal has been crudely scratched off.",
+      "cs": "'Osvobozena' z imperiální hlídky, toto dlouhé dělo je stavěno na dostřel a přesnost. Císařská pečeť byla hrubě seškrábána."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 36,
+        "Range": "Good"
+      },
+      "cs": {
+        "Poškození": 36,
+        "Dostřel": "Dobrý"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Accurate Shots"
+      ],
+      "cs": [
+        "Přesné Výstřely"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "36 Dmg, Good Range, Accurate",
+      "cs": "36 Pošk, Dobrý Dostřel, Přesné"
+    },
+    "level": 6,
+    "buyPrice": 105,
+    "sellPrice": 30
+  },
+  {
+    "id": "sr_gun_double_barreled_swivel_l07",
+    "name": {
+      "en": "Double-Barreled Swivel",
+      "cs": "Dvouhlavňové Otočné Dělo"
+    },
+    "description": {
+      "en": "A clever and deadly invention for sweeping enemy decks. Can fire twice before needing a full reload, sowing chaos among boarders.",
+      "cs": "Chytrý a smrtící vynález pro čištění nepřátelských palub. Může vystřelit dvakrát, než potřebuje plné nabití, a zasévá chaos mezi abordážníky."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 42,
+        "Special": "Anti-Personnel"
+      },
+      "cs": {
+        "Poškození": 42,
+        "Speciální": "Proti Pěchotě"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Two Quick Shots",
+        "Effective Against Crew"
+      ],
+      "cs": [
+        "Dva rychlé výstřely",
+        "Účinné proti posádce"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "42 Dmg, 2 Shots, Anti-Crew",
+      "cs": "42 Pošk, 2 Rány, Proti Posádce"
+    },
+    "level": 7,
+    "buyPrice": 125,
+    "sellPrice": 38
+  },
+  {
+    "id": "sr_gun_heavy_9_pounder_l08",
+    "name": {
+      "en": "Heavy 9-Pounder",
+      "cs": "Těžká 9liberka"
+    },
+    "description": {
+      "en": "A solid, reliable cannon that packs a serious punch. The backbone of any self-respecting pirate captain's broadside.",
+      "cs": "Solidní, spolehlivé dělo, které má pořádnou sílu. Páteř boční salvy každého pirátského kapitána, který si váží sám sebe."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 45,
+        "Impact": "High"
+      },
+      "cs": {
+        "Poškození": 45,
+        "Síla Nárazu": "Vysoká"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Good Hull Damage"
+      ],
+      "cs": [
+        "Dobré poškození trupu"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "45 Dmg, High Impact",
+      "cs": "45 Pošk, Vysoký Dopad"
+    },
+    "level": 8,
+    "buyPrice": 140,
+    "sellPrice": 42
+  },
+  {
+    "id": "sr_gun_chain_shot_culverin_l09",
+    "name": {
+      "en": "Chain-Shot Culverin",
+      "cs": "Řetězová Kolubrina"
+    },
+    "description": {
+      "en": "Specially designed to fire two cannonballs linked by a chain, this weapon is a terror to enemy sails and rigging.",
+      "cs": "Speciálně navržená ke střelbě dvou dělových koulí spojených řetězem, tato zbraň je postrachem nepřátelských plachet a lanoví."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage vs Rigging": 50
+      },
+      "cs": {
+        "Poškození Lanoví": 50
+      }
+    },
+    "abilities": {
+      "en": [
+        "Shreds Sails",
+        "Cripples Maneuverability"
+      ],
+      "cs": [
+        "Trhá Plachty",
+        "Ochromuje Manévrovatelnost"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "50 Rigging Dmg, Shreds Sails",
+      "cs": "50 Pošk Lanoví, Trhá Plachty"
+    },
+    "level": 9,
+    "buyPrice": 165,
+    "sellPrice": 50
+  },
+  {
+    "id": "sr_gun_masterforged_12_pounder_l10",
+    "name": {
+      "en": "Master-Forged 12-Pounder",
+      "cs": "Mistrovsky Kovaná 12liberka"
+    },
+    "description": {
+      "en": "A perfectly balanced and reinforced cannon from a master gunsmith. Its roar is as terrifying as its impact.",
+      "cs": "Dokonale vyvážené a zesílené dělo od mistra zbrojíře. Jeho řev je stejně děsivý jako jeho dopad."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 53,
+        "Accuracy": "Good"
+      },
+      "cs": {
+        "Poškození": 53,
+        "Přesnost": "Dobrá"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Reliable and Powerful"
+      ],
+      "cs": [
+        "Spolehlivé a Silné"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "53 Dmg, Good Accuracy",
+      "cs": "53 Pošk, Dobrá Přesnost"
+    },
+    "level": 10,
+    "buyPrice": 180,
+    "sellPrice": 54
+  },
+  {
+    "id": "sr_gun_siren_song_cannon_l11",
+    "name": {
+      "en": "Siren-Song Cannon",
+      "cs": "Dělo Písně Sirén"
+    },
+    "description": {
+      "en": "This strangely crafted cannon emits a dissonant, mesmerizing hum when fired, distracting and demoralizing enemy crews.",
+      "cs": "Toto podivně vyrobené dělo vydává při výstřelu disonantní, mesmerizující hukot, který rozptyluje a demoralizuje nepřátelské posádky."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 54,
+        "Effect": "Demoralizing"
+      },
+      "cs": {
+        "Poškození": 54,
+        "Efekt": "Demoralizující"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Reduces Enemy Morale",
+        "Causes Confusion"
+      ],
+      "cs": [
+        "Snižuje morálku nepřítele",
+        "Způsobuje zmatek"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "54 Dmg, Reduces Morale, Confuses",
+      "cs": "54 Pošk, Snižuje Morálku, Zmate"
+    },
+    "level": 11,
+    "buyPrice": 230,
+    "sellPrice": 69
+  },
+  {
+    "id": "sr_gun_grapeshot_blunderbuss_l12",
+    "name": {
+      "en": "Grapeshot Blunderbuss (Cannon-sized)",
+      "cs": "Kartáčová Bambitka (Velikost děla)"
+    },
+    "description": {
+      "en": "A massive, funnel-shaped cannon designed to spray a wide cone of lethal grapeshot, clearing a ship's deck in a single, bloody blast.",
+      "cs": "Masivní dělo ve tvaru trychtýře navržené tak, aby vystřelilo široký kužel smrtících kartáčů a vyčistilo palubu lodi jediným krvavým výbuchem."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage vs Crew": 62,
+        "Area of Effect": "Wide"
+      },
+      "cs": {
+        "Poškození Posádky": 62,
+        "Plošný Účinek": "Široký"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Devastating to Exposed Crew"
+      ],
+      "cs": [
+        "Ničivé pro nekrytou posádku"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "62 Crew Dmg, Wide AoE",
+      "cs": "62 Pošk Posádky, Široké AoE"
+    },
+    "level": 12,
+    "buyPrice": 275,
+    "sellPrice": 82
+  },
+  {
+    "id": "sr_gun_long_nine_l13",
+    "name": {
+      "en": "The 'Long Nine'",
+      "cs": "'Dlouhá Devítka'"
+    },
+    "description": {
+      "en": "A specific class of long-range 9-pounder, famed for its accuracy and punching power at extreme distances. A sniper's tool among cannons.",
+      "cs": "Specifická třída dalekonosné 9liberky, proslulá svou přesností a průrazností na extrémní vzdálenosti. Nástroj odstřelovače mezi děly."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 64,
+        "Range": "Extreme"
+      },
+      "cs": {
+        "Poškození": 64,
+        "Dostřel": "Extrémní"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Superb Accuracy"
+      ],
+      "cs": [
+        "Vynikající Přesnost"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "64 Dmg, Extreme Range, Superb Accuracy",
+      "cs": "64 Pošk, Extr. Dostřel, Vynik. Přesnost"
+    },
+    "level": 13,
+    "buyPrice": 325,
+    "sellPrice": 98
+  },
+  {
+    "id": "sr_gun_krakens_breath_carronade_l14",
+    "name": {
+      "en": "Kraken's Breath Carronade",
+      "cs": "Karronáda Krakenova Dechu"
+    },
+    "description": {
+      "en": "Stained with squid ink and brine, this heavy carronade fires a barbed harpoon attached to a heavy chain, designed to latch onto enemy ships.",
+      "cs": "Toto těžké dělo, potřísněné sépiovým inkoustem a slanou vodou, střílí ostnatou harpunu připevněnou k těžkému řetězu, navrženou k zachycení na nepřátelských lodích."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 68,
+        "Special": "Grappling"
+      },
+      "cs": {
+        "Poškození": 68,
+        "Speciální": "Záchytné"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Prevents Enemy Escape",
+        "Pulls Ships Closer"
+      ],
+      "cs": [
+        "Brání nepříteli v útěku",
+        "Přitahuje lodě blíž"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "68 Dmg, Grappling Shot",
+      "cs": "68 Pošk, Záchytná Střela"
+    },
+    "level": 14,
+    "buyPrice": 360,
+    "sellPrice": 110
+  },
+  {
+    "id": "sr_gun_solarian_demi_cannon_l15",
+    "name": {
+      "en": "Solarian Demi-Cannon",
+      "cs": "Solariánské Poloviční Dělo"
+    },
+    "description": {
+      "en": "Gilded and masterfully engineered, this Hegemony cannon is both a work of art and a brutally efficient weapon of war.",
+      "cs": "Pozlacené a mistrovsky zkonstruované, toto dělo Hegemonie je jak uměleckým dílem, tak brutálně efektivní válečnou zbraní."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 78,
+        "Reload Speed": "Fast"
+      },
+      "cs": {
+        "Poškození": 78,
+        "Rychlost Nabíjení": "Rychlá"
+      }
+    },
+    "abilities": {
+      "en": [
+        "High Rate of Fire"
+      ],
+      "cs": [
+        "Vysoká Rychlost Střelby"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "78 Dmg, Fast Reload",
+      "cs": "78 Pošk, Rychlé Nabíjení"
+    },
+    "level": 15,
+    "buyPrice": 420,
+    "sellPrice": 125
+  },
+  {
+    "id": "sr_gun_cursed_aztec_gun_l16",
+    "name": {
+      "en": "Cursed Aztec Gun",
+      "cs": "Prokleté Aztécké Dělo"
+    },
+    "description": {
+      "en": "Plated in gold and jade, this ancient cannon fires shots that seem to carry a malevolent curse, causing misfortune and decay.",
+      "cs": "Toto prastaré dělo, pokovené zlatem a nefritem, střílí rány, které se zdají nést zlovolnou kletbu způsobující neštěstí a rozklad."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 80,
+        "Effect": "Cursed Shot"
+      },
+      "cs": {
+        "Poškození": 80,
+        "Efekt": "Prokletá Střela"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Causes Bad Luck",
+        "Weakens Hull Over Time"
+      ],
+      "cs": [
+        "Způsobuje smůlu",
+        "Postupně oslabuje trup"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "80 Dmg, Cursed Shot",
+      "cs": "80 Pošk, Prokletá Střela"
+    },
+    "level": 16,
+    "buyPrice": 490,
+    "sellPrice": 145
+  },
+  {
+    "id": "sr_gun_organ_gun_l17",
+    "name": {
+      "en": "Volley 'Organ' Gun",
+      "cs": "Salvové 'Varhanové' Dělo"
+    },
+    "description": {
+      "en": "A bank of smaller cannon barrels designed to fire in a single, devastating volley. Excellent for shredding sails or suppressive fire.",
+      "cs": "Baterie menších dělových hlavní navržená k palbě v jediné, ničivé salvě. Vynikající pro trhání plachet nebo krycí palbu."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 92,
+        "Fire Pattern": "Volley"
+      },
+      "cs": {
+        "Poškození": 92,
+        "Vzor Palby": "Salva"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Massive Area Saturation"
+      ],
+      "cs": [
+        "Masivní Nasycení Oblasti"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "92 Dmg, Volley Fire",
+      "cs": "92 Pošk, Salvová Palba"
+    },
+    "level": 17,
+    "buyPrice": 530,
+    "sellPrice": 160
+  },
+  {
+    "id": "sr_gun_ghostfire_culverin_l18",
+    "name": {
+      "en": "Ghostfire Culverin",
+      "cs": "Kolubrina Duchů"
+    },
+    "description": {
+      "en": "Fires cannonballs wreathed in cold, ethereal flames that can pass through solid matter to damage a ship's internal structure or terrorize its crew.",
+      "cs": "Střílí dělové koule zahalené do chladných, éterických plamenů, které mohou projít pevnou hmotou, aby poškodily vnitřní strukturu lodi nebo terorizovaly její posádku."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 95,
+        "Effect": "Ignores Armor"
+      },
+      "cs": {
+        "Poškození": 95,
+        "Efekt": "Ignoruje zbroj"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Damages Internals",
+        "Spooks Crew"
+      ],
+      "cs": [
+        "Poškozuje vnitřnosti",
+        "Děsí posádku"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "95 Dmg, Ignores Armor, Spooks Crew",
+      "cs": "95 Pošk, Ignoruje Zbroj, Děsí Posádku"
+    },
+    "level": 18,
+    "buyPrice": 610,
+    "sellPrice": 180
+  },
+  {
+    "id": "sr_gun_stormforged_cannon_l19",
+    "name": {
+      "en": "Storm-Forged Cannon",
+      "cs": "Bouří Kované Dělo"
+    },
+    "description": {
+      "en": "This cannon, forged in a magical hurricane, crackles with lightning. Its shots carry the fury of the storm.",
+      "cs": "Toto dělo, kované v magickém hurikánu, praská blesky. Jeho výstřely nesou zuřivost bouře."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 110,
+        "Type": "Lightning"
+      },
+      "cs": {
+        "Poškození": 110,
+        "Typ": "Bleskové"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Chance to Stun Crew",
+        "Can Start Fires"
+      ],
+      "cs": [
+        "Šance omráčit posádku",
+        "Může zakládat požáry"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "110 Lightning Dmg, Stun/Fire Chance",
+      "cs": "110 Blesk. Pošk, Šance Omráčit/Zanítit"
+    },
+    "level": 19,
+    "buyPrice": 650,
+    "sellPrice": 195
+  },
+  {
+    "id": "sr_gun_the_commodore_l20",
+    "name": {
+      "en": "The Commodore's Folly",
+      "cs": "Komodorova Pošetilost"
+    },
+    "description": {
+      "en": "A massive, ornate 24-pounder, stolen from an Imperial flagship. Its recoil can shake a smaller ship to its timbers, but its power is undeniable.",
+      "cs": "Masivní, zdobená 24liberka, ukradená z imperiální vlajkové lodi. Její zpětný ráz může otřást menší lodí až do základů, ale její síla je nepopiratelná."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 118,
+        "Recoil": "Heavy"
+      },
+      "cs": {
+        "Poškození": 118,
+        "Zpětný ráz": "Těžký"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Devastating Impact",
+        "Strains Ship's Frame"
+      ],
+      "cs": [
+        "Ničivý Dopad",
+        "Namáhá Konstrukci Lodi"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "118 Dmg, Heavy Recoil, Strains Frame",
+      "cs": "118 Pošk, Těžký Zpět. Ráz, Namáhá Rám"
+    },
+    "level": 20,
+    "buyPrice": 750,
+    "sellPrice": 225
+  },
+  {
+    "id": "sr_gun_tidal_bore_l21",
+    "name": {
+      "en": "Tidal Bore Cannon",
+      "cs": "Dělo Přílivové Vlny"
+    },
+    "description": {
+      "en": "This cannon fires a projectile of magically compressed water that slams into targets with the force of a tidal wave, soaking everything.",
+      "cs": "Toto dělo střílí projektil magicky stlačené vody, který naráží do cílů silou přílivové vlny a vše promočí."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 120,
+        "Effect": "Knockback"
+      },
+      "cs": {
+        "Poškození": 120,
+        "Efekt": "Odhození"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Washes Crew Overboard",
+        "Extinguishes Fires"
+      ],
+      "cs": [
+        "Smyje posádku přes palubu",
+        "Hasí požáry"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "120 Dmg, Knockback, Washes Crew",
+      "cs": "120 Pošk, Odhození, Smyje Posádku"
+    },
+    "level": 21,
+    "buyPrice": 810,
+    "sellPrice": 240
+  },
+  {
+    "id": "sr_gun_whispering_skull_l22",
+    "name": {
+      "en": "Whispering Skull Mortar",
+      "cs": "Moždíř Šeptající Lebky"
+    },
+    "description": {
+      "en": "A mortar that lobs explosive shells filled with cursed bone fragments. The skulls seem to whisper maddening secrets on descent.",
+      "cs": "Moždíř, který vrhá výbušné granáty naplněné prokletými úlomky kostí. Zdá se, že lebky při sestupu šeptají šílená tajemství."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 138,
+        "Trajectory": "Arcing"
+      },
+      "cs": {
+        "Poškození": 138,
+        "Trajektorie": "Oblouková"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Causes Terror",
+        "Deck Penetration"
+      ],
+      "cs": [
+        "Způsobuje hrůzu",
+        "Proniká palubou"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "138 Dmg, Arcing, Causes Terror",
+      "cs": "138 Pošk, Oblouk, Způsobuje Hrůzu"
+    },
+    "level": 22,
+    "buyPrice": 890,
+    "sellPrice": 265
+  },
+  {
+    "id": "sr_gun_sunken_city_basilisk_l23",
+    "name": {
+      "en": "Sunken City Basilisk",
+      "cs": "Bazilišek Potopeného Města"
+    },
+    "description": {
+      "en": "A long, elegant cannon crusted with coral and ancient barnacles. It fires with an eerie silence, its shots trailing corrosive bubbles.",
+      "cs": "Dlouhé, elegantní dělo pokryté korály a starodávnými vilejši. Střílí s děsivou tichostí a jeho střely zanechávají stopu korozivních bublin."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 140,
+        "Effect": "Corrosive"
+      },
+      "cs": {
+        "Poškození": 140,
+        "Efekt": "Žíravý"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Eats Through Armor",
+        "Silent Firing"
+      ],
+      "cs": [
+        "Prožírá zbroj",
+        "Tichá střelba"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "140 Dmg, Corrosive, Silent Firing",
+      "cs": "140 Pošk, Žíravé, Tichá Střelba"
+    },
+    "level": 23,
+    "buyPrice": 950,
+    "sellPrice": 285
+  },
+  {
+    "id": "sr_gun_the_port_royale_negotiator_l24",
+    "name": {
+      "en": "The 'Port Royale Negotiator'",
+      "cs": "'Vyjednavač z Port Royale'"
+    },
+    "description": {
+      "en": "A bank of six swiveling blunderbusses, designed to 'negotiate' surrender by sweeping an entire deck clean in one deafening, bloody volley.",
+      "cs": "Baterie šesti otočných bambitek, navržená k 'vyjednání' kapitulace tím, že v jediné ohlušující, krvavé salvě vyčistí celou palubu."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage vs Crew": 160,
+        "Intimidation": "High"
+      },
+      "cs": {
+        "Poškození Posádky": 160,
+        "Zastrašování": "Vysoké"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Forces Morale Checks"
+      ],
+      "cs": [
+        "Vynucuje testy morálky"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "160 Crew Dmg, High Intimidation",
+      "cs": "160 Pošk Posádky, Vysoké Zastrašování"
+    },
+    "level": 24,
+    "buyPrice": 1050,
+    "sellPrice": 315
+  },
+  {
+    "id": "sr_gun_leviathans_bane_harpoon_l25",
+    "name": {
+      "en": "Leviathan's Bane Harpoon Gun",
+      "cs": "Harpunové Dělo Zkázy Leviatanů"
+    },
+    "description": {
+      "en": "An oversized ballista that fires massive, obsidian-tipped harpoons. Originally designed for hunting sea monsters, it works wonders on ship hulls.",
+      "cs": "Nadměrná balista, která střílí masivní harpuny s obsidiánovými hroty. Původně navržená pro lov mořských příšer, dělá zázraky i na lodních trupech."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 175,
+        "Type": "Piercing"
+      },
+      "cs": {
+        "Poškození": 175,
+        "Typ": "Průrazné"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Armor Penetration",
+        "Causes Major Breaches"
+      ],
+      "cs": [
+        "Proniká zbrojí",
+        "Způsobuje velké trhliny"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "175 Dmg, Armor Penetrating",
+      "cs": "175 Pošk, Proniká Zbrojí"
+    },
+    "level": 25,
+    "buyPrice": 1100,
+    "sellPrice": 330
+  },
+  {
+    "id": "sr_gun_dragonfire_cannon_l26",
+    "name": {
+      "en": "Dragonfire Cannon",
+      "cs": "Dělo Dračího Ohně"
+    },
+    "description": {
+      "en": "A cannon enchanted to fire cannonballs coated in a sticky, eternally burning alchemical fire. Terrifying to behold.",
+      "cs": "Dělo očarované tak, aby střílelo dělové koule potažené lepkavým, věčně hořícím alchymistickým ohněm. Děsivé na pohled."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 180,
+        "Effect": "Incendiary"
+      },
+      "cs": {
+        "Poškození": 180,
+        "Efekt": "Zápalný"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Spreads Fire",
+        "Causes Panic Among Crew"
+      ],
+      "cs": [
+        "Šíří oheň",
+        "Způsobuje paniku mezi posádkou"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "180 Dmg, Spreads Fire, Causes Panic",
+      "cs": "180 Pošk, Šíří Oheň, Způs. Paniku"
+    },
+    "level": 26,
+    "buyPrice": 1250,
+    "sellPrice": 375
+  },
+  {
+    "id": "sr_gun_whirlwind_barrage_l27",
+    "name": {
+      "en": "Whirlwind Barrage Mortar",
+      "cs": "Moždíř Větrné Salvy"
+    },
+    "description": {
+      "en": "This mortar lobs shells that explode into a vortex of razor-sharp winds, shredding sails and men with equal indifference.",
+      "cs": "Tento moždíř vrhá granáty, které explodují do víru ostrých větrů jako břitva, trhajíce plachty i muže se stejnou lhostejností."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 200,
+        "Type": "Area of Effect"
+      },
+      "cs": {
+        "Poškození": 200,
+        "Typ": "Plošný Účinek"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Devastates Rigging and Crew"
+      ],
+      "cs": [
+        "Ničí lanoví a posádku"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "200 AoE Dmg, Rigging/Crew",
+      "cs": "200 AoE Pošk, Lanoví/Posádka"
+    },
+    "level": 27,
+    "buyPrice": 1390,
+    "sellPrice": 415
+  },
+  {
+    "id": "sr_gun_grand_culverin_l28",
+    "name": {
+      "en": "The Grand Culverin",
+      "cs": "Velká Kolubrina"
+    },
+    "description": {
+      "en": "An enormous, masterfully crafted cannon capable of hurling a 32-pound shot over the horizon with pinpoint accuracy. The pride of any fleet.",
+      "cs": "Obrovské, mistrovsky vyrobené dělo schopné vrhat 32liberní kouli přes horizont s dokonalou přesností. Pýcha každé flotily."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 220,
+        "Range": "Legendary",
+        "Accuracy": "Pinpoint"
+      },
+      "cs": {
+        "Poškození": 220,
+        "Dostřel": "Legendární",
+        "Přesnost": "Dokonalá"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Siege Weapon"
+      ],
+      "cs": [
+        "Oblehací Zbraň"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "220 Dmg, Legendary Range, Pinpoint",
+      "cs": "220 Pošk, Legend. Dostřel, Dokonalá Přes."
+    },
+    "level": 28,
+    "buyPrice": 1550,
+    "sellPrice": 465
+  },
+  {
+    "id": "sr_gun_banshee_wail_l29",
+    "name": {
+      "en": "Banshee's Wail",
+      "cs": "Nářek Bánší"
+    },
+    "description": {
+      "en": "This cannon's shot releases a terrifying, spectral shriek that can shatter a man's courage and cause supernatural fear.",
+      "cs": "Výstřel z tohoto děla uvolní děsivý, spektrální jekot, který může zlomit odvahu muže a způsobit nadpřirozený strach."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 230,
+        "Effect": "Supernatural Fear"
+      },
+      "cs": {
+        "Poškození": 230,
+        "Efekt": "Nadpřirozený Strach"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Forces Mass Morale Check",
+        "Paralyzes with Fear"
+      ],
+      "cs": [
+        "Vynucuje hromadný test morálky",
+        "Ochromuje strachem"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "230 Dmg, Supernatural Fear",
+      "cs": "230 Pošk, Nadpřirozený Strach"
+    },
+    "level": 29,
+    "buyPrice": 1700,
+    "sellPrice": 510
+  },
+  {
+    "id": "sr_gun_heart_of_the_volcano_l30",
+    "name": {
+      "en": "Heart of the Volcano",
+      "cs": "Srdce Sopky"
+    },
+    "description": {
+      "en": "A cannon forged from volcanic rock and cooled in magma. It fires molten slag that sticks to hulls and burns with unimaginable heat.",
+      "cs": "Dělo kované z vulkanické horniny a chlazené v magmatu. Střílí roztavenou strusku, která se lepí na trupy a hoří nepředstavitelným žárem."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 260,
+        "Effect": "Molten Slag"
+      },
+      "cs": {
+        "Poškození": 260,
+        "Efekt": "Roztavená Struska"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Melts Armor",
+        "Persistent Fire Damage"
+      ],
+      "cs": [
+        "Taví zbroj",
+        "Trvalé poškození ohněm"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "260 Dmg, Molten Slag, Melts Armor",
+      "cs": "260 Pošk, Roztav. Struska, Taví Zbroj"
+    },
+    "level": 30,
+    "buyPrice": 1850,
+    "sellPrice": 555
+  },
+  {
+    "id": "sr_gun_starfall_cannon_l31",
+    "name": {
+      "en": "Starfall Cannon",
+      "cs": "Dělo Hvězdopádu"
+    },
+    "description": {
+      "en": "Crafted from meteoric iron, this cannon fires solid chunks of star-metal that explode on impact with celestial energy.",
+      "cs": "Toto dělo, vyrobené z meteorického železa, střílí pevné kusy hvězdného kovu, které při dopadu explodují nebeskou energií."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 280,
+        "Type": "Celestial"
+      },
+      "cs": {
+        "Poškození": 280,
+        "Typ": "Nebeský"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Effective vs Undead/Cursed",
+        "Radiant Burst"
+      ],
+      "cs": [
+        "Účinné proti nemrtvým/prokletým",
+        "Zářivý výbuch"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "280 Celestial Dmg, Radiant Burst",
+      "cs": "280 Nebes. Pošk, Zářivý Výbuch"
+    },
+    "level": 31,
+    "buyPrice": 2000,
+    "sellPrice": 600
+  },
+  {
+    "id": "sr_gun_davy_jones_organ_l32",
+    "name": {
+      "en": "Davy Jones' Organ",
+      "cs": "Varhany Davyho Jonese"
+    },
+    "description": {
+      "en": "A terrifying volley gun made of barnacle-crusted, cursed timbers. Its shots sound like the tormented screams of drowned sailors.",
+      "cs": "Děsivé salvové dělo vyrobené z vilejši pokrytých, prokletých trámů. Jeho výstřely znějí jako mučivé výkřiky utopených námořníků."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 300,
+        "Effect": "Soul Rot"
+      },
+      "cs": {
+        "Poškození": 300,
+        "Efekt": "Hniloba Duše"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Drains Crew Willpower",
+        "Spreads Supernatural Plague"
+      ],
+      "cs": [
+        "Vysává vůli posádky",
+        "Šíří nadpřirozený mor"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "300 Dmg, Drains Willpower, Plague",
+      "cs": "300 Pošk, Vysává Vůli, Mor"
+    },
+    "level": 32,
+    "buyPrice": 2150,
+    "sellPrice": 645
+  },
+  {
+    "id": "sr_gun_maelstrom_projector_l33",
+    "name": {
+      "en": "Maelstrom Projector",
+      "cs": "Projektor Vírů"
+    },
+    "description": {
+      "en": "An arcane device that doesn't fire shot, but projects a localized, violent vortex of sea water and wind, tearing ships apart.",
+      "cs": "Arkánní zařízení, které nestřílí koule, ale promítá lokalizovaný, prudký vír mořské vody a větru, který trhá lodě na kusy."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 325,
+        "Type": "Vortex"
+      },
+      "cs": {
+        "Poškození": 325,
+        "Typ": "Vír"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Continuous Damage",
+        "Disrupts Formation"
+      ],
+      "cs": [
+        "Průběžné poškození",
+        "Narušuje formaci"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "325 Vortex Dmg, Continuous",
+      "cs": "325 Vír. Pošk, Průběžné"
+    },
+    "level": 33,
+    "buyPrice": 2350,
+    "sellPrice": 705
+  },
+  {
+    "id": "sr_gun_the_kingmaker_l34",
+    "name": {
+      "en": "The Kingmaker",
+      "cs": "Králotvůrce"
+    },
+    "description": {
+      "en": "A legendary 36-pounder said to have been cast for the first Pirate King. Any ship flying its banner strikes with greater authority.",
+      "cs": "Legendární 36liberka, o které se říká, že byla ulita pro prvního Pirátského krále. Každá loď plující pod její vlajkou útočí s větší autoritou."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 350,
+        "Aura": "Command"
+      },
+      "cs": {
+        "Poškození": 350,
+        "Aura": "Velitelská"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Boosts Nearby Ally Morale",
+        "Inspires Fear in Foes"
+      ],
+      "cs": [
+        "Zvyšuje morálku blízkých spojenců",
+        "Vzbuzuje strach v nepřátelích"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "350 Dmg, Command Aura",
+      "cs": "350 Pošk, Velitelská Aura"
+    },
+    "level": 34,
+    "buyPrice": 2500,
+    "sellPrice": 750
+  },
+  {
+    "id": "sr_gun_void_harpoon_l35",
+    "name": {
+      "en": "Void-Touched Harpoon",
+      "cs": "Harpuna Dotčená Prázdnotou"
+    },
+    "description": {
+      "en": "This harpoon seems to be made of solidified nothingness. When it strikes, it doesn't just grapple a ship, it anchors it to a point of terrifying, crushing gravity.",
+      "cs": "Tato harpuna se zdá být vyrobena ze ztuhlé nicoty. Když zasáhne, nejenže zachytí loď, ale ukotví ji k bodu děsivé, drtivé gravitace."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 380,
+        "Effect": "Gravity Anchor"
+      },
+      "cs": {
+        "Poškození": 380,
+        "Efekt": "Gravitační Kotva"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Immobilizes Target",
+        "Crushes Hull Over Time"
+      ],
+      "cs": [
+        "Imobilizuje cíl",
+        "Postupně drtí trup"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "380 Dmg, Gravity Anchor, Immobilizes",
+      "cs": "380 Pošk, Grav. Kotva, Imobilizuje"
+    },
+    "level": 35,
+    "buyPrice": 2750,
+    "sellPrice": 825
+  },
+  {
+    "id": "sr_gun_echoing_bombard_l36",
+    "name": {
+      "en": "Echoing Bombard",
+      "cs": "Ozvěnová Bombarda"
+    },
+    "description": {
+      "en": "Fires a shell that shatters reality on impact, creating temporal echoes of the explosion that deal damage again moments later.",
+      "cs": "Střílí granát, který při dopadu tříští realitu a vytváří časové ozvěny výbuchu, které o chvíli později znovu způsobí poškození."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 400,
+        "Effect": "Temporal Echo"
+      },
+      "cs": {
+        "Poškození": 400,
+        "Efekt": "Časová Ozvěna"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Delayed Secondary Explosion"
+      ],
+      "cs": [
+        "Zpožděná sekundární exploze"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "400 Dmg, Temporal Echo",
+      "cs": "400 Pošk, Časová Ozvěna"
+    },
+    "level": 36,
+    "buyPrice": 2900,
+    "sellPrice": 870
+  },
+  {
+    "id": "sr_gun_tritons_fury_l37",
+    "name": {
+      "en": "Triton's Fury",
+      "cs": "Tritonův Hněv"
+    },
+    "description": {
+      "en": "A massive three-barreled cannon gifted by a sea-god. It can unleash a devastating, coordinated broadside from a single gun port.",
+      "cs": "Masivní tříhlavňové dělo darované mořským bohem. Může z jediné střílny vypustit ničivou, koordinovanou boční salvu."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 450,
+        "Fire Pattern": "Triple Shot"
+      },
+      "cs": {
+        "Poškození": 450,
+        "Vzor Palby": "Trojitý Výstřel"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Focused Broadside"
+      ],
+      "cs": [
+        "Soustředěná Boční Salva"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "450 Dmg, Triple Shot",
+      "cs": "450 Pošk, Trojitý Výstřel"
+    },
+    "level": 37,
+    "buyPrice": 3100,
+    "sellPrice": 930
+  },
+  {
+    "id": "sr_gun_the_silence_l38",
+    "name": {
+      "en": "The Silence",
+      "cs": "Ticho"
+    },
+    "description": {
+      "en": "This cannon is made of a sound-absorbing metal. It fires without a sound, its cannonball striking with unnerving, unexpected suddenness.",
+      "cs": "Toto dělo je vyrobeno z kovu pohlcujícího zvuk. Střílí bez zvuku a jeho dělová koule udeří s znepokojivou, nečekanou náhlostí."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 480,
+        "Effect": "Silent"
+      },
+      "cs": {
+        "Poškození": 480,
+        "Efekt": "Tichý"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Impossible to Dodge",
+        "Causes Panic"
+      ],
+      "cs": [
+        "Nemožné se vyhnout",
+        "Způsobuje paniku"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "480 Dmg, Silent, Un-dodgeable",
+      "cs": "480 Pošk, Tiché, Nelze se Vyhnout"
+    },
+    "level": 38,
+    "buyPrice": 3300,
+    "sellPrice": 990
+  },
+  {
+    "id": "sr_gun_glass_cannon_l39",
+    "name": {
+      "en": "The Glass Cannon",
+      "cs": "Skleněné Dělo"
+    },
+    "description": {
+      "en": "A cannon seemingly carved from a single piece of crystal. It fires a beam of focused sunlight of immense power, but is incredibly fragile.",
+      "cs": "Dělo, které se zdá být vytesáno z jediného kusu krystalu. Střílí paprsek soustředěného slunečního světla nesmírné síly, ale je neuvěřitelně křehké."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 550,
+        "Type": "Energy Beam",
+        "Fragility": "High"
+      },
+      "cs": {
+        "Poškození": 550,
+        "Typ": "Energetický Paprsek",
+        "Křehkost": "Vysoká"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Melts Hulls",
+        "May Shatter on Use"
+      ],
+      "cs": [
+        "Taví trupy",
+        "Může se při použití rozbít"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "550 Dmg, Energy Beam, Fragile",
+      "cs": "550 Pošk, Energ. Paprsek, Křehké"
+    },
+    "level": 39,
+    "buyPrice": 3500,
+    "sellPrice": 1050
+  },
+  {
+    "id": "sr_gun_world_serpent_cannon_l40",
+    "name": {
+      "en": "World Serpent Cannon",
+      "cs": "Dělo Světového Hada"
+    },
+    "description": {
+      "en": "A cannon forged from the shed scale of a mythical sea serpent. Its shots are imbued with a potent, armor-dissolving venom.",
+      "cs": "Dělo kované ze svlečené šupiny mýtického mořského hada. Jeho střely jsou napuštěny silným, zbroj rozpouštějícím jedem."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 570,
+        "Effect": "Acidic Venom"
+      },
+      "cs": {
+        "Poškození": 570,
+        "Efekt": "Kyselý Jed"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Dissolves Armor",
+        "Poisons Crew"
+      ],
+      "cs": [
+        "Rozpouští zbroj",
+        "Tráví posádku"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "570 Dmg, Acid Venom, Dissolves Armor",
+      "cs": "570 Pošk, Kyselý Jed, Rozpouští Zbroj"
+    },
+    "level": 40,
+    "buyPrice": 3700,
+    "sellPrice": 1110
+  },
+  {
+    "id": "sr_gun_black_spot_projector_l41",
+    "name": {
+      "en": "Black Spot Projector",
+      "cs": "Projektor Černé Skvrny"
+    },
+    "description": {
+      "en": "This arcane cannon doesn't deal damage directly, but brands an enemy captain with the dreaded Black Spot, sowing extreme terror and dissent among their crew.",
+      "cs": "Toto arkánní dělo nezpůsobuje poškození přímo, ale označí nepřátelského kapitána obávanou Černou skvrnou, čímž zaseje extrémní hrůzu a nesouhlas mezi jeho posádkou."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": "0",
+        "Effect": "The Black Spot"
+      },
+      "cs": {
+        "Poškození": "0",
+        "Efekt": "Černá Skvrna"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Causes Mass Mutiny Risk",
+        "Shatters Captain's Morale"
+      ],
+      "cs": [
+        "Způsobuje masivní riziko vzpoury",
+        "Drtí morálku kapitána"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "0 Dmg, Applies Black Spot, Mutiny Risk",
+      "cs": "0 Pošk, Aplikuje Černou Skvrnu, Riziko Vzpoury"
+    },
+    "level": 41,
+    "buyPrice": 4100,
+    "sellPrice": 1230
+  },
+  {
+    "id": "sr_gun_gravity_well_generator_l42",
+    "name": {
+      "en": "Gravity Well Generator",
+      "cs": "Generátor Gravitační Studny"
+    },
+    "description": {
+      "en": "A marvel of forbidden science, this device creates a localized, intense gravity well that can pull multiple ships into a crushing collision.",
+      "cs": "Zázrak zakázané vědy, toto zařízení vytváří lokalizovanou, intenzivní gravitační studnu, která může přitáhnout více lodí do drtivé kolize."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 660,
+        "Type": "Gravity"
+      },
+      "cs": {
+        "Poškození": 660,
+        "Typ": "Gravitační"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Pulls Enemies Together",
+        "Massive Collision Damage"
+      ],
+      "cs": [
+        "Přitahuje nepřátele k sobě",
+        "Masivní poškození kolizí"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "660 Gravity Dmg, Pulls Enemies",
+      "cs": "660 Grav. Pošk, Přitahuje Nepř."
+    },
+    "level": 42,
+    "buyPrice": 4300,
+    "sellPrice": 1290
+  },
+  {
+    "id": "sr_gun_atlantis_railgun_l43",
+    "name": {
+      "en": "Atlantis Railgun",
+      "cs": "Atlantský Railgun"
+    },
+    "description": {
+      "en": "An ancient weapon from a lost civilization that uses crystal-focused lightning to launch projectiles at impossible speeds.",
+      "cs": "Prastará zbraň ze ztracené civilizace, která používá krystalem soustředěný blesk k vypouštění projektilů nemožnou rychlostí."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 720,
+        "Velocity": "Extreme"
+      },
+      "cs": {
+        "Poškození": 720,
+        "Rychlost": "Extrémní"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Ignores Armor",
+        "Pierces Multiple Targets"
+      ],
+      "cs": [
+        "Ignoruje zbroj",
+        "Proniká více cíli"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "720 Dmg, Ignores Armor, Piercing",
+      "cs": "720 Pošk, Ignoruje Zbroj, Průrazné"
+    },
+    "level": 43,
+    "buyPrice": 4500,
+    "sellPrice": 1350
+  },
+  {
+    "id": "sr_gun_the_finale_l44",
+    "name": {
+      "en": "The Finale",
+      "cs": "Finále"
+    },
+    "description": {
+      "en": "A massive cannon that takes an agonizingly long time to load, but fires a single, apocalyptic shot that can end any naval battle instantly.",
+      "cs": "Masivní dělo, které se nabíjí mučivě dlouho, ale vystřelí jediný, apokalyptický výstřel, který může okamžitě ukončit jakoukoli námořní bitvu."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 800,
+        "Charge Time": "Very Long"
+      },
+      "cs": {
+        "Poškození": 800,
+        "Doba Nabíjení": "Velmi Dlouhá"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Battle-Ending Power",
+        "Vulnerable While Charging"
+      ],
+      "cs": [
+        "Síla ukončující bitvy",
+        "Zranitelné během nabíjení"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "800 Dmg, Very Long Charge",
+      "cs": "800 Pošk, Velmi Dlouhé Nabíjení"
+    },
+    "level": 44,
+    "buyPrice": 4800,
+    "sellPrice": 1440
+  },
+  {
+    "id": "sr_gun_mirage_maker_l45",
+    "name": {
+      "en": "Mirage Maker",
+      "cs": "Tvořič Zrcadlení"
+    },
+    "description": {
+      "en": "This cannon fires a shot of pure illusion that creates a perfect, tangible phantom of your own ship, drawing enemy fire and causing utter chaos.",
+      "cs": "Toto dělo střílí střelu čisté iluze, která vytváří dokonalý, hmatatelný fantom vaší vlastní lodi, přitahující nepřátelskou palbu a způsobující naprostý chaos."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": "0",
+        "Effect": "Summon Phantom Ship"
+      },
+      "cs": {
+        "Poškození": "0",
+        "Efekt": "Vyvolá Fantomovou Loď"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Creates Decoy",
+        "Draws Enemy Fire"
+      ],
+      "cs": [
+        "Vytváří návnadu",
+        "Přitahuje nepřátelskou palbu"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "0 Dmg, Summons Phantom Ship Decoy",
+      "cs": "0 Pošk, Vyvolá Fantomovou Loď"
+    },
+    "level": 45,
+    "buyPrice": 5000,
+    "sellPrice": 1500
+  },
+  {
+    "id": "sr_gun_sovereigns_decree_l46",
+    "name": {
+      "en": "Sovereign's Decree",
+      "cs": "Výnos Panovníka"
+    },
+    "description": {
+      "en": "A legendary Imperial cannon that fires a shot imbued with the unshakeable authority of the Veridian throne, capable of disabling enemy weapons.",
+      "cs": "Legendární imperiální dělo, které střílí střelu napuštěnou neotřesitelnou autoritou Veridiánského trůnu, schopnou zneškodnit nepřátelské zbraně."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 900,
+        "Effect": "Disarm"
+      },
+      "cs": {
+        "Poškození": 900,
+        "Efekt": "Odzbrojení"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Temporarily Disables Enemy Cannons"
+      ],
+      "cs": [
+        "Dočasně zneškodní nepřátelská děla"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "900 Dmg, Disarms Enemy Cannons",
+      "cs": "900 Pošk, Odzbrojí Nepř. Děla"
+    },
+    "level": 46,
+    "buyPrice": 6100,
+    "sellPrice": 1830
+  },
+  {
+    "id": "sr_gun_chronos_anchor_l47",
+    "name": {
+      "en": "Chronos' Anchor",
+      "cs": "Chronova Kotva"
+    },
+    "description": {
+      "en": "Fires a projectile that doesn't damage, but traps an enemy ship in a bubble of slowed time, leaving it a helpless, drifting target.",
+      "cs": "Střílí projektil, který nepoškozuje, ale uvězní nepřátelskou loď v bublině zpomaleného času, zanechávaje ji bezmocným, unášeným cílem."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": "0",
+        "Effect": "Temporal Stasis"
+      },
+      "cs": {
+        "Poškození": "0",
+        "Efekt": "Časová Stáze"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Freezes Enemy in Time",
+        "Perfect for Follow-up Attacks"
+      ],
+      "cs": [
+        "Zmrazí nepřítele v čase",
+        "Perfektní pro následné útoky"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "0 Dmg, Traps Ship in Slow Time",
+      "cs": "0 Pošk, Uvězní Loď ve Zpom. Čase"
+    },
+    "level": 47,
+    "buyPrice": 7500,
+    "sellPrice": 2250
+  },
+  {
+    "id": "sr_gun_the_worldbreaker_l48",
+    "name": {
+      "en": "The Worldbreaker",
+      "cs": "Světolam"
+    },
+    "description": {
+      "en": "A cannon of mythical proportions, said to have been forged in the heart of a dying star. Its shot momentarily tears the fabric of reality.",
+      "cs": "Dělo mýtických rozměrů, o kterém se říká, že bylo kováno v srdci umírající hvězdy. Jeho výstřel na okamžik trhá tkanivo reality."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 1100,
+        "Type": "Reality Tear"
+      },
+      "cs": {
+        "Poškození": 1100,
+        "Typ": "Trhlina Reality"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Ignores All Defenses",
+        "Causes Unpredictable Side Effects"
+      ],
+      "cs": [
+        "Ignoruje veškerou obranu",
+        "Způsobuje nepředvídatelné vedlejší účinky"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "1100 Dmg, Ignores Defenses, Unpredictable",
+      "cs": "1100 Pošk, Ignoruje Obranu, Nepředvídatelné"
+    },
+    "level": 48,
+    "buyPrice": 9500,
+    "sellPrice": 2850
+  },
+  {
+    "id": "sr_gun_kraken_caller_l49",
+    "name": {
+      "en": "Kraken-Caller's Horn",
+      "cs": "Roh Vyvolávače Krakenů"
+    },
+    "description": {
+      "en": "Not a cannon, but a massive, enchanted conch shell that unleashes a sonar blast that can summon the fury of the deep upon your foes.",
+      "cs": "Ne dělo, ale masivní, očarovaná lastura, která vypouští sonarový výbuch, jenž může na vaše nepřátele přivolat zuřivost hlubin."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": "Variable",
+        "Effect": "Summon Kraken Tentacles"
+      },
+      "cs": {
+        "Poškození": "Variabilní",
+        "Efekt": "Vyvolá chapadla Krakena"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Crushes Hulls",
+        "Drags Ships Down",
+        "Highly Unpredictable"
+      ],
+      "cs": [
+        "Drtí trupy",
+        "Stahuje lodě dolů",
+        "Vysoce nepředvídatelné"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "Variable Dmg, Summons Kraken",
+      "cs": "Var. Pošk, Vyvolává Krakena"
+    },
+    "level": 49,
+    "buyPrice": 12000,
+    "sellPrice": 3600
+  },
+  {
+    "id": "sr_gun_poseidons_wrath_l50",
+    "name": {
+      "en": "Poseidon's Wrath",
+      "cs": "Poseidonův Hněv"
+    },
+    "description": {
+      "en": "The ultimate naval weapon, a divine artifact that channels the very fury of the sea itself, capable of calling down tidal waves or concentrated bolts of oceanic power.",
+      "cs": "Ultimátní námořní zbraň, božský artefakt, který kanáluje samotnou zuřivost moře, schopný přivolat přílivové vlny nebo soustředěné blesky oceánské síly."
+    },
+    "itemType": "ship_guns",
+    "attributes": {
+      "en": {
+        "Damage": 1300,
+        "Type": "Divine/Oceanic"
+      },
+      "cs": {
+        "Poškození": 1300,
+        "Typ": "Božský/Oceánský"
+      }
+    },
+    "abilities": {
+      "en": [
+        "Command the Seas",
+        "Apocalyptic Power"
+      ],
+      "cs": [
+        "Ovládá moře",
+        "Apokalyptická síla"
+      ]
+    },
+    "itemEffectDescription": {
+      "en": "1300 Divine Dmg, Commands the Sea",
+      "cs": "1300 Božs. Pošk, Ovládá Moře"
+    },
+    "level": 50,
+    "buyPrice": 15000,
+    "sellPrice": 4500
+  }
+]

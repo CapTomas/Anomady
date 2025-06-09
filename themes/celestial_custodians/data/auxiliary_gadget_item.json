@@ -1,0 +1,1202 @@
+[
+  {
+    "id": "cc_ag_pocket_lint_l01",
+    "name": {
+      "en": "Packet of Surprisingly Useful Lint",
+      "cs": "Balíček Překvapivě Užitečných Žmolků"
+    },
+    "description": {
+      "en": "A small, compressed ball of lint, gathered from uniforms across several temporal epochs. Its exact properties are unknown, but it feels vaguely important. For use in moments of mild desperation.",
+      "cs": "Malá, stlačená kulička žmolků, nasbíraná z uniforem napříč několika časovými epochami. Její přesné vlastnosti jsou neznámé, ale působí neurčitě důležitě. Pro použití ve chvílích mírného zoufalství."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Minor Distraction", "Charges": 1 },
+      "cs": { "Účinek": "Menší Rozptýlení", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Briefly confuses simple-minded entities", "Feels oddly reassuring in your pocket"],
+      "cs": ["Krátce zmate jednoduché bytosti", "V kapse působí podivně uklidňujícím dojmem"]
+    },
+    "itemEffectDescription": { "en": "1-Use Minor Distraction", "cs": "1x Menší Rozptýlení" },
+    "level": 1,
+    "buyPrice": 5,
+    "sellPrice": 1
+  },
+  {
+    "id": "cc_ag_questionable_tea_l02",
+    "name": {
+      "en": "Questionable Instant Tea Packet",
+      "cs": "Pochybný Balíček Instantního Čaje"
+    },
+    "description": {
+      "en": "Just add water! (Any non-corrosive liquid will do, really). Produces a lukewarm, brownish liquid that might be tea. Might also be gravy. Results may vary. Temporarily boosts morale.",
+      "cs": "Stačí přidat vodu! (Vlastně jakákoli nekorozivní tekutina). Vytvoří vlažnou, nahnědlou tekutinu, která by mohla být čaj. Nebo taky omáčka. Výsledky se mohou lišit. Dočasně zvyšuje morálku."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Minor Willpower Recovery", "Charges": 1 },
+      "cs": { "Účinek": "Menší Obnova Vůle", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Restores a tiny amount of Gumption", "Tastes vaguely of Thursdays"],
+      "cs": ["Obnoví nepatrné množství Kuráže", "Chutná neurčitě po čtvrtcích"]
+    },
+    "itemEffectDescription": { "en": "1-Use Minor Gumption Restore", "cs": "1x Menší Obnova Kuráže" },
+    "level": 2,
+    "buyPrice": 8,
+    "sellPrice": 2
+  },
+  {
+    "id": "cc_ag_paperclip_l03",
+    "name": {
+      "en": "Self-Replicating Paperclip (Unstable)",
+      "cs": "Samoreplikační Sponka (Nestabilní)"
+    },
+    "description": {
+      "en": "A single paperclip that, when activated, briefly becomes two paperclips. An absolute marvel of Custodial engineering, perfect for that one form you need to file in duplicate. The effect is sadly temporary.",
+      "cs": "Jediná kancelářská sponka, která se po aktivaci na krátkou chvíli stane dvěma sponkami. Absolutní zázrak údržbářského inženýrství, ideální pro ten jeden formulář, který musíte podat ve dvou kopiích. Účinek je bohužel dočasný."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Briefly Solves Minor Bureaucracy", "Charges": 1 },
+      "cs": { "Účinek": "Krátce Řeší Drobnou Byrokracii", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Can be used to bypass a single, trivial administrative hurdle"],
+      "cs": ["Lze použít k obejití jediné, triviální administrativní překážky"]
+    },
+    "itemEffectDescription": { "en": "1-Use Bureaucratic Bypass", "cs": "1x Byrokratický Bypass" },
+    "level": 3,
+    "buyPrice": 12,
+    "sellPrice": 3
+  },
+  {
+    "id": "cc_ag_rubber_duck_l04",
+    "name": {
+      "en": "Anomaly-Distracting Rubber Duck",
+      "cs": "Anomálie Odpoutávající Gumová Kachnička"
+    },
+    "description": {
+      "en": "This standard-issue rubber duck emits a low-frequency squeak that is paradoxically fascinating to non-corporeal or reality-adjacent phenomena. They often stop what they're doing to contemplate its sheer duck-ness.",
+      "cs": "Tato standardní gumová kachnička vydává nízkofrekvenční pískot, který je paradoxně fascinující pro nehmotné nebo realitě přilehlé jevy. Často přestanou s tím, co dělají, aby kontemplovali nad její čirou kachnovitostí."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Pauses Minor Anomalies", "Charges": 1 },
+      "cs": { "Účinek": "Pozastaví Menší Anomálie", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Causes a brief metaphysical pause in one local anomaly", "Squeaks"],
+      "cs": ["Způsobí krátkou metafyzickou pauzu v jedné místní anomálii", "Píská"]
+    },
+    "itemEffectDescription": { "en": "1-Use Anomaly Pause", "cs": "1x Pozastavení Anomálie" },
+    "level": 4,
+    "buyPrice": 15,
+    "sellPrice": 4
+  },
+  {
+    "id": "cc_ag_bureaucratic_singularity_l05",
+    "name": {
+      "en": "Pocket-Sized Bureaucratic Singularity",
+      "cs": "Kapesní Byrokratická Singularita"
+    },
+    "description": {
+      "en": "A tiny, contained temporal loop that forces any incoming query or demand into an endless cycle of being re-filed. Caution: looking directly at it may cause an intense urge to form a subcommittee.",
+      "cs": "Maličká, uzavřená časová smyčka, která nutí jakýkoli příchozí dotaz nebo požadavek do nekonečného cyklu opětovného podávání. Pozor: přímý pohled na ni může způsobit intenzivní nutkání založit podvýbor."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Stalls Paperwork", "Duration": "Brief", "Charges": 1 },
+      "cs": { "Účinek": "Zdrží Papírování", "Trvání": "Krátké", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Temporarily neutralizes one source of administrative dread"],
+      "cs": ["Dočasně neutralizuje jeden zdroj administrativní hrůzy"]
+    },
+    "itemEffectDescription": { "en": "1-Use Paperwork Stall", "cs": "1x Zdržení Papírů" },
+    "level": 5,
+    "buyPrice": 16,
+    "sellPrice": 5
+  },
+  {
+    "id": "cc_ag_anti_prose_lozenge_l06",
+    "name": {
+      "en": "Anti-Prose Lozenge",
+      "cs": "Pastilka proti Próze"
+    },
+    "description": {
+      "en": "For use when encountering entities that communicate in excruciatingly long monologues or bad poetry. Dissolving one on the tongue makes their speech seem concise and almost bearable.",
+      "cs": "K použití při setkání s entitami, které komunikují v nesnesitelně dlouhých monolozích nebo špatné poezii. Rozpuštění jedné na jazyku způsobí, že jejich řeč se zdá stručná a téměř snesitelná."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Mental Fortitude Boost (Dialogue)", "Charges": 1 },
+      "cs": { "Účinek": "Posílení Psychické Odolnosti (Dialog)", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Grants temporary immunity to tedious exposition"],
+      "cs": ["Poskytuje dočasnou imunitu vůči zdlouhavým expozicím"]
+    },
+    "itemEffectDescription": { "en": "1-Use Tedium Immunity", "cs": "1x Imunita vůči Nudě" },
+    "level": 6,
+    "buyPrice": 21,
+    "sellPrice": 6
+  },
+  {
+    "id": "cc_ag_sentient_pudding_l07",
+    "name": {
+      "en": "Emergency Pacification Pudding",
+      "cs": "Nouzový Pacifikační Pudink"
+    },
+    "description": {
+      "en": "A cup of semi-sentient, butterscotch-flavored pudding. When released, it will attempt to engage any single target in a polite, yet deeply confusing, philosophical debate, often buying precious seconds.",
+      "cs": "Kelímek polovičně vnímajícího pudinku s karamelovou příchutí. Po vypuštění se pokusí zapojit jeden cíl do zdvořilé, avšak hluboce matoucí filozofické debaty, čímž často získá drahocenné sekundy."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Single-Target Pacification", "Charges": 1 },
+      "cs": { "Účinek": "Jednocílová Pacifikace", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Distracts one entity with existential questions"],
+      "cs": ["Rozptýlí jednu entitu existenciálními otázkami"]
+    },
+    "itemEffectDescription": { "en": "1-Use Pudding Pacifier", "cs": "1x Pudinkový Pacifikátor" },
+    "level": 7,
+    "buyPrice": 23,
+    "sellPrice": 7
+  },
+  {
+    "id": "cc_ag_plausible_deniability_mist_l08",
+    "name": {
+      "en": "Aerosol of Plausible Deniability",
+      "cs": "Aerosol Pravděpodobné Popiratelnosti"
+    },
+    "description": {
+      "en": "A single spray from this can creates a thick, grey mist that makes any recent minor catastrophe seem like it was probably someone else's fault. Note: Does not actually fix the catastrophe.",
+      "cs": "Jeden střik z této plechovky vytvoří hustou, šedou mlhu, díky které se jakákoli nedávná menší katastrofa zdá být pravděpodobně chybou někoho jiného. Poznámka: Katastrofu to ve skutečnosti neopraví."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Shifts Blame (Social)", "Charges": 1 },
+      "cs": { "Účinek": "Přesouvá Vinu (Sociální)", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Temporarily deflects responsibility for one (1) minor mishap"],
+      "cs": ["Dočasně odkloní odpovědnost za jednu (1) menší nehodu"]
+    },
+    "itemEffectDescription": { "en": "1-Use Blame Shift", "cs": "1x Přesun Viny" },
+    "level": 8,
+    "buyPrice": 29,
+    "sellPrice": 9
+  },
+  {
+    "id": "cc_ag_gravity_recalibration_unit_l09",
+    "name": {
+      "en": "Gravity Recalibration Packet",
+      "cs": "Balíček pro Rekalibraci Gravitace"
+    },
+    "description": {
+      "en": "A one-use patch that, when slapped onto a surface, attempts to remind local gravity of its contractual obligations. For a few moments, things will fall in the correct direction. Mostly.",
+      "cs": "Jednorázová náplast, která po plácnutí na povrch se pokusí připomenout místní gravitaci její smluvní závazky. Na několik okamžiků budou věci padat správným směrem. Většinou."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Briefly Normalizes Gravity", "Charges": 1 },
+      "cs": { "Účinek": "Krátce Normalizuje Gravitaci", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Temporarily restores standard gravitational pull in a small area"],
+      "cs": ["Dočasně obnoví standardní gravitační přitažlivost v malé oblasti"]
+    },
+    "itemEffectDescription": { "en": "1-Use Gravity Normalizer", "cs": "1x Normalizátor Gravitace" },
+    "level": 9,
+    "buyPrice": 31,
+    "sellPrice": 9
+  },
+  {
+    "id": "cc_ag_motivational_poster_l10",
+    "name": {
+      "en": "Foldable Motivational Poster",
+      "cs": "Skládací Motivační Plakát"
+    },
+    "description": {
+      "en": "Unfurls to reveal a picture of a kitten hanging from a branch, with the caption 'Just Hang In There!'. Proven to grant a brief, potent burst of resolve when faced with overwhelming cosmic dread.",
+      "cs": "Rozloží se a odhalí obrázek koťátka visícího na větvi s nápisem 'Prostě Vydrž!'. Prokázáno, že poskytuje krátký, silný příval odhodlání tváří v tvář ohromující kosmické hrůze."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Moderate Willpower Recovery", "Charges": 1 },
+      "cs": { "Účinek": "Střední Obnova Vůle", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Instantly restores a moderate amount of Gumption"],
+      "cs": ["Okamžitě obnoví střední množství Kuráže"]
+    },
+    "itemEffectDescription": { "en": "1-Use Gumption Restore", "cs": "1x Obnova Kuráže" },
+    "level": 10,
+    "buyPrice": 35,
+    "sellPrice": 11
+  },
+  {
+    "id": "cc_ag_narrative_convenience_l11",
+    "name": {
+      "en": "Device of Narrative Convenience",
+      "cs": "Zařízení Narativní Pohodlnosti"
+    },
+    "description": {
+      "en": "This small, humming device subtly alters probability so that the next item you're looking for is 'just right there'. One use only, as it tends to attract the attention of the celestial auditors.",
+      "cs": "Toto malé, bzučící zařízení jemně mění pravděpodobnost tak, že další věc, kterou hledáte, je 'prostě přímo tam'. Pouze jedno použití, protože má tendenci přitahovat pozornost nebeských auditorů."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Finds One Plot-Relevant Item", "Charges": 1 },
+      "cs": { "Účinek": "Najde Jeden Dějově Relevantní Předmět", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Reveals a single, crucial object or clue nearby"],
+      "cs": ["Odhalí jeden klíčový objekt nebo stopu poblíž"]
+    },
+    "itemEffectDescription": { "en": "1-Use Find Key Item", "cs": "1x Nalezení Klíčové Věci" },
+    "level": 11,
+    "buyPrice": 46,
+    "sellPrice": 14
+  },
+  {
+    "id": "cc_ag_panic_button_l12",
+    "name": {
+      "en": "The Big Red Panic Button (Not A Toy)",
+      "cs": "Velké Červené Panické Tlačítko (Není To Hračka)"
+    },
+    "description": {
+      "en": "A large, friendly-looking red button. Pressing it broadcasts a universal, multi-spectrum distress signal that has a small chance of summoning help, and a much larger chance of making the current situation significantly more complicated.",
+      "cs": "Velké, přátelsky vyhlížející červené tlačítko. Jeho stisknutí vysílá univerzální, vícespektrální nouzový signál, který má malou šanci přivolat pomoc a mnohem větší šanci situaci výrazně zkomplikovat."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Summons... Something", "Charges": 1 },
+      "cs": { "Účinek": "Přivolá... Něco", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["High-risk, high-reward call for aid", "Unpredictable results"],
+      "cs": ["Vysoce rizikové, vysoce odměňující volání o pomoc", "Nepředvídatelné výsledky"]
+    },
+    "itemEffectDescription": { "en": "1-Use Unpredictable Summon", "cs": "1x Nepředvídatelné Přivolání" },
+    "level": 12,
+    "buyPrice": 53,
+    "sellPrice": 16
+  },
+  {
+    "id": "cc_ag_anti_paradox_tablet_l13",
+    "name": {
+      "en": "Anti-Paradox Tablet",
+      "cs": "Tableta proti Paradoxům"
+    },
+    "description": {
+      "en": "A chewable, mint-flavored tablet that helps the user's brain gloss over one minor temporal paradox, preventing the associated migraine. Side effects include a temporary belief that you are your own grandfather.",
+      "cs": "Žvýkací tableta s mátovou příchutí, která pomáhá mozku uživatele přehlédnout jeden menší časový paradox, čímž předchází související migréně. Vedlejší účinky zahrnují dočasnou víru, že jste svým vlastním dědečkem."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Ignore One Paradox", "Charges": 1 },
+      "cs": { "Účinek": "Ignoruje Jeden Paradox", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Prevents Sanity damage from a single temporal anomaly"],
+      "cs": ["Zabraňuje poškození Příčetnosti z jedné časové anomálie"]
+    },
+    "itemEffectDescription": { "en": "1-Use Paradox Immunity", "cs": "1x Imunita na Paradox" },
+    "level": 13,
+    "buyPrice": 62,
+    "sellPrice": 19
+  },
+  {
+    "id": "cc_ag_conformity_spray_l14",
+    "name": {
+      "en": "Spray of Instant Conformity",
+      "cs": "Sprej Okamžité Konformity"
+    },
+    "description": {
+      "en": "When used on a bizarre or non-standard object, it temporarily makes it look and act like a standard, boring, grey box. Useful for getting strange cargo through bureaucratic checkpoints.",
+      "cs": "Po použití na bizarní nebo nestandardní předmět ho dočasně přiměje vypadat a chovat se jako standardní, nudná, šedá krabice. Užitečné pro pašování podivného nákladu přes byrokratické kontrolní body."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Temporary Mundane Disguise (Object)", "Charges": 1 },
+      "cs": { "Účinek": "Dočasné Všední Přestrojení (Předmět)", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Disguises one strange item as something utterly boring"],
+      "cs": ["Zamaskuje jeden podivný předmět za něco naprosto nudného"]
+    },
+    "itemEffectDescription": { "en": "1-Use Object Disguise", "cs": "1x Zamaskování Předmětu" },
+    "level": 14,
+    "buyPrice": 75,
+    "sellPrice": 22
+  },
+  {
+    "id": "cc_ag_fine_field_emitter_l15",
+    "name": {
+      "en": "Portable 'Everything is Fine' Field Emitter",
+      "cs": "Přenosný Emitor Pole 'Všechno je v Pořádku'"
+    },
+    "description": {
+      "en": "A single-use device projecting a serene denial field. For a short time, all parties within the field will be convinced that the fire, tentacles, and structural collapse are part of a planned team-building exercise.",
+      "cs": "Jednorázové zařízení, které promítá pole klidného popření. Na krátkou dobu budou všechny strany v poli přesvědčeny, že oheň, chapadla a probíhající strukturální kolaps jsou součástí plánovaného teambuildingového cvičení."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Area-of-Effect De-escalation", "Charges": 1 },
+      "cs": { "Účinek": "Plošná De-eskalace", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Briefly pacifies non-hostile entities", "Lowers local anxiety"],
+      "cs": ["Krátce uklidní ne-nepřátelské entity", "Snižuje místní úzkost"]
+    },
+    "itemEffectDescription": { "en": "1-Use AoE Calm", "cs": "1x Plošný Klid" },
+    "level": 15,
+    "buyPrice": 87,
+    "sellPrice": 26
+  },
+  {
+    "id": "cc_ag_sentient_stapler_l16",
+    "name": {
+      "en": "Diplomatic Stapler (Sentient)",
+      "cs": "Diplomatická Sešívačka (Vnímající)"
+    },
+    "description": {
+      "en": "This stapler, named Brenda, is a surprisingly skilled negotiator. When deployed, she will attempt to broker a truce with one semi-reasonable entity by offering to collate their grievances into a tidy, stapled packet.",
+      "cs": "Tato sešívačka, jménem Brenda, je překvapivě zručná vyjednavačka. Po nasazení se pokusí vyjednat příměří s jednou polorozumnou entitou tím, že nabídne srovnání jejich stížností do úhledného, sešitého balíčku."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Initiates Truce Negotiations", "Charges": 1 },
+      "cs": { "Účinek": "Zahajuje Jednání o Příměří", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Attempts to pacify one target through superior organizational skills"],
+      "cs": ["Pokusí se uklidnit jeden cíl pomocí vynikajících organizačních schopností"]
+    },
+    "itemEffectDescription": { "en": "1-Use Diplomatic Staple", "cs": "1x Diplomatické Sešití" },
+    "level": 16,
+    "buyPrice": 96,
+    "sellPrice": 29
+  },
+  {
+    "id": "cc_ag_sound_of_inevitability_l17",
+    "name": {
+      "en": "The Inevitable Sound of Paperwork",
+      "cs": "Nevyhnutelný Zvuk Papírování"
+    },
+    "description": {
+      "en": "A small audio device that emits the soul-crushing sound of a distant, dot-matrix printer. Most lifeforms find this so deeply depressing they will abandon their current course of action to go lie down for a bit.",
+      "cs": "Malé zvukové zařízení, které vydává duši drtící zvuk vzdálené jehličkové tiskárny. Většina forem života to považuje za tak hluboce depresivní, že opustí svůj současný směr jednání a jdou si na chvíli lehnout."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Area-of-Effect Demotivation", "Charges": 1 },
+      "cs": { "Účinek": "Plošná Demotivace", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Causes temporary apathy in a small area"],
+      "cs": ["Způsobuje dočasnou apatii v malé oblasti"]
+    },
+    "itemEffectDescription": { "en": "1-Use AoE Apathy", "cs": "1x Plošná Apatie" },
+    "level": 17,
+    "buyPrice": 109,
+    "sellPrice": 33
+  },
+  {
+    "id": "cc_ag_subtle_threat_biscuits_l18",
+    "name": {
+      "en": "Box of Subtly Threatening Biscuits",
+      "cs": "Krabice Jemně Vyhrožujících Sušenek"
+    },
+    "description": {
+      "en": "These biscuits are delicious, but each is baked with a tiny, almost imperceptible frown. Offering one to an entity conveys a complex message of hospitality and vague disapproval that can often de-escalate a tense situation.",
+      "cs": "Tyto sušenky jsou vynikající, ale každá je upečena s malým, téměř nepostřehnutelným zamračením. Nabídnutí jedné entitě sděluje komplexní zprávu pohostinnosti a neurčitého nesouhlasu, což může často de-eskalovat napjatou situaci."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Social Confusion", "Charges": 1 },
+      "cs": { "Účinek": "Sociální Zmatení", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Makes one social encounter less hostile and more awkward"],
+      "cs": ["Učiní jedno sociální setkání méně nepřátelským a více trapným"]
+    },
+    "itemEffectDescription": { "en": "1-Use Awkward Biscuit", "cs": "1x Trapná Sušenka" },
+    "level": 18,
+    "buyPrice": 122,
+    "sellPrice": 37
+  },
+  {
+    "id": "cc_ag_deja_vu_grenade_l19",
+    "name": {
+      "en": "Déjà Vu Grenade",
+      "cs": "Granát Déjà Vu"
+    },
+    "description": {
+      "en": "When activated, this device doesn't explode. Instead, everyone in a small radius gets a powerful feeling they've been through this exact moment before. This is usually enough to make them stop and reconsider their life choices.",
+      "cs": "Po aktivaci toto zařízení neexploduje. Místo toho všichni v malém okruhu získají silný pocit, že si tímto přesným okamžikem už prošli. To obvykle stačí k tomu, aby se zastavili a přehodnotili svá životní rozhodnutí."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Area-of-Effect Pause and Reflect", "Charges": 1 },
+      "cs": { "Účinek": "Plošná Pauza a Zamyšlení", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Causes all entities in an area to pause for a moment of introspection"],
+      "cs": ["Způsobí, že všechny entity v oblasti se na okamžik zastaví k introspekci"]
+    },
+    "itemEffectDescription": { "en": "1-Use AoE Introspection", "cs": "1x Plošná Introspekce" },
+    "level": 19,
+    "buyPrice": 130,
+    "sellPrice": 39
+  },
+  {
+    "id": "cc_ag_portable_plot_hole_l20",
+    "name": {
+      "en": "Portable Plot Hole",
+      "cs": "Přenosná Dějová Díra"
+    },
+    "description": {
+      "en": "A single-use containment field generator that creates a small, localized inconsistency in the fabric of reality. Perfect for escaping a sticky situation by creating a logical 'out' that wasn't there a moment before.",
+      "cs": "Jednorázový generátor zadržovacího pole, který vytváří malou, lokalizovanou nesrovnalost v tkanivu reality. Ideální pro únik z ošemetné situace vytvořením logického 'východiska', které tam před okamžikem nebylo."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Creates a Minor Escape Route", "Charges": 1 },
+      "cs": { "Účinek": "Vytvoří Menší Únikovou Cestu", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Generates one convenient, logic-defying escape from a non-combat situation"],
+      "cs": ["Generuje jeden pohodlný, logiku popírající únik z nebojové situace"]
+    },
+    "itemEffectDescription": { "en": "1-Use Convenient Escape", "cs": "1x Pohodlný Únik" },
+    "level": 20,
+    "buyPrice": 145,
+    "sellPrice": 44
+  },
+  {
+    "id": "cc_ag_probability_shield_l21",
+    "name": {
+      "en": "Improbability Shield (Single Charge)",
+      "cs": "Nepravděpodobnostní Štít (Jeden Náboj)"
+    },
+    "description": {
+      "en": "For a fleeting moment, this device makes it infinitely improbable that any single incoming projectile will actually hit you. It is, however, highly probable that it will hit something else important and expensive instead.",
+      "cs": "Na prchavý okamžik toto zařízení učiní nekonečně nepravděpodobným, že vás skutečně zasáhne jakýkoli jeden příchozí projektil. Je však vysoce pravděpodobné, že místo toho zasáhne něco jiného, důležitého a drahého."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Evade One Ranged Attack", "Charges": 1 },
+      "cs": { "Účinek": "Vyhne se Jednomu Útoku na Dálku", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Guarantees a dodge against one projectile", "May cause collateral damage"],
+      "cs": ["Zaručuje úhyb před jedním projektilem", "Může způsobit vedlejší škody"]
+    },
+    "itemEffectDescription": { "en": "1-Use Guaranteed Dodge", "cs": "1x Zaručený Úhyb" },
+    "level": 21,
+    "buyPrice": 160,
+    "sellPrice": 48
+  },
+  {
+    "id": "cc_ag_existential_dread_air_freshener_l22",
+    "name": {
+      "en": "Existential Dread-Scented Air Freshener",
+      "cs": "Osvěžovač Vzduchu s Vůní Existenční Hrůzy"
+    },
+    "description": {
+      "en": "Releases a pleasant pine scent, cleverly masking a powerful wave of cosmic ennui. Beings without sufficient Existential Insulation may suddenly find their motivations have evaporated.",
+      "cs": "Uvolňuje příjemnou borovicovou vůni, která chytře maskuje silnou vlnu kosmické nudy. Bytosti bez dostatečné Existenční Izolace mohou náhle zjistit, že jejich motivace se vypařily."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Temporarily Nullifies Hostile Intent", "Charges": 1 },
+      "cs": { "Účinek": "Dočasně Nulifikuje Nepřátelský Úmysl", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Causes one enemy to lose their will to fight"],
+      "cs": ["Způsobí, že jeden nepřítel ztratí vůli bojovat"]
+    },
+    "itemEffectDescription": { "en": "1-Use Will Sapper", "cs": "1x Vysávač Vůle" },
+    "level": 22,
+    "buyPrice": 175,
+    "sellPrice": 53
+  },
+  {
+    "id": "cc_ag_emergency_monologue_l23",
+    "name": {
+      "en": "Emergency Monologue Scroller",
+      "cs": "Nouzový Rolovač Monologů"
+    },
+    "description": {
+      "en": "A small device that projects a stream of text only you can see, providing a surprisingly compelling (if slightly irrelevant) monologue. Perfect for stalling for time while you figure out what to do.",
+      "cs": "Malé zařízení, které promítá proud textu, který vidíte jen vy, a poskytuje překvapivě přesvědčivý (i když mírně irelevantní) monolog. Ideální pro získání času, zatímco přemýšlíte, co dělat."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Stalls for Time", "Charges": 1 },
+      "cs": { "Účinek": "Získává Čas", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Buys you one extra moment to think in a tense situation"],
+      "cs": ["Poskytne vám jeden další okamžik na přemýšlení v napjaté situaci"]
+    },
+    "itemEffectDescription": { "en": "1-Use Time Stall", "cs": "1x Získání Času" },
+    "level": 23,
+    "buyPrice": 195,
+    "sellPrice": 58
+  },
+  {
+    "id": "cc_ag_truth_serum_l24",
+    "name": {
+      "en": "Truth Serum (Mostly)",
+      "cs": "Sérum Pravdy (Většinou)"
+    },
+    "description": {
+      "en": "When administered, compels the target to speak the truth. Mostly. There's a 12% chance they will instead speak entirely in rhyming couplets about badgers. A calculated risk.",
+      "cs": "Po podání nutí cíl mluvit pravdu. Většinou. Existuje 12% šance, že místo toho budou mluvit výhradně v rýmovaných dvojverších o jezevcích. Vypočítané riziko."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Compels Truth (Unreliable)", "Charges": 1 },
+      "cs": { "Účinek": "Vynucuje Pravdu (Nespolehlivé)", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Forces a target to answer one question truthfully, probably"],
+      "cs": ["Přinutí cíl odpovědět na jednu otázku pravdivě, pravděpodobně"]
+    },
+    "itemEffectDescription": { "en": "1-Use Unreliable Truth", "cs": "1x Nespolehlivá Pravda" },
+    "level": 24,
+    "buyPrice": 205,
+    "sellPrice": 62
+  },
+  {
+    "id": "cc_ag_deus_ex_machina_l25",
+    "name": {
+      "en": "Deus ex Machina (Batteries Not Included)",
+      "cs": "Deus ex Machina (Baterie Nejsou Součástí)"
+    },
+    "description": {
+      "en": "Summons a convenient, but deeply flawed, solution to a major problem. The solution will work, but will create an entirely new, probably worse, problem in the process. Use with extreme prejudice.",
+      "cs": "Přivolá pohodlné, ale hluboce chybné řešení velkého problému. Řešení bude fungovat, ale v procesu vytvoří zcela nový, pravděpodobně horší problém. Používejte s extrémním předsudkem."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Solves One Problem, Creates Another", "Charges": 1 },
+      "cs": { "Účinek": "Vyřeší Jeden Problém, Vytvoří Další", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Resolves a single major obstacle at a significant future cost"],
+      "cs": ["Vyřeší jednu velkou překážku za značnou budoucí cenu"]
+    },
+    "itemEffectDescription": { "en": "1-Use Problem Swap", "cs": "1x Výměna Problémů" },
+    "level": 25,
+    "buyPrice": 225,
+    "sellPrice": 68
+  },
+  {
+    "id": "cc_ag_fourth_wall_patch_kit_l26",
+    "name": {
+      "en": "Fourth Wall Patch Kit",
+      "cs": "Sada na Opravu Čtvrté Stěny"
+    },
+    "description": {
+      "en": "For when things get a little too self-aware. This kit applies a thin film of narrative insulation, preventing characters from realizing they are in a story. For a little while, anyway.",
+      "cs": "Pro případy, kdy se věci stanou příliš sebeuvědomělými. Tato sada aplikuje tenký film narativní izolace, který brání postavám v uvědomění si, že jsou v příběhu. Alespoň na chvíli."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Restores Narrative Immersion", "Charges": 1 },
+      "cs": { "Účinek": "Obnovuje Narativní Ponoření", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Briefly stops a single entity from having a meta-crisis"],
+      "cs": ["Krátce zastaví jednu entitu před prožitím meta-krize"]
+    },
+    "itemEffectDescription": { "en": "1-Use Immersion Restore", "cs": "1x Obnova Ponoření" },
+    "level": 26,
+    "buyPrice": 245,
+    "sellPrice": 74
+  },
+  {
+    "id": "cc_ag_portable_vortex_of_apathy_l27",
+    "name": {
+      "en": "Portable Vortex of Apathy",
+      "cs": "Přenosný Vír Apatie"
+    },
+    "description": {
+      "en": "Uncorking this bottle releases a small, localized vortex of pure, unadulterated apathy. Any being caught within will lose all motivation to do anything, hostile or otherwise, and may take up staring at a wall as a new hobby.",
+      "cs": "Odkorkování této lahve uvolní malý, lokalizovaný vír čisté, nefalšované apatie. Jakákoli bytost v něm chycená ztratí veškerou motivaci cokoli dělat, ať už nepřátelského či jiného, a může si jako nový koníček oblíbit zírání na zeď."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Major Single-Target Demotivation", "Charges": 1 },
+      "cs": { "Účinek": "Velká Jednocílová Demotivace", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Completely neutralizes one target for a short duration"],
+      "cs": ["Na krátkou dobu zcela neutralizuje jeden cíl"]
+    },
+    "itemEffectDescription": { "en": "1-Use Apathy Vortex", "cs": "1x Vír Apatie" },
+    "level": 27,
+    "buyPrice": 285,
+    "sellPrice": 85
+  },
+  {
+    "id": "cc_ag_universal_translator_l28",
+    "name": {
+      "en": "Universal Translator (On The Fritz)",
+      "cs": "Univerzální Překladač (Porouchaný)"
+    },
+    "description": {
+      "en": "This device will translate any language. Unfortunately, it does so by routing it through the mind of a depressed 18th-century poet, so the results are invariably melancholic and overly florid. Still, better than nothing.",
+      "cs": "Toto zařízení přeloží jakýkoli jazyk. Bohužel to dělá přes mysl depresivního básníka 18. století, takže výsledky jsou vždy melancholické a příliš květnaté. Přesto lepší než nic."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Enables Communication (Poetically)", "Charges": 1 },
+      "cs": { "Účinek": "Umožňuje Komunikaci (Básnicky)", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Allows understanding of one unknown language, with a heavy dramatic filter"],
+      "cs": ["Umožňuje porozumění jednomu neznámému jazyku, se silným dramatickým filtrem"]
+    },
+    "itemEffectDescription": { "en": "1-Use Poetic Translation", "cs": "1x Básnický Překlad" },
+    "level": 28,
+    "buyPrice": 305,
+    "sellPrice": 92
+  },
+  {
+    "id": "cc_ag_get_out_of_jail_free_card_l29",
+    "name": {
+      "en": "Get Out of Custody Free Card",
+      "cs": "Karta 'Propuštění z Vazby Zdarma'"
+    },
+    "description": {
+      "en": "An official-looking card from the Union that, due to a clerical error in Subsection B, Paragraph 7, legally absolves the bearer of one (1) non-capital infraction. Honored in approximately 4% of known jurisdictions.",
+      "cs": "Oficiálně vypadající karta od Unie, která kvůli úřední chybě v pododdílu B, odstavci 7, legálně zprošťuje držitele jednoho (1) ne-kapitálního přestupku. Uznávána v přibližně 4 % známých jurisdikcí."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Bypass One Legal Trouble", "Charges": 1 },
+      "cs": { "Účinek": "Obejít Jeden Právní Problém", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Offers a slim chance of escaping legal ramifications"],
+      "cs": ["Nabízí malou šanci uniknout právním následkům"]
+    },
+    "itemEffectDescription": { "en": "1-Use Legal Loophole", "cs": "1x Právní Klička" },
+    "level": 29,
+    "buyPrice": 335,
+    "sellPrice": 101
+  },
+  {
+    "id": "cc_ag_emergency_tea_l30",
+    "name": {
+      "en": "Emergency Tea and Sympathy Dispenser",
+      "cs": "Dávkovač Nouzového Čaje a Pochopení"
+    },
+    "description": {
+      "en": "When activated, this box produces one cup of lukewarm tea and emits a pre-recorded, soothing, yet generic message of sympathy. Ineffective against rampaging Klag-beasts, but potent against bureaucratic despair.",
+      "cs": "Po aktivaci tato krabička vyprodukuje šálek vlažného čaje a vydá předem nahranou, uklidňující, leč obecnou soustrastnou zprávu. Neúčinné proti Klag-bestiím, ale silné proti byrokratickému zoufalství."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Major Willpower Recovery", "Charges": 1 },
+      "cs": { "Účinek": "Velká Obnova Vůle", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Restores a significant amount of Gumption"],
+      "cs": ["Obnoví značné množství Kuráže"]
+    },
+    "itemEffectDescription": { "en": "1-Use Major Gumption Restore", "cs": "1x Velká Obnova Kuráže" },
+    "level": 30,
+    "buyPrice": 377,
+    "sellPrice": 113
+  },
+  {
+    "id": "cc_ag_personal_reality_anchor_l31",
+    "name": {
+      "en": "Personal Reality Anchor (Model II)",
+      "cs": "Osobní Kotva Reality (Model II)"
+    },
+    "description": {
+      "en": "Guaranteed to keep the user firmly rooted in their native reality for up to 30 seconds, even when exposed to severe weirdness. Side effects include a sudden, inexplicable craving for marmalade.",
+      "cs": "Zaručuje, že uživatel zůstane pevně zakotven ve své rodné realitě až 30 sekund, i když je vystaven silné podivnosti. Vedlejší účinky zahrnují náhlou, nevysvětlitelnou chuť na marmeládu."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Resists Reality Shift", "Duration": "Brief", "Charges": 1 },
+      "cs": { "Účinek": "Odolává Posunu Reality", "Trvání": "Krátké", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Prevents forced reality-warping effects on self"],
+      "cs": ["Zabraňuje nuceným realitu-pokřivujícím účinkům na sebe"]
+    },
+    "itemEffectDescription": { "en": "1-Use Reality Anchor", "cs": "1x Kotva Reality" },
+    "level": 31,
+    "buyPrice": 408,
+    "sellPrice": 122
+  },
+  {
+    "id": "cc_ag_banjo_of_distraction_l32",
+    "name": {
+      "en": "Self-Playing Banjo of Distraction",
+      "cs": "Samohrající Banjo Rozptýlení"
+    },
+    "description": {
+      "en": "A small, clockwork banjo that, when wound, plays an astonishingly fast and catchy tune. Few beings in the cosmos can resist tapping their foot/tentacle/pseudopod, making them forget any hostile intentions.",
+      "cs": "Malé, hodinové banjo, které po natažení hraje úžasně rychlou a chytlavou melodii. Málokterá bytost v kosmu dokáže odolat poklepávání nohou/chapadlem/pseudopodiem, což je přiměje zapomenout na jakékoli nepřátelské úmysly."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Area-of-Effect Distraction", "Charges": 1 },
+      "cs": { "Účinek": "Plošné Rozptýlení", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Causes all nearby entities to become briefly entranced by folk music"],
+      "cs": ["Způsobí, že všechny blízké entity jsou krátce okouzleny folkovou hudbou"]
+    },
+    "itemEffectDescription": { "en": "1-Use Banjo Distraction", "cs": "1x Rozptýlení Banjem" },
+    "level": 32,
+    "buyPrice": 430,
+    "sellPrice": 129
+  },
+  {
+    "id": "cc_ag_semantic_scrambler_l33",
+    "name": {
+      "en": "Semantic Scrambler",
+      "cs": "Sémantický Míchač"
+    },
+    "description": {
+      "en": "This device scrambles the meaning of the next sentence spoken by the user, replacing key nouns with 'wombat'. The resulting confusion is a powerful, if temporary, diplomatic tool.",
+      "cs": "Toto zařízení zamíchá význam další věty vyslovené uživatelem a nahradí klíčová podstatná jména slovem 'vombat'. Výsledné zmatení je mocný, i když dočasný, diplomatický nástroj."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Causes Linguistic Confusion", "Charges": 1 },
+      "cs": { "Účinek": "Způsobuje Lingvistické Zmatení", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Derails one social encounter with absurdity"],
+      "cs": ["Vykolejí jedno sociální setkání absurditou"]
+    },
+    "itemEffectDescription": { "en": "1-Use Wombat Scramble", "cs": "1x Vombatí Zamíchání" },
+    "level": 33,
+    "buyPrice": 475,
+    "sellPrice": 142
+  },
+  {
+    "id": "cc_ag_perfectly_normal_rock_l34",
+    "name": {
+      "en": "A Perfectly Normal Rock",
+      "cs": "Naprosto Normální Kámen"
+    },
+    "description": {
+      "en": "This is a rock. It has no special properties. However, its sheer, unadulterated normality is so out of place in most situations a Custodian finds themselves in that presenting it can cause bafflement and pause.",
+      "cs": "Toto je kámen. Nemá žádné zvláštní vlastnosti. Nicméně jeho čirá, nefalšovaná normalita je ve většině situací, ve kterých se Údržbář ocitne, tak nepatřičná, že její předložení může způsobit zmatení a pauzu."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Bafflement", "Charges": 1 },
+      "cs": { "Účinek": "Zmatení", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Its sheer normality can briefly stun a single target"],
+      "cs": ["Jeho čirá normalita může krátce omráčit jeden cíl"]
+    },
+    "itemEffectDescription": { "en": "1-Use Normal Rock", "cs": "1x Normální Kámen" },
+    "level": 34,
+    "buyPrice": 510,
+    "sellPrice": 153
+  },
+  {
+    "id": "cc_ag_emergency_mustache_l35",
+    "name": {
+      "en": "Emergency Authority-Granting Mustache",
+      "cs": "Nouzový Knír Udělující Autoritu"
+    },
+    "description": {
+      "en": "A convincing, self-adhesive mustache. When worn, the user is temporarily perceived as someone who is definitely supposed to be here and knows what they're doing. Confidence is key.",
+      "cs": "Přesvědčivý, samolepicí knír. Když je nošen, uživatel je dočasně vnímán jako někdo, kdo tu rozhodně má být a ví, co dělá. Sebevědomí je klíčové."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Temporary Social Invisibility", "Charges": 1 },
+      "cs": { "Účinek": "Dočasná Sociální Neviditelnost", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Allows user to bypass one social barrier or checkpoint unquestioned"],
+      "cs": ["Umožňuje uživateli projít jednou sociální bariérou nebo kontrolním bodem bez otázek"]
+    },
+    "itemEffectDescription": { "en": "1-Use Authority Mustache", "cs": "1x Autoritativní Knír" },
+    "level": 35,
+    "buyPrice": 533,
+    "sellPrice": 160
+  },
+  {
+    "id": "cc_ag_scapegoat_generator_l36",
+    "name": {
+      "en": "Pocket Scapegoat Generator",
+      "cs": "Kapesní Generátor Obětních Beránků"
+    },
+    "description": {
+      "en": "Generates a small, holographic, and incredibly clumsy creature that will immediately take the blame for any recent disaster before tripping over its own feet and vanishing. Incredibly useful for performance reviews.",
+      "cs": "Generuje malé, holografické a neuvěřitelně nešikovné stvoření, které okamžitě převezme vinu za jakoukoli nedávnou katastrofu, než zakopne o vlastní nohy a zmizí. Neuvěřitelně užitečné pro hodnocení výkonu."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Absolves user of one failure", "Charges": 1 },
+      "cs": { "Účinek": "Zprostí uživatele jedné chyby", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Completely negates the social/bureaucratic fallout of one mistake"],
+      "cs": ["Zcela neguje sociální/byrokratický dopad jedné chyby"]
+    },
+    "itemEffectDescription": { "en": "1-Use Scapegoat", "cs": "1x Obětní Beránek" },
+    "level": 36,
+    "buyPrice": 591,
+    "sellPrice": 177
+  },
+  {
+    "id": "cc_ag_comforting_lie_l37",
+    "name": {
+      "en": "A Single, Comforting Lie",
+      "cs": "Jedna, Uklidňující Lež"
+    },
+    "description": {
+      "en": "Contained in this small vial is the concept of a single, perfectly crafted lie, such as 'Your paperwork is all in order' or 'Of course this is supposed to be on fire'. When released, it convinces everyone nearby of its truth for a few critical moments.",
+      "cs": "V této malé lahvičce je obsažen koncept jediné, dokonale vytvořené lži, jako například 'Vaše papírování je vše v pořádku' nebo 'Samozřejmě, že to má hořet'. Po uvolnění přesvědčí všechny v okolí o její pravdivosti na několik kritických okamžiků."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Temporary Mass Deception", "Charges": 1 },
+      "cs": { "Účinek": "Dočasný Masový Klam", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Makes everyone in an area believe one falsehood for a short time"],
+      "cs": ["Přiměje všechny v oblasti na krátkou dobu uvěřit jedné nepravdě"]
+    },
+    "itemEffectDescription": { "en": "1-Use Comforting Lie", "cs": "1x Uklidňující Lež" },
+    "level": 37,
+    "buyPrice": 625,
+    "sellPrice": 188
+  },
+  {
+    "id": "cc_ag_reset_button_sticker_l38",
+    "name": {
+      "en": "Reset Button Sticker",
+      "cs": "Nálepka s Resetovacím Tlačítkem"
+    },
+    "description": {
+      "en": "A sticker that looks exactly like a reset button. Placing it on a malfunctioning piece of technology has a surprising chance of convincing the machine to turn itself off and on again, which fixes roughly 60% of all cosmic problems.",
+      "cs": "Nálepka, která vypadá přesně jako resetovací tlačítko. Její umístění na porouchaný kus technologie má překvapivou šanci přesvědčit stroj, aby se sám vypnul a znovu zapnul, což opraví zhruba 60 % všech kosmických problémů."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Chance to Fix Malfunctioning Tech", "Charges": 1 },
+      "cs": { "Účinek": "Šance Opravit Porouchanou Techniku", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Attempts to fix one technological problem via the placebo effect"],
+      "cs": ["Pokouší se opravit jeden technologický problém pomocí placebo efektu"]
+    },
+    "itemEffectDescription": { "en": "1-Use Tech Placebo", "cs": "1x Technické Placebo" },
+    "level": 38,
+    "buyPrice": 654,
+    "sellPrice": 196
+  },
+  {
+    "id": "cc_ag_personal_spotlight_l39",
+    "name": {
+      "en": "Dramatic Personal Spotlight",
+      "cs": "Dramatický Osobní Reflektor"
+    },
+    "description": {
+      "en": "A pocket device that, when activated, bathes the user in a single, dramatic shaft of light from an unseen source, complete with faint choral music. Instantly makes any statement or action seem incredibly important and profound.",
+      "cs": "Kapesní zařízení, které po aktivaci zalije uživatele jediným, dramatickým paprskem světla z neviditelného zdroje, doplněným o slabou sborovou hudbu. Okamžitě činí jakékoli prohlášení nebo akci neuvěřitelně důležitou a hlubokou."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Boosts Social Influence", "Charges": 1 },
+      "cs": { "Účinek": "Zvyšuje Sociální Vliv", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Greatly increases the perceived importance of one action or statement"],
+      "cs": ["Výrazně zvyšuje vnímanou důležitost jedné akce nebo prohlášení"]
+    },
+    "itemEffectDescription": { "en": "1-Use Dramatic Spotlight", "cs": "1x Dramatický Reflektor" },
+    "level": 39,
+    "buyPrice": 711,
+    "sellPrice": 213
+  },
+  {
+    "id": "cc_ag_phoenix_down_l40",
+    "name": {
+      "en": "Sub-Etha Phoenix Down (Slightly Used)",
+      "cs": "Pod-Éterické Fénixovo Peří (Lehce Použité)"
+    },
+    "description": {
+      "en": "A single, shimmering feather that promises to restore a 'knocked-out' system or being to functionality. This one looks a bit frayed. It will probably work. No guarantees against unintended side-effects, like sentience or a sudden urge to nest.",
+      "cs": "Jediné, třpytivé pírko, které slibuje obnovení funkčnosti 'vyřazeného' systému nebo bytosti. Toto vypadá trochu roztřepeně. Pravděpodobně bude fungovat. Žádné záruky proti nezamýšleným vedlejším účinkům, jako je vnímavost nebo náhlá touha hnízdit."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Restores One Incapacitated Target", "Charges": 1 },
+      "cs": { "Účinek": "Obnoví Jeden Zneschopněný Cíl", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Revives one broken machine or unconscious entity", "Unpredictable side-effects"],
+      "cs": ["Oživí jeden rozbitý stroj nebo nevědomou entitu", "Nepředvídatelné vedlejší účinky"]
+    },
+    "itemEffectDescription": { "en": "1-Use Unreliable Revive", "cs": "1x Nespolehlivé Oživení" },
+    "level": 40,
+    "buyPrice": 742,
+    "sellPrice": 223
+  },
+  {
+    "id": "cc_ag_macguffin_detector_l41",
+    "name": {
+      "en": "MacGuffin Detector",
+      "cs": "Detektor MacGuffinů"
+    },
+    "description": {
+      "en": "This device beeps with increasing intensity as it gets closer to an object of arbitrary but critical narrative importance. It is, by its very nature, only useful once per major crisis.",
+      "cs": "Toto zařízení pípá se zvyšující se intenzitou, jak se přibližuje k předmětu libovolné, ale kritické narativní důležitosti. Je ze své podstaty užitečné pouze jednou za velkou krizi."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Locates the Plot Device", "Charges": 1 },
+      "cs": { "Účinek": "Lokalizuje Dějové Zařízení", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Points the way to the one thing you need to solve the current problem"],
+      "cs": ["Ukazuje cestu k jedné věci, kterou potřebujete k vyřešení současného problému"]
+    },
+    "itemEffectDescription": { "en": "1-Use Plot Finder", "cs": "1x Hledač Děje" },
+    "level": 41,
+    "buyPrice": 795,
+    "sellPrice": 239
+  },
+  {
+    "id": "cc_ag_reverse_psychology_grenade_l42",
+    "name": {
+      "en": "Reverse Psychology Grenade",
+      "cs": "Granát Reverzní Psychologie"
+    },
+    "description": {
+      "en": "Does not explode. Instead, it releases a wave of energy that makes everyone in the vicinity passionately want to do the opposite of what they're told. 'Don't press that self-destruct button!' suddenly becomes very persuasive.",
+      "cs": "Neexploduje. Místo toho uvolní vlnu energie, která přiměje všechny v okolí vášnivě chtít dělat opak toho, co se jim řekne. 'Nemačkejte to autodestrukční tlačítko!' se náhle stane velmi přesvědčivým."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Forces Opposite Action", "Charges": 1 },
+      "cs": { "Účinek": "Vynutí Opačnou Akci", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Can be used to trick entities into performing a desired action"],
+      "cs": ["Lze použít k oklamání entit, aby provedly požadovanou akci"]
+    },
+    "itemEffectDescription": { "en": "1-Use Reverse Psychology", "cs": "1x Reverzní Psychologie" },
+    "level": 42,
+    "buyPrice": 855,
+    "sellPrice": 257
+  },
+  {
+    "id": "cc_ag_ignore_me_field_l43",
+    "name": {
+      "en": "Low-Priority Field Emitter",
+      "cs": "Emitor Pole Nízké Priority"
+    },
+    "description": {
+      "en": "Generates a field that makes the user seem terribly uninteresting and not worth anyone's time. Perfect for walking through hostile territory unnoticed, as long as you don't do anything exciting, like sneeze.",
+      "cs": "Generuje pole, díky kterému se uživatel zdá strašně nezajímavý a nestojí za ničí čas. Ideální pro procházení nepřátelským územím bez povšimnutí, pokud neuděláte nic vzrušujícího, jako například kýchnutí."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Temporary Inconspicuousness", "Charges": 1 },
+      "cs": { "Účinek": "Dočasná Nenápadnost", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Allows user to be ignored by hostiles for a short time"],
+      "cs": ["Umožňuje uživateli být ignorován nepřáteli na krátkou dobu"]
+    },
+    "itemEffectDescription": { "en": "1-Use 'Ignore Me' Field", "cs": "1x Pole 'Ignoruj Mě'" },
+    "level": 43,
+    "buyPrice": 891,
+    "sellPrice": 267
+  },
+  {
+    "id": "cc_ag_portable_committee_l44",
+    "name": {
+      "en": "Instant Committee-in-a-Box",
+      "cs": "Okamžitý Výbor v Krabici"
+    },
+    "description": {
+      "en": "When opened, this box releases five holographic, deeply bureaucratic entities who will immediately form a committee to discuss the current problem. This will solve nothing, but will delay any catastrophic event for at least an hour while they argue about the meeting's minutes.",
+      "cs": "Po otevření tato krabice uvolní pět holografických, hluboce byrokratických entit, které okamžitě vytvoří výbor k projednání současného problému. To nic nevyřeší, ale zdrží jakoukoli katastrofickou událost alespoň o hodinu, zatímco se budou hádat o zápisu ze schůze."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Major Time Stall", "Charges": 1 },
+      "cs": { "Účinek": "Velké Získání Času", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Delays any impending doom by entangling it in bureaucracy"],
+      "cs": ["Zdrží jakoukoli hrozící zkázu tím, že ji zaplete do byrokracie"]
+    },
+    "itemEffectDescription": { "en": "1-Use Committee Stall", "cs": "1x Zdržení Výborem" },
+    "level": 44,
+    "buyPrice": 968,
+    "sellPrice": 290
+  },
+  {
+    "id": "cc_ag_retcon_can_l45",
+    "name": {
+      "en": "Can of Concentrated Retcon",
+      "cs": "Plechovka Koncentrovaného Retconu"
+    },
+    "description": {
+      "en": "A highly volatile substance that, when applied to a single past event, makes it so that it never happened. Or maybe it happened differently. The user doesn't get to choose. Has a tendency to make continuity... fluid.",
+      "cs": "Vysoce nestabilní látka, která po aplikaci na jednu minulou událost zařídí, že se nikdy nestala. Nebo se možná stala jinak. Uživatel si nemůže vybrat. Má tendenci činit kontinuitu... tekutou."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Erases One Minor Mistake (Unreliably)", "Charges": 1 },
+      "cs": { "Účinek": "Vymaže Jednu Menší Chybu (Nespolehlivě)", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Alters one recent event in an unpredictable way"],
+      "cs": ["Změní jednu nedávnou událost nepředvídatelným způsobem"]
+    },
+    "itemEffectDescription": { "en": "1-Use Retcon Can", "cs": "1x Plechovka Retconu" },
+    "level": 45,
+    "buyPrice": 1000,
+    "sellPrice": 300
+  },
+  {
+    "id": "cc_ag_emergency_soundtrack_l46",
+    "name": {
+      "en": "Emergency Soundtrack Generator",
+      "cs": "Generátor Nouzového Soundtracku"
+    },
+    "description": {
+      "en": "This device analyzes the current situation and generates a powerful, swelling orchestral score appropriate to the moment. Doesn't actually help, but makes everything feel much more epic and important, boosting Gumption through sheer cinematic power.",
+      "cs": "Toto zařízení analyzuje současnou situaci a generuje silnou, gradující orchestrální hudbu vhodnou pro daný okamžik. Ve skutečnosti nepomáhá, ale všechno se zdá mnohem epičtější a důležitější, což zvyšuje Kuráž čirou filmovou silou."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Epic Willpower Recovery", "Charges": 1 },
+      "cs": { "Účinek": "Epická Obnova Vůle", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Grants a massive, one-time boost to Gumption"],
+      "cs": ["Poskytuje masivní, jednorázové posílení Kuráže"]
+    },
+    "itemEffectDescription": { "en": "1-Use Epic Gumption Restore", "cs": "1x Epická Obnova Kuráže" },
+    "level": 46,
+    "buyPrice": 1188,
+    "sellPrice": 356
+  },
+  {
+    "id": "cc_ag_universal_remote_l47",
+    "name": {
+      "en": "The Universal Remote",
+      "cs": "Univerzální Ovladač"
+    },
+    "description": {
+      "en": "A remote with a bewildering array of buttons like 'Pause', 'Mute', and 'Change Channel'. It's rumored to work on anything. Once. After which it will only work on cheap, off-brand toasters.",
+      "cs": "Ovladač s matoucím polem tlačítek jako 'Pauza', 'Ztlumit' a 'Změnit Kanál'. Říká se, že funguje na cokoli. Jednou. Poté bude fungovat pouze na levné, neznačkové toustovače."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Manipulate One Target/Event", "Charges": 1 },
+      "cs": { "Účinek": "Manipulovat Jeden Cíl/Událost", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Allows one powerful, specific manipulation of a target or situation"],
+      "cs": ["Umožňuje jednu silnou, specifickou manipulaci s cílem nebo situací"]
+    },
+    "itemEffectDescription": { "en": "1-Use Universal Remote", "cs": "1x Univerzální Ovladač" },
+    "level": 47,
+    "buyPrice": 1515,
+    "sellPrice": 454
+  },
+  {
+    "id": "cc_ag_deus_ex_machina_premium_l48",
+    "name": {
+      "en": "Deus ex Machina (Premium Subscription)",
+      "cs": "Deus ex Machina (Prémiové Předplatné)"
+    },
+    "description": {
+      "en": "An upgraded version. Summons a convenient and surprisingly competent solution to a major problem. The solution will work flawlessly, but will require you to fill out Form 47-Beta-Zeta in quintuplicate and attend a mandatory webinar on synergy.",
+      "cs": "Vylepšená verze. Přivolá pohodlné a překvapivě kompetentní řešení velkého problému. Řešení bude fungovat bezchybně, ale bude vyžadovat, abyste vyplnili formulář 47-Beta-Zeta v pěti kopiích a zúčastnili se povinného webináře o synergii."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Solves One Problem, Creates Bureaucracy", "Charges": 1 },
+      "cs": { "Účinek": "Vyřeší Jeden Problém, Vytvoří Byrokracii", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Resolves one major obstacle at the cost of future administrative hassle"],
+      "cs": ["Vyřeší jednu velkou překážku za cenu budoucích administrativních potíží"]
+    },
+    "itemEffectDescription": { "en": "1-Use Competent Solution", "cs": "1x Kompetentní Řešení" },
+    "level": 48,
+    "buyPrice": 1920,
+    "sellPrice": 576
+  },
+  {
+    "id": "cc_ag_authorial_intent_l49",
+    "name": {
+      "en": "Vial of Authorial Intent",
+      "cs": "Lahvička Autorského Záměru"
+    },
+    "description": {
+      "en": "A shimmering, potent liquid. When consumed, it allows the user to understand the true purpose or meaning behind one bizarre, universe-scale cosmic joke, granting a moment of profound, liberating clarity. The clarity fades, but the memory remains.",
+      "cs": "Třpytivá, silná tekutina. Po konzumaci umožňuje uživateli pochopit skutečný účel nebo význam jednoho bizarního, vesmírného kosmického vtipu, což poskytuje okamžik hlubokého, osvobozujícího prozření. Prozření pomine, ale vzpomínka zůstane."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Grants Cosmic Insight", "Charges": 1 },
+      "cs": { "Účinek": "Poskytuje Kosmický Vhled", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Permanently clarifies one major mystery of the universe"],
+      "cs": ["Trvale objasní jedno velké tajemství vesmíru"]
+    },
+    "itemEffectDescription": { "en": "1-Use Cosmic Insight", "cs": "1x Kosmický Vhled" },
+    "level": 49,
+    "buyPrice": 2400,
+    "sellPrice": 720
+  },
+  {
+    "id": "cc_ag_button_that_does_something_l50",
+    "name": {
+      "en": "The Button That Does... Something",
+      "cs": "Tlačítko, Které Dělá... Něco"
+    },
+    "description": {
+      "en": "The pinnacle of Custodial R&D. This button, salvaged from a decommissioned reality-editor, is not labeled. Its effects are unknown, unpredictable, and almost certainly catastrophic. The Union advises against its use, which is probably the best endorsement it could have.",
+      "cs": "Vrchol údržbářského V&V. Toto tlačítko, zachráněné z vyřazeného editoru reality, není označeno. Jeho účinky jsou neznámé, nepředvídatelné a téměř jistě katastrofální. Unie jeho použití nedoporučuje, což je pravděpodobně nejlepší doporučení, jaké mohlo dostat."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Catastrophic Reality Edit", "Charges": 1 },
+      "cs": { "Účinek": "Katastrofická Editace Reality", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Causes a major, chaotic, and reality-altering event. Good luck."],
+      "cs": ["Způsobí velkou, chaotickou a realitu měnící událost. Hodně štěstí."]
+    },
+    "itemEffectDescription": { "en": "1-Use Reality Edit", "cs": "1x Editace Reality" },
+    "level": 50,
+    "buyPrice": 2970,
+    "sellPrice": 891
+  }
+]

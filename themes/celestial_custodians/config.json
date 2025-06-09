@@ -273,7 +273,7 @@
             "default_ai_value": 2,
             "level_mappings": {
               "1": { "display_text_key": "weirdness_index_mundane_celestial_custodians", "css_class": "status-ok" },
-              "2": { "display_text_key": "weirdness_index_peculiar_celestial_custodians", "css_class": "status-caution-mild" },
+              "2": { "display_text_key": "weirdness_index_peculiar_celestial_custodians", "css_class": "status-warning" },
               "3": { "display_text_key": "weirdness_index_bizarre_celestial_custodians", "css_class": "status-warning" },
               "4": { "display_text_key": "weirdness_index_reality_bending_celestial_custodians", "css_class": "status-danger" }
             },

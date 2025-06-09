@@ -24,9 +24,26 @@
     "resilience": "tooltip_attr_resilience_echo_sleuths"
   },
   "equipment_slots": {
-    "anchor_artifact": "equipped_anchor_effect",
-    "mnemosyne_device": "equipped_flask_effect",
-    "cognitive_tool": "equipped_resolver_effect"
+    "anchor_artifact": {
+      "id": "equipped_anchor_effect",
+      "type": "static",
+      "reward_trigger": "anchor_artifact_reward_trigger"
+    },
+    "mnemosyne_device": {
+      "id": "equipped_flask_effect",
+      "type": "static",
+      "reward_trigger": "mnemosyne_device_reward_trigger"
+    },
+    "cognitive_tool": {
+      "id": "equipped_resolver_effect",
+      "type": "consumable",
+      "reward_trigger": "cognitive_tool_reward_trigger"
+    },
+    "lucidity_shards_currency": {
+      "id": "lucidity_shards",
+      "type": "money",
+      "reward_trigger": "lucidity_shards_reward_trigger"
+    }
   },
   "dashboard_config_ref": "echo_sleuths",
   "dashboard_config": {
@@ -38,7 +55,7 @@
         "type": "meter",
         "meter_type": "health",
         "maps_to_run_stat": "currentIntegrity",
-        "short_description": "Psychic Cohesion. The ability to maintain a stable physical and mental form against reality-bending forces. Reaching zero means dissolution."
+        "short_description": "Psychic Cohesion. The Sleuth's ability to maintain form against reality-bending forces. Zero means dissolution into Reverie's static."
       },
       {
         "id": "willpower",
@@ -47,7 +64,7 @@
         "type": "meter",
         "meter_type": "stamina",
         "maps_to_run_stat": "currentWillpower",
-        "short_description": "Focus. A spendable resource for using advanced mental techniques, deconstructing paradoxes, or shaping dream-memories."
+        "short_description": "Focus. Mental energy for advanced techniques, deconstructing paradoxes, or shaping dream-memories. Recovers through reflection or specific insights."
       },
       {
         "id": "aptitude",
@@ -55,7 +72,7 @@
         "tooltip_key": "tooltip_attr_aptitude_echo_sleuths",
         "type": "number",
         "maps_to_run_stat": "aptitude",
-        "short_description": "Deduction. A measure of skill in reasoning, investigation, and spotting inconsistencies in reality's narrative."
+        "short_description": "Deductive Acumen. Skill in investigation, reasoning, and spotting inconsistencies. Influences how well enigmas are unraveled."
       },
       {
         "id": "resilience",
@@ -63,7 +80,7 @@
         "tooltip_key": "tooltip_attr_resilience_echo_sleuths",
         "type": "number",
         "maps_to_run_stat": "resilience",
-        "short_description": "Mental Fortitude. The ability to passively resist psychic intrusions, conceptual attacks, and reality-flux events."
+        "short_description": "Cognitive Anchor. Passive ability to filter psychic noise and resist the corrosive effects of Reverie's truths."
       },
       {
         "id": "strain_level",
@@ -108,10 +125,10 @@
           {
             "id": "lucidity_shards",
             "label_key": "label_lucidity_shards_echo_sleuths",
-            "type": "text",
+            "type": "number_text",
             "default_value_key": "default_lucidity_shards_echo_sleuths",
             "must_translate": true,
-            "short_description": "Measure of the Sleuth's fleeting moments of profound clarity or focus. This should be a thematic, descriptive phrase reflecting quantity or quality. These might be spent or gained through narrative events."
+            "short_description": "Fragments of focused insight or solidified memories. Used as a form of currency or to fuel potent cognitive abilities."
           },
           {
             "id": "existential_weight_level",

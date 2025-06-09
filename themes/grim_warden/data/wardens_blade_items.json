@@ -12,17 +12,23 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 3
+        "Damage": 24
       },
       "cs": {
-        "Zranění": 3
+        "Zranění": 24
       }
     },
     "abilities": {
       "en": [],
       "cs": []
     },
-    "level": 1
+    "itemEffectDescription": {
+      "en": "24 Dmg",
+      "cs": "24 Zraň"
+    },
+    "level": 1,
+    "buyPrice": 23,
+    "sellPrice": 7
   },
   {
     "id": "gw_blade_scavenged_hatchet_l2",
@@ -37,17 +43,23 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 5
+        "Damage": 26
       },
       "cs": {
-        "Zranění": 5
+        "Zranění": 26
       }
     },
     "abilities": {
       "en": [],
       "cs": []
     },
-    "level": 2
+    "itemEffectDescription": {
+      "en": "26 Dmg",
+      "cs": "26 Zraň"
+    },
+    "level": 2,
+    "buyPrice": 42,
+    "sellPrice": 13
   },
   {
     "id": "gw_blade_notched_shortsword_l3",
@@ -62,10 +74,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 7
+        "Damage": 31
       },
       "cs": {
-        "Zranění": 7
+        "Zranění": 31
       }
     },
     "abilities": {
@@ -76,7 +88,13 @@
         "Zubaté Ostří"
       ]
     },
-    "level": 3
+    "itemEffectDescription": {
+      "en": "31 Dmg, Jagged Edge",
+      "cs": "31 Zraň, Zubaté Ostří"
+    },
+    "level": 3,
+    "buyPrice": 53,
+    "sellPrice": 16
   },
   {
     "id": "gw_blade_militia_spearhead_l4",
@@ -91,10 +109,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 9
+        "Damage": 30
       },
       "cs": {
-        "Zranění": 9
+        "Zranění": 30
       }
     },
     "abilities": {
@@ -105,7 +123,13 @@
         "Průrazný"
       ]
     },
-    "level": 4
+    "itemEffectDescription": {
+      "en": "30 Dmg, Piercing",
+      "cs": "30 Zraň, Průrazný"
+    },
+    "level": 4,
+    "buyPrice": 65,
+    "sellPrice": 20
   },
   {
     "id": "gw_blade_barbed_cleaver_l5",
@@ -120,10 +144,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 11
+        "Damage": 33
       },
       "cs": {
-        "Zranění": 11
+        "Zranění": 33
       }
     },
     "abilities": {
@@ -134,7 +158,13 @@
         "Způsobuje Krvácení"
       ]
     },
-    "level": 5
+    "itemEffectDescription": {
+      "en": "33 Dmg, Bleed",
+      "cs": "33 Zraň, Krvácení"
+    },
+    "level": 5,
+    "buyPrice": 83,
+    "sellPrice": 25
   },
   {
     "id": "gw_blade_grim_falchion_l6",
@@ -149,10 +179,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 13
+        "Damage": 36
       },
       "cs": {
-        "Zranění": 13
+        "Zranění": 36
       }
     },
     "abilities": {
@@ -163,7 +193,13 @@
         "Těžký Úder"
       ]
     },
-    "level": 6
+    "itemEffectDescription": {
+      "en": "36 Dmg, Heavy Blow",
+      "cs": "36 Zraň, Těžký Úder"
+    },
+    "level": 6,
+    "buyPrice": 91,
+    "sellPrice": 27
   },
   {
     "id": "gw_blade_witchfinder_stiletto_l7",
@@ -178,10 +214,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 14
+        "Damage": 41
       },
       "cs": {
-        "Zranění": 14
+        "Zranění": 41
       }
     },
     "abilities": {
@@ -192,7 +228,13 @@
         "Přesný Úder"
       ]
     },
-    "level": 7
+    "itemEffectDescription": {
+      "en": "41 Dmg, Precise Strike",
+      "cs": "41 Zraň, Přesný Úder"
+    },
+    "level": 7,
+    "buyPrice": 122,
+    "sellPrice": 37
   },
   {
     "id": "gw_blade_bone_saw_l8",
@@ -207,10 +249,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 16
+        "Damage": 47
       },
       "cs": {
-        "Zranění": 16
+        "Zranění": 47
       }
     },
     "abilities": {
@@ -221,7 +263,13 @@
         "Těžké Rány"
       ]
     },
-    "level": 8
+    "itemEffectDescription": {
+      "en": "47 Dmg, Grievous Wounds",
+      "cs": "47 Zraň, Těžké Rány"
+    },
+    "level": 8,
+    "buyPrice": 150,
+    "sellPrice": 45
   },
   {
     "id": "gw_blade_silvered_arming_sword_l9",
@@ -236,10 +284,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 19
+        "Damage": 45
       },
       "cs": {
-        "Zranění": 19
+        "Zranění": 45
       }
     },
     "abilities": {
@@ -250,7 +298,13 @@
         "Stříbrné Ostří"
       ]
     },
-    "level": 9
+    "itemEffectDescription": {
+      "en": "45 Dmg, Silvered",
+      "cs": "45 Zraň, Postříbřené"
+    },
+    "level": 9,
+    "buyPrice": 154,
+    "sellPrice": 46
   },
   {
     "id": "gw_blade_wardens_resolve_l10",
@@ -265,10 +319,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 22
+        "Damage": 51
       },
       "cs": {
-        "Zranění": 22
+        "Zranění": 51
       }
     },
     "abilities": {
@@ -281,7 +335,13 @@
         "Efektivní proti Zkaženým"
       ]
     },
-    "level": 10
+    "itemEffectDescription": {
+      "en": "51 Dmg, True Strike, vs Blighted",
+      "cs": "51 Zraň, Jistý Úder, vs Zkažení"
+    },
+    "level": 10,
+    "buyPrice": 185,
+    "sellPrice": 56
   },
   {
     "id": "gw_blade_ritual_athame_l11",
@@ -296,10 +356,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 24
+        "Damage": 54
       },
       "cs": {
-        "Zranění": 24
+        "Zranění": 54
       }
     },
     "abilities": {
@@ -310,7 +370,13 @@
         "Dotek Ducha"
       ]
     },
-    "level": 11
+    "itemEffectDescription": {
+      "en": "54 Dmg, Ghost Touch",
+      "cs": "54 Zraň, Dotek Ducha"
+    },
+    "level": 11,
+    "buyPrice": 243,
+    "sellPrice": 73
   },
   {
     "id": "gw_blade_executioners_hand_axe_l12",
@@ -325,10 +391,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 27
+        "Damage": 65
       },
       "cs": {
-        "Zranění": 27
+        "Zranění": 65
       }
     },
     "abilities": {
@@ -339,7 +405,13 @@
         "Ochromující Úder"
       ]
     },
-    "level": 12
+    "itemEffectDescription": {
+      "en": "65 Dmg, Crippling Blow",
+      "cs": "65 Zraň, Ochromující Úder"
+    },
+    "level": 12,
+    "buyPrice": 265,
+    "sellPrice": 79
   },
   {
     "id": "gw_blade_serrated_longknife_l13",
@@ -354,10 +426,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 30
+        "Damage": 60
       },
       "cs": {
-        "Zranění": 30
+        "Zranění": 60
       }
     },
     "abilities": {
@@ -368,7 +440,13 @@
         "Přetrvávající Krvácení"
       ]
     },
-    "level": 13
+    "itemEffectDescription": {
+      "en": "60 Dmg, Persistent Bleed",
+      "cs": "60 Zraň, Trvalé Krvácení"
+    },
+    "level": 13,
+    "buyPrice": 349,
+    "sellPrice": 105
   },
   {
     "id": "gw_blade_cold_iron_bastard_sword_l14",
@@ -383,10 +461,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 33
+        "Damage": 67
       },
       "cs": {
-        "Zranění": 33
+        "Zranění": 67
       }
     },
     "abilities": {
@@ -397,7 +475,13 @@
         "Zhouba Víl"
       ]
     },
-    "level": 14
+    "itemEffectDescription": {
+      "en": "67 Dmg, Fey Bane",
+      "cs": "67 Zraň, Zhouba Víl"
+    },
+    "level": 14,
+    "buyPrice": 381,
+    "sellPrice": 114
   },
   {
     "id": "gw_blade_shadowfang_l15",
@@ -412,10 +496,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 37
+        "Damage": 70
       },
       "cs": {
-        "Zranění": 37
+        "Zranění": 70
       }
     },
     "abilities": {
@@ -428,7 +512,13 @@
         "Vzbuzuje strach"
       ]
     },
-    "level": 15
+    "itemEffectDescription": {
+      "en": "70 Dmg, Shadow Strike, Fear",
+      "cs": "70 Zraň, Stínový Úder, Strach"
+    },
+    "level": 15,
+    "buyPrice": 414,
+    "sellPrice": 124
   },
   {
     "id": "gw_blade_blightbane_l16",
@@ -443,10 +533,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 40
+        "Damage": 89
       },
       "cs": {
-        "Zranění": 40
+        "Zranění": 89
       }
     },
     "abilities": {
@@ -457,7 +547,13 @@
         "Silná proti Zkaženým"
       ]
     },
-    "level": 16
+    "itemEffectDescription": {
+      "en": "89 Dmg, Potent vs Blighted",
+      "cs": "89 Zraň, Silná vs Zkažení"
+    },
+    "level": 16,
+    "buyPrice": 444,
+    "sellPrice": 133
   },
   {
     "id": "gw_blade_soulcleaver_l17",
@@ -472,10 +568,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 42
+        "Damage": 81
       },
       "cs": {
-        "Zranění": 42
+        "Zranění": 81
       }
     },
     "abilities": {
@@ -486,7 +582,13 @@
         "Uvadající Dotek"
       ]
     },
-    "level": 17
+    "itemEffectDescription": {
+      "en": "81 Dmg, Withering Touch",
+      "cs": "81 Zraň, Uvadající Dotek"
+    },
+    "level": 17,
+    "buyPrice": 535,
+    "sellPrice": 161
   },
   {
     "id": "gw_blade_ancient_ward_axe_l18",
@@ -501,10 +603,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 46
+        "Damage": 98
       },
       "cs": {
-        "Zranění": 46
+        "Zranění": 98
       }
     },
     "abilities": {
@@ -515,7 +617,13 @@
         "Drtí Zbroj"
       ]
     },
-    "level": 18
+    "itemEffectDescription": {
+      "en": "98 Dmg, Armor Sunder",
+      "cs": "98 Zraň, Drtí Zbroj"
+    },
+    "level": 18,
+    "buyPrice": 551,
+    "sellPrice": 165
   },
   {
     "id": "gw_blade_moon_sickle_l19",
@@ -530,10 +638,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 49
+        "Damage": 113
       },
       "cs": {
-        "Zranění": 49
+        "Zranění": 113
       }
     },
     "abilities": {
@@ -544,7 +652,13 @@
         "Noční Síla"
       ]
     },
-    "level": 19
+    "itemEffectDescription": {
+      "en": "113 Dmg, Nocturnal Might",
+      "cs": "113 Zraň, Noční Síla"
+    },
+    "level": 19,
+    "buyPrice": 724,
+    "sellPrice": 217
   },
   {
     "id": "gw_blade_griefs_edge_l20",
@@ -559,10 +673,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 53
+        "Damage": 109
       },
       "cs": {
-        "Zranění": 53
+        "Zranění": 109
       }
     },
     "abilities": {
@@ -575,7 +689,13 @@
         "Menší Odsávání Života"
       ]
     },
-    "level": 20
+    "itemEffectDescription": {
+      "en": "109 Dmg, Despair Aura, Life Leech",
+      "cs": "109 Zraň, Aura Zoufalství, Ods. Života"
+    },
+    "level": 20,
+    "buyPrice": 776,
+    "sellPrice": 233
   },
   {
     "id": "gw_blade_thorned_reaver_l21",
@@ -590,10 +710,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 57
+        "Damage": 128
       },
       "cs": {
-        "Zranění": 57
+        "Zranění": 128
       }
     },
     "abilities": {
@@ -604,7 +724,13 @@
         "Požírač Zkázy"
       ]
     },
-    "level": 21
+    "itemEffectDescription": {
+      "en": "128 Dmg, Blight Devourer",
+      "cs": "128 Zraň, Požírač Zkázy"
+    },
+    "level": 21,
+    "buyPrice": 789,
+    "sellPrice": 237
   },
   {
     "id": "gw_blade_oathkeeper_l22",
@@ -619,10 +745,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 61
+        "Damage": 128
       },
       "cs": {
-        "Zranění": 61
+        "Zranění": 128
       }
     },
     "abilities": {
@@ -633,7 +759,13 @@
         "Nezlomná Vůle"
       ]
     },
-    "level": 22
+    "itemEffectDescription": {
+      "en": "128 Dmg, Unbreakable Will",
+      "cs": "128 Zraň, Nezlomná Vůle"
+    },
+    "level": 22,
+    "buyPrice": 880,
+    "sellPrice": 264
   },
   {
     "id": "gw_blade_whispering_scythe_l23",
@@ -648,10 +780,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 65
+        "Damage": 150
       },
       "cs": {
-        "Zranění": 65
+        "Zranění": 150
       }
     },
     "abilities": {
@@ -664,7 +796,13 @@
         "Široký Oblouk"
       ]
     },
-    "level": 23
+    "itemEffectDescription": {
+      "en": "150 Dmg, Soul Chill, Sweeping Arc",
+      "cs": "150 Zraň, Mrazivá Duše, Široký Oblouk"
+    },
+    "level": 23,
+    "buyPrice": 966,
+    "sellPrice": 290
   },
   {
     "id": "gw_blade_abyssal_shard_l24",
@@ -679,10 +817,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 69
+        "Damage": 164
       },
       "cs": {
-        "Zranění": 69
+        "Zranění": 164
       }
     },
     "abilities": {
@@ -695,7 +833,13 @@
         "Znepokojivá Aura"
       ]
     },
-    "level": 24
+    "itemEffectDescription": {
+      "en": "164 Dmg, Void Strike, Unsettling Aura",
+      "cs": "164 Zraň, Úder Prázdnoty, Znepokojivá Aura"
+    },
+    "level": 24,
+    "buyPrice": 990,
+    "sellPrice": 297
   },
   {
     "id": "gw_blade_veridian_bane_l25",
@@ -710,10 +854,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 75
+        "Damage": 169
       },
       "cs": {
-        "Zranění": 75
+        "Zranění": 169
       }
     },
     "abilities": {
@@ -726,7 +870,13 @@
         "Očista Zkázy"
       ]
     },
-    "level": 25
+    "itemEffectDescription": {
+      "en": "169 Dmg, Annihilating Blow, Blight Purge",
+      "cs": "169 Zraň, Ničivý Úder, Očista Zkázy"
+    },
+    "level": 25,
+    "buyPrice": 1109,
+    "sellPrice": 333
   },
   {
     "id": "gw_blade_starforged_dirk_l26",
@@ -741,10 +891,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 79
+        "Damage": 194
       },
       "cs": {
-        "Zranění": 79
+        "Zranění": 194
       }
     },
     "abilities": {
@@ -755,7 +905,13 @@
         "Nebeský Jas"
       ]
     },
-    "level": 26
+    "itemEffectDescription": {
+      "en": "194 Dmg, Celestial Radiance",
+      "cs": "194 Zraň, Nebeský Jas"
+    },
+    "level": 26,
+    "buyPrice": 1215,
+    "sellPrice": 365
   },
   {
     "id": "gw_blade_heartseeker_rapier_l27",
@@ -770,10 +926,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 83
+        "Damage": 212
       },
       "cs": {
-        "Zranění": 83
+        "Zranění": 212
       }
     },
     "abilities": {
@@ -784,7 +940,13 @@
         "Smrtící Průraz"
       ]
     },
-    "level": 27
+    "itemEffectDescription": {
+      "en": "212 Dmg, Fatal Puncture",
+      "cs": "212 Zraň, Smrtící Průraz"
+    },
+    "level": 27,
+    "buyPrice": 1334,
+    "sellPrice": 400
   },
   {
     "id": "gw_blade_runed_war_cleaver_l28",
@@ -799,10 +961,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 88
+        "Damage": 204
       },
       "cs": {
-        "Zranění": 88
+        "Zranění": 204
       }
     },
     "abilities": {
@@ -813,7 +975,13 @@
         "Runami Posílený Sek"
       ]
     },
-    "level": 28
+    "itemEffectDescription": {
+      "en": "204 Dmg, Rune-Empowered Cleave",
+      "cs": "204 Zraň, Runový Sek"
+    },
+    "level": 28,
+    "buyPrice": 1690,
+    "sellPrice": 507
   },
   {
     "id": "gw_blade_ghostflame_falchion_l29",
@@ -828,10 +996,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 93
+        "Damage": 249
       },
       "cs": {
-        "Zranění": 93
+        "Zranění": 249
       }
     },
     "abilities": {
@@ -844,7 +1012,13 @@
         "Děsivá Přítomnost"
       ]
     },
-    "level": 29
+    "itemEffectDescription": {
+      "en": "249 Dmg, Spectral Burn, Terrifying",
+      "cs": "249 Zraň, Spektrální Popálení, Děsivá"
+    },
+    "level": 29,
+    "buyPrice": 1785,
+    "sellPrice": 536
   },
   {
     "id": "gw_blade_dragonstooth_blade_l30",
@@ -859,10 +1033,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 100
+        "Damage": 272
       },
       "cs": {
-        "Zranění": 100
+        "Zranění": 272
       }
     },
     "abilities": {
@@ -875,7 +1049,13 @@
         "Drtič Zbroje"
       ]
     },
-    "level": 30
+    "itemEffectDescription": {
+      "en": "272 Dmg, Wyrm's Fury, Armor Shatter",
+      "cs": "272 Zraň, Dračí Zuřivost, Drtí Zbroj"
+    },
+    "level": 30,
+    "buyPrice": 1852,
+    "sellPrice": 556
   },
   {
     "id": "gw_blade_obsidian_heart_l31",
@@ -890,10 +1070,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 105
+        "Damage": 269
       },
       "cs": {
-        "Zranění": 105
+        "Zranění": 269
       }
     },
     "abilities": {
@@ -904,7 +1084,13 @@
         "Zmrazení Duše"
       ]
     },
-    "level": 31
+    "itemEffectDescription": {
+      "en": "269 Dmg, Soul Freeze",
+      "cs": "269 Zraň, Zmrazí Duši"
+    },
+    "level": 31,
+    "buyPrice": 1968,
+    "sellPrice": 590
   },
   {
     "id": "gw_blade_vindicator_l32",
@@ -919,10 +1105,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 111
+        "Damage": 272
       },
       "cs": {
-        "Zranění": 111
+        "Zranění": 272
       }
     },
     "abilities": {
@@ -933,7 +1119,13 @@
         "Svaté Udeření"
       ]
     },
-    "level": 32
+    "itemEffectDescription": {
+      "en": "272 Dmg, Holy Smite",
+      "cs": "272 Zraň, Svaté Udeření"
+    },
+    "level": 32,
+    "buyPrice": 2221,
+    "sellPrice": 666
   },
   {
     "id": "gw_blade_corruptors_thorn_l33",
@@ -948,10 +1140,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 117
+        "Damage": 331
       },
       "cs": {
-        "Zranění": 117
+        "Zranění": 331
       }
     },
     "abilities": {
@@ -962,7 +1154,13 @@
         "Infuze Zkázy"
       ]
     },
-    "level": 33
+    "itemEffectDescription": {
+      "en": "331 Dmg, Blight Infusion",
+      "cs": "331 Zraň, Infuze Zkázy"
+    },
+    "level": 33,
+    "buyPrice": 2235,
+    "sellPrice": 671
   },
   {
     "id": "gw_blade_ancestral_ward_l34",
@@ -977,10 +1175,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 123
+        "Damage": 361
       },
       "cs": {
-        "Zranění": 123
+        "Zranění": 361
       }
     },
     "abilities": {
@@ -991,7 +1189,13 @@
         "Duchovní Štít"
       ]
     },
-    "level": 34
+    "itemEffectDescription": {
+      "en": "361 Dmg, Spirit Shield",
+      "cs": "361 Zraň, Duchovní Štít"
+    },
+    "level": 34,
+    "buyPrice": 2341,
+    "sellPrice": 702
   },
   {
     "id": "gw_blade_nightmare_reaver_l35",
@@ -1006,10 +1210,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 130
+        "Damage": 368
       },
       "cs": {
-        "Zranění": 130
+        "Zranění": 368
       }
     },
     "abilities": {
@@ -1022,7 +1226,13 @@
         "Fantomové Rány"
       ]
     },
-    "level": 35
+    "itemEffectDescription": {
+      "en": "368 Dmg, Evokes Terror, Phantasmal Wounds",
+      "cs": "368 Zraň, Vyvolává Hrůzu, Fantomové Rány"
+    },
+    "level": 35,
+    "buyPrice": 2577,
+    "sellPrice": 773
   },
   {
     "id": "gw_blade_sunstone_edge_l36",
@@ -1037,10 +1247,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 137
+        "Damage": 415
       },
       "cs": {
-        "Zranění": 137
+        "Zranění": 415
       }
     },
     "abilities": {
@@ -1051,7 +1261,13 @@
         "Sluneční Erupce"
       ]
     },
-    "level": 36
+    "itemEffectDescription": {
+      "en": "415 Dmg, Solar Flare",
+      "cs": "415 Zraň, Sluneční Erupce"
+    },
+    "level": 36,
+    "buyPrice": 2984,
+    "sellPrice": 895
   },
   {
     "id": "gw_blade_void_carver_l37",
@@ -1066,10 +1282,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 145
+        "Damage": 444
       },
       "cs": {
-        "Zranění": 145
+        "Zranění": 444
       }
     },
     "abilities": {
@@ -1080,7 +1296,13 @@
         "Dimenziální Trhlina"
       ]
     },
-    "level": 37
+    "itemEffectDescription": {
+      "en": "444 Dmg, Dimensional Rift",
+      "cs": "444 Zraň, Dimenziální Trhlina"
+    },
+    "level": 37,
+    "buyPrice": 2901,
+    "sellPrice": 870
   },
   {
     "id": "gw_blade_bloodmoon_scythe_l38",
@@ -1095,10 +1317,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 153
+        "Damage": 432
       },
       "cs": {
-        "Zranění": 153
+        "Zranění": 432
       }
     },
     "abilities": {
@@ -1111,7 +1333,13 @@
         "Rostoucí Hrůza"
       ]
     },
-    "level": 38
+    "itemEffectDescription": {
+      "en": "432 Dmg, Essence Drain, Growing Dread",
+      "cs": "432 Zraň, Ods. Esence, Rostoucí Hrůza"
+    },
+    "level": 38,
+    "buyPrice": 3511,
+    "sellPrice": 1053
   },
   {
     "id": "gw_blade_storm_herald_l39",
@@ -1126,10 +1354,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 162
+        "Damage": 521
       },
       "cs": {
-        "Zranění": 162
+        "Zranění": 521
       }
     },
     "abilities": {
@@ -1140,7 +1368,13 @@
         "Úder Blesku"
       ]
     },
-    "level": 39
+    "itemEffectDescription": {
+      "en": "521 Dmg, Lightning Strike",
+      "cs": "521 Zraň, Úder Blesku"
+    },
+    "level": 39,
+    "buyPrice": 3535,
+    "sellPrice": 1061
   },
   {
     "id": "gw_blade_last_rites_l40",
@@ -1155,10 +1389,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 175
+        "Damage": 570
       },
       "cs": {
-        "Zranění": 175
+        "Zranění": 570
       }
     },
     "abilities": {
@@ -1171,7 +1405,13 @@
         "Ignoruje Obranu"
       ]
     },
-    "level": 40
+    "itemEffectDescription": {
+      "en": "570 Dmg, Merciless Execution, Ignores Defenses",
+      "cs": "570 Zraň, Nemilosrdná Poprava, Ignoruje Obranu"
+    },
+    "level": 40,
+    "buyPrice": 3803,
+    "sellPrice": 1141
   },
   {
     "id": "gw_blade_hope_sever_l41",
@@ -1186,10 +1426,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 183
+        "Damage": 639
       },
       "cs": {
-        "Zranění": 183
+        "Zranění": 639
       }
     },
     "abilities": {
@@ -1200,7 +1440,13 @@
         "Zdrcující Zoufalství"
       ]
     },
-    "level": 41
+    "itemEffectDescription": {
+      "en": "639 Dmg, Crushing Despair",
+      "cs": "639 Zraň, Zdrcující Zoufalství"
+    },
+    "level": 41,
+    "buyPrice": 4252,
+    "sellPrice": 1276
   },
   {
     "id": "gw_blade_silent_requiem_l42",
@@ -1215,10 +1461,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 192
+        "Damage": 612
       },
       "cs": {
-        "Zranění": 192
+        "Zranění": 612
       }
     },
     "abilities": {
@@ -1231,7 +1477,13 @@
         "Neviděný Úder"
       ]
     },
-    "level": 42
+    "itemEffectDescription": {
+      "en": "612 Dmg, Silent Death, Unseen Strike",
+      "cs": "612 Zraň, Tichá Smrt, Neviděný Úder"
+    },
+    "level": 42,
+    "buyPrice": 4518,
+    "sellPrice": 1355
   },
   {
     "id": "gw_blade_balefire_brand_l43",
@@ -1246,10 +1498,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 201
+        "Damage": 709
       },
       "cs": {
-        "Zranění": 201
+        "Zranění": 709
       }
     },
     "abilities": {
@@ -1260,7 +1512,13 @@
         "Pohlcující Zhoubný Oheň"
       ]
     },
-    "level": 43
+    "itemEffectDescription": {
+      "en": "709 Dmg, Consuming Balefire",
+      "cs": "709 Zraň, Pohlcující Zhoubný Oheň"
+    },
+    "level": 43,
+    "buyPrice": 4353,
+    "sellPrice": 1306
   },
   {
     "id": "gw_blade_time_splinter_l44",
@@ -1275,10 +1533,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 210
+        "Damage": 737
       },
       "cs": {
-        "Zranění": 210
+        "Zranění": 737
       }
     },
     "abilities": {
@@ -1289,7 +1547,13 @@
         "Časový Rozklad"
       ]
     },
-    "level": 44
+    "itemEffectDescription": {
+      "en": "737 Dmg, Temporal Decay",
+      "cs": "737 Zraň, Časový Rozklad"
+    },
+    "level": 44,
+    "buyPrice": 4478,
+    "sellPrice": 1343
   },
   {
     "id": "gw_blade_terminus_est_l45",
@@ -1304,10 +1568,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 225
+        "Damage": 829
       },
       "cs": {
-        "Zranění": 225
+        "Zranění": 829
       }
     },
     "abilities": {
@@ -1320,7 +1584,13 @@
         "Šance na Okamžité Zabíjení"
       ]
     },
-    "level": 45
+    "itemEffectDescription": {
+      "en": "829 Dmg, Final Judgment, Instant Kill Chance",
+      "cs": "829 Zraň, Poslední Soud, Šance Okamž. Zab."
+    },
+    "level": 45,
+    "buyPrice": 5304,
+    "sellPrice": 1591
   },
   {
     "id": "gw_blade_umbra_cleaver_l46",
@@ -1335,10 +1605,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 235
+        "Damage": 932
       },
       "cs": {
-        "Zranění": 235
+        "Zranění": 932
       }
     },
     "abilities": {
@@ -1351,7 +1621,13 @@
         "Způsobuje Zoufalství"
       ]
     },
-    "level": 46
+    "itemEffectDescription": {
+      "en": "932 Dmg, Shadow Rend, Despair",
+      "cs": "932 Zraň, Trhlina Stínů, Zoufalství"
+    },
+    "level": 46,
+    "buyPrice": 6543,
+    "sellPrice": 1963
   },
   {
     "id": "gw_blade_frostfang_heirloom_l47",
@@ -1366,10 +1642,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 246
+        "Damage": 997
       },
       "cs": {
-        "Zranění": 246
+        "Zranění": 997
       }
     },
     "abilities": {
@@ -1382,7 +1658,13 @@
         "Činí Zbroj Křehkou"
       ]
     },
-    "level": 47
+    "itemEffectDescription": {
+      "en": "997 Dmg, Deep Freeze, Brittle Armor",
+      "cs": "997 Zraň, Hluboký Mráz, Křehká Zbroj"
+    },
+    "level": 47,
+    "buyPrice": 7578,
+    "sellPrice": 2273
   },
   {
     "id": "gw_blade_soulfire_greatsword_l48",
@@ -1397,10 +1679,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 258
+        "Damage": 1139
       },
       "cs": {
-        "Zranění": 258
+        "Zranění": 1139
       }
     },
     "abilities": {
@@ -1413,7 +1695,13 @@
         "Děsivý Žár"
       ]
     },
-    "level": 48
+    "itemEffectDescription": {
+      "en": "1139 Dmg, Soulflame Burst, Fearsome Heat",
+      "cs": "1139 Zraň, Výbuch Duš. Plamene, Děsivý Žár"
+    },
+    "level": 48,
+    "buyPrice": 9934,
+    "sellPrice": 2980
   },
   {
     "id": "gw_blade_starless_night_l49",
@@ -1428,10 +1716,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 270
+        "Damage": 1109
       },
       "cs": {
-        "Zranění": 270
+        "Zranění": 1109
       }
     },
     "abilities": {
@@ -1444,7 +1732,13 @@
         "Lamač Vůle"
       ]
     },
-    "level": 49
+    "itemEffectDescription": {
+      "en": "1109 Dmg, Consuming Darkness, Will Breaker",
+      "cs": "1109 Zraň, Pohlcující Temnota, Lámač Vůle"
+    },
+    "level": 49,
+    "buyPrice": 11059,
+    "sellPrice": 3318
   },
   {
     "id": "gw_blade_echo_of_the_first_warden_l50",
@@ -1459,10 +1753,10 @@
     "itemType": "wardens_blade",
     "attributes": {
       "en": {
-        "Damage": 300
+        "Damage": 1269
       },
       "cs": {
-        "Zranění": 300
+        "Zranění": 1269
       }
     },
     "abilities": {
@@ -1477,6 +1771,12 @@
         "Aura Odhodlání"
       ]
     },
-    "level": 50
+    "itemEffectDescription": {
+      "en": "1269 Dmg, Primal Ward, True Death, Resolve Aura",
+      "cs": "1269 Zraň, Prvotní Ochrana, Pravá Smrt, Aura Odhodlání"
+    },
+    "level": 50,
+    "buyPrice": 15825,
+    "sellPrice": 4748
   }
 ]

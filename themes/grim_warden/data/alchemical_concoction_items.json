@@ -28,7 +28,13 @@
         "Uklidňuje žaludek"
       ]
     },
-    "level": 1
+    "itemEffectDescription": {
+      "en": "Minor Restore, Soothes Ailments",
+      "cs": "Menší Obnova, Uklidňuje Neduhy"
+    },
+    "level": 1,
+    "buyPrice": 5,
+    "sellPrice": 2
   },
   {
     "id": "gw_ac_gravemossinfusion_l02",
@@ -61,7 +67,13 @@
         "Snižuje námahu očí"
       ]
     },
-    "level": 2
+    "itemEffectDescription": {
+      "en": "+1 Sight (Fleeting), Sharpens Sight",
+      "cs": "+1 Zrak (Prch.), Zostřuje Zrak"
+    },
+    "level": 2,
+    "buyPrice": 8,
+    "sellPrice": 2
   },
   {
     "id": "gw_ac_nettleburnsalve_l03",
@@ -94,7 +106,13 @@
         "Krátké zvýšení výdrže"
       ]
     },
-    "level": 3
+    "itemEffectDescription": {
+      "en": "+1 Stamina (Brief), Invigorates",
+      "cs": "+1 Výdrž (Krát.), Povzbuzuje"
+    },
+    "level": 3,
+    "buyPrice": 11,
+    "sellPrice": 3
   },
   {
     "id": "gw_ac_shadowslipelixir_l04",
@@ -127,7 +145,13 @@
         "Pomáhá menšímu plížení"
       ]
     },
-    "level": 4
+    "itemEffectDescription": {
+      "en": "Muffles Sound (Brief), Aids Stealth",
+      "cs": "Tlumí Zvuk (Krát.), Pomáhá Plížení"
+    },
+    "level": 4,
+    "buyPrice": 14,
+    "sellPrice": 4
   },
   {
     "id": "gw_ac_bloodwortpotion_l05",
@@ -158,7 +182,13 @@
         "Zastavuje krvácení"
       ]
     },
-    "level": 5
+    "itemEffectDescription": {
+      "en": "Moderate Restore, Mends Wounds",
+      "cs": "Střední Obnova, Sceluje Rány"
+    },
+    "level": 5,
+    "buyPrice": 17,
+    "sellPrice": 5
   },
   {
     "id": "gw_ac_stoneskintonic_l06",
@@ -191,7 +221,13 @@
         "Odolává menším nárazům"
       ]
     },
-    "level": 6
+    "itemEffectDescription": {
+      "en": "+1 Phys Def (Brief), Hardens Skin",
+      "cs": "+1 Fyz Obr (Krát.), Zpevňuje Kůži"
+    },
+    "level": 6,
+    "buyPrice": 20,
+    "sellPrice": 6
   },
   {
     "id": "gw_ac_foxgloveextract_l07",
@@ -224,7 +260,13 @@
         "Zvyšuje ostražitost"
       ]
     },
-    "level": 7
+    "itemEffectDescription": {
+      "en": "+1 Reflex (Brief), Heightens Alertness",
+      "cs": "+1 Reflex (Krát.), Zvyš. Ostražitost"
+    },
+    "level": 7,
+    "buyPrice": 24,
+    "sellPrice": 7
   },
   {
     "id": "gw_ac_nightseyeelixir_l08",
@@ -257,7 +299,13 @@
         "Zlepšuje noční vnímání"
       ]
     },
-    "level": 8
+    "itemEffectDescription": {
+      "en": "Low-Light Vision (Mod.), Improves Night Perc.",
+      "cs": "Vidění v Šeru (Stř.), Zlepš. Noční Vním."
+    },
+    "level": 8,
+    "buyPrice": 28,
+    "sellPrice": 8
   },
   {
     "id": "gw_ac_wardingincense_l09",
@@ -290,7 +338,13 @@
         "Lehce odpuzuje negativní energii"
       ]
     },
-    "level": 9
+    "itemEffectDescription": {
+      "en": "Minor Hex Ward (Brief), Repels Neg. Energy",
+      "cs": "Ochr. Menší Kletby (Krát.), Odpuz. Neg. Energii"
+    },
+    "level": 9,
+    "buyPrice": 32,
+    "sellPrice": 10
   },
   {
     "id": "gw_ac_ironbiletonic_l10",
@@ -323,7 +377,13 @@
         "Posiluje proti toxinům"
       ]
     },
-    "level": 10
+    "itemEffectDescription": {
+      "en": "Minor Poison Resist (Mod.), Fortifies vs Toxins",
+      "cs": "Menší Odol. Jedu (Stř.), Posiluje vs Toxiny"
+    },
+    "level": 10,
+    "buyPrice": 36,
+    "sellPrice": 11
   },
   {
     "id": "gw_ac_mendersdraught_l11",
@@ -354,7 +414,13 @@
         "Urychluje přirozené hojení"
       ]
     },
-    "level": 11
+    "itemEffectDescription": {
+      "en": "Strong Restore, Heals Mod. Wounds",
+      "cs": "Silná Obnova, Léčí Stř. Rány"
+    },
+    "level": 11,
+    "buyPrice": 45,
+    "sellPrice": 14
   },
   {
     "id": "gw_ac_steadfastphiltre_l12",
@@ -387,7 +453,13 @@
         "Odolává účinkům strachu"
       ]
     },
-    "level": 12
+    "itemEffectDescription": {
+      "en": "+1 Resolve (Mod.), Resists Fear",
+      "cs": "+1 Odhodlání (Stř.), Odol. Strachu"
+    },
+    "level": 12,
+    "buyPrice": 54,
+    "sellPrice": 16
   },
   {
     "id": "gw_ac_ghostfootoil_l13",
@@ -420,7 +492,13 @@
         "Eliminuje hluk kroků"
       ]
     },
-    "level": 13
+    "itemEffectDescription": {
+      "en": "Silent Movement (Mod.), Eliminates Footfall",
+      "cs": "Tichý Pohyb (Stř.), Eliminuje Kroky"
+    },
+    "level": 13,
+    "buyPrice": 64,
+    "sellPrice": 19
   },
   {
     "id": "gw_ac_wyrmwoodbrew_l14",
@@ -455,7 +533,13 @@
         "Odolává slabým magickým neduhům"
       ]
     },
-    "level": 14
+    "itemEffectDescription": {
+      "en": "Cleanse Toxin, Weak Magic Resist (Brief)",
+      "cs": "Čistí Toxiny, Slabá Mag. Odol. (Krát.)"
+    },
+    "level": 14,
+    "buyPrice": 74,
+    "sellPrice": 22
   },
   {
     "id": "gw_ac_farsightinfusion_l15",
@@ -488,7 +572,13 @@
         "Zaměřuje se na vzdálené objekty"
       ]
     },
-    "level": 15
+    "itemEffectDescription": {
+      "en": "Telescopic Vision (Brief), Focus Distant",
+      "cs": "Teleskop. Vidění (Krát.), Zaměř. Vzdálené"
+    },
+    "level": 15,
+    "buyPrice": 85,
+    "sellPrice": 26
   },
   {
     "id": "gw_ac_giantsbloadelixir_l16",
@@ -521,7 +611,13 @@
         "Vyvolává mírnou agresi"
       ]
     },
-    "level": 16
+    "itemEffectDescription": {
+      "en": "+1 Str (Brief), Minor Aggression",
+      "cs": "+1 Síla (Krát.), Mírná Agrese"
+    },
+    "level": 16,
+    "buyPrice": 97,
+    "sellPrice": 29
   },
   {
     "id": "gw_ac_spectralshroudmist_l17",
@@ -554,7 +650,13 @@
         "Těžší vizuálně zaměřit"
       ]
     },
-    "level": 17
+    "itemEffectDescription": {
+      "en": "+1 Vis. Evasion (Brief), Blurs Form",
+      "cs": "+1 Viz. Vyhýb. (Krát.), Rozmaz. Podobu"
+    },
+    "level": 17,
+    "buyPrice": 108,
+    "sellPrice": 32
   },
   {
     "id": "gw_ac_coldirondraught_l18",
@@ -587,7 +689,13 @@
         "Chrání před vlivy z jiného světa"
       ]
     },
-    "level": 18
+    "itemEffectDescription": {
+      "en": "Fae Magic Resist (Mod.), Wards Otherworldly",
+      "cs": "Odol. Magii Víl (Stř.), Chrání Jinosvět."
+    },
+    "level": 18,
+    "buyPrice": 120,
+    "sellPrice": 36
   },
   {
     "id": "gw_ac_gravewardensbrew_l19",
@@ -620,7 +728,13 @@
         "Vyzařuje mrazivou přítomnost"
       ]
     },
-    "level": 19
+    "itemEffectDescription": {
+      "en": "Undead Fear Aura (Mod.), Chilling Presence",
+      "cs": "Aura Strachu Nemrt. (Stř.), Mrazivá Přítom."
+    },
+    "level": 19,
+    "buyPrice": 133,
+    "sellPrice": 40
   },
   {
     "id": "gw_ac_panaceaofsoot_l20",
@@ -651,7 +765,13 @@
         "Velká obnova vitality"
       ]
     },
-    "level": 20
+    "itemEffectDescription": {
+      "en": "Major Restore, Heals Grievous Wounds",
+      "cs": "Velká Obnova, Léčí Těžké Rány"
+    },
+    "level": 20,
+    "buyPrice": 147,
+    "sellPrice": 44
   },
   {
     "id": "gw_ac_shadowmeldelixir_l21",
@@ -684,7 +804,13 @@
         "Vyžaduje nehybnost"
       ]
     },
-    "level": 21
+    "itemEffectDescription": {
+      "en": "Shadow Invisibility (Still, Mod.)",
+      "cs": "Stínová Nevid. (V Klidu, Stř.)"
+    },
+    "level": 21,
+    "buyPrice": 161,
+    "sellPrice": 48
   },
   {
     "id": "gw_ac_heartofstonepotion_l22",
@@ -719,7 +845,13 @@
         "Mírně zpomaluje reakce"
       ]
     },
-    "level": 22
+    "itemEffectDescription": {
+      "en": "+2 Phys Def, -1 Reflex (Mod.), Slows React.",
+      "cs": "+2 Fyz Obr, -1 Reflex (Stř.), Zpom. Reakce"
+    },
+    "level": 22,
+    "buyPrice": 176,
+    "sellPrice": 53
   },
   {
     "id": "gw_ac_bansheeskeentonic_l23",
@@ -752,7 +884,13 @@
         "Detekuje slabé zvuky"
       ]
     },
-    "level": 23
+    "itemEffectDescription": {
+      "en": "+2 Hearing (Mod.), Supernatural Hearing",
+      "cs": "+2 Sluch (Stř.), Nadpřiroz. Sluch"
+    },
+    "level": 23,
+    "buyPrice": 192,
+    "sellPrice": 58
   },
   {
     "id": "gw_ac_soulfireelixir_l24",
@@ -787,7 +925,13 @@
         "Odhání menší duchy"
       ]
     },
-    "level": 24
+    "itemEffectDescription": {
+      "en": "+2 Fear Resist, Minor Spirit Ward (Mod.)",
+      "cs": "+2 Odol. Strachu, Menší Ochr. Duchů (Stř.)"
+    },
+    "level": 24,
+    "buyPrice": 210,
+    "sellPrice": 63
   },
   {
     "id": "gw_ac_witchbanebrew_l25",
@@ -820,7 +964,13 @@
         "Rozptyluje menší kletby"
       ]
     },
-    "level": 25
+    "itemEffectDescription": {
+      "en": "+2 Curse Resist (Long), Dispels Hexes",
+      "cs": "+2 Odol. Kletbám (Dlouhé), Rozpt. Kletby"
+    },
+    "level": 25,
+    "buyPrice": 230,
+    "sellPrice": 69
   },
   {
     "id": "gw_ac_wraithformdraught_l26",
@@ -855,7 +1005,13 @@
         "Šance vyhnout se fyzickým útokům"
       ]
     },
-    "level": 26
+    "itemEffectDescription": {
+      "en": "Part. Incorporeal (Brief), Evade Attacks",
+      "cs": "Část. Nehmot. (Krát.), Vyhne se Útokům"
+    },
+    "level": 26,
+    "buyPrice": 250,
+    "sellPrice": 75
   },
   {
     "id": "gw_ac_berserkersrage_l27",
@@ -894,7 +1050,13 @@
         "Zatemňuje úsudek"
       ]
     },
-    "level": 27
+    "itemEffectDescription": {
+      "en": "+2 Str, +2 Pain Tol., -1 Judg. (Mod.)",
+      "cs": "+2 Síla, +2 Tol. Bol., -1 Úsudek (Stř.)"
+    },
+    "level": 27,
+    "buyPrice": 280,
+    "sellPrice": 84
   },
   {
     "id": "gw_ac_truesightelixir_l28",
@@ -929,7 +1091,13 @@
         "Detekuje neviditelnost"
       ]
     },
-    "level": 28
+    "itemEffectDescription": {
+      "en": "True Sight (Mod.), See Illusions/Spirits",
+      "cs": "Pravé Vidění (Stř.), Vidí Iluze/Duchy"
+    },
+    "level": 28,
+    "buyPrice": 310,
+    "sellPrice": 93
   },
   {
     "id": "gw_ac_lichbaneoil_l29",
@@ -962,7 +1130,13 @@
         "Ofenzivně posiluje životní sílu"
       ]
     },
-    "level": 29
+    "itemEffectDescription": {
+      "en": "Major Undead Dmg Aura (Brief)",
+      "cs": "Velká Aura Zraň. Nemrt. (Krát.)"
+    },
+    "level": 29,
+    "buyPrice": 340,
+    "sellPrice": 102
   },
   {
     "id": "gw_ac_draughtofheroism_l30",
@@ -1001,7 +1175,13 @@
         "Inspiruje blízké spojence"
       ]
     },
-    "level": 30
+    "itemEffectDescription": {
+      "en": "Major Courage & Prowess, Inspires Allies (Mod.)",
+      "cs": "Velká Odvaha & Zdatnost, Inspiruje Spoj. (Stř.)"
+    },
+    "level": 30,
+    "buyPrice": 370,
+    "sellPrice": 111
   },
   {
     "id": "gw_ac_regenserenity_l31",
@@ -1036,7 +1216,13 @@
         "Navozuje hluboký klid"
       ]
     },
-    "level": 31
+    "itemEffectDescription": {
+      "en": "Major Regen, Induces Calm (Long)",
+      "cs": "Velká Regen., Navozuje Klid (Dlouhé)"
+    },
+    "level": 31,
+    "buyPrice": 400,
+    "sellPrice": 120
   },
   {
     "id": "gw_ac_quicksilverstep_l32",
@@ -1071,7 +1257,13 @@
         "Dramaticky zvyšuje hbitost"
       ]
     },
-    "level": 32
+    "itemEffectDescription": {
+      "en": "Major Speed & Agility (Mod.)",
+      "cs": "Velká Rychl. & Hbitost (Stř.)"
+    },
+    "level": 32,
+    "buyPrice": 435,
+    "sellPrice": 131
   },
   {
     "id": "gw_ac_mindfortress_l33",
@@ -1106,7 +1298,13 @@
         "Imunita vůči kouzlům a iluzím"
       ]
     },
-    "level": 33
+    "itemEffectDescription": {
+      "en": "Absolute Mental Fortitude, Illusion/Charm Immune (Long)",
+      "cs": "Abs. Ment. Pevnost, Imun. Iluze/Kouzla (Dlouhé)"
+    },
+    "level": 33,
+    "buyPrice": 470,
+    "sellPrice": 141
   },
   {
     "id": "gw_ac_dragonbreathdraught_l34",
@@ -1139,7 +1337,13 @@
         "Extrémně horké"
       ]
     },
-    "level": 34
+    "itemEffectDescription": {
+      "en": "Fire Breath (1 Charge)",
+      "cs": "Ohnivý Dech (1 Náboj)"
+    },
+    "level": 34,
+    "buyPrice": 505,
+    "sellPrice": 152
   },
   {
     "id": "gw_ac_unseenpassage_l35",
@@ -1172,7 +1376,13 @@
         "Zranitelný magickou detekcí"
       ]
     },
-    "level": 35
+    "itemEffectDescription": {
+      "en": "Complete Invisibility (Mod.)",
+      "cs": "Úplná Neviditelnost (Stř.)"
+    },
+    "level": 35,
+    "buyPrice": 540,
+    "sellPrice": 162
   },
   {
     "id": "gw_ac_adamantineskin_l36",
@@ -1205,7 +1415,13 @@
         "Nesmírné snížení fyzického poškození"
       ]
     },
-    "level": 36
+    "itemEffectDescription": {
+      "en": "+3 Phys Def (Long), Adamantine Skin",
+      "cs": "+3 Fyz Obr (Dlouhé), Adamant. Kůže"
+    },
+    "level": 36,
+    "buyPrice": 580,
+    "sellPrice": 174
   },
   {
     "id": "gw_ac_spiritwalkelixir_l37",
@@ -1242,7 +1458,13 @@
         "Fyzické tělo zůstává zranitelné"
       ]
     },
-    "level": 37
+    "itemEffectDescription": {
+      "en": "Astral Projection (Brief), Body Vulnerable",
+      "cs": "Astrální Projekce (Krát.), Tělo Zranitelné"
+    },
+    "level": 37,
+    "buyPrice": 620,
+    "sellPrice": 186
   },
   {
     "id": "gw_ac_wardensvigil_l38",
@@ -1281,7 +1503,13 @@
         "Zahání veškerou únavu"
       ]
     },
-    "level": 38
+    "itemEffectDescription": {
+      "en": "Major Senses, Pretern. Aware, Banish Fatigue (Ext.)",
+      "cs": "Velké Smysly, Nadpřir. Vním., Odstr. Únavu (Prodl.)"
+    },
+    "level": 38,
+    "buyPrice": 660,
+    "sellPrice": 198
   },
   {
     "id": "gw_ac_chronosliptincture_l39",
@@ -1318,7 +1546,13 @@
         "Krátký, intenzivní účinek"
       ]
     },
-    "level": 39
+    "itemEffectDescription": {
+      "en": "Slows Time, Superhuman React. (V. Brief)",
+      "cs": "Zpom. Čas, Nadlid. Reakce (V. Krát.)"
+    },
+    "level": 39,
+    "buyPrice": 700,
+    "sellPrice": 210
   },
   {
     "id": "gw_ac_phoenixashphial_l40",
@@ -1355,7 +1589,13 @@
         "Krátce zahalen éterickým ohněm"
       ]
     },
-    "level": 40
+    "itemEffectDescription": {
+      "en": "Revives (Near Death), Full Restore, Ethereal Fire",
+      "cs": "Oživí (Blízko Smrti), Plná Obnova, Éter. Oheň"
+    },
+    "level": 40,
+    "buyPrice": 750,
+    "sellPrice": 225
   },
   {
     "id": "gw_ac_voidessence_l41",
@@ -1392,7 +1632,13 @@
         "Ochabuje emoční reakce"
       ]
     },
-    "level": 41
+    "itemEffectDescription": {
+      "en": "Major Energy/Magic Resist, Dulls Emotions (Long)",
+      "cs": "Velká Energ./Mag. Odol., Tlumí Emoce (Dlouhé)"
+    },
+    "level": 41,
+    "buyPrice": 800,
+    "sellPrice": 240
   },
   {
     "id": "gw_ac_shapeshifterheart_l42",
@@ -1427,7 +1673,13 @@
         "Zpočátku obtížné ovládání"
       ]
     },
-    "level": 42
+    "itemEffectDescription": {
+      "en": "Polymorph: Beast (Mod.), Difficult Control",
+      "cs": "Proměna: Šelma (Stř.), Obtížné Ovlád."
+    },
+    "level": 42,
+    "buyPrice": 850,
+    "sellPrice": 255
   },
   {
     "id": "gw_ac_golemsbloodpotion_l43",
@@ -1462,7 +1714,13 @@
         "Extrémně pomalý pohyb a reakce"
       ]
     },
-    "level": 43
+    "itemEffectDescription": {
+      "en": "Near-Abs. Phys. Invuln., Major Speed Penalty (Mod.)",
+      "cs": "Téměř Abs. Fyz. Nezran., Velký Postih Rychl. (Stř.)"
+    },
+    "level": 43,
+    "buyPrice": 900,
+    "sellPrice": 270
   },
   {
     "id": "gw_ac_truthserumprime_l44",
@@ -1497,7 +1755,13 @@
         "Vlastní použití propůjčuje mentální jasnost"
       ]
     },
-    "level": 44
+    "itemEffectDescription": {
+      "en": "Compels Truth (Target), Self: Clarity",
+      "cs": "Vynucuje Pravdu (Cíl), Sobě: Jasnost"
+    },
+    "level": 44,
+    "buyPrice": 960,
+    "sellPrice": 288
   },
   {
     "id": "gw_ac_elixiroffateweaving_l45",
@@ -1532,7 +1796,13 @@
         "Účinky jsou chaotické a nepředvídatelné"
       ]
     },
-    "level": 45
+    "itemEffectDescription": {
+      "en": "Minor Probability Influence (Chaotic, V. Brief)",
+      "cs": "Menší Vliv Pravděp. (Chaotické, V. Krát.)"
+    },
+    "level": 45,
+    "buyPrice": 1020,
+    "sellPrice": 306
   },
   {
     "id": "gw_ac_celestialdew_l46",
@@ -1565,7 +1835,13 @@
         "Navrací původní duchovní a fyzické zdraví"
       ]
     },
-    "level": 46
+    "itemEffectDescription": {
+      "en": "Absolute Purification, Full Restore",
+      "cs": "Absolutní Očištění, Plná Obnova"
+    },
+    "level": 46,
+    "buyPrice": 1200,
+    "sellPrice": 360
   },
   {
     "id": "gw_ac_timelessform_l47",
@@ -1602,7 +1878,13 @@
         "Nemůže interagovat během nadčasovosti"
       ]
     },
-    "level": 47
+    "itemEffectDescription": {
+      "en": "Temporal Stasis (Brief), No Interaction",
+      "cs": "Časová Stáze (Krát.), Bez Interakce"
+    },
+    "level": 47,
+    "buyPrice": 1530,
+    "sellPrice": 459
   },
   {
     "id": "gw_ac_primordialmight_l48",
@@ -1641,7 +1923,13 @@
         "Dočasné aspekty bestiální transformace"
       ]
     },
-    "level": 48
+    "itemEffectDescription": {
+      "en": "Colossal Str & Res, Terror Aura (Brief)",
+      "cs": "Kolos. Síla & Odol., Aura Děsu (Krát.)"
+    },
+    "level": 48,
+    "buyPrice": 1900,
+    "sellPrice": 570
   },
   {
     "id": "gw_ac_godsbanebrew_l49",
@@ -1680,7 +1968,13 @@
         "Extrémně nestabilní, vysoké osobní riziko"
       ]
     },
-    "level": 49
+    "itemEffectDescription": {
+      "en": "Divine Invuln., Dmg vs Divine (Unstable, V. Brief)",
+      "cs": "Božská Nezran., Zraň. vs Božské (Nestabilní, V. Krát.)"
+    },
+    "level": 49,
+    "buyPrice": 2420,
+    "sellPrice": 726
   },
   {
     "id": "gw_ac_elixirofascent_l50",
@@ -1719,6 +2013,12 @@
         "Způsobuje nesmírnou fyzickou a duchovní zátěž"
       ]
     },
-    "level": 50
+    "itemEffectDescription": {
+      "en": "Peak Potential, Demigod State (Brief), Immense Strain",
+      "cs": "Vrch. Potenc., Stav Poloboha (Krát.), Nesmír. Zátěž"
+    },
+    "level": 50,
+    "buyPrice": 3000,
+    "sellPrice": 900
   }
 ]

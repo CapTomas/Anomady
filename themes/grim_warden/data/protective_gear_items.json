@@ -12,10 +12,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 3
+        "Armor": 20
       },
       "cs": {
-        "Zbroj": 3
+        "Zbroj": 20
       }
     },
     "abilities": {
@@ -26,7 +26,13 @@
         "Lehce tlumí zvuk"
       ]
     },
-    "level": 1
+    "itemEffectDescription": {
+      "en": "20 Arm, Dampens Sound",
+      "cs": "20 Zbr, Tlumí Zvuk"
+    },
+    "level": 1,
+    "buyPrice": 25,
+    "sellPrice": 8
   },
   {
     "id": "gw_pg_hidepatches_l02",
@@ -41,10 +47,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 4
+        "Armor": 34
       },
       "cs": {
-        "Zbroj": 4
+        "Zbroj": 34
       }
     },
     "abilities": {
@@ -55,7 +61,13 @@
         "Menší odolnost proti chladu"
       ]
     },
-    "level": 2
+    "itemEffectDescription": {
+      "en": "34 Arm, Minor Cold Resist",
+      "cs": "34 Zbr, Menší Odol. Chladu"
+    },
+    "level": 2,
+    "buyPrice": 40,
+    "sellPrice": 12
   },
   {
     "id": "gw_pg_rustedlinks_l03",
@@ -70,10 +82,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 5
+        "Armor": 48
       },
       "cs": {
-        "Zbroj": 5
+        "Zbroj": 48
       }
     },
     "abilities": {
@@ -84,7 +96,13 @@
         "Odrazuje havěť"
       ]
     },
-    "level": 3
+    "itemEffectDescription": {
+      "en": "48 Arm, Deters Vermin",
+      "cs": "48 Zbr, Odrazuje Havěť"
+    },
+    "level": 3,
+    "buyPrice": 55,
+    "sellPrice": 17
   },
   {
     "id": "gw_pg_thicktunic_l04",
@@ -99,10 +117,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 6
+        "Armor": 62
       },
       "cs": {
-        "Zbroj": 6
+        "Zbroj": 62
       }
     },
     "abilities": {
@@ -113,7 +131,13 @@
         "Poskytuje teplo"
       ]
     },
-    "level": 4
+    "itemEffectDescription": {
+      "en": "62 Arm, Warmth",
+      "cs": "62 Zbr, Teplo"
+    },
+    "level": 4,
+    "buyPrice": 70,
+    "sellPrice": 21
   },
   {
     "id": "gw_pg_bonewraps_l05",
@@ -128,10 +152,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 7
+        "Armor": 76
       },
       "cs": {
-        "Zbroj": 7
+        "Zbroj": 76
       }
     },
     "abilities": {
@@ -142,7 +166,13 @@
         "Vyvolává neklid u zvířat"
       ]
     },
-    "level": 5
+    "itemEffectDescription": {
+      "en": "76 Arm, Unease Animals",
+      "cs": "76 Zbr, Neklid Zvířat"
+    },
+    "level": 5,
+    "buyPrice": 85,
+    "sellPrice": 26
   },
   {
     "id": "gw_pg_leatherjerkin_l06",
@@ -157,10 +187,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 8
+        "Armor": 90
       },
       "cs": {
-        "Zbroj": 8
+        "Zbroj": 90
       }
     },
     "abilities": {
@@ -171,7 +201,13 @@
         "Odolává drobným řezům"
       ]
     },
-    "level": 6
+    "itemEffectDescription": {
+      "en": "90 Arm, Cut Resist",
+      "cs": "90 Zbr, Odol. Řezům"
+    },
+    "level": 6,
+    "buyPrice": 100,
+    "sellPrice": 30
   },
   {
     "id": "gw_pg_paddedgambeson_l07",
@@ -186,10 +222,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 9
+        "Armor": 104
       },
       "cs": {
-        "Zbroj": 9
+        "Zbroj": 104
       }
     },
     "abilities": {
@@ -200,7 +236,13 @@
         "Snižuje tupé trauma"
       ]
     },
-    "level": 7
+    "itemEffectDescription": {
+      "en": "104 Arm, Blunt Trauma Resist",
+      "cs": "104 Zbr, Odol. Tup. Traumatu"
+    },
+    "level": 7,
+    "buyPrice": 120,
+    "sellPrice": 36
   },
   {
     "id": "gw_pg_ironcap_l08",
@@ -215,10 +257,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 10
+        "Armor": 118
       },
       "cs": {
-        "Zbroj": 10
+        "Zbroj": 118
       }
     },
     "abilities": {
@@ -229,7 +271,13 @@
         "Odklání letmé údery"
       ]
     },
-    "level": 8
+    "itemEffectDescription": {
+      "en": "118 Arm, Deflects Shoulder Blows",
+      "cs": "118 Zbr, Odklání Údery na Rameno"
+    },
+    "level": 8,
+    "buyPrice": 140,
+    "sellPrice": 42
   },
   {
     "id": "gw_pg_watchcloak_l09",
@@ -244,10 +292,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 11
+        "Armor": 132
       },
       "cs": {
-        "Zbroj": 11
+        "Zbroj": 132
       }
     },
     "abilities": {
@@ -258,7 +306,13 @@
         "Voděodolný"
       ]
     },
-    "level": 9
+    "itemEffectDescription": {
+      "en": "132 Arm, Water Resist",
+      "cs": "132 Zbr, Voděodolný"
+    },
+    "level": 9,
+    "buyPrice": 160,
+    "sellPrice": 48
   },
   {
     "id": "gw_pg_ringmail_l10",
@@ -273,10 +327,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 12
+        "Armor": 146
       },
       "cs": {
-        "Zbroj": 12
+        "Zbroj": 146
       }
     },
     "abilities": {
@@ -287,7 +341,13 @@
         "Menší ochrana proti duchům"
       ]
     },
-    "level": 10
+    "itemEffectDescription": {
+      "en": "146 Arm, Minor Spirit Ward",
+      "cs": "146 Zbr, Menší Ochr. Duchů"
+    },
+    "level": 10,
+    "buyPrice": 180,
+    "sellPrice": 54
   },
   {
     "id": "gw_pg_boiledcuirass_l11",
@@ -302,10 +362,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 14
+        "Armor": 190
       },
       "cs": {
-        "Zbroj": 14
+        "Zbroj": 190
       }
     },
     "abilities": {
@@ -316,7 +376,13 @@
         "Dobrá ochrana trupu"
       ]
     },
-    "level": 11
+    "itemEffectDescription": {
+      "en": "190 Arm, Good Torso Prot.",
+      "cs": "190 Zbr, Dobrá Ochr. Trupu"
+    },
+    "level": 11,
+    "buyPrice": 225,
+    "sellPrice": 68
   },
   {
     "id": "gw_pg_scalemail_l12",
@@ -331,10 +397,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 15
+        "Armor": 206
       },
       "cs": {
-        "Zbroj": 15
+        "Zbroj": 206
       }
     },
     "abilities": {
@@ -345,7 +411,13 @@
         "Odolává bodným útokům"
       ]
     },
-    "level": 12
+    "itemEffectDescription": {
+      "en": "206 Arm, Pierce Resist",
+      "cs": "206 Zbr, Odol. Bodnutí"
+    },
+    "level": 12,
+    "buyPrice": 270,
+    "sellPrice": 81
   },
   {
     "id": "gw_pg_wardensmantle_l13",
@@ -360,10 +432,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 17
+        "Armor": 222
       },
       "cs": {
-        "Zbroj": 17
+        "Zbroj": 222
       }
     },
     "abilities": {
@@ -374,7 +446,13 @@
         "Chrání před padajícími sutinami"
       ]
     },
-    "level": 13
+    "itemEffectDescription": {
+      "en": "222 Arm, Debris Prot.",
+      "cs": "222 Zbr, Ochr. Sutinami"
+    },
+    "level": 13,
+    "buyPrice": 320,
+    "sellPrice": 96
   },
   {
     "id": "gw_pg_grimpauldron_l14",
@@ -389,10 +467,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 18
+        "Armor": 238
       },
       "cs": {
-        "Zbroj": 18
+        "Zbroj": 238
       }
     },
     "abilities": {
@@ -403,7 +481,13 @@
         "Chrání životně důležitá místa"
       ]
     },
-    "level": 14
+    "itemEffectDescription": {
+      "en": "238 Arm, Guards Neck/Shoulder",
+      "cs": "238 Zbr, Chrání Krk/Rameno"
+    },
+    "level": 14,
+    "buyPrice": 370,
+    "sellPrice": 111
   },
   {
     "id": "gw_pg_studdedcoat_l15",
@@ -418,10 +502,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 20
+        "Armor": 254
       },
       "cs": {
-        "Zbroj": 20
+        "Zbroj": 254
       }
     },
     "abilities": {
@@ -432,7 +516,13 @@
         "Odolný proti větru"
       ]
     },
-    "level": 15
+    "itemEffectDescription": {
+      "en": "254 Arm, Wind Resist",
+      "cs": "254 Zbr, Odol. Větru"
+    },
+    "level": 15,
+    "buyPrice": 425,
+    "sellPrice": 128
   },
   {
     "id": "gw_pg_brigandine_l16",
@@ -447,10 +537,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 21
+        "Armor": 270
       },
       "cs": {
-        "Zbroj": 21
+        "Zbroj": 270
       }
     },
     "abilities": {
@@ -461,7 +551,13 @@
         "Bitvou prověřená odolnost"
       ]
     },
-    "level": 16
+    "itemEffectDescription": {
+      "en": "270 Arm, Battle-Tested",
+      "cs": "270 Zbr, Bitvou Prověřená"
+    },
+    "level": 16,
+    "buyPrice": 485,
+    "sellPrice": 146
   },
   {
     "id": "gw_pg_chainhauberk_l17",
@@ -476,10 +572,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 23
+        "Armor": 286
       },
       "cs": {
-        "Zbroj": 23
+        "Zbroj": 286
       }
     },
     "abilities": {
@@ -490,7 +586,13 @@
         "Účinná proti čepelím"
       ]
     },
-    "level": 17
+    "itemEffectDescription": {
+      "en": "286 Arm, Slash Resist",
+      "cs": "286 Zbr, Odol. Sečným Zbr."
+    },
+    "level": 17,
+    "buyPrice": 540,
+    "sellPrice": 162
   },
   {
     "id": "gw_pg_darkwoodshield_l18",
@@ -505,10 +607,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 24
+        "Armor": 302
       },
       "cs": {
-        "Zbroj": 24
+        "Zbroj": 302
       }
     },
     "abilities": {
@@ -519,7 +621,13 @@
         "Šance odrazit projektily"
       ]
     },
-    "level": 18
+    "itemEffectDescription": {
+      "en": "302 Arm, Projectile Deflect",
+      "cs": "302 Zbr, Odklání Projektily"
+    },
+    "level": 18,
+    "buyPrice": 600,
+    "sellPrice": 180
   },
   {
     "id": "gw_pg_silentstrider_l19",
@@ -534,10 +642,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 26
+        "Armor": 318
       },
       "cs": {
-        "Zbroj": 26
+        "Zbroj": 318
       }
     },
     "abilities": {
@@ -548,7 +656,13 @@
         "Výrazně tlumí pohyb"
       ]
     },
-    "level": 19
+    "itemEffectDescription": {
+      "en": "318 Arm, Muffles Movement",
+      "cs": "318 Zbr, Tlumí Pohyb"
+    },
+    "level": 19,
+    "buyPrice": 665,
+    "sellPrice": 200
   },
   {
     "id": "gw_pg_heavymail_l20",
@@ -563,10 +677,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 27
+        "Armor": 334
       },
       "cs": {
-        "Zbroj": 27
+        "Zbroj": 334
       }
     },
     "abilities": {
@@ -577,7 +691,13 @@
         "Odolává těžkým úderům"
       ]
     },
-    "level": 20
+    "itemEffectDescription": {
+      "en": "334 Arm, Heavy Blow Resist",
+      "cs": "334 Zbr, Odol. Těžkým Úderům"
+    },
+    "level": 20,
+    "buyPrice": 735,
+    "sellPrice": 221
   },
   {
     "id": "gw_pg_steelamellar_l21",
@@ -592,10 +712,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 29
+        "Armor": 350
       },
       "cs": {
-        "Zbroj": 29
+        "Zbroj": 350
       }
     },
     "abilities": {
@@ -606,7 +726,13 @@
         "Vyvažuje ochranu a mobilitu"
       ]
     },
-    "level": 21
+    "itemEffectDescription": {
+      "en": "350 Arm, Balanced Prot/Mobility",
+      "cs": "350 Zbr, Vyváž. Ochr/Mobilita"
+    },
+    "level": 21,
+    "buyPrice": 805,
+    "sellPrice": 242
   },
   {
     "id": "gw_pg_shadowstitchmail_l22",
@@ -621,10 +747,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 31
+        "Armor": 366
       },
       "cs": {
-        "Zbroj": 31
+        "Zbroj": 366
       }
     },
     "abilities": {
@@ -635,7 +761,13 @@
         "Zlepšené plížení ve stínech"
       ]
     },
-    "level": 22
+    "itemEffectDescription": {
+      "en": "366 Arm, Shadow Stealth",
+      "cs": "366 Zbr, Stínové Plížení"
+    },
+    "level": 22,
+    "buyPrice": 880,
+    "sellPrice": 264
   },
   {
     "id": "gw_pg_cryptbreastplate_l23",
@@ -650,10 +782,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 33
+        "Armor": 382
       },
       "cs": {
-        "Zbroj": 33
+        "Zbroj": 382
       }
     },
     "abilities": {
@@ -664,7 +796,13 @@
         "Mírná odolnost vůči nekrotickým energiím"
       ]
     },
-    "level": 23
+    "itemEffectDescription": {
+      "en": "382 Arm, Necrotic Resist",
+      "cs": "382 Zbr, Nekrot. Odol."
+    },
+    "level": 23,
+    "buyPrice": 960,
+    "sellPrice": 288
   },
   {
     "id": "gw_pg_runevambraces_l24",
@@ -679,10 +817,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 35
+        "Armor": 398
       },
       "cs": {
-        "Zbroj": 35
+        "Zbroj": 398
       }
     },
     "abilities": {
@@ -693,7 +831,13 @@
         "Odklání menší kletby"
       ]
     },
-    "level": 24
+    "itemEffectDescription": {
+      "en": "398 Arm, Curse Deflect",
+      "cs": "398 Zbr, Odklání Kletby"
+    },
+    "level": 24,
+    "buyPrice": 1050,
+    "sellPrice": 315
   },
   {
     "id": "gw_pg_obsidianguard_l25",
@@ -708,10 +852,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 37
+        "Armor": 414
       },
       "cs": {
-        "Zbroj": 37
+        "Zbroj": 414
       }
     },
     "abilities": {
@@ -722,7 +866,13 @@
         "Chrání před uhranutím"
       ]
     },
-    "level": 25
+    "itemEffectDescription": {
+      "en": "414 Arm, Evil Eye Prot.",
+      "cs": "414 Zbr, Ochr. Uhranutím"
+    },
+    "level": 25,
+    "buyPrice": 1150,
+    "sellPrice": 345
   },
   {
     "id": "gw_pg_ghastlyshroud_l26",
@@ -737,10 +887,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 39
+        "Armor": 490
       },
       "cs": {
-        "Zbroj": 39
+        "Zbroj": 490
       }
     },
     "abilities": {
@@ -751,7 +901,13 @@
         "Zastrašuje nižší nemrtvé"
       ]
     },
-    "level": 26
+    "itemEffectDescription": {
+      "en": "490 Arm, Intimidates Undead",
+      "cs": "490 Zbr, Zastrašuje Nemrtvé"
+    },
+    "level": 26,
+    "buyPrice": 1250,
+    "sellPrice": 375
   },
   {
     "id": "gw_pg_blackironplate_l27",
@@ -766,10 +922,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 41
+        "Armor": 508
       },
       "cs": {
-        "Zbroj": 41
+        "Zbroj": 508
       }
     },
     "abilities": {
@@ -780,7 +936,13 @@
         "Vysoká fyzická odolnost"
       ]
     },
-    "level": 27
+    "itemEffectDescription": {
+      "en": "508 Arm, High Phys Resist",
+      "cs": "508 Zbr, Vys. Fyz. Odol."
+    },
+    "level": 27,
+    "buyPrice": 1400,
+    "sellPrice": 420
   },
   {
     "id": "gw_pg_sentinelarmor_l28",
@@ -795,10 +957,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 43
+        "Armor": 526
       },
       "cs": {
-        "Zbroj": 43
+        "Zbroj": 526
       }
     },
     "abilities": {
@@ -809,7 +971,13 @@
         "Posiluje výdrž"
       ]
     },
-    "level": 28
+    "itemEffectDescription": {
+      "en": "526 Arm, Bolsters Endurance",
+      "cs": "526 Zbr, Posiluje Výdrž"
+    },
+    "level": 28,
+    "buyPrice": 1550,
+    "sellPrice": 465
   },
   {
     "id": "gw_pg_runicplate_l29",
@@ -824,10 +992,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 45
+        "Armor": 544
       },
       "cs": {
-        "Zbroj": 45
+        "Zbroj": 544
       }
     },
     "abilities": {
@@ -840,7 +1008,13 @@
         "Silná Ochrana"
       ]
     },
-    "level": 29
+    "itemEffectDescription": {
+      "en": "544 Arm, Threat Warning, Strong Wards",
+      "cs": "544 Zbr, Varuje Hrozby, Silné Ochrany"
+    },
+    "level": 29,
+    "buyPrice": 1700,
+    "sellPrice": 510
   },
   {
     "id": "gw_pg_duskforged_l30",
@@ -855,10 +1029,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 47
+        "Armor": 562
       },
       "cs": {
-        "Zbroj": 47
+        "Zbroj": 562
       }
     },
     "abilities": {
@@ -871,7 +1045,13 @@
         "Soumrakové maskování"
       ]
     },
-    "level": 30
+    "itemEffectDescription": {
+      "en": "562 Arm, Ethereal Resist, Twilight Camo",
+      "cs": "562 Zbr, Éter. Odol., Soumrak. Mask."
+    },
+    "level": 30,
+    "buyPrice": 1850,
+    "sellPrice": 555
   },
   {
     "id": "gw_pg_darksteelplate_l31",
@@ -886,10 +1066,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 50
+        "Armor": 580
       },
       "cs": {
-        "Zbroj": 50
+        "Zbroj": 580
       }
     },
     "abilities": {
@@ -902,7 +1082,13 @@
         "Vynikající odolnost"
       ]
     },
-    "level": 31
+    "itemEffectDescription": {
+      "en": "580 Arm, Shadow Absorb, Superior Dura.",
+      "cs": "580 Zbr, Pohlcuje Stíny, Vynik. Odol."
+    },
+    "level": 31,
+    "buyPrice": 2000,
+    "sellPrice": 600
   },
   {
     "id": "gw_pg_ghostiron_l32",
@@ -917,10 +1103,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 52
+        "Armor": 598
       },
       "cs": {
-        "Zbroj": 52
+        "Zbroj": 598
       }
     },
     "abilities": {
@@ -933,7 +1119,13 @@
         "Znepokojuje Duchy"
       ]
     },
-    "level": 32
+    "itemEffectDescription": {
+      "en": "598 Arm, Phase Attacks, Unsettles Spirits",
+      "cs": "598 Zbr, Fázuje Útoky, Znepokoj. Duchy"
+    },
+    "level": 32,
+    "buyPrice": 2175,
+    "sellPrice": 653
   },
   {
     "id": "gw_pg_soulforgedaegis_l33",
@@ -948,10 +1140,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 55
+        "Armor": 616
       },
       "cs": {
-        "Zbroj": 55
+        "Zbroj": 616
       }
     },
     "abilities": {
@@ -964,7 +1156,13 @@
         "Odpuzuje efekty strachu"
       ]
     },
-    "level": 33
+    "itemEffectDescription": {
+      "en": "616 Arm, Fortifies Will, Repels Fear",
+      "cs": "616 Zbr, Posiluje Vůli, Odpuz. Strach"
+    },
+    "level": 33,
+    "buyPrice": 2350,
+    "sellPrice": 705
   },
   {
     "id": "gw_pg_nightweaverobes_l34",
@@ -979,10 +1177,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 57
+        "Armor": 634
       },
       "cs": {
-        "Zbroj": 57
+        "Zbroj": 634
       }
     },
     "abilities": {
@@ -995,7 +1193,13 @@
         "Tichý pohyb"
       ]
     },
-    "level": 34
+    "itemEffectDescription": {
+      "en": "634 Arm, Darkness Stealth, Silent Move",
+      "cs": "634 Zbr, Temné Plížení, Tichý Pohyb"
+    },
+    "level": 34,
+    "buyPrice": 2525,
+    "sellPrice": 758
   },
   {
     "id": "gw_pg_blightedcarapace_l35",
@@ -1010,10 +1214,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 60
+        "Armor": 652
       },
       "cs": {
-        "Zbroj": 60
+        "Zbroj": 652
       }
     },
     "abilities": {
@@ -1026,7 +1230,13 @@
         "Mírně kazící aura"
       ]
     },
-    "level": 35
+    "itemEffectDescription": {
+      "en": "652 Arm, Toxin/Disease Resist, Corrupting Aura",
+      "cs": "652 Zbr, Odol. Toxinům/Nemocem, Kazící Aura"
+    },
+    "level": 35,
+    "buyPrice": 2700,
+    "sellPrice": 810
   },
   {
     "id": "gw_pg_golemplate_l36",
@@ -1041,10 +1251,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 62
+        "Armor": 670
       },
       "cs": {
-        "Zbroj": 62
+        "Zbroj": 670
       }
     },
     "abilities": {
@@ -1057,7 +1267,13 @@
         "Extrémně odolný"
       ]
     },
-    "level": 36
+    "itemEffectDescription": {
+      "en": "670 Arm, Unflinching, Extreme Dura.",
+      "cs": "670 Zbr, Neochvějná, Extrém. Odol."
+    },
+    "level": 36,
+    "buyPrice": 2900,
+    "sellPrice": 870
   },
   {
     "id": "gw_pg_stygianmail_l37",
@@ -1072,10 +1288,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 65
+        "Armor": 688
       },
       "cs": {
-        "Zbroj": 65
+        "Zbroj": 688
       }
     },
     "abilities": {
@@ -1088,7 +1304,13 @@
         "Chladná aura"
       ]
     },
-    "level": 37
+    "itemEffectDescription": {
+      "en": "688 Arm, Vitality Drain, Cold Aura",
+      "cs": "688 Zbr, Vysává Vitalitu, Chladná Aura"
+    },
+    "level": 37,
+    "buyPrice": 3100,
+    "sellPrice": 930
   },
   {
     "id": "gw_pg_wardensbulwark_l38",
@@ -1103,10 +1325,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 67
+        "Armor": 706
       },
       "cs": {
-        "Zbroj": 67
+        "Zbroj": 706
       }
     },
     "abilities": {
@@ -1119,7 +1341,13 @@
         "Ozvěny minulých Strážců"
       ]
     },
-    "level": 38
+    "itemEffectDescription": {
+      "en": "706 Arm, Resolve Strength, Warden Echoes",
+      "cs": "706 Zbr, Síla Odhodlání, Ozvěny Strážců"
+    },
+    "level": 38,
+    "buyPrice": 3300,
+    "sellPrice": 990
   },
   {
     "id": "gw_pg_obsidianheart_l39",
@@ -1134,10 +1362,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 70
+        "Armor": 724
       },
       "cs": {
-        "Zbroj": 70
+        "Zbroj": 724
       }
     },
     "abilities": {
@@ -1150,7 +1378,13 @@
         "Odolává odražení"
       ]
     },
-    "level": 39
+    "itemEffectDescription": {
+      "en": "724 Arm, Earthen Stability, Knockback Resist",
+      "cs": "724 Zbr, Zemská Stabilita, Odol. Odražení"
+    },
+    "level": 39,
+    "buyPrice": 3500,
+    "sellPrice": 1050
   },
   {
     "id": "gw_pg_shadowbarrage_l40",
@@ -1165,10 +1399,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 72
+        "Armor": 742
       },
       "cs": {
-        "Zbroj": 72
+        "Zbroj": 742
       }
     },
     "abilities": {
@@ -1181,7 +1415,13 @@
         "Dotčen prázdnotou"
       ]
     },
-    "level": 40
+    "itemEffectDescription": {
+      "en": "742 Arm, Cosmic Resist, Void Touched",
+      "cs": "742 Zbr, Kosm. Odol., Dotek Prázdnoty"
+    },
+    "level": 40,
+    "buyPrice": 3750,
+    "sellPrice": 1125
   },
   {
     "id": "gw_pg_ebondoomplate_l41",
@@ -1196,10 +1436,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 75
+        "Armor": 850
       },
       "cs": {
-        "Zbroj": 75
+        "Zbroj": 850
       }
     },
     "abilities": {
@@ -1212,7 +1452,13 @@
         "Aura hrůzy"
       ]
     },
-    "level": 41
+    "itemEffectDescription": {
+      "en": "850 Arm, Dmg Reflect, Dread Aura",
+      "cs": "850 Zbr, Odraz Zraň., Aura Hrůzy"
+    },
+    "level": 41,
+    "buyPrice": 4000,
+    "sellPrice": 1200
   },
   {
     "id": "gw_pg_celestialbulwark_l42",
@@ -1227,10 +1473,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 78
+        "Armor": 870
       },
       "cs": {
-        "Zbroj": 78
+        "Zbroj": 870
       }
     },
     "abilities": {
@@ -1243,7 +1489,13 @@
         "Vázán povinností"
       ]
     },
-    "level": 42
+    "itemEffectDescription": {
+      "en": "870 Arm, Holy/Unholy Ward, Bound by Duty",
+      "cs": "870 Zbr, Svatá/Nesv. Ochr., Vázán Povinností"
+    },
+    "level": 42,
+    "buyPrice": 4250,
+    "sellPrice": 1275
   },
   {
     "id": "gw_pg_unseenshroud_l43",
@@ -1258,10 +1510,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 81
+        "Armor": 890
       },
       "cs": {
-        "Zbroj": 81
+        "Zbroj": 890
       }
     },
     "abilities": {
@@ -1274,7 +1526,13 @@
         "Zkresluje vnímání"
       ]
     },
-    "level": 43
+    "itemEffectDescription": {
+      "en": "890 Arm, Still Invisibility, Distorts Perception",
+      "cs": "890 Zbr, Nevid. v Klidu, Zkresluje Vnímání"
+    },
+    "level": 43,
+    "buyPrice": 4500,
+    "sellPrice": 1350
   },
   {
     "id": "gw_pg_wardenkingregalia_l44",
@@ -1289,10 +1547,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 84
+        "Armor": 910
       },
       "cs": {
-        "Zbroj": 84
+        "Zbroj": 910
       }
     },
     "abilities": {
@@ -1307,7 +1565,13 @@
         "Symbol autority"
       ]
     },
-    "level": 44
+    "itemEffectDescription": {
+      "en": "910 Arm, Inspires Allies, Demoralizes Foes",
+      "cs": "910 Zbr, Inspiruje Spoj., Demoral. Nepř."
+    },
+    "level": 44,
+    "buyPrice": 4800,
+    "sellPrice": 1440
   },
   {
     "id": "gw_pg_heartwoodbastion_l45",
@@ -1322,10 +1586,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 87
+        "Armor": 930
       },
       "cs": {
-        "Zbroj": 87
+        "Zbroj": 930
       }
     },
     "abilities": {
@@ -1338,7 +1602,13 @@
         "Naladěn na přírodu"
       ]
     },
-    "level": 45
+    "itemEffectDescription": {
+      "en": "930 Arm, Slow Regen, Nature Attuned",
+      "cs": "930 Zbr, Pom. Regen., Naladěn Přírodě"
+    },
+    "level": 45,
+    "buyPrice": 5100,
+    "sellPrice": 1530
   },
   {
     "id": "gw_pg_voidplate_l46",
@@ -1353,10 +1623,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 90
+        "Armor": 950
       },
       "cs": {
-        "Zbroj": 90
+        "Zbroj": 950
       }
     },
     "abilities": {
@@ -1369,7 +1639,13 @@
         "Vyvolává závrať"
       ]
     },
-    "level": 46
+    "itemEffectDescription": {
+      "en": "950 Arm, Banish Chance, Induces Vertigo",
+      "cs": "950 Zbr, Šance Vyhnat, Vyvol. Závrať"
+    },
+    "level": 46,
+    "buyPrice": 6000,
+    "sellPrice": 1800
   },
   {
     "id": "gw_pg_timelessguardian_l47",
@@ -1384,10 +1660,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 93
+        "Armor": 970
       },
       "cs": {
-        "Zbroj": 93
+        "Zbroj": 970
       }
     },
     "abilities": {
@@ -1400,7 +1676,13 @@
         "Imunní vůči zoufalství"
       ]
     },
-    "level": 47
+    "itemEffectDescription": {
+      "en": "970 Arm, Temporal Resist, Despair Immune",
+      "cs": "970 Zbr, Čas. Odol., Imun. Zoufalství"
+    },
+    "level": 47,
+    "buyPrice": 7650,
+    "sellPrice": 2295
   },
   {
     "id": "gw_pg_dragonbone_l48",
@@ -1415,10 +1697,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 96
+        "Armor": 990
       },
       "cs": {
-        "Zbroj": 96
+        "Zbroj": 990
       }
     },
     "abilities": {
@@ -1431,7 +1713,13 @@
         "Dračí aura strachu"
       ]
     },
-    "level": 48
+    "itemEffectDescription": {
+      "en": "990 Arm, High Elem. Resist, Dragon Fear Aura",
+      "cs": "990 Zbr, Vys. Elem. Odol., Dračí Aura Strachu"
+    },
+    "level": 48,
+    "buyPrice": 9500,
+    "sellPrice": 2850
   },
   {
     "id": "gw_pg_silentknight_l49",
@@ -1446,10 +1734,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 99
+        "Armor": 1010
       },
       "cs": {
-        "Zbroj": 99
+        "Zbroj": 1010
       }
     },
     "abilities": {
@@ -1464,7 +1752,13 @@
         "Neochvějná ostražitost"
       ]
     },
-    "level": 49
+    "itemEffectDescription": {
+      "en": "1010 Arm, Complete Silence, Heightened Senses",
+      "cs": "1010 Zbr, Naprosté Ticho, Zostř. Smysly"
+    },
+    "level": 49,
+    "buyPrice": 12100,
+    "sellPrice": 3630
   },
   {
     "id": "gw_pg_wardensresolve_l50",
@@ -1479,10 +1773,10 @@
     "itemType": "protective_gear",
     "attributes": {
       "en": {
-        "Armor": 102
+        "Armor": 1030
       },
       "cs": {
-        "Zbroj": 102
+        "Zbroj": 1030
       }
     },
     "abilities": {
@@ -1497,6 +1791,12 @@
         "Svatyně duší"
       ]
     },
-    "level": 50
+    "itemEffectDescription": {
+      "en": "1030 Arm, Defies Oblivion, Unbreakable Will",
+      "cs": "1030 Zbr, Vzdoruje Zapomnění, Nezlomná Vůle"
+    },
+    "level": 50,
+    "buyPrice": 15000,
+    "sellPrice": 4500
   }
 ]

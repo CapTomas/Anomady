@@ -10,74 +10,25 @@
       "cs": "Rezavá, nevyvážená dýka. Spíše naostřený střep zoufalství než pořádná zbraň. Lepší než nic... sotva."
     },
     "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 24 }, "cs": { "Zranění": 24 } },
-    "abilities": { "en": [], "cs": [] },
-    "itemEffectDescription": { "en": "24 Dmg", "cs": "24 Zraň" },
-    "level": 1, "buyPrice": 23, "sellPrice": 7
-  },
-  {
-    "id": "gw_blade_woodcutters_axe_l1",
-    "name": {
-      "en": "Woodcutter's Axe",
-      "cs": "Dřevorubecká Sekera"
+    "attributes": {
+      "en": {
+        "Damage": 24
+      },
+      "cs": {
+        "Zranění": 24
+      }
     },
-    "description": {
-      "en": "A heavy, clumsy tool meant for felling trees, not beasts. Its weight provides a desperate, crushing force.",
-      "cs": "Těžký, neohrabaný nástroj určený k kácení stromů, ne bestií. Jeho váha poskytuje zoufalou, drtivou sílu."
+    "abilities": {
+      "en": [],
+      "cs": []
     },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 26 }, "cs": { "Zranění": 26 } },
-    "abilities": { "en": [ "Clumsy" ], "cs": [ "Neohrabaná" ] },
-    "itemEffectDescription": { "en": "26 Dmg, Clumsy", "cs": "26 Zraň, Neohrabaná" },
-    "level": 1, "buyPrice": 26, "sellPrice": 8
-  },
-  {
-    "id": "gw_blade_sharpened_stake_l1",
-    "name": {
-      "en": "Sharpened Stake",
-      "cs": "Naostřený Kůl"
+    "itemEffectDescription": {
+      "en": "24 Dmg",
+      "cs": "24 Zraň"
     },
-    "description": {
-      "en": "A length of fire-hardened wood, hastily sharpened to a point. A weapon born of pure, animal desperation.",
-      "cs": "Kus ohněm tvrzeného dřeva, narychlo zaostřený do špice. Zbraň zrozená z čistého, zvířecího zoufalství."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 22 }, "cs": { "Zranění": 22 } },
-    "abilities": { "en": [ "Piercing" ], "cs": [ "Průrazný" ] },
-    "itemEffectDescription": { "en": "22 Dmg, Piercing", "cs": "22 Zraň, Průrazný" },
-    "level": 1, "buyPrice": 24, "sellPrice": 7
-  },
-  {
-    "id": "gw_blade_broken_bottle_l1",
-    "name": {
-      "en": "Broken Bottle",
-      "cs": "Rozbitá Lahev"
-    },
-    "description": {
-      "en": "The jagged neck of a discarded wine bottle. A gutter weapon for gutter fights, it opens veins with vicious ease.",
-      "cs": "Zubaté hrdlo odhozené lahve od vína. Zbraň z kanálu pro boje v kanálech, s odpornou lehkostí otvírá žíly."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 21 }, "cs": { "Zranění": 21 } },
-    "abilities": { "en": [ "Causes Bleeding" ], "cs": [ "Způsobuje Krvácení" ] },
-    "itemEffectDescription": { "en": "21 Dmg, Bleed", "cs": "21 Zraň, Krvácení" },
-    "level": 1, "buyPrice": 25, "sellPrice": 8
-  },
-  {
-    "id": "gw_blade_iron_bar_l1",
-    "name": {
-      "en": "Bent Iron Bar",
-      "cs": "Ohnutá Železná Tyč"
-    },
-    "description": {
-      "en": "A length of rusted iron, pried from a collapsed gate. Heavy and blunt, it is a tool for breaking bones, not cutting flesh.",
-      "cs": "Kus rezavého železa, vypáčený ze zhroucené brány. Těžký a tupý, je to nástroj na lámání kostí, ne na řezání masa."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 25 }, "cs": { "Zranění": 25 } },
-    "abilities": { "en": [ "Bludgeoning" ], "cs": [ "Drtivá" ] },
-    "itemEffectDescription": { "en": "25 Dmg, Bludgeoning", "cs": "25 Zraň, Drtivá" },
-    "level": 1, "buyPrice": 27, "sellPrice": 8
+    "level": 1,
+    "buyPrice": 23,
+    "sellPrice": 7
   },
   {
     "id": "gw_blade_scavenged_hatchet_l2",
@@ -90,74 +41,25 @@
       "cs": "Vytažena z mrtvoly či zapomenuté bedny, ostří této sekyrky je vyštípané, ale její váha nabízí ponurou útěchu."
     },
     "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 26 }, "cs": { "Zranění": 26 } },
-    "abilities": { "en": [], "cs": [] },
-    "itemEffectDescription": { "en": "26 Dmg", "cs": "26 Zraň" },
-    "level": 2, "buyPrice": 42, "sellPrice": 13
-  },
-  {
-    "id": "gw_blade_militia_shortspear_l2",
-    "name": {
-      "en": "Militia Shortspear",
-      "cs": "Krátké Kopí Domobrany"
+    "attributes": {
+      "en": {
+        "Damage": 26
+      },
+      "cs": {
+        "Zranění": 26
+      }
     },
-    "description": {
-      "en": "A mass-produced spear for doomed conscripts. The wooden shaft is splintered, but the point remains sharp enough to worry about.",
-      "cs": "Hromadně vyráběné kopí pro odsouzené brance. Dřevěná násada je roztříštěná, ale hrot zůstává dost ostrý na to, aby znepokojoval."
+    "abilities": {
+      "en": [],
+      "cs": []
     },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 28 }, "cs": { "Zranění": 28 } },
-    "abilities": { "en": [ "Decent Reach" ], "cs": [ "Slušný Dosah" ] },
-    "itemEffectDescription": { "en": "28 Dmg, Reach", "cs": "28 Zraň, Dosah" },
-    "level": 2, "buyPrice": 44, "sellPrice": 13
-  },
-  {
-    "id": "gw_blade_butchers_cleaver_l2",
-    "name": {
-      "en": "Butcher's Cleaver",
-      "cs": "Řeznický Sekáč"
+    "itemEffectDescription": {
+      "en": "26 Dmg",
+      "cs": "26 Zraň"
     },
-    "description": {
-      "en": "Stained with the rust of animal blood, this heavy cleaver is designed to split bone and thick hide with a single, brutal chop.",
-      "cs": "Potřísněný rzí zvířecí krve, tento těžký sekáč je navržen tak, aby jediným brutálním sekem rozťal kost i tlustou kůži."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 29 }, "cs": { "Zranění": 29 } },
-    "abilities": { "en": [ "Heavy Blow" ], "cs": [ "Těžký Úder" ] },
-    "itemEffectDescription": { "en": "29 Dmg, Heavy Blow", "cs": "29 Zraň, Těžký Úder" },
-    "level": 2, "buyPrice": 39, "sellPrice": 12
-  },
-  {
-    "id": "gw_blade_barbed_dagger_l2",
-    "name": {
-      "en": "Barbed Dagger",
-      "cs": "Ostnatá Dýka"
-    },
-    "description": {
-      "en": "A cruel little blade with backward-facing barbs along its spine. Pulling it out is worse than putting it in.",
-      "cs": "Krutá malá čepel se zpětnými ostny podél hřbetu. Její vytažení je horší než její zasunutí."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 25 }, "cs": { "Zranění": 25 } },
-    "abilities": { "en": [ "Grievous Wound" ], "cs": [ "Těžká Rána" ] },
-    "itemEffectDescription": { "en": "25 Dmg, Grievous Wound", "cs": "25 Zraň, Těžká Rána" },
-    "level": 2, "buyPrice": 41, "sellPrice": 12
-  },
-  {
-    "id": "gw_blade_gnarled_mace_l2",
-    "name": {
-      "en": "Gnarled Iron Mace",
-      "cs": "Sukovitý Železný Palcát"
-    },
-    "description": {
-      "en": "A lump of pig iron crudely affixed to a wooden handle. It lacks finesse but excels at denting armor and helmets.",
-      "cs": "Kus surového železa nahrubo připevněný k dřevěné rukojeti. Chybí mu jemnost, ale vyniká v promáčknutí zbroje a přileb."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 27 }, "cs": { "Zranění": 27 } },
-    "abilities": { "en": [ "Armor Denting" ], "cs": [ "Promáčkne Zbroj" ] },
-    "itemEffectDescription": { "en": "27 Dmg, Armor Dent", "cs": "27 Zraň, Promáčkne Zbroj" },
-    "level": 2, "buyPrice": 37, "sellPrice": 11
+    "level": 2,
+    "buyPrice": 42,
+    "sellPrice": 13
   },
   {
     "id": "gw_blade_notched_shortsword_l3",
@@ -170,154 +72,64 @@
       "cs": "Pokrytá záseky a ponurou historií. Každý zub vypráví příběh zoufalého přežití nebo hořkého konce."
     },
     "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 31 }, "cs": { "Zranění": 31 } },
-    "abilities": { "en": [ "Jagged Edge" ], "cs": [ "Zubaté Ostří" ] },
-    "itemEffectDescription": { "en": "31 Dmg, Jagged Edge", "cs": "31 Zraň, Zubaté Ostří" },
-    "level": 3, "buyPrice": 53, "sellPrice": 16
-  },
-  {
-    "id": "gw_blade_pitchfork_l3",
-    "name": {
-      "en": "Peasant's Pitchfork",
-      "cs": "Rolnické Vidle"
+    "attributes": {
+      "en": {
+        "Damage": 31
+      },
+      "cs": {
+        "Zranění": 31
+      }
     },
-    "description": {
-      "en": "A farmer's tool turned weapon of rebellion. Its tines are meant for hay, but find flesh well enough when swung in anger.",
-      "cs": "Rolnický nástroj přeměněný ve zbraň povstání. Jeho hroty jsou určeny pro seno, ale v hněvu si maso najdou dost dobře."
+    "abilities": {
+      "en": [
+        "Jagged Edge"
+      ],
+      "cs": [
+        "Zubaté Ostří"
+      ]
     },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 30 }, "cs": { "Zranění": 30 } },
-    "abilities": { "en": [ "Awkward Lunge" ], "cs": [ "Nemotorný Výpad" ] },
-    "itemEffectDescription": { "en": "30 Dmg, Awkward", "cs": "30 Zraň, Nemotorné" },
-    "level": 3, "buyPrice": 50, "sellPrice": 15
-  },
-  {
-    "id": "gw_blade_hammer_l3",
-    "name": {
-      "en": "Smith's Hammer",
-      "cs": "Kovářské Kladivo"
+    "itemEffectDescription": {
+      "en": "31 Dmg, Jagged Edge",
+      "cs": "31 Zraň, Zubaté Ostří"
     },
-    "description": {
-      "en": "A heavy, flat-faced hammer designed for shaping metal. It can reshape a skull with the same brutal efficiency.",
-      "cs": "Těžké kladivo s plochou hlavou určené k tvarování kovu. Se stejnou brutální účinností dokáže přetvořit i lebku."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 32 }, "cs": { "Zranění": 32 } },
-    "abilities": { "en": [ "Staggering Blow" ], "cs": [ "Ohromující Úder" ] },
-    "itemEffectDescription": { "en": "32 Dmg, Stagger", "cs": "32 Zraň, Ohromí" },
-    "level": 3, "buyPrice": 58, "sellPrice": 17
-  },
-  {
-    "id": "gw_blade_hunting_knife_l3",
-    "name": {
-      "en": "Skinning Knife",
-      "cs": "Stahovací Nůž"
-    },
-    "description": {
-      "en": "A small, curved blade, razor sharp for skinning pelts. In a fight, it excels at opening throats and severing tendons.",
-      "cs": "Malá, zakřivená čepel, ostrá jako břitva pro stahování kůží. V boji vyniká v podřezávání hrdel a přeřezávání šlach."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 28 }, "cs": { "Zranění": 28 } },
-    "abilities": { "en": [ "Precise Cut" ], "cs": [ "Přesný Řez" ] },
-    "itemEffectDescription": { "en": "28 Dmg, Precise Cut", "cs": "28 Zraň, Přesný Řez" },
-    "level": 3, "buyPrice": 56, "sellPrice": 17
-  },
-  {
-    "id": "gw_blade_chain_l3",
-    "name": {
-      "en": "Length of Heavy Chain",
-      "cs": "Kus Těžkého Řetězu"
-    },
-    "description": {
-      "en": "A rusty, heavy chain ending in a broken manacle. Swung with force, it can wrap around limbs or crush a jaw.",
-      "cs": "Zrezivělý, těžký řetěz zakončený zlomeným okovem. Když se jím švihne silou, může se omotat kolem končetin nebo rozdrtit čelist."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 29 }, "cs": { "Zranění": 29 } },
-    "abilities": { "en": [ "Entangling" ], "cs": [ "Oplétající" ] },
-    "itemEffectDescription": { "en": "29 Dmg, Entangling", "cs": "29 Zraň, Oplétající" },
-    "level": 3, "buyPrice": 52, "sellPrice": 16
+    "level": 3,
+    "buyPrice": 53,
+    "sellPrice": 16
   },
   {
     "id": "gw_blade_militia_spearhead_l4",
     "name": {
-      "en": "Militia Spearhead (Improvised)",
-      "cs": "Hrot Domobraneckého Kopí (Improvizovaný)"
+      "en": "Militia Spearhead",
+      "cs": "Hrot Domobraneckého Kopí"
     },
     "description": {
-      "en": "A crude spearhead, likely broken from its shaft in some forgotten skirmish. Awkward as a dagger, but sharp enough to puncture hide.",
-      "cs": "Hrubý hrot kopí, pravděpodobně odlomený z násady v nějaké zapomenuté šarvátce. Nepohodlný jako dýka, ale dost ostrý na probodnutí kůže."
+      "en": "A crude spearhead, likely broken from its shaft in some forgotten skirmish. Awkward, but sharp enough to puncture hide.",
+      "cs": "Hrubý hrot kopí, pravděpodobně odlomený z násady v nějaké zapomenuté šarvátce. Nepohodlný, ale dost ostrý na probodnutí kůže."
     },
     "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 30 }, "cs": { "Zranění": 30 } },
-    "abilities": { "en": [ "Piercing" ], "cs": [ "Průrazný" ] },
-    "itemEffectDescription": { "en": "30 Dmg, Piercing", "cs": "30 Zraň, Průrazný" },
-    "level": 4, "buyPrice": 65, "sellPrice": 20
-  },
-  {
-    "id": "gw_blade_trench_knife_l4",
-    "name": {
-      "en": "Grave Digger's Pick",
-      "cs": "Hrobníkův Krumpáč"
+    "attributes": {
+      "en": {
+        "Damage": 30
+      },
+      "cs": {
+        "Zranění": 30
+      }
     },
-    "description": {
-      "en": "A small, one-handed pick used for breaking hard soil and rock. The sharpened point is brutally effective against armor.",
-      "cs": "Malý, jednoruční krumpáč používaný k rozbíjení tvrdé půdy a kamene. Zaostřený hrot je brutálně účinný proti zbroji."
+    "abilities": {
+      "en": [
+        "Piercing"
+      ],
+      "cs": [
+        "Průrazný"
+      ]
     },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 33 }, "cs": { "Zranění": 33 } },
-    "abilities": { "en": [ "Armor Piercing" ], "cs": [ "Průraz Zbroje" ] },
-    "itemEffectDescription": { "en": "33 Dmg, Armor Pierce", "cs": "33 Zraň, Průraz Zbroje" },
-    "level": 4, "buyPrice": 75, "sellPrice": 22
-  },
-  {
-    "id": "gw_blade_bandit_cutlass_l4",
-    "name": {
-      "en": "Bandit's Cutlass",
-      "cs": "Banditova Šavle"
+    "itemEffectDescription": {
+      "en": "30 Dmg, Piercing",
+      "cs": "30 Zraň, Průrazný"
     },
-    "description": {
-      "en": "A simple, curved blade with a basket hilt. A common weapon for thugs and highwaymen, designed for quick, intimidating slashes.",
-      "cs": "Jednoduchá, zakřivená čepel s košíčkovým jílcem. Běžná zbraň pro rváče a lapky, navržená pro rychlé, zastrašující seky."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 34 }, "cs": { "Zranění": 34 } },
-    "abilities": { "en": [ "Intimidating" ], "cs": [ "Zastrašující" ] },
-    "itemEffectDescription": { "en": "34 Dmg, Intimidating", "cs": "34 Zraň, Zastrašující" },
-    "level": 4, "buyPrice": 72, "sellPrice": 22
-  },
-  {
-    "id": "gw_blade_sickle_l4",
-    "name": {
-      "en": "Harvest Sickle",
-      "cs": "Žací Srp"
-    },
-    "description": {
-      "en": "Designed to reap wheat, this curved blade is wickedly sharp on its inner edge. It hooks and tears with surprising effectiveness.",
-      "cs": "Tato zakřivená čepel, navržená ke sklizni pšenice, je ďábelsky ostrá na své vnitřní straně. S překvapivou účinností zahákne a trhá."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 31 }, "cs": { "Zranění": 31 } },
-    "abilities": { "en": [ "Hooking Strike" ], "cs": [ "Zahákávající Úder" ] },
-    "itemEffectDescription": { "en": "31 Dmg, Hooking", "cs": "31 Zraň, Zahákne" },
-    "level": 4, "buyPrice": 64, "sellPrice": 19
-  },
-  {
-    "id": "gw_blade_ironshod_cudgel_l4",
-    "name": {
-      "en": "Iron-Shod Cudgel",
-      "cs": "Železem Okovaný Kyj"
-    },
-    "description": {
-      "en": "A stout piece of hardwood, crudely studded with iron nails and bands. Each blow is a jarring, painful affair.",
-      "cs": "Statný kus tvrdého dřeva, nahrubo pobitý železnými hřeby a pásy. Každý úder je otřesnou, bolestivou záležitostí."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 35 }, "cs": { "Zranění": 35 } },
-    "abilities": { "en": [ "Concussive" ], "cs": [ "Otřesová" ] },
-    "itemEffectDescription": { "en": "35 Dmg, Concussive", "cs": "35 Zraň, Otřesová" },
-    "level": 4, "buyPrice": 68, "sellPrice": 20
+    "level": 4,
+    "buyPrice": 65,
+    "sellPrice": 20
   },
   {
     "id": "gw_blade_barbed_cleaver_l5",
@@ -330,74 +142,29 @@
       "cs": "Brutální nástroj, jehož ostří je lemováno krutými ostny, navrženými k trhání masa a vštěpování hlubokého, viscerálního strachu."
     },
     "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 33 }, "cs": { "Zranění": 33 } },
-    "abilities": { "en": [ "Causes Bleeding" ], "cs": [ "Způsobuje Krvácení" ] },
-    "itemEffectDescription": { "en": "33 Dmg, Bleed", "cs": "33 Zraň, Krvácení" },
-    "level": 5, "buyPrice": 83, "sellPrice": 25
-  },
-  {
-    "id": "gw_blade_wardens_dirk_trainee_l5",
-    "name": {
-      "en": "Warden's Dirk (Trainee)",
-      "cs": "Strážcova Dýka (Učednická)"
+    "attributes": {
+      "en": {
+        "Damage": 33
+      },
+      "cs": {
+        "Zranění": 33
+      }
     },
-    "description": {
-      "en": "A standard-issue blade for initiates, meant more for finishing wounded beasts than for open combat. Plain, but reliable.",
-      "cs": "Standardní čepel pro nováčky, určená spíše k dorážení zraněných bestií než k otevřenému boji. Prostá, ale spolehlivá."
+    "abilities": {
+      "en": [
+        "Causes Bleeding"
+      ],
+      "cs": [
+        "Způsobuje Krvácení"
+      ]
     },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 32 }, "cs": { "Zranění": 32 } },
-    "abilities": { "en": [ "Mercy Stroke" ], "cs": [ "Rána z Milosti" ] },
-    "itemEffectDescription": { "en": "32 Dmg, Mercy Stroke", "cs": "32 Zraň, Rána z Milosti" },
-    "level": 5, "buyPrice": 90, "sellPrice": 27
-  },
-  {
-    "id": "gw_blade_serrated_handaxe_l5",
-    "name": {
-      "en": "Serrated Hand Axe",
-      "cs": "Pilovitá Ruční Sekera"
+    "itemEffectDescription": {
+      "en": "33 Dmg, Bleed",
+      "cs": "33 Zraň, Krvácení"
     },
-    "description": {
-      "en": "A hatchet whose edge has been deliberately filed into a saw-like pattern. It chews through armor and flesh with equal malice.",
-      "cs": "Sekyrka, jejíž ostří bylo záměrně opilováno do pilovitého vzoru. Se stejnou zlobou se zakusuje do zbroje i do masa."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 35 }, "cs": { "Zranění": 35 } },
-    "abilities": { "en": [ "Shreds Armor" ], "cs": [ "Drtí Zbroj" ] },
-    "itemEffectDescription": { "en": "35 Dmg, Shreds Armor", "cs": "35 Zraň, Drtí Zbroj" },
-    "level": 5, "buyPrice": 88, "sellPrice": 26
-  },
-  {
-    "id": "gw_blade_flanged_mace_l5",
-    "name": {
-      "en": "Flanged Mace",
-      "cs": "Okřídlený Palcát"
-    },
-    "description": {
-      "en": "A proper military mace with sharp flanges designed to concentrate the force of a blow and crush steel plate.",
-      "cs": "Pořádný vojenský palcát s ostrými křídly navrženými tak, aby soustředily sílu úderu a drtily ocelové pláty."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 36 }, "cs": { "Zranění": 36 } },
-    "abilities": { "en": [ "Armor Breaker" ], "cs": [ "Lamač Zbroje" ] },
-    "itemEffectDescription": { "en": "36 Dmg, Armor Break", "cs": "36 Zraň, Láme Zbroj" },
-    "level": 5, "buyPrice": 92, "sellPrice": 28
-  },
-  {
-    "id": "gw_blade_boar_spear_l5",
-    "name": {
-      "en": "Boar Spear",
-      "cs": "Kančí Oštěp"
-    },
-    "description": {
-      "en": "A sturdy spear with a cross-guard to prevent an impaled foe from charging up the shaft. A hunter's weapon, through and through.",
-      "cs": "Pevný oštěp s příčnou záštitou, která zabraňuje nabodnutému nepříteli v útoku po násadě. Zbraň lovce, skrz naskrz."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 34 }, "cs": { "Zranění": 34 } },
-    "abilities": { "en": [ "Stops Charge" ], "cs": [ "Zastaví Útok" ] },
-    "itemEffectDescription": { "en": "34 Dmg, Stops Charge", "cs": "34 Zraň, Zastaví Útok" },
-    "level": 5, "buyPrice": 80, "sellPrice": 24
+    "level": 5,
+    "buyPrice": 83,
+    "sellPrice": 25
   },
   {
     "id": "gw_blade_grim_falchion_l6",
@@ -410,74 +177,29 @@
       "cs": "Těžká, zakřivená čepel oblíbená zoufalými žoldáky. Zpívá truchlivou píseň, když se prosekává vzduchem."
     },
     "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 36 }, "cs": { "Zranění": 36 } },
-    "abilities": { "en": [ "Heavy Blow" ], "cs": [ "Těžký Úder" ] },
-    "itemEffectDescription": { "en": "36 Dmg, Heavy Blow", "cs": "36 Zraň, Těžký Úder" },
-    "level": 6, "buyPrice": 91, "sellPrice": 27
-  },
-  {
-    "id": "gw_blade_blight_tipped_dart_l6",
-    "name": {
-      "en": "Blight-Tipped Shiv",
-      "cs": "Zhoubou Potřená Čepelka"
+    "attributes": {
+      "en": {
+        "Damage": 36
+      },
+      "cs": {
+        "Zranění": 36
+      }
     },
-    "description": {
-      "en": "A shard of metal deliberately coated in a mild Blight-ichor. It causes wounds that fester unnaturally.",
-      "cs": "Střep kovu záměrně potřený slabým ichorem Zkázy. Způsobuje rány, které nepřirozeně hnisají."
+    "abilities": {
+      "en": [
+        "Heavy Blow"
+      ],
+      "cs": [
+        "Těžký Úder"
+      ]
     },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 34 }, "cs": { "Zranění": 34 } },
-    "abilities": { "en": [ "Festering Wound" ], "cs": [ "Hnisající Rána" ] },
-    "itemEffectDescription": { "en": "34 Dmg, Festering", "cs": "34 Zraň, Hnisající" },
-    "level": 6, "buyPrice": 105, "sellPrice": 31
-  },
-  {
-    "id": "gw_blade_arming_sword_l6",
-    "name": {
-      "en": "Arming Sword",
-      "cs": "Bojový Meč"
+    "itemEffectDescription": {
+      "en": "36 Dmg, Heavy Blow",
+      "cs": "36 Zraň, Těžký Úder"
     },
-    "description": {
-      "en": "A standard soldier's longsword. Well-balanced and versatile, a reliable piece of steel for a grim world.",
-      "cs": "Standardní dlouhý meč vojáka. Dobře vyvážený a všestranný, spolehlivý kus oceli pro ponurý svět."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 38 }, "cs": { "Zranění": 38 } },
-    "abilities": { "en": [ "Versatile" ], "cs": [ "Všestranný" ] },
-    "itemEffectDescription": { "en": "38 Dmg, Versatile", "cs": "38 Zraň, Všestranný" },
-    "level": 6, "buyPrice": 108, "sellPrice": 32
-  },
-  {
-    "id": "gw_blade_war_pick_l6",
-    "name": {
-      "en": "War Pick",
-      "cs": "Válečný Kladivokrumpáč"
-    },
-    "description": {
-      "en": "A hammer with one blunt face and one sharp spike, designed to punch through plate armor with focused force.",
-      "cs": "Kladivo s jednou tupou stranou a jedním ostrým hrotem, navržené k proražení plátové zbroje soustředěnou silou."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 39 }, "cs": { "Zranění": 39 } },
-    "abilities": { "en": [ "Punctures Armor" ], "cs": [ "Proráží Zbroj" ] },
-    "itemEffectDescription": { "en": "39 Dmg, Punctures Armor", "cs": "39 Zraň, Proráží Zbroj" },
-    "level": 6, "buyPrice": 110, "sellPrice": 33
-  },
-  {
-    "id": "gw_blade_throwing_axes_l6",
-    "name": {
-      "en": "Set of Throwing Knives",
-      "cs": "Sada Vrhacích Nožů"
-    },
-    "description": {
-      "en": "Three crudely balanced blades, best used to distract or wound a foe before closing in. Not meant for a prolonged fight.",
-      "cs": "Tři nahrubo vyvážené čepele, nejlépe použitelné k odlákání pozornosti nebo zranění nepřítele před přiblížením. Nejsou určeny pro delší boj."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 35 }, "cs": { "Zranění": 35 } },
-    "abilities": { "en": [ "Ranged Option" ], "cs": [ "Možnost na Dálku" ] },
-    "itemEffectDescription": { "en": "35 Dmg, Ranged", "cs": "35 Zraň, Na Dálku" },
-    "level": 6, "buyPrice": 95, "sellPrice": 28
+    "level": 6,
+    "buyPrice": 91,
+    "sellPrice": 27
   },
   {
     "id": "gw_blade_witchfinder_stiletto_l7",
@@ -490,74 +212,29 @@
       "cs": "Štíhlá dýka s jehlovitým hrotem, navržená k proklouznutí mezi žebry nebo do očí bezbožných. Chladná na dotek."
     },
     "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 41 }, "cs": { "Zranění": 41 } },
-    "abilities": { "en": [ "Precise Strike" ], "cs": [ "Přesný Úder" ] },
-    "itemEffectDescription": { "en": "41 Dmg, Precise Strike", "cs": "41 Zraň, Přesný Úder" },
-    "level": 7, "buyPrice": 122, "sellPrice": 37
-  },
-  {
-    "id": "gw_blade_harrowing_axe_l7",
-    "name": {
-      "en": "Harrowing Axe",
-      "cs": "Trýznivá Sekera"
+    "attributes": {
+      "en": {
+        "Damage": 41
+      },
+      "cs": {
+        "Zranění": 41
+      }
     },
-    "description": {
-      "en": "A bearded axe with a long haft, allowing for powerful, sweeping blows that can cleave through multiple foes... or miss entirely.",
-      "cs": "Sekera s vousatou hlavicí a dlouhou násadou, umožňující mocné, rozmáchlé údery, které mohou proseknout více nepřátel... nebo minout úplně."
+    "abilities": {
+      "en": [
+        "Precise Strike"
+      ],
+      "cs": [
+        "Přesný Úder"
+      ]
     },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 44 }, "cs": { "Zranění": 44 } },
-    "abilities": { "en": [ "Cleaving Blow" ], "cs": [ "Široký Sek" ] },
-    "itemEffectDescription": { "en": "44 Dmg, Cleave", "cs": "44 Zraň, Široký Sek" },
-    "level": 7, "buyPrice": 128, "sellPrice": 38
-  },
-  {
-    "id": "gw_blade_mourning_star_l7",
-    "name": {
-      "en": "Sorrowful Morningstar",
-      "cs": "Smutná Jitřenka"
+    "itemEffectDescription": {
+      "en": "41 Dmg, Precise Strike",
+      "cs": "41 Zraň, Přesný Úder"
     },
-    "description": {
-      "en": "A spiked ball on a chain, this weapon is unpredictable and brutal. It whistles a sad tune just before it crushes a skull.",
-      "cs": "Koule s hroty na řetězu, tato zbraň je nepředvídatelná a brutální. Píská smutnou melodii těsně předtím, než rozdrtí lebku."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 42 }, "cs": { "Zranění": 42 } },
-    "abilities": { "en": [ "Ignores Shields" ], "cs": [ "Ignoruje Štíty" ] },
-    "itemEffectDescription": { "en": "42 Dmg, Ignores Shields", "cs": "42 Zraň, Ignoruje Štíty" },
-    "level": 7, "buyPrice": 118, "sellPrice": 35
-  },
-  {
-    "id": "gw_blade_cold_iron_dirk_l7",
-    "name": {
-      "en": "Cold Iron Dirk",
-      "cs": "Dýka z Chladného Železa"
-    },
-    "description": {
-      "en": "Forged from rare, pure iron that is anathema to fey and other ethereal creatures. Its touch is like a brand to them.",
-      "cs": "Ukutá ze vzácného, čistého železa, které je anathemou pro víly a jiné éterické bytosti. Její dotek je pro ně jako cejch."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 38 }, "cs": { "Zranění": 38 } },
-    "abilities": { "en": [ "Effective vs Fey" ], "cs": [ "Účinná proti Vílám" ] },
-    "itemEffectDescription": { "en": "38 Dmg, vs Fey", "cs": "38 Zraň, vs Víly" },
-    "level": 7, "buyPrice": 125, "sellPrice": 37
-  },
-  {
-    "id": "gw_blade_longsword_l7",
-    "name": {
-      "en": "Mercenary's Longsword",
-      "cs": "Žoldnéřský Dlouhý Meč"
-    },
-    "description": {
-      "en": "A practical, no-nonsense blade. The leather on its hilt is worn smooth from countless contracts and desperate battles.",
-      "cs": "Praktická, přímočará čepel. Kůže na jejím jílci je ohlazená od nesčetných kontraktů a zoufalých bitev."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 40 }, "cs": { "Zranění": 40 } },
-    "abilities": { "en": [ "Well-Balanced" ], "cs": [ "Dobře Vyvážený" ] },
-    "itemEffectDescription": { "en": "40 Dmg, Well-Balanced", "cs": "40 Zraň, Dobře Vyvážený" },
-    "level": 7, "buyPrice": 110, "sellPrice": 33
+    "level": 7,
+    "buyPrice": 122,
+    "sellPrice": 37
   },
   {
     "id": "gw_blade_bone_saw_l8",
@@ -570,74 +247,29 @@
       "cs": "Více nástroj řezníka než bojovníka, tato pila s pilovitým ostřím žvýká maso a drtí kosti s děsivou účinností."
     },
     "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 47 }, "cs": { "Zranění": 47 } },
-    "abilities": { "en": [ "Grievous Wounds" ], "cs": [ "Těžké Rány" ] },
-    "itemEffectDescription": { "en": "47 Dmg, Grievous Wounds", "cs": "47 Zraň, Těžké Rány" },
-    "level": 8, "buyPrice": 150, "sellPrice": 45
-  },
-  {
-    "id": "gw_blade_wardens_sidearm_l8",
-    "name": {
-      "en": "Warden's Sidearm Sword",
-      "cs": "Strážcův Pobratimský Meč"
+    "attributes": {
+      "en": {
+        "Damage": 47
+      },
+      "cs": {
+        "Zranění": 47
+      }
     },
-    "description": {
-      "en": "A short, sturdy sword issued to Wardens. Etched near the hilt is a simple ward against corruption, though its power has faded.",
-      "cs": "Krátký, pevný meč vydávaný Strážcům. U jílce je vyleptána jednoduchá ochrana proti zkaženosti, i když její síla již vybledla."
+    "abilities": {
+      "en": [
+        "Grievous Wounds"
+      ],
+      "cs": [
+        "Těžké Rány"
+      ]
     },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 45 }, "cs": { "Zranění": 45 } },
-    "abilities": { "en": [ "Faint Ward" ], "cs": [ "Slabá Ochrana" ] },
-    "itemEffectDescription": { "en": "45 Dmg, Faint Ward", "cs": "45 Zraň, Slabá Ochrana" },
-    "level": 8, "buyPrice": 148, "sellPrice": 44
-  },
-  {
-    "id": "gw_blade_headsman_axe_l8",
-    "name": {
-      "en": "Headsman's Axe",
-      "cs": "Popravčí Sekera"
+    "itemEffectDescription": {
+      "en": "47 Dmg, Grievous Wounds",
+      "cs": "47 Zraň, Těžké Rány"
     },
-    "description": {
-      "en": "A heavy, single-bladed axe designed for one purpose. It feels grim and final in the hands, hungry for necks.",
-      "cs": "Těžká, jednobřitá sekera navržená pro jediný účel. V rukou působí ponuře a konečně, hladová po krcích."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 49 }, "cs": { "Zranění": 49 } },
-    "abilities": { "en": [ "Critical Damage" ], "cs": [ "Kritické Zranění" ] },
-    "itemEffectDescription": { "en": "49 Dmg, Critical", "cs": "49 Zraň, Kritické" },
-    "level": 8, "buyPrice": 152, "sellPrice": 46
-  },
-  {
-    "id": "gw_blade_trident_l8",
-    "name": {
-      "en": "Fisherman's Trident",
-      "cs": "Rybářský Trojzubec"
-    },
-    "description": {
-      "en": "Used to spear eels in murky water, this trident is surprisingly effective at catching limbs and keeping foes at bay.",
-      "cs": "Tento trojzubec, používaný k harpunování úhořů v kalné vodě, je překvapivě účinný při zachycování končetin a držení nepřátel na distanc."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 42 }, "cs": { "Zranění": 42 } },
-    "abilities": { "en": [ "Disarming" ], "cs": [ "Odzbrojující" ] },
-    "itemEffectDescription": { "en": "42 Dmg, Disarming", "cs": "42 Zraň, Odzbrojující" },
-    "level": 8, "buyPrice": 135, "sellPrice": 40
-  },
-  {
-    "id": "gw_blade_heavy_flail_l8",
-    "name": {
-      "en": "Heavy Flail",
-      "cs": "Těžký Cep"
-    },
-    "description": {
-      "en": "A brutal weapon that is difficult to block. The swinging iron head builds up momentum for a crushing, armor-denting impact.",
-      "cs": "Brutální zbraň, kterou je obtížné blokovat. Kývavá železná hlavice nabírá hybnost pro drtivý, zbroj promáčkávající náraz."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 46 }, "cs": { "Zranění": 46 } },
-    "abilities": { "en": [ "Hard to Block" ], "cs": [ "Těžko Blokovatelný" ] },
-    "itemEffectDescription": { "en": "46 Dmg, Hard to Block", "cs": "46 Zraň, Těžko Blok." },
-    "level": 8, "buyPrice": 142, "sellPrice": 43
+    "level": 8,
+    "buyPrice": 150,
+    "sellPrice": 45
   },
   {
     "id": "gw_blade_silvered_arming_sword_l9",
@@ -650,74 +282,29 @@
       "cs": "Rytířský meč, jehož ostří je tence potaženo stříbrem. Strážci často nosí takové čepele proti tvorům zranitelným čistým kovem."
     },
     "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 45 }, "cs": { "Zranění": 45 } },
-    "abilities": { "en": [ "Silvered Edge" ], "cs": [ "Stříbrné Ostří" ] },
-    "itemEffectDescription": { "en": "45 Dmg, Silvered", "cs": "45 Zraň, Postříbřené" },
-    "level": 9, "buyPrice": 154, "sellPrice": 46
-  },
-  {
-    "id": "gw_blade_blackwood_spear_l9",
-    "name": {
-      "en": "Blackwood Hunting Spear",
-      "cs": "Lovecké Kopí z Černého Dřeva"
+    "attributes": {
+      "en": {
+        "Damage": 45
+      },
+      "cs": {
+        "Zranění": 45
+      }
     },
-    "description": {
-      "en": "Made from the dense, dark wood of a Blight-resistant tree. It is unnaturally sturdy and seems to absorb sound.",
-      "cs": "Vyrobeno z hustého, tmavého dřeva stromu odolného vůči Zkáze. Je nepřirozeně pevné a zdá se, že pohlcuje zvuk."
+    "abilities": {
+      "en": [
+        "Silvered Edge"
+      ],
+      "cs": [
+        "Stříbrné Ostří"
+      ]
     },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 48 }, "cs": { "Zranění": 48 } },
-    "abilities": { "en": [ "Durable", "Quiet" ], "cs": [ "Odolné", "Tiché" ] },
-    "itemEffectDescription": { "en": "48 Dmg, Durable, Quiet", "cs": "48 Zraň, Odolné, Tiché" },
-    "level": 9, "buyPrice": 165, "sellPrice": 50
-  },
-  {
-    "id": "gw_blade_inquisitors_mace_l9",
-    "name": {
-      "en": "Inquisitor's Mace",
-      "cs": "Inkvizitorský Palcát"
+    "itemEffectDescription": {
+      "en": "45 Dmg, Silvered",
+      "cs": "45 Zraň, Postříbřené"
     },
-    "description": {
-      "en": "A heavy, grim mace used to deliver judgment. Its weight alone is enough to shatter bone and the will to resist.",
-      "cs": "Těžký, ponurý palcát používaný k vynesení rozsudku. Samotná jeho váha stačí k rozdrcení kosti a vůle k odporu."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 50 }, "cs": { "Zranění": 50 } },
-    "abilities": { "en": [ "Breaks Will" ], "cs": [ "Láme Vůli" ] },
-    "itemEffectDescription": { "en": "50 Dmg, Breaks Will", "cs": "50 Zraň, Láme Vůli" },
-    "level": 9, "buyPrice": 170, "sellPrice": 51
-  },
-  {
-    "id": "gw_blade_ritual_knife_l9",
-    "name": {
-      "en": "Ritual Sacrificial Knife",
-      "cs": "Rituální Obětní Nůž"
-    },
-    "description": {
-      "en": "Stolen from a dark cult, this obsidian knife is honed for spilling blood. It feels unnervingly warm to the touch.",
-      "cs": "Tento obsidiánový nůž, ukradený temnému kultu, je vybroušen pro prolévání krve. Na dotek je znepokojivě teplý."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 46 }, "cs": { "Zranění": 46 } },
-    "abilities": { "en": [ "Unholy Aura" ], "cs": [ "Bezbožná Aura" ] },
-    "itemEffectDescription": { "en": "46 Dmg, Unholy Aura", "cs": "46 Zraň, Bezbožná Aura" },
-    "level": 9, "buyPrice": 172, "sellPrice": 52
-  },
-  {
-    "id": "gw_blade_zweihander_l9",
-    "name": {
-      "en": "Sellsword's Zweihänder",
-      "cs": "Žoldnéřský Obouruční Meč"
-    },
-    "description": {
-      "en": "A massive two-handed sword requiring significant strength to wield. Its long reach keeps lesser horrors at a distance.",
-      "cs": "Masivní obouruční meč vyžadující značnou sílu k ovládání. Jeho dlouhý dosah drží menší hrůzy na distanc."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 52 }, "cs": { "Zranění": 52 } },
-    "abilities": { "en": [ "Great Reach", "Unwieldy" ], "cs": [ "Velký Dosah", "Neohrabaný" ] },
-    "itemEffectDescription": { "en": "52 Dmg, Great Reach, Unwieldy", "cs": "52 Zraň, Velký Dosah, Neohrabaný" },
-    "level": 9, "buyPrice": 158, "sellPrice": 47
+    "level": 9,
+    "buyPrice": 154,
+    "sellPrice": 46
   },
   {
     "id": "gw_blade_wardens_resolve_l10",
@@ -730,73 +317,30 @@
       "cs": "Standardní čepel Strážce, prostá, ale bezchybně zpracovaná. Slabě bzučí v přítomnosti intenzivní Zkázy."
     },
     "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 51 }, "cs": { "Zranění": 51 } },
-    "abilities": { "en": [ "True Strike", "Effective vs Blighted" ], "cs": [ "Jistý Úder", "Efektivní proti Zkaženým" ] },
-    "itemEffectDescription": { "en": "51 Dmg, True Strike, vs Blighted", "cs": "51 Zraň, Jistý Úder, vs Zkažení" },
-    "level": 10, "buyPrice": 185, "sellPrice": 56
-  },
-  {
-    "id": "gw_blade_grave_axe_l10",
-    "name": {
-      "en": "Grave Warden's Axe",
-      "cs": "Sekera Hrobového Strážce"
+    "attributes": {
+      "en": {
+        "Damage": 51
+      },
+      "cs": {
+        "Zranění": 51
+      }
     },
-    "description": {
-      "en": "An axe blessed with funereal rites, its edge is particularly sharp against the restless dead. It feels cold, like freshly turned earth.",
-      "cs": "Sekera požehnaná pohřebními rituály, její ostří je obzvláště účinné proti neklidným mrtvým. Působí chladně, jako čerstvě zoraná země."
+    "abilities": {
+      "en": [
+        "True Strike",
+        "Effective vs Blighted"
+      ],
+      "cs": [
+        "Jistý Úder",
+        "Efektivní proti Zkaženým"
+      ]
     },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 54 }, "cs": { "Zranění": 54 } },
-    "abilities": { "en": [ "Effective vs Undead" ], "cs": [ "Účinná proti Nemrtvým" ] },
-    "itemEffectDescription": { "en": "54 Dmg, vs Undead", "cs": "54 Zraň, vs Nemrtví" },
-    "level": 10, "buyPrice": 195, "sellPrice": 58
-  },
-  {
-    "id": "gw_blade_veterans_flail_l10",
-    "name": {
-      "en": "Veteran's Heavy Flail",
-      "cs": "Veteránův Těžký Cep"
+    "itemEffectDescription": {
+      "en": "51 Dmg, True Strike, vs Blighted",
+      "cs": "51 Zraň, Jistý Úder, vs Zkažení"
     },
-    "description": {
-      "en": "The chain is reinforced, the spiked head heavier. A weapon for a seasoned fighter who knows that a shield is just another wall to break down.",
-      "cs": "Řetěz je zesílený, hlava s hroty těžší. Zbraň pro zkušeného bojovníka, který ví, že štít je jen další zeď, kterou je třeba prorazit."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 56 }, "cs": { "Zranění": 56 } },
-    "abilities": { "en": [ "Shatters Shields" ], "cs": [ "Drtí Štíty" ] },
-    "itemEffectDescription": { "en": "56 Dmg, Shield Shatter", "cs": "56 Zraň, Drtí Štíty" },
-    "level": 10, "buyPrice": 178, "sellPrice": 53
-  },
-  {
-    "id": "gw_blade_parrying_dagger_l10",
-    "name": {
-      "en": "Duelist's Parrying Dagger",
-      "cs": "Duelantská Krycí Dýka"
-    },
-    "description": {
-      "en": "A dagger with an ornate, wide guard designed to catch an opponent's blade. It rewards timing and precision over brute force.",
-      "cs": "Dýka s ozdobnou, širokou záštitou navrženou k zachycení protivníkovy čepele. Odměňuje načasování a přesnost před hrubou silou."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 48 }, "cs": { "Zranění": 48 } },
-    "abilities": { "en": [ "Defensive", "Riposte" ], "cs": [ "Obranná", "Odvetný úder" ] },
-    "itemEffectDescription": { "en": "48 Dmg, Defensive, Riposte", "cs": "48 Zraň, Obranná, Odveta" },
-    "level": 10, "buyPrice": 190, "sellPrice": 57
-  },
-  {
-    "id": "gw_blade_estoc_l10",
-    "name": {
-      "en": "Estoc",
-      "cs": "Estok"
-    },
-    "description": {
-      "en": "A long, rigid, tapering sword with no cutting edge, designed purely for thrusting through the gaps in plate armor. A specialist's tool.",
-      "cs": "Dlouhý, pevný, zužující se meč bez ostří, navržený čistě k probodávání mezer v plátové zbroji. Nástroj specialisty."
-    },
-    "itemType": "wardens_blade",
-    "attributes": { "en": { "Damage": 50 }, "cs": { "Zranění": 50 } },
-    "abilities": { "en": [ "Superior Piercing" ], "cs": [ "Vynikající Průraznost" ] },
-    "itemEffectDescription": { "en": "50 Dmg, Superior Pierce", "cs": "50 Zraň, Vynik. Průraz" },
-    "level": 10, "buyPrice": 188, "sellPrice": 56
+    "level": 10,
+    "buyPrice": 185,
+    "sellPrice": 56
   }
 ]

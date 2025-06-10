@@ -14,12 +14,13 @@ import {
 } from './domElements.js';
 import { getThemeConfig } from '../services/themeService.js';
 import { getUIText } from '../services/localizationService.js';
-import { highlightElementUpdate } from './uiUtils.js';
+import { highlightElementUpdate, formatDynamicText } from './uiUtils.js';
 import {
     getPanelState,
     setPanelState,
     getCurrentTheme,
     getLastKnownDashboardUpdates,
+    setLastKnownDashboardUpdates,
     getLastKnownGameStateIndicators,
     updateDashboardItemMetaEntry,
     getDashboardItemMeta,
@@ -185,12 +186,10 @@ function _createPanelItemElement(itemConfig, themeId) {
     if (itemConfig.type === "text_long" || commonFullWidthIds.includes(itemConfig.id)) {
         itemContainer.classList.add("full-width");
     }
-
     const label = document.createElement("span");
     label.classList.add("label");
     label.textContent = getUIText(itemConfig.label_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
     itemContainer.appendChild(label);
-
     if (itemConfig.type === "meter") {
         const meterContainer = document.createElement("div");
         meterContainer.classList.add("meter-bar-container");
@@ -213,8 +212,23 @@ function _createPanelItemElement(itemConfig, themeId) {
         itemContainer.appendChild(valueSpan);
     }
 
+    const themeConfig = getThemeConfig(themeId);
+    const equipmentSlots = themeConfig?.equipment_slots || {};
+    const slotKey = Object.keys(equipmentSlots).find(key => equipmentSlots[key].id === itemConfig.id);
+
+    if (slotKey && equipmentSlots[slotKey].type !== 'money') {
+        itemContainer.classList.add('equipment-slot-interactive');
+        itemContainer.addEventListener('click', () => {
+            log(LOG_LEVEL_DEBUG, `Equipment slot clicked: ${slotKey}`);
+            document.dispatchEvent(new CustomEvent('equipmentSlotClicked', {
+                detail: { slotKey: slotKey, themeId: themeId }
+            }));
+        });
+        const clickToOpenText = getUIText("tooltip_open_inventory_for_slot", {}, { explicitThemeContext: themeId });
+    }
+
     // Append the tooltip trigger icon if a tooltip_key is defined in the config
-    if (itemConfig.tooltip_key) {
+    if (itemConfig.tooltip_key) { // Also check if it's not an equipment slot to avoid double tooltips
         const tooltipIcon = document.createElement('span');
         tooltipIcon.className = 'info-tooltip-trigger';
         // The icon's content is rendered via CSS mask.
@@ -223,7 +237,6 @@ function _createPanelItemElement(itemConfig, themeId) {
         attachTooltip(tooltipIcon, itemConfig.tooltip_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
         itemContainer.appendChild(tooltipIcon);
     }
-
     return itemContainer;
 }
 
@@ -340,7 +353,8 @@ function initializeDashboardDefaultTexts(themeId) {
         } else if (itemConfig.type === "text" || itemConfig.type === "text_long" || itemConfig.type === "number_text") {
             if (valueElement) {
                 const suffix = itemConfig.suffix || "";
-                valueElement.textContent = `${defaultValueText}${suffix}`;
+                const newText = `${defaultValueText}${suffix}`;
+                valueElement.innerHTML = formatDynamicText(newText);
             }
         } else if (itemConfig.type === "status_text" && valueElement) {
              if (valueElement) { // For status_text, the value IS the text
@@ -647,8 +661,9 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
         if (valueElement) {
             const suffix = itemConfig.suffix || "";
             const newText = `${newValue}${suffix}`;
-            if (valueElement.textContent !== newText) {
-                valueElement.textContent = newText;
+            const formattedHtml = formatDynamicText(newText);
+            if (valueElement.innerHTML !== formattedHtml) {
+                valueElement.innerHTML = formattedHtml;
                 if (highlight && itemContainer) highlightElementUpdate(itemContainer);
             }
         }
@@ -662,6 +677,10 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
             }
         }
     }
+
+    // Persist this update to the central state object that gets saved.
+    setLastKnownDashboardUpdates({ [itemId]: newValue });
+
     // If an item inside a collapsible panel is updated, ensure the panel expands.
     if (itemContainer && highlight) {
         const parentPanelBox = itemContainer.closest('.panel-box');

@@ -11,12 +11,10 @@ import { XP_LEVELS, MAX_PLAYER_LEVEL, BOON_DEFINITIONS, MIN_LEVEL_FOR_STORE } fr
 import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARN, LOG_LEVEL_ERROR } from '../core/logger.js';
 import { attachTooltip, hideCurrentTooltip } from './tooltipManager.js';
 import * as modalManager from './modalManager.js';
-import { getThemeConfig, getThemeTraits } from '../services/themeService.js';
+import * as themeService from '../services/themeService.js';
 import * as uiUtils from './uiUtils.js';
-
 // Dependencies injected at init
 let _gameControllerRef = null;
-
 // Destructure relevant DOM elements
 const {
     characterProgressionPanel,
@@ -26,7 +24,6 @@ const {
     xpBarFill,
     xpBarText
 } = dom;
-
 /**
  * Creates the static DOM structure for the character panel.
  * This is called once during initialization.
@@ -51,44 +48,35 @@ function _createBasePanelStructure() {
             <!-- Icon buttons will be dynamically inserted here -->
         </div>
     `;
-
     const strainIcon = document.getElementById('char-panel-strain-icon');
     if (strainIcon) {
         strainIcon.addEventListener('click', _showStrainDetailsModal);
     }
 }
-
 /**
  * Dynamically builds the character attributes grid based on the theme's top_panel config.
  * @param {string} themeId The ID of the current theme.
  */
 export function buildCharacterPanel(themeId) {
-    const themeConfig = getThemeConfig(themeId);
+    const themeConfig = themeService.getThemeConfig(themeId);
     const grid = document.getElementById('character-attributes-grid');
     const rightContainer = dom.characterProgressionPanel.querySelector('.character-info-right');
-
     if (!grid || !rightContainer) {
         log(LOG_LEVEL_ERROR, "Character panel grid or right container not found. Cannot build panel.");
         return;
     }
-
     grid.innerHTML = '';
     rightContainer.innerHTML = '';
-
     const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
-
     topPanelConfig.forEach(itemConfig => {
         if (itemConfig.id === 'strain_level') return; // Strain is handled separately in the left container
-
         const itemContainer = document.createElement('div');
         itemContainer.id = `cp-item-${itemConfig.id}`;
         itemContainer.className = 'attribute-item';
-
         const label = document.createElement('span');
         label.className = 'attribute-label';
         label.textContent = getUIText(itemConfig.label_key);
         itemContainer.appendChild(label);
-
         if (itemConfig.type === 'meter') {
             const meterContainer = document.createElement('div');
             meterContainer.className = 'attribute-meter-container';
@@ -97,7 +85,6 @@ export function buildCharacterPanel(themeId) {
             meterBar.className = 'attribute-meter-bar';
             meterContainer.appendChild(meterBar);
             itemContainer.appendChild(meterContainer);
-
             const valueDisplay = document.createElement('span');
             valueDisplay.id = `char-panel-${itemConfig.id}-value`;
             valueDisplay.className = 'attribute-value';
@@ -108,7 +95,6 @@ export function buildCharacterPanel(themeId) {
             valueDisplay.className = 'attribute-value';
             itemContainer.appendChild(valueDisplay);
         }
-
         if (itemConfig.tooltip_key) {
             const tooltipIcon = document.createElement('span');
             tooltipIcon.className = 'info-tooltip-trigger';
@@ -119,77 +105,87 @@ export function buildCharacterPanel(themeId) {
         }
         grid.appendChild(itemContainer);
     });
-
     _createIconButtons(rightContainer);
 }
-
-
 /**
- * Creates the icon buttons for Lore, Inventory, and Traits.
- * @param {HTMLElement} container - The container to append the buttons to.
- * @private
- */
-/**
- * Creates the icon buttons for Inventory, Traits, Lore, and Store.
+ * Creates the icon buttons for Inventory, Character Progress, Lore, and Store.
  * @param {HTMLElement} container - The container to append the buttons to.
  * @private
  */
 function _createIconButtons(container) {
     if (!container) return;
+
     const buttons = [
         { id: 'inventory', icon: 'icon_inventory.svg', tooltipKey: 'tooltip_inventory_button', handler: _showInventoryModal },
-        { id: 'traits', icon: 'icon_traits.svg', tooltipKey: 'tooltip_traits_button', handler: _showTraitsModal },
+        {
+            id: 'character_progress',
+            icon: 'icon_character.svg', // Use the empty icon for the in-game panel button
+            tooltipKey: 'tooltip_character_progress',
+            handler: () => {
+                const themeId = state.getCurrentTheme();
+                if (themeId) {
+                    showCharacterProgressModal(themeId);
+                } else {
+                    log(LOG_LEVEL_WARN, "Character progress button clicked but no active theme found.");
+                }
+            }
+        },
         { id: 'lore', icon: 'icon_lore.svg', tooltipKey: 'tooltip_lore_button', handler: _showLoreModal },
-        { id: 'store', icon: 'icon_store_empty.svg', tooltipKey: 'tooltip_store_button', handler: _showStoreModal }
+        { id: 'store', icon: 'icon_store.svg', tooltipKey: 'tooltip_store_button', handler: _showStoreModal }
     ];
+
     buttons.forEach(btnInfo => {
         const button = document.createElement('button');
         button.id = `char-panel-${btnInfo.id}-button`;
         button.className = 'ui-button icon-button';
-        // Special logic for the store button
+
         if (btnInfo.id === 'store') {
             const currentLevel = state.getPlayerLevel();
-            if (currentLevel >= MIN_LEVEL_FOR_STORE) {
+            // Store is locked if current level is LESS than min level. Button is disabled.
+            if (currentLevel < MIN_LEVEL_FOR_STORE) {
                 button.disabled = true;
-                attachTooltip(button, 'tooltip_store_locked_level', { MIN_LEVEL: MIN_LEVEL_FOR_STORE });
+                button.classList.add('disabled');
+                const tooltipText = getUIText('tooltip_store_locked_level', { MIN_LEVEL: MIN_LEVEL_FOR_STORE });
+                attachTooltip(button, null, {}, { rawText: tooltipText });
+                button.innerHTML = `<img src="images/app/icon_store.svg" alt="${tooltipText}">`;
             } else {
+                const altText = getUIText(btnInfo.tooltipKey);
                 attachTooltip(button, btnInfo.tooltipKey);
+                button.innerHTML = `<img src="images/app/${btnInfo.icon}" alt="${altText}">`;
+                button.addEventListener('click', btnInfo.handler);
             }
         } else {
+            const altText = getUIText(btnInfo.tooltipKey);
             attachTooltip(button, btnInfo.tooltipKey);
+            button.innerHTML = `<img src="images/app/${btnInfo.icon}" alt="${altText}">`;
+            button.addEventListener('click', btnInfo.handler);
         }
-        button.innerHTML = `<img src="images/app/${btnInfo.icon}" alt="${btnInfo.id}">`;
-        button.addEventListener('click', btnInfo.handler);
+
         container.appendChild(button);
     });
 }
-
 /**
  * Shows a modal with details about the character's current strain level.
  * @private
  */
 function _showStrainDetailsModal() {
     const themeId = state.getCurrentTheme();
-    const themeConfig = getThemeConfig(themeId);
+    const themeConfig = themeService.getThemeConfig(themeId);
     if (!themeConfig) return;
     const strainLevel = state.getCurrentStrainLevel();
     const strainItemConfig = themeConfig.dashboard_config?.top_panel?.find(item => item.id === 'strain_level');
-
     if (!strainItemConfig) return;
     const levelConfig = strainItemConfig.level_mappings?.[String(strainLevel)];
     if (!levelConfig) return;
-
     const titleKey = "modal_title_strain_status";
     const messageText = getUIText(levelConfig.display_text_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
     const tooltipText = getUIText(strainItemConfig.tooltip_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
-
     modalManager.showCustomModal({
         type: 'alert',
         titleKey: titleKey,
         htmlContent: `<p><strong>${messageText}</strong></p><p>${tooltipText}</p>`,
     });
 }
-
 /**
  * Initializes the CharacterPanelManager.
  * @param {object} [dependencies={}] - Optional dependencies.
@@ -201,30 +197,32 @@ export function initCharacterPanelManager(dependencies = {}) {
     showXPBar(false);
     log(LOG_LEVEL_INFO, "CharacterPanelManager initialized. Panel and XP bar hidden.");
 }
-
-
 /**
  * Shows a modal displaying the character's persistent progress for a specific theme.
  * Includes stats, traits, and a 'Reset Character' option.
  * @param {string} themeId - The ID of the theme for which to show progress.
  */
 export async function showCharacterProgressModal(themeId) {
-    const themeConfig = getThemeConfig(themeId);
-    const progress = state.getLandingSelectedThemeProgress();
+    const themeConfig = themeService.getThemeConfig(themeId);
+    const progress = state.getCurrentTheme() === themeId
+        ? state.getCurrentUserThemeProgress()
+        : state.getLandingSelectedThemeProgress();
     const currentUser = state.getCurrentUser();
-
     if (!themeConfig || !progress || !currentUser) {
         log(LOG_LEVEL_ERROR, "Could not show character progress modal. Missing themeConfig, progress data, or user.");
         return;
     }
-
-    const allThemeTraits = getThemeTraits(themeId);
+    // Fetch traits on demand if not already cached
+    let allThemeTraits = themeService.getThemeTraits(themeId);
+    if (!allThemeTraits) {
+        log(LOG_LEVEL_INFO, `Traits for ${themeId} not cached. Fetching for progress modal...`);
+        await themeService.fetchAndCachePromptFile(themeId, 'traits');
+        allThemeTraits = themeService.getThemeTraits(themeId); // Re-attempt to get from cache.
+    }
     const lang = state.getCurrentAppLanguage();
     const themeDisplayName = getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeId });
-
     const content = document.createElement('div');
     content.className = 'character-progress-modal-content';
-
     // Build the stats list
     const statsList = document.createElement('dl');
     statsList.className = 'progress-stats-list';
@@ -236,7 +234,6 @@ export async function showCharacterProgressModal(themeId) {
         statsList.appendChild(dt);
         statsList.appendChild(dd);
     };
-
     const xpForNextLevel = progress.level < XP_LEVELS.length ? XP_LEVELS[progress.level] : 'MAX';
     createStatItem('label_char_progress_level', progress.level || 1);
     createStatItem('label_char_progress_xp', `${progress.currentXP || 0} / ${xpForNextLevel}`);
@@ -245,14 +242,12 @@ export async function showCharacterProgressModal(themeId) {
     createStatItem('label_char_progress_aptitude', `${themeConfig.base_attributes.aptitude} (+${progress.aptitudeBonus || 0})`);
     createStatItem('label_char_progress_resilience', `${themeConfig.base_attributes.resilience} (+${progress.resilienceBonus || 0})`);
     content.appendChild(statsList);
-
     // Build the traits list
     const traitsSection = document.createElement('div');
     traitsSection.className = 'progress-traits-section';
     const traitsTitle = document.createElement('h4');
     traitsTitle.textContent = getUIText('label_char_progress_traits');
     traitsSection.appendChild(traitsTitle);
-
     const acquiredTraits = Array.isArray(progress.acquiredTraitKeys) ? progress.acquiredTraitKeys : [];
     if (acquiredTraits.length > 0 && allThemeTraits) {
         const list = document.createElement('ul');
@@ -285,7 +280,6 @@ export async function showCharacterProgressModal(themeId) {
         traitsSection.appendChild(noTraitsP);
     }
     content.appendChild(traitsSection);
-
     // Danger Zone for Reset Button
     const dangerZone = document.createElement('div');
     dangerZone.className = 'danger-zone';
@@ -305,7 +299,6 @@ export async function showCharacterProgressModal(themeId) {
     dangerZone.appendChild(dangerTitle);
     dangerZone.appendChild(resetButton);
     content.appendChild(dangerZone);
-
     modalManager.showCustomModal({
         type: 'custom',
         titleKey: 'modal_title_character_progress',
@@ -314,8 +307,6 @@ export async function showCharacterProgressModal(themeId) {
         customActions: [{ textKey: 'modal_ok_button', className: 'ui-button primary', onClick: () => modalManager.hideCustomModal() }]
     });
 }
-
-
 /**
  * Shows or hides the character progression panel.
  * @param {boolean} show - True to show, false to hide.
@@ -328,7 +319,6 @@ export function showCharacterPanel(show) {
         log(LOG_LEVEL_WARN, "Character progression panel DOM element not found.");
     }
 }
-
 /**
  * Shows or hides the XP bar.
  * @param {boolean} show - True to show, false to hide.
@@ -341,7 +331,6 @@ export function showXPBar(show) {
         log(LOG_LEVEL_WARN, "XP bar container DOM element not found.");
     }
 }
-
 /**
  * Animates the XP bar and text to show experience gain.
  * @param {number} xpGained - The amount of experience points gained.
@@ -372,7 +361,6 @@ export function animateXpGain(xpGained) {
         }
     }, 6000);
 }
-
 /**
  * Updates the character progression panel and XP bar with the latest data from the state.
  * @param {boolean} [highlight=true] - If true, updated values will flash to draw attention. Set to false for silent updates like on game load.
@@ -383,7 +371,7 @@ export function updateCharacterPanel(highlight = true) {
     }
     const themeId = state.getCurrentTheme();
     if (!themeId) return;
-    const themeConfig = getThemeConfig(themeId);
+    const themeConfig = themeService.getThemeConfig(themeId);
     const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
     // Update Identity block
     const playerIdentifier = state.getPlayerIdentifier() || getUIText('char_panel_placeholder_name');
@@ -480,7 +468,6 @@ export function updateCharacterPanel(highlight = true) {
         }
     }
 }
-
 /**
  * Updates the static labels in the character panel based on the current language.
  * This is typically called by languageManager when the language changes.
@@ -495,7 +482,7 @@ export function retranslateCharacterPanelLabels() {
     if (idEl && !state.getPlayerIdentifier()) idEl.textContent = getUIText('char_panel_placeholder_name');
     if (levelEl) levelEl.textContent = `${getUIText("char_panel_label_level")} ${state.getPlayerLevel()}`;
     // Retranslate dynamically generated elements and tooltips
-    const themeConfig = getThemeConfig(themeId);
+    const themeConfig = themeService.getThemeConfig(themeId);
     const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
     topPanelConfig.forEach(itemConfig => {
         const itemContainer = document.getElementById(`cp-item-${itemConfig.id}`);
@@ -512,95 +499,50 @@ export function retranslateCharacterPanelLabels() {
     if(rightContainer) {
         const loreBtn = rightContainer.querySelector('#char-panel-lore-button');
         const invBtn = rightContainer.querySelector('#char-panel-inventory-button');
-        const traitsBtn = rightContainer.querySelector('#char-panel-traits-button');
+        const progressBtn = rightContainer.querySelector('#char-panel-character_progress-button');
+        const storeBtn = rightContainer.querySelector('#char-panel-store-button');
+
         if (loreBtn) attachTooltip(loreBtn, 'tooltip_lore_button');
         if (invBtn) attachTooltip(invBtn, 'tooltip_inventory_button');
-        if (traitsBtn) attachTooltip(traitsBtn, 'tooltip_traits_button');
+        if (progressBtn) attachTooltip(progressBtn, 'tooltip_character_progress');
+        if (storeBtn) {
+            const currentLevel = state.getPlayerLevel();
+            if (currentLevel < MIN_LEVEL_FOR_STORE) {
+                const tooltipText = getUIText('tooltip_store_locked_level', { MIN_LEVEL: MIN_LEVEL_FOR_STORE });
+                attachTooltip(storeBtn, null, {}, { rawText: tooltipText });
+            } else {
+                attachTooltip(storeBtn, 'tooltip_store_button');
+            }
+        }
     }
     log(LOG_LEVEL_DEBUG, "Character panel labels and tooltips re-translated.");
     updateCharacterPanel(false); // Refresh values without highlight on language change
 }
-
 /**
  * Shows a placeholder modal for the Store.
  * @private
  */
 function _showStoreModal() {
-    modalManager.showCustomModal({
-        type: 'alert',
-        titleKey: 'modal_title_store',
-        messageKey: 'store_not_implemented_message'
-    });
-}
-
-/**
- * Shows a modal with the character's acquired traits.
- * @private
- */
-function _showTraitsModal() {
-    const themeId = state.getCurrentTheme();
-    if (!themeId) {
-        log(LOG_LEVEL_WARN, "_showTraitsModal called without an active theme.");
-        return;
+    if (_gameControllerRef) {
+        const themeId = state.getCurrentTheme();
+        if (themeId) {
+            _gameControllerRef.showStoreModal(themeId);
+        } else {
+            log(LOG_LEVEL_WARN, "_showStoreModal called but no active theme is set.");
+        }
     }
-    const acquiredTraitKeys = state.getAcquiredTraitKeys();
-    const allThemeTraits = getThemeTraits(themeId);
-    const lang = state.getCurrentAppLanguage();
-    const titleKey = "modal_title_acquired_traits";
-    const content = document.createElement('div');
-    content.className = 'traits-modal-content';
-
-    if (acquiredTraitKeys && acquiredTraitKeys.length > 0 && allThemeTraits) {
-        const list = document.createElement('ul');
-        list.className = 'traits-list';
-        acquiredTraitKeys.forEach(traitKey => {
-            const traitDefinition = allThemeTraits[traitKey];
-            if (traitDefinition) {
-                const localizedTrait = traitDefinition[lang] || traitDefinition['en']; // Fallback to English
-                if (localizedTrait) {
-                    const listItem = document.createElement('li');
-                    listItem.className = 'trait-item';
-                    const nameSpan = document.createElement('span');
-                    nameSpan.className = 'trait-name';
-                    nameSpan.textContent = localizedTrait.name;
-                    const descSpan = document.createElement('span');
-                    descSpan.className = 'trait-description';
-                    descSpan.textContent = localizedTrait.description;
-                    listItem.appendChild(nameSpan);
-                    listItem.appendChild(descSpan);
-                    list.appendChild(listItem);
-                } else {
-                    log(LOG_LEVEL_WARN, `Localized data for trait key '${traitKey}' not found for lang '${lang}'.`);
-                }
-            } else {
-                 log(LOG_LEVEL_WARN, `Data for acquired trait key '${traitKey}' not found in theme's parsed traits.`);
-            }
-        });
-        content.appendChild(list);
-    } else {
-        const noTraitsP = document.createElement('p');
-        noTraitsP.textContent = getUIText('traits_none_acquired', {}, { explicitThemeContext: themeId, viewContext: 'game' });
-        content.appendChild(noTraitsP);
-    }
-    modalManager.showCustomModal({
-        type: 'custom',
-        titleKey: titleKey,
-        htmlContent: content,
-        customActions: [{ textKey: 'modal_ok_button', className: 'ui-button primary', onClick: () => modalManager.hideCustomModal() }]
-    });
 }
 /**
- * Shows a placeholder modal for the inventory.
+ * Shows a modal displaying the character's inventory.
  * @private
  */
 function _showInventoryModal() {
-    modalManager.showCustomModal({
-        type: 'alert',
-        titleKey: 'modal_title_inventory',
-        messageKey: 'inventory_not_implemented_message'
-    });
+    if (_gameControllerRef && typeof _gameControllerRef.showInventoryModal === 'function') {
+        _gameControllerRef.showInventoryModal();
+    } else {
+        log(LOG_LEVEL_ERROR, "GameController or showInventoryModal method not available.");
+    }
 }
-
 /**
  * Shows a modal with the current Evolved World Lore and any unlocked World Fragments.
  * @private
@@ -608,14 +550,12 @@ function _showInventoryModal() {
 async function _showLoreModal() {
     const themeId = state.getCurrentTheme();
     const currentUser = state.getCurrentUser();
-    const themeConfig = getThemeConfig(themeId);
+    const themeConfig = themeService.getThemeConfig(themeId);
     if (!themeConfig) return;
-
     const themeDisplayName = getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeId });
     const modalContent = document.createElement('div');
     modalContent.className = 'lore-modal-content';
     modalContent.textContent = getUIText('system_processing_short'); // Loading indicator
-
     modalManager.showCustomModal({
         type: 'custom',
         titleKey: 'modal_title_world_lore',
@@ -623,7 +563,6 @@ async function _showLoreModal() {
         htmlContent: modalContent,
         customActions: [{ textKey: 'modal_ok_button', className: 'ui-button primary', onClick: () => modalManager.hideCustomModal() }]
     });
-
     try {
         const baseLore = getUIText(themeConfig.lore_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
         let shards = [];
@@ -631,9 +570,7 @@ async function _showLoreModal() {
             const shardsResponse = await apiService.fetchWorldShards(currentUser.token, themeId);
             shards = shardsResponse.worldShards || [];
         }
-
         modalContent.innerHTML = ''; // Clear loading text
-
         // Base Lore Section
         const loreSection = document.createElement('div');
         loreSection.className = 'lore-section';
@@ -646,7 +583,6 @@ async function _showLoreModal() {
         loreSection.appendChild(loreTitle);
         loreSection.appendChild(loreText);
         modalContent.appendChild(loreSection);
-
         // World Fragments Section
         const fragmentsSection = document.createElement('div');
         fragmentsSection.className = 'lore-section';
@@ -654,7 +590,6 @@ async function _showLoreModal() {
         fragmentsTitle.className = 'lore-section-title';
         fragmentsTitle.textContent = getUIText('lore_modal_fragments_title');
         fragmentsSection.appendChild(fragmentsTitle);
-
         if (shards.length > 0) {
             const list = document.createElement('ul');
             list.className = 'lore-fragments-list';
@@ -686,7 +621,6 @@ async function _showLoreModal() {
             fragmentsSection.appendChild(noFragmentsP);
         }
         modalContent.appendChild(fragmentsSection);
-
     } catch (error) {
         log(LOG_LEVEL_ERROR, "Failed to load lore/shards for modal:", error);
         modalManager.displayModalError(getUIText("error_api_call_failed", { ERROR_MSG: error.message }), modalContent);

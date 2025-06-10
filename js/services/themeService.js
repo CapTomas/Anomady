@@ -259,7 +259,7 @@ export async function fetchAndCacheItemData(themeId, itemType) {
         log(LOG_LEVEL_ERROR, `Theme ${themeId} not found in manifest. Cannot fetch item data.`);
         return null;
     }
-    const itemDataPath = `${themeManifestEntry.path}data/items_${itemType}.json`;
+    const itemDataPath = `${themeManifestEntry.path}data/${itemType}_items.json`;
     log(LOG_LEVEL_INFO, `Fetching item data file: ${itemDataPath}`);
     const itemData = await _fetchJSON(itemDataPath);
     if (itemData !== null) {

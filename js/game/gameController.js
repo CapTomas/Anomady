@@ -261,7 +261,7 @@ async function _applyBoonAndFinalize(payload, boonDisplayText) {
             dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder() || localizationService.getUIText("placeholder_command");
             dom.playerActionInput.focus();
         }
-        await authService.saveCurrentGameState();
+        await authService.saveCurrentGameState(true);
     } catch (error) {
         log(LOG_LEVEL_ERROR, "Error applying Boon:", error);
         storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: error.message || "Failed to apply Boon." }), "system system-error");
@@ -362,6 +362,7 @@ function _presentInitialTraitChoices() {
     uiUtils.setGMActivityIndicator(false);
     uiUtils.setPlayerInputEnabled(false); // Prevent typing during trait choice
 }
+
 /**
  * Handles the player's initial trait selection and starts the game.
  * @param {string} traitKey - The key of the selected trait.
@@ -393,6 +394,367 @@ async function _handleInitialTraitSelection(traitKey) {
     }
 }
 /**
+ * Creates the detailed view for a single inventory item, including its stats and action button.
+ * @param {object} item - The item object from state.
+ * @param {boolean} isEquipped - True if the item is currently equipped.
+ * @returns {HTMLElement|null} The DOM element for the item details, or null.
+ * @private
+ */
+function _createInventoryItemDetailElement(item, isEquipped) {
+    const themeId = state.getCurrentTheme();
+    if (!item || !themeId) return null;
+    const lang = localizationService.getApplicationLanguage();
+    const detailContainer = document.createElement('div');
+    detailContainer.className = 'inventory-item-details';
+    const description = document.createElement('p');
+    description.className = 'inventory-item-description';
+    description.textContent = item.description?.[lang] || item.description?.['en'] || '';
+    if (description.textContent) {
+         detailContainer.appendChild(description);
+    }
+    // --- Collapsible Content ---
+    const collapsibleContent = document.createElement('div');
+    collapsibleContent.className = 'inventory-item-collapsible-content';
+    const attributes = item.attributes?.[lang] || item.attributes?.['en'];
+    if (attributes && Object.keys(attributes).length > 0) {
+        const attributesContainer = document.createElement('div');
+        attributesContainer.className = 'inventory-item-stats-grid';
+        for (const [key, value] of Object.entries(attributes)) {
+            const statItem = document.createElement('div');
+            statItem.className = 'stat-item';
+            const statLabel = document.createElement('span');
+            statLabel.className = 'stat-label';
+            statLabel.textContent = key;
+            const statValue = document.createElement('span');
+            statValue.className = 'stat-value';
+            statValue.textContent = value;
+            statItem.appendChild(statLabel);
+            statItem.appendChild(statValue);
+            attributesContainer.appendChild(statItem);
+        }
+        collapsibleContent.appendChild(attributesContainer);
+    }
+    const abilities = item.abilities?.[lang] || item.abilities?.['en'];
+    if (abilities && abilities.length > 0) {
+        const abilitiesContainer = document.createElement('div');
+        abilitiesContainer.className = 'inventory-item-abilities';
+        const abilitiesLabel = document.createElement('h5');
+        abilitiesLabel.textContent = localizationService.getUIText('label_abilities');
+        const abilitiesList = document.createElement('ul');
+        abilities.forEach(abilityText => {
+            const li = document.createElement('li');
+            li.textContent = abilityText;
+            abilitiesList.appendChild(li);
+        });
+        abilitiesContainer.appendChild(abilitiesLabel);
+        abilitiesContainer.appendChild(abilitiesList);
+        collapsibleContent.appendChild(abilitiesContainer);
+    }
+    if (collapsibleContent.hasChildNodes()) {
+        detailContainer.appendChild(collapsibleContent);
+    }
+    // --- End Collapsible Content ---
+    const metaContainer = document.createElement('div');
+    metaContainer.className = 'inventory-item-meta';
+    const actionButton = document.createElement('button');
+    actionButton.className = 'ui-button small inventory-action-button';
+    if (isEquipped) {
+        actionButton.textContent = localizationService.getUIText('button_unequip');
+        actionButton.dataset.slotKey = item.itemType;
+        actionButton.addEventListener('click', (e) => _handleUnequipItem(e.target.dataset.slotKey));
+    } else {
+        actionButton.textContent = localizationService.getUIText('button_equip');
+        actionButton.dataset.itemId = item.id;
+        actionButton.addEventListener('click', (e) => _handleEquipItem(e.target.dataset.itemId));
+    }
+    metaContainer.appendChild(actionButton);
+    const priceInfo = document.createElement('div');
+    priceInfo.className = 'price-info';
+    if (item.sellPrice) priceInfo.innerHTML += `<span>${localizationService.getUIText('label_sell_price')}: ${item.sellPrice}</span>`;
+    if(priceInfo.innerHTML) metaContainer.appendChild(priceInfo);
+    detailContainer.appendChild(metaContainer);
+    return detailContainer;
+}
+
+/**
+ * Builds the complete HTML content for the inventory modal.
+ * @returns {Promise<HTMLElement|null>} A promise that resolves to the modal content element.
+ * @private
+ */
+/**
+ * Builds the complete HTML content for the inventory modal.
+ * @returns {Promise<HTMLElement|null>} A promise that resolves to the modal content element.
+ * @private
+ */
+async function _buildInventoryModalContent() {
+    const themeId = state.getCurrentTheme();
+    if (!themeId) return null;
+    const themeConfig = themeService.getThemeConfig(themeId);
+    if (!themeConfig || !themeConfig.equipment_slots) return null;
+    const lang = localizationService.getApplicationLanguage();
+    const modalContent = document.createElement('div');
+    modalContent.className = 'inventory-modal-content';
+    // Equipped Items Section
+    const equippedSection = document.createElement('div');
+    equippedSection.className = 'inventory-section';
+    const equippedTitle = document.createElement('h4');
+    equippedTitle.textContent = localizationService.getUIText('modal_title_equipped_items');
+    equippedSection.appendChild(equippedTitle);
+    const equippedList = document.createElement('ul');
+    equippedList.className = 'inventory-list detailed';
+    const equippedItems = state.getEquippedItems();
+    const allDashboardItemConfigs = [
+        ...(themeConfig.dashboard_config.left_panel || []),
+        ...(themeConfig.dashboard_config.right_panel || [])
+    ].flatMap(panel => panel.items);
+    for (const slotKey in themeConfig.equipment_slots) {
+        const slotConfig = themeConfig.equipment_slots[slotKey];
+        if (slotConfig.type === 'money') continue;
+        const item = equippedItems[slotKey];
+        const listItem = document.createElement('li');
+        listItem.className = 'inventory-item-detailed equipped-item-slot';
+        listItem.addEventListener('click', (e) => {
+            if (e.target.closest('button')) return;
+            if (item) { // Only allow expanding if there is an item
+                 listItem.classList.toggle('is-expanded');
+            }
+        });
+        const itemHeader = document.createElement('div');
+        itemHeader.className = 'inventory-slot-header';
+        const slotLabel = document.createElement('span');
+        slotLabel.className = 'inventory-item-slot-label';
+        const itemDashboardConfig = allDashboardItemConfigs.find(i => i.id === slotConfig.id);
+        const slotLabelKey = itemDashboardConfig?.label_key || 'Unknown Slot';
+        slotLabel.textContent = localizationService.getUIText(slotLabelKey, {}, { explicitThemeContext: themeId });
+        const itemName = document.createElement('span');
+        itemName.className = 'inventory-item-name';
+        itemHeader.appendChild(slotLabel);
+        itemHeader.appendChild(itemName);
+        listItem.appendChild(itemHeader);
+        if (item) {
+            itemName.textContent = item.name?.[lang] || item.name?.['en'] || 'Unknown Item';
+            const itemDetails = _createInventoryItemDetailElement(item, true); // true for isEquipped
+            if (itemDetails) listItem.appendChild(itemDetails);
+        } else {
+            itemName.textContent = localizationService.getUIText('inventory_slot_empty');
+            itemName.classList.add('empty');
+        }
+        equippedList.appendChild(listItem);
+    }
+    equippedSection.appendChild(equippedList);
+    modalContent.appendChild(equippedSection);
+    // Backpack Section
+    const inventorySection = document.createElement('div');
+    inventorySection.className = 'inventory-section';
+    const inventoryTitle = document.createElement('h4');
+    inventoryTitle.textContent = localizationService.getUIText('modal_title_backpack');
+    inventorySection.appendChild(inventoryTitle);
+    const backpackItems = state.getCurrentInventory();
+    if (backpackItems.length > 0) {
+        const backpackList = document.createElement('ul');
+        backpackList.className = 'inventory-list detailed';
+        backpackItems.forEach(item => {
+             const listItem = document.createElement('li');
+            listItem.className = 'inventory-item-detailed backpack-item';
+            listItem.addEventListener('click', (e) => {
+                if (e.target.closest('button')) return;
+                listItem.classList.toggle('is-expanded');
+            });
+            const itemHeader = document.createElement('div');
+            itemHeader.className = 'inventory-slot-header';
+            const slotLabel = document.createElement('span');
+            slotLabel.className = 'inventory-item-slot-label';
+            const itemDashboardConfig = allDashboardItemConfigs.find(i => i.id === themeConfig.equipment_slots[item.itemType]?.id);
+            slotLabel.textContent = itemDashboardConfig ? localizationService.getUIText(itemDashboardConfig.label_key, {}, { explicitThemeContext: themeId }) : item.itemType;
+            const itemName = document.createElement('span');
+            itemName.className = 'inventory-item-name';
+            itemName.textContent = item.name?.[lang] || item.name?.['en'] || 'Unknown Item';
+            itemHeader.appendChild(slotLabel);
+            itemHeader.appendChild(itemName);
+            listItem.appendChild(itemHeader);
+            const itemDetails = _createInventoryItemDetailElement(item, false); // false for isEquipped
+            if (itemDetails) listItem.appendChild(itemDetails);
+            backpackList.appendChild(listItem);
+        });
+        inventorySection.appendChild(backpackList);
+    } else {
+        const inventoryList = document.createElement('p');
+        inventoryList.textContent = localizationService.getUIText('inventory_backpack_empty');
+        inventorySection.appendChild(inventoryList);
+    }
+    modalContent.appendChild(inventorySection);
+    return modalContent;
+}
+/**
+ * Equips starting gear based on the player's level for the given theme.
+ * This should only be called when starting a new game run.
+ * @param {string} themeId - The ID of the theme.
+ * @private
+ */
+async function _equipStartingGear(themeId) {
+    const themeConfig = themeService.getThemeConfig(themeId);
+    if (!themeConfig || !themeConfig.equipment_slots) {
+        log(LOG_LEVEL_WARN, `No equipment slots defined for theme ${themeId}. Skipping starting gear.`);
+        return;
+    }
+
+    const playerLevel = state.getPlayerLevel();
+    const lang = localizationService.getApplicationLanguage();
+    const equipmentSlots = themeConfig.equipment_slots;
+    const startingGear = {};
+    const startingInventory = []; // This remains empty, equipped items are not also in the backpack.
+
+    log(LOG_LEVEL_INFO, `Equipping starting gear for theme ${themeId} at level ${playerLevel}.`);
+
+    for (const slotKey in equipmentSlots) {
+        const slotConfig = equipmentSlots[slotKey];
+        const itemType = slotKey; // e.g., 'wardens_blade'
+        if (slotConfig.type === 'money') continue;
+
+        const items = await themeService.fetchAndCacheItemData(themeId, itemType);
+        if (items && items.length > 0) {
+            const suitableItems = items.filter(item => item.level <= playerLevel);
+            if (suitableItems.length > 0) {
+                const bestItem = suitableItems.reduce((best, current) => (current.level > best.level ? current : best), suitableItems[0]);
+                startingGear[slotKey] = bestItem; // This item is equipped
+
+                const itemName = bestItem.name?.[lang] || bestItem.name?.['en'] || 'Unknown Item';
+                const effectDescription = bestItem.itemEffectDescription?.[lang] || bestItem.itemEffectDescription?.['en'] || localizationService.getUIText('unknown');
+                const fullItemDescription = `<span class="equipped-item-name">${itemName}</span><br><em class="equipped-item-effect">${effectDescription}</em>`;
+
+                dashboardManager.updateDashboardItem(slotConfig.id, fullItemDescription, false);
+                log(LOG_LEVEL_DEBUG, `Equipped level ${bestItem.level} item '${itemName}' in slot '${slotKey}'.`);
+            }
+        }
+    }
+
+    state.setEquippedItems(startingGear);
+    state.setCurrentInventory(startingInventory); // Sets the (empty) inventory
+    log(LOG_LEVEL_INFO, 'Starting gear setup complete. Equipped and Inventory states populated.', { equipped: startingGear, inventory: startingInventory });
+}
+/**
+ * Handles the logic for equipping an item from the inventory.
+ * @param {string} itemId - The ID of the item to equip.
+ * @private
+ */
+async function _handleEquipItem(itemId) {
+    const themeId = state.getCurrentTheme();
+    const inventory = state.getCurrentInventory();
+    const itemToEquip = inventory.find(i => i.id === itemId);
+
+    if (!itemToEquip || !themeId) {
+        log(LOG_LEVEL_ERROR, `Could not equip item: Item with ID ${itemId} not found in inventory, or no active theme.`);
+        return;
+    }
+
+    log(LOG_LEVEL_INFO, `Equipping item: ${itemToEquip.name?.en || itemToEquip.id}`);
+
+    const equippedItems = { ...state.getEquippedItems() };
+    const newInventory = inventory.filter(i => i.id !== itemId);
+    const slotKey = itemToEquip.itemType;
+
+    const currentlyEquippedItem = equippedItems[slotKey];
+    if (currentlyEquippedItem) {
+        newInventory.push(currentlyEquippedItem);
+        log(LOG_LEVEL_DEBUG, `Swapping out item: ${currentlyEquippedItem.name?.en || currentlyEquippedItem.id}`);
+    }
+
+    equippedItems[slotKey] = itemToEquip;
+    state.setEquippedItems(equippedItems);
+    state.setCurrentInventory(newInventory);
+
+    const themeConfig = themeService.getThemeConfig(themeId);
+    const slotConfig = themeConfig?.equipment_slots?.[slotKey];
+    if (slotConfig) {
+        const dashboardId = slotConfig.id;
+        const lang = localizationService.getApplicationLanguage();
+        const itemName = itemToEquip.name?.[lang] || itemToEquip.name?.['en'] || 'Unknown Item';
+        const effectDescription = itemToEquip.itemEffectDescription?.[lang] || itemToEquip.itemEffectDescription?.['en'] || localizationService.getUIText('unknown');
+        const fullItemDescription = `<span class="equipped-item-name">${itemName}</span><br><em class="equipped-item-effect">${effectDescription}</em>`;
+        dashboardManager.updateDashboardItem(dashboardId, fullItemDescription, true);
+    }
+
+    // Refresh modal content in place
+    const newModalContent = await _buildInventoryModalContent();
+    if (dom.customModalMessage && newModalContent) {
+        dom.customModalMessage.innerHTML = '';
+        dom.customModalMessage.appendChild(newModalContent);
+    } else {
+        log(LOG_LEVEL_ERROR, "Could not find modal content area to refresh inventory.");
+    }
+
+    await authService.saveCurrentGameState(true);
+}
+
+/**
+ * Handles the logic for unequipping an item.
+ * @param {string} slotKey - The equipment slot key of the item to unequip.
+ * @private
+ */
+async function _handleUnequipItem(slotKey) {
+    const themeId = state.getCurrentTheme();
+    const equippedItems = state.getEquippedItems();
+    const itemToUnequip = equippedItems[slotKey];
+
+    if (!itemToUnequip || !themeId) {
+        log(LOG_LEVEL_ERROR, `Could not unequip item: No item found in slot ${slotKey}, or no active theme.`);
+        return;
+    }
+
+    log(LOG_LEVEL_INFO, `Unequipping item from slot ${slotKey}: ${itemToUnequip.name?.en || itemToUnequip.id}`);
+
+    const newInventory = [...state.getCurrentInventory(), itemToUnequip];
+    const newEquippedItems = { ...equippedItems };
+    delete newEquippedItems[slotKey];
+
+    state.setEquippedItems(newEquippedItems);
+    state.setCurrentInventory(newInventory);
+
+    const themeConfig = themeService.getThemeConfig(themeId);
+    const slotConfig = themeConfig?.equipment_slots?.[slotKey];
+    if (slotConfig) {
+        const dashboardId = slotConfig.id;
+        const allItemConfigs = [
+            ...(themeConfig.dashboard_config.left_panel || []),
+            ...(themeConfig.dashboard_config.right_panel || [])
+        ].flatMap(panel => panel.items);
+        const itemDashboardConfig = allItemConfigs.find(i => i.id === dashboardId);
+        if (itemDashboardConfig && itemDashboardConfig.default_value_key) {
+            const defaultValue = localizationService.getUIText(itemDashboardConfig.default_value_key, {}, { explicitThemeContext: themeId });
+            dashboardManager.updateDashboardItem(dashboardId, defaultValue, true);
+        }
+    }
+
+    // Refresh modal content in place
+    const newModalContent = await _buildInventoryModalContent();
+    if (dom.customModalMessage && newModalContent) {
+        dom.customModalMessage.innerHTML = '';
+        dom.customModalMessage.appendChild(newModalContent);
+    } else {
+        log(LOG_LEVEL_ERROR, "Could not find modal content area to refresh inventory.");
+    }
+
+    await authService.saveCurrentGameState(true);
+}
+
+/**
+ * Builds and displays a modal showing the character's equipped items and inventory.
+ */
+export async function showInventoryModal() {
+    const modalContent = await _buildInventoryModalContent();
+    if (!modalContent) {
+        log(LOG_LEVEL_ERROR, "Failed to build inventory modal content.");
+        return;
+    }
+
+    modalManager.showCustomModal({
+        type: 'custom',
+        titleKey: 'modal_title_inventory',
+        htmlContent: modalContent,
+        customActions: [{ textKey: 'modal_ok_button', className: 'ui-button primary', onClick: () => modalManager.hideCustomModal() }]
+    });
+}
+/**
  * Initializes the GameController with necessary dependencies.
  * @param {object} dependencies - Object containing references to other modules.
  * @param {object} dependencies.userThemeControlsManager - Reference to userThemeControlsManager.
@@ -403,6 +765,12 @@ export function initGameController(dependencies) {
     } else {
         log(LOG_LEVEL_WARN, "GameController initialized without userThemeControlsManager dependency.");
     }
+
+    document.addEventListener('equipmentSlotClicked', (e) => {
+        log(LOG_LEVEL_DEBUG, `Global event 'equipmentSlotClicked' caught by gameController for slot: ${e.detail.slotKey}`);
+        showInventoryModal();
+    });
+
     log(LOG_LEVEL_INFO, "GameController initialized.");
 }
 /**
@@ -436,7 +804,8 @@ async function _setupNewGameEnvironment(themeId) {
     dashboardManager.resetDashboardUI(themeId);
     characterPanelManager.buildCharacterPanel(themeId);
     await _loadOrCreateUserThemeProgress(themeId);
-    _initializeCurrentRunStats();
+    await _initializeCurrentRunStats();
+    await _equipStartingGear(themeId);
     characterPanelManager.updateCharacterPanel(false);
     characterPanelManager.showCharacterPanel(true);
     characterPanelManager.showXPBar(true);
@@ -700,6 +1069,8 @@ export async function resumeGameSession(themeId) {
             } else {
                 state.setPlayerIdentifier(loadedData.player_identifier);
             }
+            state.setEquippedItems(loadedData.equipped_items || {});
+            state.setCurrentInventory(loadedData.session_inventory || []);
             state.setGameHistory(loadedData.game_history || []);
             state.setLastKnownDashboardUpdates(lastUpdates);
             state.setLastKnownGameStateIndicators(loadedData.last_game_state_indicators || {});

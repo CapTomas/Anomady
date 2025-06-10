@@ -15,6 +15,8 @@ Max Willpower: ${effectiveMaxWillpower}
 Aptitude: ${effectiveAptitude}
 Resilience: ${effectiveResilience}
 Acquired Traits (JSON): ${acquiredTraitsJSON}
+Equipped Items:
+${equippedItemsPayload}
 Current Strain Level: ${currentStrainLevel}
 Active Conditions (JSON): ${activeConditionsJSON}
 

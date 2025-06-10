@@ -1,0 +1,272 @@
+[
+  {
+    "id": "cc_us_stained_coveralls_l01",
+    "name": {
+      "en": "Standard-Issue Coveralls (Slightly Stained)",
+      "cs": "Standardní Montérky (Lehce Ušpiněné)"
+    },
+    "description": {
+      "en": "The classic beige. Comes pre-equipped with mystery stains and a faint air of resignation. Union-approved for minimal protection and maximum conformity.",
+      "cs": "Klasická béžová. Dodává se s předinstalovanými záhadnými skvrnami a lehkým odérem rezignace. Schváleno Unií pro minimální ochranu a maximální konformitu."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 21 },
+      "cs": { "Zvýšení Soudržnosti": 21 }
+    },
+    "abilities": {
+      "en": ["Resists minor tea spills"],
+      "cs": ["Odolává menšímu rozlití čaje"]
+    },
+    "itemEffectDescription": {
+      "en": "+21 Cohesion, Tea Resistant",
+      "cs": "+21 Soudržnost, Odolné čaji"
+    },
+    "level": 1,
+    "buyPrice": 24,
+    "sellPrice": 6
+  },
+  {
+    "id": "cc_us_reinforced_galoshes_l02",
+    "name": {
+      "en": "Reinforced Galoshes (Worn as a Suit)",
+      "cs": "Zesílené Galoše (Nošené jako Oblek)"
+    },
+    "description": {
+      "en": "Through a bureaucratic loophole, these oversized, surprisingly durable galoshes are classified as a full utility suite. Protects against puddles of a questionable nature.",
+      "cs": "Díky byrokratické skulince jsou tyto nadměrné, překvapivě odolné galoše klasifikovány jako plnohodnotná užitková sada. Chrání před kalužemi pochybné povahy."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 36 },
+      "cs": { "Zvýšení Soudržnosti": 36 }
+    },
+    "abilities": {
+      "en": ["Prevents existential dampness"],
+      "cs": ["Zabraňuje existenční vlhkosti"]
+    },
+    "itemEffectDescription": {
+      "en": "+36 Cohesion, Dampness Prevention",
+      "cs": "+36 Soudržnost, Prevence vlhkosti"
+    },
+    "level": 2,
+    "buyPrice": 41,
+    "sellPrice": 10
+  },
+  {
+    "id": "cc_us_padded_boiler_suit_l03",
+    "name": {
+      "en": "Padded Boiler Suit",
+      "cs": "Polstrovaný Pracovní Overal"
+    },
+    "description": {
+      "en": "A slight upgrade featuring what the manual calls 'strategic fluff.' Offers moderate comfort during minor temporal paradoxes.",
+      "cs": "Mírné vylepšení obsahující to, co manuál nazývá 'strategické chmýří'. Nabízí mírné pohodlí během menších časových paradoxů."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 52 },
+      "cs": { "Zvýšení Soudržnosti": 52 }
+    },
+    "abilities": {
+      "en": ["Slightly muffles the sound of screaming voids"],
+      "cs": ["Lehce tlumí zvuk křičících prázdnot"]
+    },
+    "itemEffectDescription": {
+      "en": "+52 Cohesion, Muffles Voids",
+      "cs": "+52 Soudržnost, Tlumí prázdnoty"
+    },
+    "level": 3,
+    "buyPrice": 53,
+    "sellPrice": 13
+  },
+  {
+    "id": "cc_us_asbestos_lined_apron_l04",
+    "name": {
+      "en": "Asbestos-Lined Apron",
+      "cs": "Azbestem Podšitá Zástěra"
+    },
+    "description": {
+      "en": "An older model from a less... litigious era of custodial service. Surprisingly effective against low-level thermal and existential hazards.",
+      "cs": "Starší model z méně... soudně sporné éry údržbářských služeb. Překvapivě účinná proti nízkoúrovňovým tepelným a existenčním rizikům."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 65 },
+      "cs": { "Zvýšení Soudržnosti": 65 }
+    },
+    "abilities": {
+      "en": ["Questionably safe", "Adds a vintage charm"],
+      "cs": ["Pochybně bezpečná", "Dodává vintage šarm"]
+    },
+    "itemEffectDescription": {
+      "en": "+65 Cohesion, Questionably Safe",
+      "cs": "+65 Soudržnost, Pochybně bezpečná"
+    },
+    "level": 4,
+    "buyPrice": 75,
+    "sellPrice": 19
+  },
+  {
+    "id": "cc_us_anti_static_jumpsuit_l05",
+    "name": {
+      "en": "Anti-Static Jumpsuit",
+      "cs": "Antistatická Kombinéza"
+    },
+    "description": {
+      "en": "Guaranteed to reduce unwanted static cling by up to 80%, even when wrestling with sentient carpets or negotiating with beings of pure energy.",
+      "cs": "Zaručeně snižuje nežádoucí statickou přilnavost až o 80 %, i při zápasení s vnímajícími koberci nebo vyjednávání s bytostmi z čisté energie."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 74 },
+      "cs": { "Zvýšení Soudržnosti": 74 }
+    },
+    "abilities": {
+      "en": ["Prevents minor reality shocks"],
+      "cs": ["Zabraňuje menším šokům z reality"]
+    },
+    "itemEffectDescription": {
+      "en": "+74 Cohesion, Prevents Shocks",
+      "cs": "+74 Soudržnost, Zabraňuje šokům"
+    },
+    "level": 5,
+    "buyPrice": 89,
+    "sellPrice": 22
+  },
+  {
+    "id": "cc_us_gravity_wellies_l06",
+    "name": {
+      "en": "Gravity Wellies",
+      "cs": "Gravitační Gumáky"
+    },
+    "description": {
+      "en": "These boots ensure you remain vaguely 'down' relative to the most convenient large object. Results may vary in areas with indecisive gravity.",
+      "cs": "Tyto boty zajišťují, že zůstanete vágně 'dole' vzhledem k nejvhodnějšímu velkému objektu. Výsledky se mohou lišit v oblastech s nerozhodnou gravitací."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 95 },
+      "cs": { "Zvýšení Soudržnosti": 95 }
+    },
+    "abilities": {
+      "en": ["Resists sudden upward movement"],
+      "cs": ["Odolává náhlému pohybu vzhůru"]
+    },
+    "itemEffectDescription": {
+      "en": "+95 Cohesion, Resists Up",
+      "cs": "+95 Soudržnost, Odolává vzhůru"
+    },
+    "level": 6,
+    "buyPrice": 99,
+    "sellPrice": 25
+  },
+  {
+    "id": "cc_us_self_ironing_tunic_l07",
+    "name": {
+      "en": "Self-Ironing Tunic",
+      "cs": "Samožehlicí Tunika"
+    },
+    "description": {
+      "en": "Maintains a crisp, professional crease even when reality itself is fraying at the edges. Professionalism is key, even during a containment breach.",
+      "cs": "Udržuje si ostrý, profesionální puky, i když se samotná realita třepí na okrajích. Profesionalita je klíčová, i během narušení kontejnmentu."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 108 },
+      "cs": { "Zvýšení Soudržnosti": 108 }
+    },
+    "abilities": {
+      "en": ["Boosts morale through neatness"],
+      "cs": ["Zvyšuje morálku úhledností"]
+    },
+    "itemEffectDescription": {
+      "en": "+108 Cohesion, Morale Boost",
+      "cs": "+108 Soudržnost, Zvyšuje morálku"
+    },
+    "level": 7,
+    "buyPrice": 125,
+    "sellPrice": 31
+  },
+  {
+    "id": "cc_us_bureaucratic_bulwark_l08",
+    "name": {
+      "en": "Bureaucratic Bulwark Vest",
+      "cs": "Vesta Byrokratické Bašty"
+    },
+    "description": {
+      "en": "Lined with layers of rejected forms and triplicate copies, this vest can absorb a surprising amount of kinetic energy and administrative oversight.",
+      "cs": "Tato vesta, podšitá vrstvami zamítnutých formulářů a trojmo vyhotovených kopií, dokáže pohltit překvapivé množství kinetické energie a administrativního dohledu."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 121 },
+      "cs": { "Zvýšení Soudržnosti": 121 }
+    },
+    "abilities": {
+      "en": ["Confuses auditors", "Smells faintly of ink"],
+      "cs": ["Mate auditory", "Slabě voní inkoustem"]
+    },
+    "itemEffectDescription": {
+      "en": "+121 Cohesion, Confuses Auditors",
+      "cs": "+121 Soudržnost, Mate auditory"
+    },
+    "level": 8,
+    "buyPrice": 145,
+    "sellPrice": 36
+  },
+  {
+    "id": "cc_us_pocket_protector_plus_l09",
+    "name": {
+      "en": "Pocket Protector Plus™",
+      "cs": "Chránič Kapes Plus™"
+    },
+    "description": {
+      "en": "Not just a pocket protector, but a full-body hazmat suit woven from the same indestructible plastic. Protects against leaky pens and minor cosmic rays.",
+      "cs": "Nejen chránič kapes, ale celotělový ochranný oblek utkaný ze stejného nezničitelného plastu. Chrání před tekoucími pery a menšími kosmickými paprsky."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 135 },
+      "cs": { "Zvýšení Soudržnosti": 135 }
+    },
+    "abilities": {
+      "en": ["Impervious to ink-based lifeforms"],
+      "cs": ["Nepropustný pro životní formy na bázi inkoustu"]
+    },
+    "itemEffectDescription": {
+      "en": "+135 Cohesion, Ink-Proof",
+      "cs": "+135 Soudržnost, Odolné inkoustu"
+    },
+    "level": 9,
+    "buyPrice": 158,
+    "sellPrice": 40
+  },
+  {
+    "id": "cc_us_hazard_pay_vest_l10",
+    "name": {
+      "en": "Hazard-Pay Vest with Extra Pockets",
+      "cs": "Vesta pro Rizikové Práce s Extra Kapsami"
+    },
+    "description": {
+      "en": "Reinforced with what the manual calls 'Semi-Pliable Carbon,' this vest has enough pockets to lose several small pets and a surprising number of forms (Form 37B not included).",
+      "cs": "Zesílená materiálem, který manuál nazývá 'polo-ohebný karbon', tato vesta má dost kapes na ztracení několika malých domácích mazlíčků a překvapivého množství formulářů (formulář 37B není součástí)."
+    },
+    "itemType": "utility_suite",
+    "attributes": {
+      "en": { "Cohesion Boost": 149 },
+      "cs": { "Zvýšení Soudržnosti": 149 }
+    },
+    "abilities": {
+      "en": ["Slightly reduces papercut severity"],
+      "cs": ["Mírně snižuje závažnost říznutí papírem"]
+    },
+    "itemEffectDescription": {
+      "en": "+149 Cohesion, Reduces Papercuts",
+      "cs": "+149 Soudržnost, Snižuje říznutí"
+    },
+    "level": 10,
+    "buyPrice": 176,
+    "sellPrice": 44
+  }
+]

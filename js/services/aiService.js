@@ -24,6 +24,7 @@ import {
     getEffectiveAptitude,
     getEffectiveResilience,
     getAcquiredTraitKeys,
+    getEquippedItems,
     getCurrentStrainLevel,
     getActiveConditions,
     getIsInitialGameLoad,
@@ -92,7 +93,6 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         log(LOG_LEVEL_ERROR, `CRITICAL PROMPT FAILURE: No valid default prompt found for key "${basePromptKey}" for theme "${currentThemeId}" or master. Cannot generate system prompt.`);
         return `{"narrative": "SYSTEM ERROR: Core prompt file (type: ${activePromptType}, final key: ${basePromptKey}) is critically missing or invalid.", "dashboard_updates": {}, "suggested_actions": ["Restart Game"], "game_state_indicators": {}, "xp_awarded": 0}`;
     }
-
     // Generate description for the new Top Panel (Core Attributes)
     let generatedTopPanelDescription = "";
     const topPanelItems = dashboardLayoutConfig.top_panel || [];
@@ -103,7 +103,6 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     if (generatedTopPanelDescription.endsWith(",\n")) {
         generatedTopPanelDescription = generatedTopPanelDescription.slice(0, -2);
     }
-
     // Generate description for the side panels (dashboard_updates)
     let generatedDashboardDescription = "";
     const dashboardItems = [...(dashboardLayoutConfig.left_panel || []), ...(dashboardLayoutConfig.right_panel || [])].flatMap(p => p.items);
@@ -120,7 +119,6 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     if (generatedDashboardDescription.endsWith(",\n")) {
         generatedDashboardDescription = generatedDashboardDescription.slice(0, -2);
     }
-
     let generatedGameStateIndicators = "";
     if (dashboardLayoutConfig.game_state_indicators && Array.isArray(dashboardLayoutConfig.game_state_indicators)) {
         dashboardLayoutConfig.game_state_indicators.forEach(indicator => {
@@ -171,6 +169,25 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     const acquiredTraits = getAcquiredTraitKeys ? getAcquiredTraitKeys() : [];
     const currentStrain = getCurrentStrainLevel ? getCurrentStrainLevel() : 1;
     const activeConditions = getActiveConditions ? getActiveConditions() : [];
+    const equippedItems = getEquippedItems ? getEquippedItems() : {};
+    let equippedItemsPayload = "The character has no notable equipment.";
+    if (Object.keys(equippedItems).length > 0) {
+        const lang = getCurrentNarrativeLanguage();
+        if (getIsInitialGameLoad()) {
+            equippedItemsPayload = "The character begins with the following equipment based on their current level. This gear is fixed for the start of the game and should be reflected in the dashboard. Do not change it unless the player acquires new items.\n";
+        } else {
+            equippedItemsPayload = "The character is currently equipped with the following:\n";
+        }
+
+        for (const slotKey in equippedItems) {
+            const item = equippedItems[slotKey];
+            if (item && item.name) {
+                const itemName = item.name?.[lang] || item.name?.['en'] || 'Unknown Item';
+                const itemEffect = item.itemEffectDescription?.[lang] || item.itemEffectDescription?.['en'] || 'No effect description.';
+                equippedItemsPayload += `- ${itemName} (${itemEffect})\n`;
+            }
+        }
+    }
     const replacements = {
         'narrativeLanguageInstruction': narrativeLangInstruction,
         'currentNameForPrompt': playerID || getUIText("unknown"),
@@ -199,6 +216,7 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         'acquiredTraitsJSON': JSON.stringify(acquiredTraits),
         'currentStrainLevel': String(currentStrain),
         'activeConditionsJSON': JSON.stringify(activeConditions),
+        'equippedItemsPayload': equippedItemsPayload,
     };
     for (const key in replacements) {
         processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${key}\\}`, "g"), replacements[key]);

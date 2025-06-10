@@ -36,6 +36,8 @@ import {
     getDashboardItemMeta,
     getCurrentUserThemeProgress,
     getLastAiSuggestedActions,
+    getEquippedItems,
+    getCurrentInventory,
 } from '../core/state.js';
 import {
     JWT_STORAGE_KEY,
@@ -370,7 +372,7 @@ export async function handleResetPassword(token, newPassword) {
  * Resets `currentTurnUnlockData` after including it in the payload.
  * Clears the unsaved history delta upon a successful save.
  */
-export async function saveCurrentGameState() {
+export async function saveCurrentGameState(forceSave = false) {
     const currentUser = getCurrentUser();
     if (!currentUser || !currentUser.token) {
         log(LOG_LEVEL_INFO, "User not logged in. Game state not saved to backend.");
@@ -381,14 +383,14 @@ export async function saveCurrentGameState() {
         log(LOG_LEVEL_WARN, "Cannot save game state: currentTheme not set in state.");
         return;
     }
-    // Get the delta of unsaved turns. If it's empty and no boon is pending, there's nothing new to save.
+    // Get the delta of unsaved turns.
     const historyDelta = getUnsavedHistoryDelta();
-    // A save is necessary if there are new turns OR if a boon selection was just made (to persist the new level/stats).
-    if (historyDelta.length === 0 && !getIsBoonSelectionPending()) {
-        log(LOG_LEVEL_INFO, "No new turns or pending boons to save. Skipping save operation.");
+    // A save is necessary if there are new turns, a boon selection was just made, OR if explicitly forced.
+    if (historyDelta.length === 0 && !getIsBoonSelectionPending() && !forceSave) {
+        log(LOG_LEVEL_INFO, "No new turns, pending boons, or force flag. Skipping save operation.");
         return;
     }
-    log(LOG_LEVEL_INFO, `Attempting to save game state delta (${historyDelta.length} turns) for theme '${currentThemeId}' for user '${currentUser.email}'`);
+    log(LOG_LEVEL_INFO, `Attempting to save game state for theme '${currentThemeId}' for user '${currentUser.email}'. Forced: ${forceSave}, Delta: ${historyDelta.length} turns.`);
     const narrativePlayerIdentifier = getPlayerIdentifier();
     const turnUnlockData = getCurrentTurnUnlockData();
     let userThemeProgressForPayload = getCurrentUserThemeProgress(); // Get current progress
@@ -417,6 +419,8 @@ export async function saveCurrentGameState() {
         dashboard_item_meta: getDashboardItemMeta(),
         user_theme_progress: userThemeProgressForPayload, // Use the potentially corrected object
         is_boon_selection_pending: getIsBoonSelectionPending(), // Add the boon pending status
+        session_inventory: getCurrentInventory(),
+        equipped_items: getEquippedItems(),
     };
     // Reset currentTurnUnlockData in state after it's been included in the payload
     setCurrentTurnUnlockData(null);

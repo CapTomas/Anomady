@@ -1,9 +1,14 @@
+Okay, I've woven those updates into the fabric of the `leveling.md` document. The changes focus on making inventory and currency session-specific, while empowering the AI to generate unique items for the current run. Starting gear selection will still be based on the character's persistent level, ensuring a thematic start to each new session.
+
+Here's the revised document:
+
+--- START OF FILE leveling.md ---
 
 ---
 
 ## **Anomady: Core Mechanics & Systems Design**
 
-**Document Version:** 1.2 (Revised)
+**Document Version:** 1.3 (Revised)
 
 **Philosophy:** This document outlines the foundational mechanics governing character existence, progression, interaction, and the resolution of challenges within the Anomady engine. These systems are designed to be theme-agnostic, providing a robust yet flexible framework adaptable to diverse narrative settings. The core design emphasizes player agency expressed through narrative choices, with underlying mechanics providing consistent context for the AI Game Master to interpret and respond, ensuring that the world feels reactive, and progression feels meaningful across multiple playthroughs of a theme.
 
@@ -42,7 +47,7 @@ Every player character, significant entity, or even vessel is defined by four co
 
 ### **II. Character Progression**
 
-Progression is marked by gaining Experience Points (XP) through overcoming challenges and completing Objectives. This progression is **persistent for each theme per user**, until the character for that theme is explicitly reset.
+Progression is marked by gaining Experience Points (XP) through overcoming challenges and completing Objectives. This progression (character level, attributes, traits) is **persistent for each theme per user**, until the character for that theme is explicitly reset.
 
 1.  **Experience & Levels:**
     *   Characters start at Level 1.
@@ -86,7 +91,7 @@ Beyond core attributes, several dynamic factors influence gameplay:
 
 ### **IV. Equipment, Inventory, & Economy**
 
-The inventory and economy systems provide a dynamic loop for character enhancement and resource management, enhancing gameplay and character development. Inventory (excluding consumed items) and thematic currency are **persistent for each theme per user** until that theme's character is explicitly reset.
+The inventory and economy systems provide a dynamic loop for character enhancement and resource management. Items acquired and thematic currency are managed on a **per-session basis**. While starting gear selection is influenced by the character's persistent level, all collected equipment and funds are available for the current game run only and reset when a new run begins. This promotes dynamic adaptation and replayability within each theme.
 
 1.  **Core Principles:**
     *   **Slot-Driven Dashboard:** Each theme's `config.json` defines `equipment_slots`. Each slot configuration includes:
@@ -95,9 +100,9 @@ The inventory and economy systems provide a dynamic loop for character enhanceme
             *   `"static"`: For persistent gear like weapons or armor.
             *   `"consumable"`: For single-use or charges-based items like potions or limited-use gadgets.
             *   `"money"`: For thematic currency; the dashboard item typically displays a numerical value.
-        *   `reward_trigger`: A string key for a boolean game state indicator (e.g., "wardens_blade_reward_trigger"). The AI sets this to `true` to signal a reward of this item type.
+        *   `reward_trigger`: A string key for a boolean game state indicator (e.g., "wardens_blade_reward_trigger"). The AI sets this to `true` to signal a reward of this item type or currency.
     *   **Item Types & Slots:** An item's `itemType` (defined in its JSON data) must match an `equipment_slots` key (where `type` is "static" or "consumable") to be equippable in that slot.
-    *   **Persistent Inventory:** All `static` and unconsumed `consumable` items acquired (starting gear, rewards, purchases) are stored in the `session_inventory` field of the `GameState` model. This inventory persists across game sessions for the specific theme character until a full reset.
+    *   **Session Inventory:** All `static` and unconsumed `consumable` items acquired (starting gear, rewards, purchases) are stored in the `session_inventory` field of the `GameState` model for the current game session. This inventory is cleared when a new game run begins for the theme.
 
 2.  **Item Structure:** All items adhere to the following JSON structure:
     ```json
@@ -132,44 +137,49 @@ The inventory and economy systems provide a dynamic loop for character enhanceme
 4.  **Item Compendium & Starting Gear:**
     *   Each theme has JSON data files (e.g., `themes/grim_warden/data/wardens_blade_items.json`) serving as an item compendium.
     *   Items are assigned a character `level`.
-    *   When a new game begins, `gameController.js` uses the character's persistent level (`UserThemeProgress.level`) to randomly select appropriate starting gear from the compendium for each defined `static` or `consumable` equipment slot.
+    *   When a new game begins, `gameController.js` uses the character's persistent level (`UserThemeProgress.level`) to randomly select appropriate starting gear from the compendium for each defined `static` or `consumable` equipment slot. These items are added to the current session's `session_inventory`.
 
 5.  **Item & Currency Reward Generation (Config-Driven Backend Logic):**
-    *   The AI Game Master does **not** invent items or currency amounts directly.
-    *   Upon quest completion or significant narrative achievement, the AI is instructed to set the relevant `reward_trigger` boolean game state indicator (defined in `equipment_slots` config) to `true` if the promised reward matches that item or currency type.
-    *   **Backend Reward Process:** When the backend receives a `GameState` save where a `reward_trigger` is `true`:
-        1.  It identifies the `itemType` (for items) or confirms it's currency (for `type: "money"`) associated with that trigger.
-        2.  For **Items**: It consults the theme's item compendium for that `itemType`. It randomly selects an item based on the player's current character level and the following distribution:
-            | Player Levels | Item Level Distribution                               |
-            | :------------ | :---------------------------------------------------- |
-            | 1–10          | 40% PlayerLvl, 35% PlayerLvl+1, 15% PlayerLvl+2, 10% PlayerLvl-1 |
-            | 11–25         | 50% PlayerLvl, 25% PlayerLvl+1, 8% PlayerLvl+2, 17% PlayerLvl-1  |
-            | 26–45         | 60% PlayerLvl, 15% PlayerLvl+1, 5% PlayerLvl+2, 20% PlayerLvl-1  |
-            | 46–50         | 70% PlayerLvl, 5% PlayerLvl+1, 3% PlayerLvl+2, 22% PlayerLvl-1   |
-            *(Note: Item levels are clamped. If PlayerLvl-1 < 1, Lvl 1 items chosen. If PlayerLvl+X > max item level, max level items chosen.)*
-            The awarded item is added to the player's persistent `session_inventory`.
-        3.  For **Currency**: The backend determines an appropriate amount based on the Objective's scale (Minor, Standard, etc., referencing the "Currency per Std. Obj." column in the progression table as a guideline) and adds it to the player's persistent currency total (managed via the dashboard item linked to the `type: "money"` slot).
-        4.  The `reward_trigger` game state indicator is reset to `false` by the AI in its *next* turn response after acknowledging the reward.
+    *   The AI Game Master facilitates item and currency rewards, which are granted on a **session-specific basis**.
+    *   **Awarding Items:**
+        *   **Compendium-Based Items:** For pre-defined item types (e.g., a "Warden's Blade," a "Health Potion"), the AI sets the relevant `reward_trigger` game state indicator (defined in `equipment_slots`) to `true`.
+            *   **Backend Process:** Upon receiving a `GameState` with such a trigger, the backend identifies the `itemType`. It consults the theme's item compendium, randomly selects an item of that type appropriate for the player's current character level (using the distribution table below), and adds it to the player's `session_inventory` for the current game run.
+                | Player Levels | Item Level Distribution                               |
+                | :------------ | :---------------------------------------------------- |
+                | 1–10          | 40% PlayerLvl, 35% PlayerLvl+1, 15% PlayerLvl+2, 10% PlayerLvl-1 |
+                | 11–25         | 50% PlayerLvl, 25% PlayerLvl+1, 8% PlayerLvl+2, 17% PlayerLvl-1  |
+                | 26–45         | 60% PlayerLvl, 15% PlayerLvl+1, 5% PlayerLvl+2, 20% PlayerLvl-1  |
+                | 46–50         | 70% PlayerLvl, 5% PlayerLvl+1, 3% PlayerLvl+2, 22% PlayerLvl-1   |
+                *(Note: Item levels are clamped. If PlayerLvl-1 < 1, Lvl 1 items chosen. If PlayerLvl+X > max item level, max level items chosen.)*
+        *   **AI-Generated Unique Items:** The AI has the capability to narratively introduce and define entirely new items during a game session.
+            *   When awarding such an item, the AI must construct its complete data structure (conforming to the JSON format specified in Section IV.2), including all localized names, descriptions, attributes, and abilities. This item will exist only for the current session.
+            *   This generated item object is placed by the AI into a designated game state field, such as `state.pending_generated_item_reward`.
+            *   **Backend Process:** The backend retrieves this custom item data, adds the item to the player's `session_inventory` for the current run, and then clears the `pending_generated_item_reward` field.
+    *   **Awarding Currency:**
+        *   The AI signals a currency reward by setting the `reward_trigger` for the `type: "money"` slot to `true`.
+        *   **Backend Process:** The backend determines an appropriate amount based on the Objective's scale (Minor, Standard, etc., referencing the "Currency per Std. Obj." column in the progression table as a guideline) and adds it to the player's current session's currency total (managed via the dashboard item linked to the `type: "money"` slot).
+    *   **Reward Acknowledgment:** The `reward_trigger` game state indicator (for compendium items or currency) is reset to `false` by the AI in its *next* turn response after acknowledging the reward.
+    *   All awarded items and currency are for the current game session only and are not carried over to subsequent runs.
 
 6.  **Item Consumption:**
     *   For items equipped in slots marked `type: "consumable"`:
         *   The AI's narrative description of the item being fully used is the trigger.
         *   The AI **must** update the relevant dashboard item (e.g., `equipped_alchemical_concoction_effect`) to an "empty" or "charges depleted" state.
-        *   Client-side logic in `gameController.js` detects this state change and removes the item from `session_inventory` and `equipped_items`.
+        *   Client-side logic in `gameController.js` detects this state change and removes the item from `session_inventory` and `equipped_items` for the current session.
 
 7.  **The Store:**
     *   **Unlock:** Becomes available to the player upon reaching **character Level 3** for a specific theme.
     *   **Functionality:**
-        *   **Sell:** Players can sell `static` items and any unconsumed `consumable` items from their persistent inventory. The sell price is typically 20-30% of the item's `buyPrice`. Fully consumed items or currency itself cannot be sold.
-        *   **Buy:** Players can purchase items offered by the store using their thematic currency. Items are bought at their listed `buyPrice`.
-    *   **Currency:** Thematic currency (e.g., "Silver Shards," "Imperial Credits") is acquired through quest rewards (as per `reward_trigger` for `type: "money"` slots), selling items, or other AI-narrated means (finding, stealing, etc. – where the AI would trigger the currency `reward_trigger`).
+        *   **Sell:** Players can sell `static` items and any unconsumed `consumable` items from their current session's `session_inventory`. The sell price is typically 20-30% of the item's `buyPrice`. Fully consumed items or currency itself cannot be sold.
+        *   **Buy:** Players can purchase items offered by the store using their current session's thematic currency. Items are bought at their listed `buyPrice`.
+    *   **Currency:** Thematic currency (e.g., "Silver Shards," "Imperial Credits") is acquired through quest rewards (as per `reward_trigger` for `type: "money"` slots), selling items, or other AI-narrated means (finding, stealing, etc. – where the AI would trigger the currency `reward_trigger`). All currency is session-specific.
     *   **Stock Rotation:** The Store's inventory refreshes with new items **every 12 real-world hours**. (A backend timestamp mechanism will manage this.)
     *   **Stock Generation:** Each refresh, the Store offers **three randomly selected items**.
         *   Items can be of any `itemType` defined in the theme's item compendiums (e.g., weapons, armor, consumables).
         *   The level of offered items is determined using the same player level-based distribution table as quest rewards.
 
 8.  **Inventory Interaction (UI):**
-    *   A dedicated Inventory Modal will display items from `session_inventory`, grouped by `itemType`.
+    *   A dedicated Inventory Modal will display items from the current `session_inventory`, grouped by `itemType`.
     *   Each item shows `name`, `attributes` (localized), and `description` (localized).
     *   "Equip" button: Updates `state.equippedItems`, updates the dashboard via `dashboardManager.updateDashboardFromEquippedItems()`, re-renders modal, triggers save.
     *   (Future) "Sell" button for `static` and unconsumed `consumable` items when interacting with the Store UI.
@@ -217,7 +227,7 @@ The numbers and systems exist to provide a consistent framework for your creativ
 
 **Key for Table Columns (Generalized Terminology):**
 
-*   **Lvl, XP to Lvl Up, Cum. XP, Std. Objs to Lvl Up, Currency per Std. Obj., Avg. Tool Price, Std. Objs to Afford Tool:** "Currency" and "Tool" are generic placeholders for theme-specific equivalents (e.g., Doubloons, Credits, Reagents; Pirate Cutlass, Starship Scanner, Alchemical Kit).
+*   **Lvl, XP to Lvl Up, Cum. XP, Std. Objs to Lvl Up, Currency per Std. Obj., Avg. Tool Price, Std. Objs to Afford Tool:** "Currency" and "Tool" are generic placeholders for theme-specific equivalents (e.g., Doubloons, Credits, Reagents; Pirate Cutlass, Starship Scanner, Alchemical Kit). Currency values listed are guidelines for session-based rewards.
 *   **Avg. XP [Objective Type]:** Approximate XP awarded for Minor, Standard, Major, or Epic Objectives. Calculated as:
     *   `Implied_Std_Obj_XP = XP to Lvl Up / Std. Objs to Lvl Up`
     *   `Avg. XP Minor Obj. = Implied_Std_Obj_XP * 0.3` (rounded)
@@ -225,7 +235,7 @@ The numbers and systems exist to provide a consistent framework for your creativ
     *   `Avg. XP Major Obj. = Implied_Std_Obj_XP * 1.5` (rounded)
     *   `Avg. XP Epic Obj. = Implied_Std_Obj_XP * 2.5` (rounded)
 *   **Base Player Integrity:** Player's Max Integrity from base value (100) and automatic per-level gains (100 + 10 * (Lvl-1)).
-*   **Avg. Gear Integrity Bonus:** An assumed average Integrity bonus from thematic protective measures/gear appropriate for the character's level.
+*   **Avg. Gear Integrity Bonus:** An assumed average Integrity bonus from thematic protective measures/gear appropriate for the character's level, acquired within the current session.
 *   **Total Effective Integrity:** The sum of `Base Player Integrity` and `Avg. Gear Integrity Bonus`. This total value is used for calculating `... Setbacks to Overwhelm Player` columns.
 *   **Base Player Willpower:** Player's Max Willpower from base value (50) and automatic per-level gains (50 + 5 * (Lvl-1)).
 *   **Avg. Player Output Magnitude (Base):** The character's average base effectiveness or impact per significant action/ability use for this level, *before* Aptitude modifier and Strain effects. This could be damage in combat, persuasiveness in dialogue, efficiency in a task, or potency of a special ability.
@@ -241,4 +251,4 @@ The following represent *base values before player's Aptitude/Resilience modifie
 *   **SC Difficulty / Resistance, Player Efforts to Overcome SC, SC Setback Magnitude (Base), SC Setbacks to Overwhelm Player:** Derived from CC values using multipliers (SC Diff = CC Diff * 2.2; SC Setback = CC Setback * 1.6).
 *   **AC Difficulty / Resistance, Player Efforts to Overcome AC, AC Setback Magnitude (Base), AC Setbacks to Overwhelm Player:** Derived from CC values using multipliers (AC Diff = CC Diff * 4.5; AC Setback = CC Setback * 2.2).
 *
----
+--- END OF FILE leveling.md ---

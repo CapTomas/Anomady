@@ -1,0 +1,242 @@
+[
+  {
+    "id": "cc_ag_pocket_lint_l01",
+    "name": {
+      "en": "Packet of Surprisingly Useful Lint",
+      "cs": "Balíček Překvapivě Užitečných Žmolků"
+    },
+    "description": {
+      "en": "A small, compressed ball of lint, gathered from uniforms across several temporal epochs. Its exact properties are unknown, but it feels vaguely important. For use in moments of mild desperation.",
+      "cs": "Malá, stlačená kulička žmolků, nasbíraná z uniforem napříč několika časovými epochami. Její přesné vlastnosti jsou neznámé, ale působí neurčitě důležitě. Pro použití ve chvílích mírného zoufalství."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Minor Distraction", "Charges": 1 },
+      "cs": { "Účinek": "Menší Rozptýlení", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Briefly confuses simple-minded entities", "Feels oddly reassuring in your pocket"],
+      "cs": ["Krátce zmate jednoduché bytosti", "V kapse působí podivně uklidňujícím dojmem"]
+    },
+    "itemEffectDescription": { "en": "1-Use Minor Distraction", "cs": "1x Menší Rozptýlení" },
+    "level": 1,
+    "buyPrice": 5,
+    "sellPrice": 1
+  },
+  {
+    "id": "cc_ag_questionable_tea_l02",
+    "name": {
+      "en": "Questionable Instant Tea Packet",
+      "cs": "Pochybný Balíček Instantního Čaje"
+    },
+    "description": {
+      "en": "Just add water! (Any non-corrosive liquid will do, really). Produces a lukewarm, brownish liquid that might be tea. Might also be gravy. Results may vary. Temporarily boosts morale.",
+      "cs": "Stačí přidat vodu! (Vlastně jakákoli nekorozivní tekutina). Vytvoří vlažnou, nahnědlou tekutinu, která by mohla být čaj. Nebo taky omáčka. Výsledky se mohou lišit. Dočasně zvyšuje morálku."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Minor Willpower Recovery", "Charges": 1 },
+      "cs": { "Účinek": "Menší Obnova Vůle", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Restores a tiny amount of Gumption", "Tastes vaguely of Thursdays"],
+      "cs": ["Obnoví nepatrné množství Kuráže", "Chutná neurčitě po čtvrtcích"]
+    },
+    "itemEffectDescription": { "en": "1-Use Minor Gumption Restore", "cs": "1x Menší Obnova Kuráže" },
+    "level": 2,
+    "buyPrice": 8,
+    "sellPrice": 2
+  },
+  {
+    "id": "cc_ag_paperclip_l03",
+    "name": {
+      "en": "Self-Replicating Paperclip (Unstable)",
+      "cs": "Samoreplikační Sponka (Nestabilní)"
+    },
+    "description": {
+      "en": "A single paperclip that, when activated, briefly becomes two paperclips. An absolute marvel of Custodial engineering, perfect for that one form you need to file in duplicate. The effect is sadly temporary.",
+      "cs": "Jediná kancelářská sponka, která se po aktivaci na krátkou chvíli stane dvěma sponkami. Absolutní zázrak údržbářského inženýrství, ideální pro ten jeden formulář, který musíte podat ve dvou kopiích. Účinek je bohužel dočasný."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Briefly Solves Minor Bureaucracy", "Charges": 1 },
+      "cs": { "Účinek": "Krátce Řeší Drobnou Byrokracii", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Can be used to bypass a single, trivial administrative hurdle"],
+      "cs": ["Lze použít k obejití jediné, triviální administrativní překážky"]
+    },
+    "itemEffectDescription": { "en": "1-Use Bureaucratic Bypass", "cs": "1x Byrokratický Bypass" },
+    "level": 3,
+    "buyPrice": 12,
+    "sellPrice": 3
+  },
+  {
+    "id": "cc_ag_rubber_duck_l04",
+    "name": {
+      "en": "Anomaly-Distracting Rubber Duck",
+      "cs": "Anomálie Odpoutávající Gumová Kachnička"
+    },
+    "description": {
+      "en": "This standard-issue rubber duck emits a low-frequency squeak that is paradoxically fascinating to non-corporeal or reality-adjacent phenomena. They often stop what they're doing to contemplate its sheer duck-ness.",
+      "cs": "Tato standardní gumová kachnička vydává nízkofrekvenční pískot, který je paradoxně fascinující pro nehmotné nebo realitě přilehlé jevy. Často přestanou s tím, co dělají, aby kontemplovali nad její čirou kachnovitostí."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Pauses Minor Anomalies", "Charges": 1 },
+      "cs": { "Účinek": "Pozastaví Menší Anomálie", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Causes a brief metaphysical pause in one local anomaly", "Squeaks"],
+      "cs": ["Způsobí krátkou metafyzickou pauzu v jedné místní anomálii", "Píská"]
+    },
+    "itemEffectDescription": { "en": "1-Use Anomaly Pause", "cs": "1x Pozastavení Anomálie" },
+    "level": 4,
+    "buyPrice": 15,
+    "sellPrice": 4
+  },
+  {
+    "id": "cc_ag_bureaucratic_singularity_l05",
+    "name": {
+      "en": "Pocket-Sized Bureaucratic Singularity",
+      "cs": "Kapesní Byrokratická Singularita"
+    },
+    "description": {
+      "en": "A tiny, contained temporal loop that forces any incoming query or demand into an endless cycle of being re-filed. Caution: looking directly at it may cause an intense urge to form a subcommittee.",
+      "cs": "Maličká, uzavřená časová smyčka, která nutí jakýkoli příchozí dotaz nebo požadavek do nekonečného cyklu opětovného podávání. Pozor: přímý pohled na ni může způsobit intenzivní nutkání založit podvýbor."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Stalls Paperwork", "Duration": "Brief", "Charges": 1 },
+      "cs": { "Účinek": "Zdrží Papírování", "Trvání": "Krátké", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Temporarily neutralizes one source of administrative dread"],
+      "cs": ["Dočasně neutralizuje jeden zdroj administrativní hrůzy"]
+    },
+    "itemEffectDescription": { "en": "1-Use Paperwork Stall", "cs": "1x Zdržení Papírů" },
+    "level": 5,
+    "buyPrice": 16,
+    "sellPrice": 5
+  },
+  {
+    "id": "cc_ag_anti_prose_lozenge_l06",
+    "name": {
+      "en": "Anti-Prose Lozenge",
+      "cs": "Pastilka proti Próze"
+    },
+    "description": {
+      "en": "For use when encountering entities that communicate in excruciatingly long monologues or bad poetry. Dissolving one on the tongue makes their speech seem concise and almost bearable.",
+      "cs": "K použití při setkání s entitami, které komunikují v nesnesitelně dlouhých monolozích nebo špatné poezii. Rozpuštění jedné na jazyku způsobí, že jejich řeč se zdá stručná a téměř snesitelná."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Mental Fortitude Boost (Dialogue)", "Charges": 1 },
+      "cs": { "Účinek": "Posílení Psychické Odolnosti (Dialog)", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Grants temporary immunity to tedious exposition"],
+      "cs": ["Poskytuje dočasnou imunitu vůči zdlouhavým expozicím"]
+    },
+    "itemEffectDescription": { "en": "1-Use Tedium Immunity", "cs": "1x Imunita vůči Nudě" },
+    "level": 6,
+    "buyPrice": 21,
+    "sellPrice": 6
+  },
+  {
+    "id": "cc_ag_sentient_pudding_l07",
+    "name": {
+      "en": "Emergency Pacification Pudding",
+      "cs": "Nouzový Pacifikační Pudink"
+    },
+    "description": {
+      "en": "A cup of semi-sentient, butterscotch-flavored pudding. When released, it will attempt to engage any single target in a polite, yet deeply confusing, philosophical debate, often buying precious seconds.",
+      "cs": "Kelímek polovičně vnímajícího pudinku s karamelovou příchutí. Po vypuštění se pokusí zapojit jeden cíl do zdvořilé, avšak hluboce matoucí filozofické debaty, čímž často získá drahocenné sekundy."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Single-Target Pacification", "Charges": 1 },
+      "cs": { "Účinek": "Jednocílová Pacifikace", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Distracts one entity with existential questions"],
+      "cs": ["Rozptýlí jednu entitu existenciálními otázkami"]
+    },
+    "itemEffectDescription": { "en": "1-Use Pudding Pacifier", "cs": "1x Pudinkový Pacifikátor" },
+    "level": 7,
+    "buyPrice": 23,
+    "sellPrice": 7
+  },
+  {
+    "id": "cc_ag_plausible_deniability_mist_l08",
+    "name": {
+      "en": "Aerosol of Plausible Deniability",
+      "cs": "Aerosol Pravděpodobné Popiratelnosti"
+    },
+    "description": {
+      "en": "A single spray from this can creates a thick, grey mist that makes any recent minor catastrophe seem like it was probably someone else's fault. Note: Does not actually fix the catastrophe.",
+      "cs": "Jeden střik z této plechovky vytvoří hustou, šedou mlhu, díky které se jakákoli nedávná menší katastrofa zdá být pravděpodobně chybou někoho jiného. Poznámka: Katastrofu to ve skutečnosti neopraví."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Shifts Blame (Social)", "Charges": 1 },
+      "cs": { "Účinek": "Přesouvá Vinu (Sociální)", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Temporarily deflects responsibility for one (1) minor mishap"],
+      "cs": ["Dočasně odkloní odpovědnost za jednu (1) menší nehodu"]
+    },
+    "itemEffectDescription": { "en": "1-Use Blame Shift", "cs": "1x Přesun Viny" },
+    "level": 8,
+    "buyPrice": 29,
+    "sellPrice": 9
+  },
+  {
+    "id": "cc_ag_gravity_recalibration_unit_l09",
+    "name": {
+      "en": "Gravity Recalibration Packet",
+      "cs": "Balíček pro Rekalibraci Gravitace"
+    },
+    "description": {
+      "en": "A one-use patch that, when slapped onto a surface, attempts to remind local gravity of its contractual obligations. For a few moments, things will fall in the correct direction. Mostly.",
+      "cs": "Jednorázová náplast, která po plácnutí na povrch se pokusí připomenout místní gravitaci její smluvní závazky. Na několik okamžiků budou věci padat správným směrem. Většinou."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Briefly Normalizes Gravity", "Charges": 1 },
+      "cs": { "Účinek": "Krátce Normalizuje Gravitaci", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Temporarily restores standard gravitational pull in a small area"],
+      "cs": ["Dočasně obnoví standardní gravitační přitažlivost v malé oblasti"]
+    },
+    "itemEffectDescription": { "en": "1-Use Gravity Normalizer", "cs": "1x Normalizátor Gravitace" },
+    "level": 9,
+    "buyPrice": 31,
+    "sellPrice": 9
+  },
+  {
+    "id": "cc_ag_motivational_poster_l10",
+    "name": {
+      "en": "Foldable Motivational Poster",
+      "cs": "Skládací Motivační Plakát"
+    },
+    "description": {
+      "en": "Unfurls to reveal a picture of a kitten hanging from a branch, with the caption 'Just Hang In There!'. Proven to grant a brief, potent burst of resolve when faced with overwhelming cosmic dread.",
+      "cs": "Rozloží se a odhalí obrázek koťátka visícího na větvi s nápisem 'Prostě Vydrž!'. Prokázáno, že poskytuje krátký, silný příval odhodlání tváří v tvář ohromující kosmické hrůze."
+    },
+    "itemType": "auxiliary_gadget",
+    "attributes": {
+      "en": { "Effect": "Moderate Willpower Recovery", "Charges": 1 },
+      "cs": { "Účinek": "Střední Obnova Vůle", "Náboje": 1 }
+    },
+    "abilities": {
+      "en": ["Instantly restores a moderate amount of Gumption"],
+      "cs": ["Okamžitě obnoví střední množství Kuráže"]
+    },
+    "itemEffectDescription": { "en": "1-Use Gumption Restore", "cs": "1x Obnova Kuráže" },
+    "level": 10,
+    "buyPrice": 35,
+    "sellPrice": 11
+  }
+]

@@ -265,6 +265,7 @@ router.get('/me/themes/:themeId/progress', protect, async (req, res) => {
         userThemeProgress: {
           userId: userId,
           themeId: themeId,
+          characterName: null,
           level: 1,
           currentXP: 0,
           maxIntegrityBonus: 0,
@@ -425,4 +426,71 @@ router.delete('/me/themes/:themeId/character-reset', protect, async (req, res) =
     res.status(500).json({ error: { message: 'Failed to reset character due to a server error.', code: 'CHARACTER_RESET_TRANSACTION_ERROR' } });
   }
 });
+
+/**
+ * @route   PUT /api/v1/users/me/themes/:themeId/progress
+ * @desc    Update user's persistent progress for a specific theme (e.g., character name).
+ * @access  Private
+ */
+router.put('/me/themes/:themeId/progress', protect, async (req, res) => {
+  const userId = req.user.id;
+  const { themeId } = req.params;
+  const { characterName } = req.body;
+
+  logger.info(`Updating UserThemeProgress for user ${userId}, theme ${themeId} with payload:`, req.body);
+
+  if (!themeId) {
+    return res.status(400).json({ error: { message: 'Theme ID is required.', code: 'MISSING_THEME_ID' } });
+  }
+
+  const updateData = {};
+
+  if (characterName !== undefined) {
+    if (typeof characterName !== 'string' || characterName.trim().length < 1 || characterName.trim().length > 50) {
+      return res.status(400).json({ error: { message: 'Character name must be a string between 1 and 50 characters.', code: 'INVALID_CHARACTER_NAME' } });
+    }
+    updateData.characterName = characterName.trim();
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    return res.status(400).json({ error: { message: 'No valid data provided for update.', code: 'NO_UPDATE_DATA' } });
+  }
+
+  try {
+    const updatedProgress = await prisma.userThemeProgress.update({
+      where: {
+        userId_themeId: {
+          userId: userId,
+          themeId: themeId,
+        },
+      },
+      data: updateData,
+    });
+
+    // Also update the player_identifier in any existing GameState for consistency.
+    await prisma.gameState.updateMany({
+        where: {
+            userId: userId,
+            theme_id: themeId,
+        },
+        data: {
+            player_identifier: updateData.characterName,
+        }
+    });
+
+    logger.info(`UserThemeProgress updated successfully for user ${userId}, theme ${themeId}.`);
+    res.status(200).json({
+      message: 'User theme progress updated successfully.',
+      userThemeProgress: updatedProgress,
+    });
+  } catch (error) {
+    if (error.code === 'P2025') { // Record to update not found
+      logger.warn(`Attempt to update non-existent UserThemeProgress for user ${userId}, theme ${themeId}.`);
+      return res.status(404).json({ error: { message: 'User theme progress not found.', code: 'USER_THEME_PROGRESS_NOT_FOUND' } });
+    }
+    logger.error(`Error updating UserThemeProgress for user ${userId}, theme ${themeId}:`, error);
+    res.status(500).json({ error: { message: 'Failed to update user theme progress.', code: 'USER_THEME_PROGRESS_UPDATE_ERROR' } });
+  }
+});
+
 export default router;

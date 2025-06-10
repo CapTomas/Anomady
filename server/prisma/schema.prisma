@@ -96,6 +96,7 @@ model UserThemeProgress {
   user                User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Ensuring onDelete Cascade
   userId              String   @map("user_id")
   themeId             String   @map("theme_id")
+  characterName       String?  @map("character_name")
   level               Int      @default(1)
   currentXP           Int      @default(0) @map("current_xp")
   maxIntegrityBonus   Int      @default(0) @map("max_integrity_bonus")

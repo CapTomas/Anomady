@@ -10,6 +10,7 @@
   "concept_key": "theme_concept_grim_warden",
   "category_key": "theme_category_grim_warden",
   "style_key": "theme_style_grim_warden",
+  "default_identifier_key": "default_identifier_grim_warden",
   "naming_convention": "entity",
   "base_attributes": {
     "integrity": 100,

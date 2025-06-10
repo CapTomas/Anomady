@@ -177,6 +177,7 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
           create: {
             userId: userId,
             themeId: theme_id,
+            characterName: player_identifier,
             level: clientUserThemeProgress.level || 1,
             currentXP: clientUserThemeProgress.currentXP || 0,
             maxIntegrityBonus: clientUserThemeProgress.maxIntegrityBonus || 0,
@@ -196,10 +197,19 @@ router.post('/', protect, validateGameStatePayload, async (req, res) => {
         const existingProgress = await tx.userThemeProgress.findUnique({ where: { userId_themeId: { userId: userId, themeId: theme_id } } });
         if (!existingProgress) {
           await tx.userThemeProgress.create({
-            data: { userId: userId, themeId: theme_id, level: 1, currentXP: 0, maxIntegrityBonus: 0, maxWillpowerBonus: 0, aptitudeBonus: 0, resilienceBonus: 0, acquiredTraitKeys: [] }
+            data: { userId: userId, themeId: theme_id, characterName: player_identifier, level: 1, currentXP: 0, maxIntegrityBonus: 0, maxWillpowerBonus: 0, aptitudeBonus: 0, resilienceBonus: 0, acquiredTraitKeys: [] }
           });
           logger.info(`[UserThemeProgress] Initialized default progress for user ${userId}, theme ${theme_id}.`);
         }
+      }
+      // After upsert/create, ensure character name is set if it was missing from an old record
+      const finalProgressCheck = await tx.userThemeProgress.findUnique({ where: { userId_themeId: { userId: userId, themeId: theme_id } } });
+      if (finalProgressCheck && !finalProgressCheck.characterName) {
+        await tx.userThemeProgress.update({
+          where: { userId_themeId: { userId: userId, themeId: theme_id } },
+          data: { characterName: player_identifier }
+        });
+        logger.info(`[UserThemeProgress] Backfilled missing character name for user ${userId}, theme ${theme_id}.`);
       }
       // Handle World Shard Unlocking
       if (new_persistent_lore_unlock && typeof new_persistent_lore_unlock === 'object') {
@@ -336,8 +346,13 @@ router.get('/:themeId', protect, async (req, res) => {
         ? gameState.game_history.slice(-RECENT_INTERACTION_WINDOW_SIZE)
         : [];
     logger.info(`GameState retrieved for user ${userId}, theme ${themeId}. Sending ${clientGameHistory.length} recent turns.`);
+    const finalGameState = { ...gameState };
+    // Prioritize the persistent character name from progress over the one saved in GameState
+    if (userThemeProgress && userThemeProgress.characterName) {
+      finalGameState.player_identifier = userThemeProgress.characterName;
+    }
     res.status(200).json({
-        ...gameState,
+        ...finalGameState,
         game_history: clientGameHistory,
         game_history_lore: effectiveEvolvedLore,
         userThemeProgress: userThemeProgress

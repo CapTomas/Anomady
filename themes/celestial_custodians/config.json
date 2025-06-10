@@ -10,6 +10,7 @@
   "concept_key": "theme_concept_celestial_custodians",
   "category_key": "theme_category_celestial_custodians",
   "style_key": "theme_style_celestial_custodians",
+  "default_identifier_key": "default_identifier_celestial_custodians",
   "naming_convention": "asset",
   "base_attributes": {
     "integrity": 100,

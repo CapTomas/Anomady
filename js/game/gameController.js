@@ -780,7 +780,7 @@ export function initGameController(dependencies) {
  * @private
  */
 async function _setupNewGameEnvironment(themeId) {
-    log(LOG_LEVEL_INFO, `Setting up new game environment for theme: ${themeId}. Player will be prompted for identifier.`);
+    log(LOG_LEVEL_INFO, `Setting up new game environment for theme: ${themeId}.`);
     state.setCurrentTheme(themeId);
     const dataLoaded = await themeService.ensureThemeDataLoaded(themeId);
     if (!dataLoaded) {
@@ -789,12 +789,13 @@ async function _setupNewGameEnvironment(themeId) {
         await switchToLanding();
         return;
     }
-    // Preload all necessary text files
+    // Preload all necessary text files and data
     await themeService.getAllPromptsForTheme(themeId);
     await themeService.ensureThemeDataLoaded("master");
     await themeService.getAllPromptsForTheme("master");
-    // This will fetch and cache traits.json if it's in the config
     await themeService.fetchAndCachePromptFile(themeId, 'traits');
+
+    // Clear and reset UI and volatile state
     state.clearVolatileGameState();
     state.setIsInitialGameLoad(true);
     state.setCurrentPromptType("initial");
@@ -803,6 +804,8 @@ async function _setupNewGameEnvironment(themeId) {
     suggestedActionsManager.clearSuggestedActions();
     dashboardManager.resetDashboardUI(themeId);
     characterPanelManager.buildCharacterPanel(themeId);
+
+    // Load or create progress, then decide the flow
     await _loadOrCreateUserThemeProgress(themeId);
     await _initializeCurrentRunStats();
     await _equipStartingGear(themeId);
@@ -810,21 +813,61 @@ async function _setupNewGameEnvironment(themeId) {
     characterPanelManager.showCharacterPanel(true);
     characterPanelManager.showXPBar(true);
     landingPageManager.switchToGameView(themeId);
+
     if (_userThemeControlsManagerRef && typeof _userThemeControlsManagerRef.setThemeAsPlaying === 'function') {
         await _userThemeControlsManagerRef.setThemeAsPlaying(themeId);
+    }
+
+    const progress = state.getCurrentUserThemeProgress();
+    const existingName = progress?.characterName;
+
+    if (existingName) {
+        // Name exists, skip the name input step and start the game immediately.
+        log(LOG_LEVEL_INFO, `Found existing character name '${existingName}'. Starting game directly.`);
+        state.setPlayerIdentifier(existingName);
+        if (dom.nameInputSection) dom.nameInputSection.style.display = "none";
+        if (dom.actionInputSection) dom.actionInputSection.style.display = "flex";
+        if (dom.playerActionInput) {
+            dom.playerActionInput.placeholder = localizationService.getUIText("placeholder_command");
+            state.setCurrentAiPlaceholder(dom.playerActionInput.placeholder);
+            dom.playerActionInput.value = "";
+            dom.playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
+            dom.playerActionInput.focus();
+        }
+
+        const themeDisplayName = themeId
+            ? (themeService.getThemeConfig(themeId)?.name_key
+                ? localizationService.getUIText(themeService.getThemeConfig(themeId).name_key, {}, { explicitThemeContext: themeId })
+                : themeId)
+            : "Unknown Theme";
+
+        const newGameSettings = state.getCurrentNewGameSettings();
+        const useEvolvedWorld = newGameSettings ? newGameSettings.useEvolvedWorld : false;
+        const initialActionText = `Start game as "${existingName}". Theme: ${themeDisplayName}. Evolved World: ${useEvolvedWorld}.`;
+        state.clearCurrentNewGameSettings();
+
+        await processPlayerAction(initialActionText, true);
+
     } else {
-        log(LOG_LEVEL_WARN, "UserThemeControlsManager not available in _setupNewGameEnvironment. Cannot set theme as playing.");
+        // No name exists, proceed with the original flow to ask for one.
+        const themeConfig = themeService.getThemeConfig(themeId);
+        const defaultNameKey = themeConfig?.default_identifier_key;
+        const defaultName = defaultNameKey ? localizationService.getUIText(defaultNameKey, {}, { explicitThemeContext: themeId }) : localizationService.getUIText('unknown');
+
+        state.setPlayerIdentifier(defaultName); // Set default name for the panel to show initially
+        characterPanelManager.updateCharacterPanel(false); // Update panel to show default name
+        state.setPlayerIdentifier(""); // Clear it from state so game knows we still need input
+
+        if (dom.nameInputSection) dom.nameInputSection.style.display = "flex";
+        if (dom.actionInputSection) dom.actionInputSection.style.display = "none";
+        if (dom.playerIdentifierInput) {
+            dom.playerIdentifierInput.value = "";
+            dom.playerIdentifierInput.placeholder = localizationService.getUIText("placeholder_name_login");
+            dom.playerIdentifierInput.focus();
+        }
+        storyLogManager.addMessageToLog(localizationService.getUIText("alert_identifier_required"), "system");
+        log(LOG_LEVEL_INFO, `UI configured for new game in theme ${themeId}. Awaiting player identifier input.`);
     }
-    state.setPlayerIdentifier("");
-    if (dom.nameInputSection) dom.nameInputSection.style.display = "flex";
-    if (dom.actionInputSection) dom.actionInputSection.style.display = "none";
-    if (dom.playerIdentifierInput) {
-        dom.playerIdentifierInput.value = "";
-        dom.playerIdentifierInput.placeholder = localizationService.getUIText("placeholder_name_login");
-        dom.playerIdentifierInput.focus();
-    }
-    storyLogManager.addMessageToLog(localizationService.getUIText("alert_identifier_required"), "system");
-    log(LOG_LEVEL_INFO, `UI configured for new game in theme ${themeId}. Awaiting player identifier input.`);
 }
 /**
  * Handles player identifier submission for anonymous users.
@@ -838,6 +881,7 @@ export async function handleIdentifierSubmission(identifier) {
         return;
     }
     state.setPlayerIdentifier(identifier);
+    characterPanelManager.updateCharacterPanel(false); // Instantly update the name in the top panel
     if (dom.nameInputSection) dom.nameInputSection.style.display = "none";
     if (dom.actionInputSection) dom.actionInputSection.style.display = "flex";
     if (dom.playerActionInput) {

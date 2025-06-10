@@ -10,6 +10,7 @@
   "concept_key": "theme_concept_salt_reavers",
   "category_key": "theme_category_salt_reavers",
   "style_key": "theme_style_salt_reavers",
+  "default_identifier_key": "default_identifier_salt_reavers",
   "naming_convention": "entity",
   "base_attributes": {
     "integrity": 100,

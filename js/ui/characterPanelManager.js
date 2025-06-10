@@ -37,7 +37,7 @@ function _createBasePanelStructure() {
                 <div id="char-panel-strain-icon" class="attribute-value status-icon"></div>
             </div>
             <div class="char-panel-identity-block">
-                <span id="char-panel-identifier" data-lang-key="char_panel_placeholder_name">Character</span>
+                <span id="char-panel-identifier">Character</span>
                 <span id="char-panel-level" data-lang-key="char_panel_placeholder_level">Level 1</span>
             </div>
         </div>
@@ -51,6 +51,17 @@ function _createBasePanelStructure() {
     const strainIcon = document.getElementById('char-panel-strain-icon');
     if (strainIcon) {
         strainIcon.addEventListener('click', _showStrainDetailsModal);
+    }
+    const identityBlock = characterProgressionPanel.querySelector('.char-panel-identity-block');
+    if (identityBlock) {
+        identityBlock.addEventListener('click', () => {
+            const themeId = state.getCurrentTheme();
+            if (themeId) {
+                showCharacterProgressModal(themeId);
+            } else {
+                log(LOG_LEVEL_WARN, "Character identity block clicked but no active theme found.");
+            }
+        });
     }
 }
 /**
@@ -204,14 +215,17 @@ export function initCharacterPanelManager(dependencies = {}) {
  */
 export async function showCharacterProgressModal(themeId) {
     const themeConfig = themeService.getThemeConfig(themeId);
+    // Determine if we're in-game or on the landing page to get the correct progress data source
     const progress = state.getCurrentTheme() === themeId
         ? state.getCurrentUserThemeProgress()
         : state.getLandingSelectedThemeProgress();
+
     const currentUser = state.getCurrentUser();
     if (!themeConfig || !progress || !currentUser) {
         log(LOG_LEVEL_ERROR, "Could not show character progress modal. Missing themeConfig, progress data, or user.");
         return;
     }
+
     // Fetch traits on demand if not already cached
     let allThemeTraits = themeService.getThemeTraits(themeId);
     if (!allThemeTraits) {
@@ -219,10 +233,86 @@ export async function showCharacterProgressModal(themeId) {
         await themeService.fetchAndCachePromptFile(themeId, 'traits');
         allThemeTraits = themeService.getThemeTraits(themeId); // Re-attempt to get from cache.
     }
+
     const lang = state.getCurrentAppLanguage();
     const themeDisplayName = getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeId });
+
     const content = document.createElement('div');
     content.className = 'character-progress-modal-content';
+
+    // --- Character Name Section ---
+    const nameChangeSection = document.createElement('div');
+    nameChangeSection.className = 'progress-name-section';
+
+    const nameDisplayContainer = document.createElement('div');
+    nameDisplayContainer.className = 'name-display-container';
+
+    const nameLabel = document.createElement('span');
+    nameLabel.className = 'name-label';
+    nameLabel.textContent = getUIText('label_profile_character_name');
+
+    const currentNameSpan = document.createElement('span');
+    currentNameSpan.className = 'current-character-name';
+    currentNameSpan.textContent = progress.characterName || `(${getUIText('unknown')})`;
+
+    const changeNameButton = document.createElement('button');
+    changeNameButton.className = 'ui-button small';
+    changeNameButton.textContent = getUIText('button_change_name');
+    attachTooltip(changeNameButton, 'tooltip_change_name');
+
+    changeNameButton.addEventListener('click', async () => {
+        const newNameResult = await modalManager.showCustomModal({
+            type: 'prompt',
+            titleKey: 'modal_title_change_character_name',
+            inputPlaceholderKey: 'placeholder_character_name',
+            defaultValue: progress.characterName || '',
+            confirmTextKey: 'button_confirm_name_change'
+        });
+
+        // showCustomModal for prompt resolves with the string value, or null if cancelled
+        if (newNameResult !== null && newNameResult.trim() && newNameResult.trim() !== (progress.characterName || '')) {
+            try {
+                const newName = newNameResult.trim();
+                const updatedProgressResponse = await apiService.updateUserThemeProgress(
+                    currentUser.token,
+                    themeId,
+                    { characterName: newName }
+                );
+
+                // Update state based on where the modal was opened from
+                if (state.getCurrentTheme() === themeId) {
+                    state.setCurrentUserThemeProgress(updatedProgressResponse.userThemeProgress);
+                    state.setPlayerIdentifier(newName);
+                    updateCharacterPanel(true);
+                } else {
+                    state.setLandingSelectedThemeProgress(updatedProgressResponse.userThemeProgress);
+                }
+
+                // Update the name in the open modal without closing it
+                currentNameSpan.textContent = newName;
+                progress.characterName = newName; // Update local `progress` object for subsequent clicks
+
+                modalManager.displayModalError(
+                    getUIText('alert_character_name_changed_success', { CHARACTER_NAME: newName })
+                );
+            } catch (error) {
+                log(LOG_LEVEL_ERROR, 'Failed to update character name', error);
+                modalManager.displayModalError(
+                    getUIText('error_api_call_failed', { ERROR_MSG: error.message })
+                );
+            }
+        } else if (newNameResult !== null) {
+             // User confirmed but entered empty or same name, do nothing.
+             log(LOG_LEVEL_DEBUG, "Character name change cancelled or name was unchanged.");
+        }
+    });
+
+    nameDisplayContainer.appendChild(nameLabel);
+    nameDisplayContainer.appendChild(currentNameSpan);
+    nameDisplayContainer.appendChild(changeNameButton);
+    nameChangeSection.appendChild(nameDisplayContainer);
+    content.appendChild(nameChangeSection);
+
     // Build the stats list
     const statsList = document.createElement('dl');
     statsList.className = 'progress-stats-list';
@@ -242,6 +332,7 @@ export async function showCharacterProgressModal(themeId) {
     createStatItem('label_char_progress_aptitude', `${themeConfig.base_attributes.aptitude} (+${progress.aptitudeBonus || 0})`);
     createStatItem('label_char_progress_resilience', `${themeConfig.base_attributes.resilience} (+${progress.resilienceBonus || 0})`);
     content.appendChild(statsList);
+
     // Build the traits list
     const traitsSection = document.createElement('div');
     traitsSection.className = 'progress-traits-section';
@@ -280,6 +371,7 @@ export async function showCharacterProgressModal(themeId) {
         traitsSection.appendChild(noTraitsP);
     }
     content.appendChild(traitsSection);
+
     // Danger Zone for Reset Button
     const dangerZone = document.createElement('div');
     dangerZone.className = 'danger-zone';
@@ -299,6 +391,7 @@ export async function showCharacterProgressModal(themeId) {
     dangerZone.appendChild(dangerTitle);
     dangerZone.appendChild(resetButton);
     content.appendChild(dangerZone);
+
     modalManager.showCustomModal({
         type: 'custom',
         titleKey: 'modal_title_character_progress',
@@ -371,13 +464,23 @@ export function updateCharacterPanel(highlight = true) {
     }
     const themeId = state.getCurrentTheme();
     if (!themeId) return;
+
     const themeConfig = themeService.getThemeConfig(themeId);
     const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
+
     // Update Identity block
-    const playerIdentifier = state.getPlayerIdentifier() || getUIText('char_panel_placeholder_name');
+    let playerIdentifier = state.getPlayerIdentifier();
+    if (!playerIdentifier) {
+        const defaultNameKey = themeConfig?.default_identifier_key;
+        playerIdentifier = defaultNameKey
+            ? getUIText(defaultNameKey, {}, { explicitThemeContext: themeId })
+            : getUIText('char_panel_unnamed_protagonist');
+    }
+
     const level = state.getPlayerLevel();
     const idEl = document.getElementById('char-panel-identifier');
     const levelEl = document.getElementById('char-panel-level');
+
     if (idEl && idEl.textContent !== playerIdentifier) {
         idEl.textContent = playerIdentifier;
         if (highlight) uiUtils.flashElement(idEl);
@@ -387,6 +490,7 @@ export function updateCharacterPanel(highlight = true) {
         levelEl.textContent = levelText;
         if (highlight) uiUtils.flashElement(levelEl);
     }
+
     // Update dynamic attributes
     const runStats = state.getCurrentRunStats();
     topPanelConfig.forEach(itemConfig => {
@@ -400,16 +504,21 @@ export function updateCharacterPanel(highlight = true) {
             // For other stats like integrity, willpower, strain, get them from runStats
             itemValue = runStats[itemConfig.maps_to_run_stat];
         }
+
         if (itemValue === undefined) return;
+
         const valueEl = document.getElementById(`char-panel-${itemConfig.id}-value`);
         const meterEl = document.getElementById(`char-panel-${itemConfig.id}-meter`);
+
         if (itemConfig.type === 'meter') {
             let maxVal;
             if (itemConfig.id === 'integrity') maxVal = state.getEffectiveMaxIntegrity();
             else if (itemConfig.id === 'willpower') maxVal = state.getEffectiveMaxWillpower();
             else maxVal = 100; // Fallback for other meters if any
+
             const percentage = maxVal > 0 ? (itemValue / maxVal) * 100 : 0;
             const newTextContent = `${itemValue}/${maxVal}`;
+
             if (valueEl && valueEl.textContent !== newTextContent) {
                 valueEl.textContent = newTextContent;
                 if (highlight) uiUtils.flashElement(valueEl);
@@ -420,6 +529,7 @@ export function updateCharacterPanel(highlight = true) {
                 if (percentage <= 25) meterEl.classList.add('meter-low');
                 else if (percentage <= 50) meterEl.classList.add('meter-medium');
                 else meterEl.classList.add('meter-full');
+
                 if (percentage > 50) {
                     if (itemConfig.meter_type === 'health') meterEl.classList.add('integrity-full');
                     if (itemConfig.meter_type === 'stamina') meterEl.classList.add('willpower-full');
@@ -448,6 +558,7 @@ export function updateCharacterPanel(highlight = true) {
             }
         }
     });
+
     // Update XP Bar
     const userProgress = state.getCurrentUserThemeProgress();
     if (xpBarContainer && xpBarFill && xpBarText && userProgress) {
@@ -458,10 +569,13 @@ export function updateCharacterPanel(highlight = true) {
         const xpIntoCurrentLevel = currentXP - xpForCurrentLevel;
         const xpNeededForThisLevel = xpForNextLevel - xpForCurrentLevel;
         const xpPercentage = (currentLevel >= MAX_PLAYER_LEVEL || xpNeededForThisLevel <= 0) ? 100 : (xpIntoCurrentLevel / xpNeededForThisLevel) * 100;
+
         xpBarFill.style.width = `${Math.max(0, Math.min(100, xpPercentage))}%`;
+
         const newXpText = (currentLevel >= MAX_PLAYER_LEVEL)
             ? getUIText("xp_bar_max_level")
             : `${getUIText("xp_bar_label_xp")} ${currentXP}/${xpForNextLevel}`;
+
         // Just update the text, the xpGained animation provides the visual feedback.
         if (xpBarText.textContent !== newXpText) {
             xpBarText.textContent = newXpText;
@@ -476,11 +590,11 @@ export function retranslateCharacterPanelLabels() {
     if (!characterProgressionPanel) return;
     const themeId = state.getCurrentTheme();
     if (!themeId) return;
+
     // Retranslate static elements
-    const idEl = document.getElementById('char-panel-identifier');
     const levelEl = document.getElementById('char-panel-level');
-    if (idEl && !state.getPlayerIdentifier()) idEl.textContent = getUIText('char_panel_placeholder_name');
     if (levelEl) levelEl.textContent = `${getUIText("char_panel_label_level")} ${state.getPlayerLevel()}`;
+
     // Retranslate dynamically generated elements and tooltips
     const themeConfig = themeService.getThemeConfig(themeId);
     const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
@@ -489,19 +603,20 @@ export function retranslateCharacterPanelLabels() {
         if (itemContainer) {
             const labelEl = itemContainer.querySelector('.attribute-label');
             if (labelEl) labelEl.textContent = getUIText(itemConfig.label_key);
+
             const tooltipTrigger = itemContainer.querySelector('.info-tooltip-trigger');
             if (tooltipTrigger && itemConfig.tooltip_key) {
                 attachTooltip(tooltipTrigger, itemConfig.tooltip_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
             }
         }
     });
+
     const rightContainer = dom.characterProgressionPanel.querySelector('.character-info-right');
     if(rightContainer) {
         const loreBtn = rightContainer.querySelector('#char-panel-lore-button');
         const invBtn = rightContainer.querySelector('#char-panel-inventory-button');
         const progressBtn = rightContainer.querySelector('#char-panel-character_progress-button');
         const storeBtn = rightContainer.querySelector('#char-panel-store-button');
-
         if (loreBtn) attachTooltip(loreBtn, 'tooltip_lore_button');
         if (invBtn) attachTooltip(invBtn, 'tooltip_inventory_button');
         if (progressBtn) attachTooltip(progressBtn, 'tooltip_character_progress');
@@ -516,7 +631,7 @@ export function retranslateCharacterPanelLabels() {
         }
     }
     log(LOG_LEVEL_DEBUG, "Character panel labels and tooltips re-translated.");
-    updateCharacterPanel(false); // Refresh values without highlight on language change
+    updateCharacterPanel(false); // Refresh values (including name) without highlight on language change
 }
 /**
  * Shows a placeholder modal for the Store.

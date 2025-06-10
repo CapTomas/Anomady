@@ -217,6 +217,17 @@ export const applyBoonSelection = (token, themeId, boonPayload) => {
     return _callApi(`/api/v1/users/me/themes/${themeId}/boon`, 'POST', boonPayload, token);
 };
 
+/**
+ * Updates user's persistent progress for a specific theme (e.g., character name).
+ * @param {string} token - The JWT token for authentication.
+ * @param {string} themeId - The ID of the theme.
+ * @param {object} progressToUpdate - The progress data to update (e.g., { characterName: "New Name" }).
+ * @returns {Promise<object>} The API response containing the updated UserThemeProgress.
+ */
+export const updateUserThemeProgress = (token, themeId, progressToUpdate) => {
+    return _callApi(`/api/v1/users/me/themes/${themeId}/progress`, 'PUT', progressToUpdate, token);
+};
+
 // --- AI Proxy Endpoint ---
 /**
  * Calls the backend proxy for Gemini API interaction.

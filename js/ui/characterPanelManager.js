@@ -120,17 +120,17 @@ export function buildCharacterPanel(themeId) {
 }
 /**
  * Creates the icon buttons for Inventory, Character Progress, Lore, and Store.
+ * Uses divs with CSS masks instead of imgs to allow for color animation.
  * @param {HTMLElement} container - The container to append the buttons to.
  * @private
  */
 function _createIconButtons(container) {
     if (!container) return;
-
     const buttons = [
         { id: 'inventory', icon: 'icon_inventory.svg', tooltipKey: 'tooltip_inventory_button', handler: _showInventoryModal },
         {
             id: 'character_progress',
-            icon: 'icon_character.svg', // Use the empty icon for the in-game panel button
+            icon: 'icon_character.svg',
             tooltipKey: 'tooltip_character_progress',
             handler: () => {
                 const themeId = state.getCurrentTheme();
@@ -150,28 +150,32 @@ function _createIconButtons(container) {
         button.id = `char-panel-${btnInfo.id}-button`;
         button.className = 'ui-button icon-button';
 
+        const iconWrapper = document.createElement('div');
+        iconWrapper.className = 'icon-wrapper';
+        iconWrapper.style.webkitMaskImage = `url('images/app/${btnInfo.icon}')`;
+        iconWrapper.style.maskImage = `url('images/app/${btnInfo.icon}')`;
+        button.appendChild(iconWrapper);
+
         if (btnInfo.id === 'store') {
             const currentLevel = state.getPlayerLevel();
-            // Store is locked if current level is LESS than min level. Button is disabled.
             if (currentLevel < MIN_LEVEL_FOR_STORE) {
                 button.disabled = true;
                 button.classList.add('disabled');
                 const tooltipText = getUIText('tooltip_store_locked_level', { MIN_LEVEL: MIN_LEVEL_FOR_STORE });
                 attachTooltip(button, null, {}, { rawText: tooltipText });
-                button.innerHTML = `<img src="images/app/icon_store.svg" alt="${tooltipText}">`;
+                button.setAttribute("aria-label", tooltipText);
             } else {
                 const altText = getUIText(btnInfo.tooltipKey);
                 attachTooltip(button, btnInfo.tooltipKey);
-                button.innerHTML = `<img src="images/app/${btnInfo.icon}" alt="${altText}">`;
+                button.setAttribute("aria-label", altText);
                 button.addEventListener('click', btnInfo.handler);
             }
         } else {
             const altText = getUIText(btnInfo.tooltipKey);
             attachTooltip(button, btnInfo.tooltipKey);
-            button.innerHTML = `<img src="images/app/${btnInfo.icon}" alt="${altText}">`;
+            button.setAttribute("aria-label", altText);
             button.addEventListener('click', btnInfo.handler);
         }
-
         container.appendChild(button);
     });
 }
@@ -453,6 +457,44 @@ export function animateXpGain(xpGained) {
             xpBarText.classList.remove('updated');
         }
     }, 6000);
+}
+/**
+ * Triggers a visual animation on one of the character panel icon buttons using the Web Animations API.
+ * This is more reliable than class-based animations when followed immediately by blocking JS.
+ * It animates scale and background color for a "pulse and shine" effect.
+ * @param {'inventory' | 'character_progress' | 'lore'} iconId - The ID of the icon to animate.
+ */
+export function triggerIconAnimation(iconId) {
+    const button = document.getElementById(`char-panel-${iconId}-button`);
+    if (button) {
+        log(LOG_LEVEL_DEBUG, `Triggering animation for icon: ${iconId}`);
+        const iconWrapper = button.querySelector('.icon-wrapper');
+        if (iconWrapper && typeof iconWrapper.animate === 'function') {
+            // Define the keyframes for the animation directly in JavaScript
+            const pulseShineKeyframes = [
+                { transform: 'scale(1)', backgroundColor: 'var(--color-text-muted)' },
+                { transform: 'scale(1.25)', backgroundColor: 'var(--color-accent-main)' },
+                { transform: 'scale(1)', backgroundColor: 'var(--color-text-muted)' }
+            ];
+
+            // Define the timing properties for the animation
+            const pulseShineTiming = {
+                duration: 1200,    // Slower duration for one pulse
+                iterations: 4,    // Number of times to repeat
+                easing: 'ease-in-out'
+            };
+
+            // Play the animation
+            iconWrapper.animate(pulseShineKeyframes, pulseShineTiming);
+
+        } else if (!iconWrapper) {
+            log(LOG_LEVEL_WARN, `Could not find .icon-wrapper inside button 'char-panel-${iconId}-button' to animate.`);
+        } else {
+             log(LOG_LEVEL_WARN, `Web Animations API (element.animate) not supported in this browser.`);
+        }
+    } else {
+        log(LOG_LEVEL_WARN, `Could not find icon button with ID 'char-panel-${iconId}-button' to animate.`);
+    }
 }
 /**
  * Updates the character progression panel and XP bar with the latest data from the state.

@@ -234,42 +234,54 @@ function _presentSecondaryBoonChoices(type) {
 }
 /**
  * Finalizes the boon application by calling the API and updating the UI.
+ * This function is refactored to ensure the animation renders before blocking UI.
  * @param {object} payload - The boon payload for the API.
  * @param {string} boonDisplayText - The display text of the chosen boon for logging.
  * @private
  */
 async function _applyBoonAndFinalize(payload, boonDisplayText) {
-    uiUtils.setGMActivityIndicator(true);
-    storyLogManager.showLoadingIndicator();
-    try {
-        const currentUser = state.getCurrentUser();
-        const themeId = state.getCurrentTheme();
-        if (!currentUser || !currentUser.token || !themeId) {
-            throw new Error("User or theme context lost during Boon finalization.");
-        }
-        const response = await apiService.applyBoonSelection(currentUser.token, themeId, payload);
-        state.setCurrentUserThemeProgress(response.userThemeProgress);
-        state.setIsBoonSelectionPending(false);
-        _boonSelectionContext.step = 'none';
-        _initializeCurrentRunStats();
-        characterPanelManager.updateCharacterPanel();
-        const restoredActions = state.getLastAiSuggestedActions();
-        state.setCurrentSuggestedActions(restoredActions || []);
-        suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
-        uiUtils.setPlayerInputEnabled(true);
-        if (dom.playerActionInput) {
-            dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder() || localizationService.getUIText("placeholder_command");
-            dom.playerActionInput.focus();
-        }
-        await authService.saveCurrentGameState(true);
-    } catch (error) {
-        log(LOG_LEVEL_ERROR, "Error applying Boon:", error);
-        storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: error.message || "Failed to apply Boon." }), "system system-error");
-        _presentPrimaryBoonChoices();
-    } finally {
-        uiUtils.setGMActivityIndicator(false);
-        storyLogManager.removeLoadingIndicator();
+    // 1. Trigger the animation immediately.
+    if (payload.boonType === "NEW_TRAIT" || payload.boonType === "MAX_ATTRIBUTE_INCREASE" || payload.boonType === "ATTRIBUTE_ENHANCEMENT") {
+        characterPanelManager.triggerIconAnimation('character_progress');
     }
+
+    // 2. Schedule the heavy processing to occur after the next browser paint.
+    requestAnimationFrame(() => {
+        // A minimal setTimeout ensures this runs in a separate task from the animation call.
+        setTimeout(async () => {
+            uiUtils.setGMActivityIndicator(true);
+            storyLogManager.showLoadingIndicator();
+            try {
+                const currentUser = state.getCurrentUser();
+                const themeId = state.getCurrentTheme();
+                if (!currentUser || !currentUser.token || !themeId) {
+                    throw new Error("User or theme context lost during Boon finalization.");
+                }
+                const response = await apiService.applyBoonSelection(currentUser.token, themeId, payload);
+                state.setCurrentUserThemeProgress(response.userThemeProgress);
+                state.setIsBoonSelectionPending(false);
+                _boonSelectionContext.step = 'none';
+                _initializeCurrentRunStats();
+                characterPanelManager.updateCharacterPanel();
+                const restoredActions = state.getLastAiSuggestedActions();
+                state.setCurrentSuggestedActions(restoredActions || []);
+                suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
+                uiUtils.setPlayerInputEnabled(true);
+                if (dom.playerActionInput) {
+                    dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder() || localizationService.getUIText("placeholder_command");
+                    dom.playerActionInput.focus();
+                }
+                await authService.saveCurrentGameState(true);
+            } catch (error) {
+                log(LOG_LEVEL_ERROR, "Error applying Boon:", error);
+                storyLogManager.addMessageToLog(localizationService.getUIText("error_api_call_failed", { ERROR_MSG: error.message || "Failed to apply Boon." }), "system system-error");
+                _presentPrimaryBoonChoices();
+            } finally {
+                uiUtils.setGMActivityIndicator(false);
+                storyLogManager.removeLoadingIndicator();
+            }
+        }, 20);
+    });
 }
 /**
  * Handles the player's Boon selection.
@@ -365,33 +377,43 @@ function _presentInitialTraitChoices() {
 
 /**
  * Handles the player's initial trait selection and starts the game.
+ * This function is refactored to ensure the animation renders before blocking UI.
  * @param {string} traitKey - The key of the selected trait.
  * @private
  */
 async function _handleInitialTraitSelection(traitKey) {
-    uiUtils.setGMActivityIndicator(true);
-    storyLogManager.showLoadingIndicator();
+    // 1. Immediate state update.
     const progress = state.getCurrentUserThemeProgress();
-    if (progress) {
-        progress.acquiredTraitKeys = [traitKey];
-        state.setCurrentUserThemeProgress(progress);
-    } else {
+    if (!progress) {
         log(LOG_LEVEL_ERROR, "Cannot set initial trait: UserThemeProgress is not initialized.");
-        uiUtils.setGMActivityIndicator(false);
-        storyLogManager.removeLoadingIndicator();
         return;
     }
+    progress.acquiredTraitKeys = [traitKey];
+    state.setCurrentUserThemeProgress(progress);
     state.setIsInitialTraitSelectionPending(false);
-    uiUtils.setPlayerInputEnabled(true);
     log(LOG_LEVEL_INFO, `Initial trait '${traitKey}' selected. Proceeding to start game narrative.`);
-    if (_deferredInitialActionText) {
-        await processPlayerAction(_deferredInitialActionText, true);
-        _deferredInitialActionText = null; // Clear after use
-    } else {
-        log(LOG_LEVEL_ERROR, "Deferred initial action text was missing after trait selection.");
-        uiUtils.setGMActivityIndicator(false);
-        storyLogManager.removeLoadingIndicator();
-    }
+
+    // 2. Trigger the animation immediately.
+    characterPanelManager.triggerIconAnimation('character_progress');
+
+    // 3. Schedule the blocking AI call to occur after the next browser paint.
+    requestAnimationFrame(() => {
+        // A minimal setTimeout ensures this runs in a separate task.
+        setTimeout(async () => {
+            uiUtils.setGMActivityIndicator(true);
+            storyLogManager.showLoadingIndicator();
+            uiUtils.setPlayerInputEnabled(true);
+
+            if (_deferredInitialActionText) {
+                await processPlayerAction(_deferredInitialActionText, true);
+                _deferredInitialActionText = null; // Clear after use
+            } else {
+                log(LOG_LEVEL_ERROR, "Deferred initial action text was missing after trait selection.");
+                uiUtils.setGMActivityIndicator(false);
+                storyLogManager.removeLoadingIndicator();
+            }
+        }, 20);
+    });
 }
 /**
  * Creates the detailed view for a single inventory item, including its stats and action button.
@@ -476,11 +498,6 @@ function _createInventoryItemDetailElement(item, isEquipped) {
     return detailContainer;
 }
 
-/**
- * Builds the complete HTML content for the inventory modal.
- * @returns {Promise<HTMLElement|null>} A promise that resolves to the modal content element.
- * @private
- */
 /**
  * Builds the complete HTML content for the inventory modal.
  * @returns {Promise<HTMLElement|null>} A promise that resolves to the modal content element.
@@ -1266,6 +1283,26 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
         storyLogManager.removeLoadingIndicator();
         if (fullAiResponse) {
             const updatesFromAI = fullAiResponse.dashboard_updates || {};
+            // --- START OF NEW LOGIC FOR ICON ANIMATIONS & STATS PROCESSING ---
+            const currentThemeId = state.getCurrentTheme();
+            const themeConfig = themeService.getThemeConfig(currentThemeId); // Declare themeConfig ONCE here.
+
+            // Check for new inventory items and animate inventory icon
+            if (themeConfig && themeConfig.equipment_slots) {
+                const equipmentSlotIds = Object.values(themeConfig.equipment_slots)
+                    .filter(slot => slot.type !== 'money')
+                    .map(slot => slot.id);
+
+                const newItemReceived = Object.keys(updatesFromAI).some(updatedKey => equipmentSlotIds.includes(updatedKey));
+
+                if (newItemReceived) {
+                    characterPanelManager.triggerIconAnimation('inventory');
+                }
+            }
+            // Check for new persistent lore unlock and animate lore icon
+            if (fullAiResponse.new_persistent_lore_unlock) {
+                characterPanelManager.triggerIconAnimation('lore');
+            }
 
             // 1. Process any special update handlers first, which may modify the updatesFromAI object
             if (updatesFromAI.conditions_update) {
@@ -1286,7 +1323,6 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
             state.setLastKnownDashboardUpdates(updatesFromAI);
 
             // 3. Update the ephemeral run-time state (_currentRunStats) based on the updates received.
-            const themeConfig = themeService.getThemeConfig(state.getCurrentTheme());
             const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
 
             topPanelConfig.forEach(itemConfig => {
@@ -1321,8 +1357,7 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
                     }
                 }
             });
-
-
+            // --- END OF NEW LOGIC FOR ICON ANIMATIONS & STATS PROCESSING ---
             // 4. Now, update the UI from the fresh state.
             storyLogManager.renderMessage(fullAiResponse.narrative, "gm");
             dashboardManager.updateDashboard(updatesFromAI); // Updates side panels

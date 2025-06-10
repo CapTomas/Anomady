@@ -207,6 +207,16 @@ body {
         opacity: 0;
     }
 }
+@keyframes pulse-shine {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 0px rgba(var(--color-accent-main-rgb), 0));
+    }
+    50% {
+        transform: scale(1.25);
+        filter: drop-shadow(0 0 6px rgba(var(--color-accent-main-rgb), 0.8));
+    }
+}
 /* Hide main layout during initial JS loading to prevent flicker */
 body.app-loading #main-layout {
     visibility: hidden;
@@ -503,14 +513,25 @@ div#char-panel-willpower-meter {
 .character-info-right .ui-button.icon-button:hover {
     background-color: var(--color-bg-element-hover);
 }
-.character-info-right .ui-button.icon-button img {
+.character-info-right .ui-button.icon-button .icon-wrapper {
     width: 100%;
     height: 100%;
-    opacity: 0.7;
-    transition: opacity var(--transition-fast);
+    background-color: var(--color-text-muted);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
 }
-.character-info-right .ui-button.icon-button:hover img {
-    opacity: 1;
+.character-info-right .ui-button.icon-button:hover .icon-wrapper {
+    background-color: var(--color-text-primary);
+    transform: scale(1.05);
+}
+.character-info-right .ui-button.icon-button.disabled:hover .icon-wrapper {
+    transform: none;
+    background-color: var(--color-text-muted);
 }
 .traits-modal-content {
     max-height: 70vh;
@@ -643,20 +664,32 @@ button#char-panel-store-button:disabled {
 #xp-bar-text.updated {
     animation: flash-xp-bar-text 6s ease-out forwards;
 }
-[id^="info-item-container-equipped_"] .value em,
-[id^="info-item-container-equipped_"] .value-overlay em {
-    display: block;
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
-    font-style: italic;
-    font-weight: var(--font-weight-400);
-    margin-top: calc(var(--spacing-unit) / 2);
-    line-height: var(--line-height-tight);
-		padding: 2px 6px;
-		border-radius: var(--radius-sm);
-		background-color: var(--color-bg-button-default-active);
-		background-image: url(images/app/background_noise.png);
+/* Styling for equipped item names in the dashboard */
+[id^="info-item-container-equipped_"] .value .equipped-item-name,
+[id^="info-item-container-equipped_"] .value-overlay .equipped-item-name {
+	display: inline;
+	padding: 2px 8px;
+	border-radius: var(--radius-sm);
+	background-color: var(--color-bg-button-default-active);
+	background-image: url(images/app/background_noise.png);
+	font-style: normal; /* Ensure it's not italic */
+	cursor: pointer;
+}
 
+/* Styling for the effect description of equipped items */
+[id^="info-item-container-equipped_"] .value .equipped-item-effect,
+[id^="info-item-container-equipped_"] .value-overlay .equipped-item-effect {
+	display: block;
+	color: var(--color-text-secondary);
+	font-size: var(--font-size-sm);
+	font-style: italic;
+	font-weight: var(--font-weight-400);
+	margin-top: calc(var(--spacing-unit) / 2);
+	margin-left: 4px;
+	line-height: var(--line-height-tight);
+	padding: 0;
+	background: none;
+	border-radius: 0;
 }
 .xp-gain-popup {
     position: absolute;
@@ -1521,7 +1554,7 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
     transition: background-color var(--transition-fast);
 }
 .inventory-item-detailed:hover:not(.is-expanded) {
-    background-color: var(--color-bg-input-field);
+    background-color: var(--color-bg-button-default-active);
 }
 .inventory-slot-header {
     display: flex;
@@ -1650,13 +1683,14 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 }
 .inventory-action-button {
     flex-shrink: 0;
-    background-color: var(--color-bg-input-field);
-    background-image: url(images/app/background_noise.png);
-    color: var(--color-text-secondary);
+    background-color: var(--color-accent-main);
+    background-image: url(images/app/color_noise.png);
+    color: var(--color-bg-content-view);
 }
 .inventory-action-button:hover {
-    background-color: var(--color-bg-element-hover);
-    color: var(--color-accent-main);
+    background-color: var(--color-accent-main-light);
+		background-image: url(images/app/color_noise.png);
+    color: var(--color-bg-content-view);
 }
 .price-info {
     display: flex;

@@ -2383,6 +2383,9 @@ button.ui-button.danger:hover {
 		grid-template-columns: repeat(6, 1fr);
 		gap: calc(var(--theme-grid-gap) * 1.5);
 	}
+	:root {
+		--sidebar-width: 380px;
+	}
 }
 @media (min-width: 1200px) and (max-width: 1999px) {
 	#theme-grid-container {

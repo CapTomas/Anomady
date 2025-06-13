@@ -666,11 +666,19 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
             if (!isNaN(parsedValue)) {
                 if (itemConfig.type === 'meter') {
                     // Meter values from AI are percentages (e.g., "90"). Convert to absolute values.
-                    let maxVal = 100; // Fallback
+                    let maxVal;
                     if (itemConfig.maps_to_run_stat === 'currentIntegrity') maxVal = getEffectiveMaxIntegrity();
                     else if (itemConfig.maps_to_run_stat === 'currentWillpower') maxVal = getEffectiveMaxWillpower();
+                    else maxVal = 100; // Fallback for other meters if any
 
-                    const absoluteValue = Math.round((parsedValue / 100) * maxVal);
+                    let absoluteValue = Math.round((parsedValue / 100) * maxVal);
+
+                    // --- FIX: Clamp the value to not exceed the maximum ---
+                    if (absoluteValue > maxVal) {
+                        log(LOG_LEVEL_WARN, `AI provided value for ${itemConfig.maps_to_run_stat} (${absoluteValue}) exceeds maximum (${maxVal}). Clamping.`);
+                        absoluteValue = maxVal;
+                    }
+
                     updateCurrentRunStat(itemConfig.maps_to_run_stat, absoluteValue);
                     log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to absolute value ${absoluteValue} from top panel update.`);
                 } else { // 'number' or 'status_icon' types have absolute values

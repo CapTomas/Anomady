@@ -114,7 +114,7 @@
             "type": "number_text",
             "default_value_key": "coin_scant_shards",
             "must_translate": true,
-            "short_description": "Hard-won coin. Used for repairs, reagents, and rare moments of solace. Thematic currency."
+            "short_description": "Hard-won coin. Used for repairs, reagents, and rare moments of solace. Thematic currency. Warden should start with a small amount. (2-10 is typical)."
           },
           {
             "id": "renown",
@@ -123,7 +123,7 @@
             "type": "text",
             "default_value_key": "renown_obscure_figure",
             "must_translate": true,
-            "short_description": "The Warden's reputation, whispered in shadowed taverns or cursed by their foes. E.g., 'The Butcher of Grey-Mire', 'Hope's Ember'."
+            "short_description": "The Warden's reputation, whispered in shadowed taverns or cursed by their foes."
           },
           {
             "id": "oath_allegiance",
@@ -132,7 +132,7 @@
             "type": "text",
             "default_value_key": "oath_order_initiate",
             "must_translate": true,
-            "short_description": "The Warden's defining philosophy or sworn duty. E.g., 'To Endure the Falling Dark', 'Vengeance for Oakhaven'."
+            "short_description": "The Warden's defining philosophy or sworn duty."
           }
         ]
       },
@@ -186,7 +186,7 @@
             "type": "text_long",
             "default_value_key": "conditions_none_active",
             "must_translate": true,
-            "short_description": "Comma-separated list of active temporary conditions (e.g., 'Blight-Fevered', 'Adrenaline Rush'). Updated via 'conditions_update'."
+            "short_description": "Comma-separated list of active temporary conditions"
           }
         ]
       }
@@ -223,7 +223,7 @@
             "type": "text",
             "default_value_key": "status_on_watch",
             "must_translate": true,
-            "short_description": "Warden's current primary activity (e.g., 'Stalking the Beast', 'Interrogating the Cultist')."
+            "short_description": "Warden's current primary activity"
           },
           {
             "id": "threat_level",
@@ -283,7 +283,7 @@
             "type": "text",
             "default_value_key": "moon_cycle_sky_obscured",
             "must_translate": false,
-            "short_description": "Current moon phase or time of day (e.g., 'Full Moon', 'Blood Moon', 'Midday Gloom')."
+            "short_description": "Current moon phase or time of day."
           }
         ]
       },

@@ -150,7 +150,7 @@
             "type": "text_long",
             "default_value_key": "default_equipped_wardens_blade_grim_warden",
             "must_translate": true,
-            "short_description": "Name and effect description string of the Warden's primary weapon. Provided via rewards or store."
+            "short_description": "Name and effect description string of the Warden's primary weapon. Provided via rewards or store. You must not change this field under any circumstances, as it is just used to determine the Warden's primary weapon."
           },
           {
             "id": "equipped_protective_gear_effect",
@@ -159,7 +159,7 @@
             "type": "text_long",
             "default_value_key": "default_equipped_protective_gear_grim_warden",
             "must_translate": true,
-            "short_description": "Name and effect description string of the Warden's worn armor/protection. Provided via rewards or store."
+            "short_description": "Name and effect description string of the Warden's worn armor/protection. Provided via rewards or store. You must not change this field under any circumstances, as it is just used to determine the Warden's protective gear."
           },
           {
             "id": "equipped_alchemical_concoction_effect",
@@ -168,7 +168,7 @@
             "type": "text_long",
             "default_value_key": "default_equipped_alchemical_concoction_grim_warden",
             "must_translate": true,
-            "short_description": "Name and effect description string of the readied alchemical draught or salve. Provided via rewards or store."
+            "short_description": "Name and effect description string of the readied alchemical draught or salve. Provided via rewards or store. You must not change this field under any circumstances, as it is just used to determine the Warden's alchemical concoction."
           }
         ]
       },
@@ -352,6 +352,13 @@
     ],
     "game_state_indicators": [
       {
+        "id": "generate_item_reward",
+        "type": "boolean",
+        "default_value": false,
+        "priority": 10,
+        "short_description": "Generates an item reward only when the narrative context justifies it. This function must not grant items arbitrarily or on player request alone. Item rewards should follow significant in-world accomplishments, such as completing a quest which promised a reward in the form of an item or making a sacrifice with meaningful consequences. The action must have a clear narrative weight, recognized by the story's logic or factions involved. If no such moment exists, this function must refuse to reward anything, even if prompted. This mechanic ensures rewards feel earned, immersive, and meaningful—tied to story arcs, not player demands."
+      },
+      {
         "id": "combat_active",
         "label_key": "label_combat_active_grim_warden",
         "type": "boolean",
@@ -377,15 +384,6 @@
         "must_translate": false,
         "priority": 2,
         "short_description": "Set to TRUE for ONE turn if a preternatural omen or unsettling whisper manifests. The associated prompt details the event, then the AI MUST set this to FALSE."
-      },
-      {
-        "id": "rare_trophy_claimed",
-        "label_key": "label_rare_trophy_claimed_grim_warden",
-        "type": "boolean",
-        "default_value": false,
-        "must_translate": false,
-        "priority": 1,
-        "short_description": "Set to TRUE for ONE turn after acquiring a rare monster part, valuable reagent, or unique item from a foe or environment. AI sets to FALSE on subsequent turn."
       },
       {
         "id": "conditions_active",

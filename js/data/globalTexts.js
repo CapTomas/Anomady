@@ -31,7 +31,6 @@ export const globalTextData = {
       "alert_level_2_display_default": "Condition Elevated",
       "alert_level_3_display_default": "Condition High",
       "alert_level_4_display_default": "Condition Critical",
-
       // --- Core Game/Session Messages ---
       "system_lang_set_en": "System: UI & Narrative set to ENGLISH.",
       "system_lang_set_cs": "System: UI & Narrative set to CZECH.",
@@ -49,10 +48,9 @@ export const globalTextData = {
       "error_dashboard_config_missing": "Error: Dashboard configuration is missing for this theme.",
       "error_critical_manifest_missing": "CRITICAL: Theme manifest (themesManifest.js) is missing or empty. Application cannot start.",
       "error_initial_theme_data_load_failed": "Error: Failed to load initial data for one or more themes. Some themes may not be available.",
-      "error_theme_data_load_failed": "Error: Failed to load required data for theme {THEME_ID}. This theme cannot be started.",
       "error_api_call_failed": "Operation failed: {ERROR_MSG}",
       "error_critical_no_api_key": "CRITICAL: Gemini API Key not provided. Application cannot connect to AI.",
-
+      "system_character_defeat_generic": "Your story has reached its end. The path forward is closed, but another may yet begin.",
       // --- Buttons & Actions ---
       "button_new_game": "New Game",
       "aria_label_new_game": "Start a new game",
@@ -64,7 +62,6 @@ export const globalTextData = {
       "coming_soon_button": "Coming Soon",
       "theme_icon_alt_text_playing": "Playing",
       "theme_icon_alt_text_liked": "Favorite",
-
       // --- Modals & Dialogs ---
       "modal_ok_button": "OK",
       "modal_confirm_button": "Confirm",
@@ -82,7 +79,6 @@ export const globalTextData = {
       "confirm_new_game_generic": "Start new game in {THEME_NAME}? Progress in this theme will be lost.",
       "tooltip_theme_playing": "{THEME_NAME}",
       "tooltip_theme_liked": "{THEME_NAME}",
-
       // --- AI Model & API Key ---
       "label_toggle_model": "AI Model",
       "aria_label_toggle_model_generic": "Toggle AI Model",
@@ -96,7 +92,6 @@ export const globalTextData = {
       "prompt_enter_api_key": "Welcome! Please enter your Google Gemini API Key:",
       "placeholder_api_key_input": "Enter your Gemini API Key here",
       "alert_api_key_required": "Gemini API Key is required. Please refresh and provide a key.",
-
       // --- Authentication & User Profile ---
       "button_login": "Login",
       "aria_label_login": "Log into your account",
@@ -170,7 +165,6 @@ export const globalTextData = {
       "button_reset_password": "Reset Password",
       "alert_password_reset_success_title": "Password Reset Successful",
       "text_try_request_again": "Please try requesting a new reset link.",
-
       // --- Email Confirmation ---
       "email_confirmation_status_page_title": "Email Confirmation",
       "email_confirmation_success": "Your email address has been successfully confirmed! You can now log in.",
@@ -185,7 +179,6 @@ export const globalTextData = {
       "alert_confirmation_email_resent_message": "A new confirmation email has been sent to your address. Please check your inbox.",
       "modal_title_email_not_confirmed": "Email Not Confirmed",
       "message_email_not_confirmed_instruction": "Your email address {USER_EMAIL} is not yet confirmed. Please check your inbox (and spam folder) for the confirmation link, or click the button below to resend it.",
-
       // --- World Fragments (Shards) ---
       "tooltip_shaped_world": "This world has been shaped by your actions ({ACTIVE_SHARDS} active fragments).",
       "button_configure_shards": "Configure World Fragments",
@@ -215,7 +208,6 @@ export const globalTextData = {
       "lore_modal_base_lore_title": "Founding Lore",
       "lore_modal_fragments_title": "Unlocked World Fragments",
       "lore_modal_no_fragments_unlocked": "No World Fragments have been unlocked for this theme yet.",
-
       // --- Character & Progression ---
       "button_continue_game": "Continue Expedition",
       "label_profile_character_name": "Character Name:",
@@ -270,7 +262,6 @@ export const globalTextData = {
       "tooltip_store_locked_level": "Store unlocks at Level {MIN_LEVEL}.",
       "modal_title_store": "Store",
       "store_not_implemented_message": "The Store will be available in a future update. Keep adventuring!",
-
       // --- XP Bar & Boons ---
       "xp_bar_label_xp": "XP:",
       "xp_bar_default_text": "XP: 0/100",
@@ -311,7 +302,6 @@ export const globalTextData = {
       "alert_level_2_display_default": "Stav Zvýšený",
       "alert_level_3_display_default": "Stav Vysoký",
       "alert_level_4_display_default": "Stav Kritický",
-
       // --- Core Game/Session Messages ---
       "system_lang_set_en": "Systém: UI a Příběh nastaveny na ANGLIČTINU.",
       "system_lang_set_cs": "Systém: UI a Příběh nastaveny na ČEŠTINU.",
@@ -329,10 +319,9 @@ export const globalTextData = {
       "error_dashboard_config_missing": "Chyba: Chybí konfigurace panelu pro toto téma.",
       "error_critical_manifest_missing": "KRITICKÉ: Manifest témat (themesManifest.js) chybí nebo je prázdný. Aplikaci nelze spustit.",
       "error_initial_theme_data_load_failed": "Chyba: Nepodařilo se načíst počáteční data pro jedno či více témat. Některá témata nemusí být dostupná.",
-      "error_theme_data_load_failed": "Chyba: Nepodařilo se načíst požadovaná data pro téma {THEME_ID}. Toto téma nelze spustit.",
       "error_api_call_failed": "Operace selhala: {ERROR_MSG}",
       "error_critical_no_api_key": "KRITICKÉ: Gemini API klíč nebyl zadán. Aplikace se nemůže připojit k AI.",
-
+      "system_character_defeat_generic": "Tvůj příběh dospěl ke svému konci. Cesta vpřed je uzavřena, ale jiná může teprve začít.",
       // --- Buttons & Actions ---
       "button_new_game": "Nová Hra",
       "aria_label_new_game": "Začít novou hru",
@@ -344,7 +333,6 @@ export const globalTextData = {
       "coming_soon_button": "Již Brzy",
       "theme_icon_alt_text_playing": "Hraje se",
       "theme_icon_alt_text_liked": "Oblíbené",
-
       // --- Modals & Dialogs ---
       "modal_ok_button": "OK",
       "modal_confirm_button": "Potvrdit",
@@ -362,7 +350,6 @@ export const globalTextData = {
       "confirm_new_game_generic": "Začít novou hru v {THEME_NAME}? Postup v tomto tématu bude ztracen.",
       "tooltip_theme_playing": "{THEME_NAME}",
       "tooltip_theme_liked": "{THEME_NAME}",
-
       // --- AI Model & API Key ---
       "label_toggle_model": "AI Model",
       "aria_label_toggle_model_generic": "Přepnout AI Model",
@@ -376,7 +363,6 @@ export const globalTextData = {
       "prompt_enter_api_key": "Vítejte! Zadejte prosím svůj Google Gemini API klíč:",
       "placeholder_api_key_input": "Zadejte svůj Gemini API Klíč",
       "alert_api_key_required": "Je vyžadován Gemini API klíč. Obnovte stránku a zadejte klíč.",
-
       // --- Authentication & User Profile ---
       "button_login": "Přihlásit se",
       "aria_label_login": "Přihlásit se k vašemu účtu",
@@ -450,7 +436,6 @@ export const globalTextData = {
       "button_reset_password": "Obnovit Heslo",
       "alert_password_reset_success_title": "Heslo Úspěšně Obnoveno",
       "text_try_request_again": "Zkuste prosím požádat o nový odkaz pro obnovu.",
-
       // --- Email Confirmation ---
       "email_confirmation_status_page_title": "Potvrzení E-mailu",
       "email_confirmation_success": "Vaše e-mailová adresa byla úspěšně potvrzena! Nyní se můžete přihlásit.",
@@ -465,7 +450,6 @@ export const globalTextData = {
       "alert_confirmation_email_resent_message": "Na vaši adresu byl odeslán nový potvrzovací e-mail. Zkontrolujte prosím svou schránku.",
       "modal_title_email_not_confirmed": "E-mail Není Potvrzen",
       "message_email_not_confirmed_instruction": "Vaše e-mailová adresa {USER_EMAIL} ještě není potvrzena. Zkontrolujte prosím svou doručenou poštu (i složku se spamem) pro potvrzovací odkaz, nebo klikněte na tlačítko níže pro jeho opětovné zaslání.",
-
       // --- World Fragments (Shards) ---
       "tooltip_shaped_world": "Tento svět byl utvářen tvými činy ({ACTIVE_SHARDS} aktivních fragmentů).",
       "button_configure_shards": "Nastavit fragmenty světa",
@@ -495,7 +479,6 @@ export const globalTextData = {
       "lore_modal_base_lore_title": "Základní příběh",
       "lore_modal_fragments_title": "Odemčené Fragmenty Světa",
       "lore_modal_no_fragments_unlocked": "Pro toto téma zatím nebyly odemčeny žádné fragmenty světa.",
-
       // --- Character & Progression ---
       "button_continue_game": "Pokračovat ve Výpravě",
       "label_profile_character_name": "Jméno Postavy:",
@@ -550,7 +533,6 @@ export const globalTextData = {
       "tooltip_store_locked_level": "Obchod se odemkne na Úrovni {MIN_LEVEL}.",
       "modal_title_store": "Obchod",
       "store_not_implemented_message": "Obchod bude dostupný v některé z budoucích aktualizací. Pokračujte v dobrodružství!",
-
       // --- XP Bar & Boons ---
       "xp_bar_label_xp": "ZK:",
       "xp_bar_default_text": "ZK: 0/100",
@@ -570,7 +552,6 @@ export const globalTextData = {
       "system_initial_trait_selection_prompt": "Na počátku tvé cesty si zvol definující rys, který tě bude provázet:",
     }
   },
-
   // --- Landing Page Specific Text ---
   landing: {
     en: {

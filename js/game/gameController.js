@@ -771,6 +771,64 @@ export async function showInventoryModal() {
         customActions: [{ textKey: 'modal_ok_button', className: 'ui-button primary', onClick: () => modalManager.hideCustomModal() }]
     });
 }
+
+/**
+ * Handles the character's defeat when integrity reaches zero.
+ * Logs a thematic message, disables input, and presents a "New Game" option.
+ * @private
+ */
+async function _handleCharacterDefeat() {
+    const themeId = state.getCurrentTheme();
+    if (!themeId) return;
+
+    log(LOG_LEVEL_INFO, `Character defeat detected for theme ${themeId}.`);
+    state.setIsRunActive(false); // Mark the run as inactive
+
+    // Add a small delay for dramatic effect and to let final UI updates render.
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Log the end message
+    const defeatMessageKey = `system_character_defeat_${themeId}`;
+    let defeatMessage = localizationService.getUIText(defeatMessageKey, {}, { explicitThemeContext: themeId });
+    // Fallback to a generic message if theme-specific one doesn't exist
+    if (defeatMessage === defeatMessageKey) {
+        defeatMessage = localizationService.getUIText('system_character_defeat_generic');
+    }
+    storyLogManager.addMessageToLog(defeatMessage, "system system-error system-emphasized");
+
+    // Disable input and display the final action button
+    uiUtils.setPlayerInputEnabled(false);
+    const newGameButtonTextKey = `button_new_hunt_${themeId}`; // Example of theme-specific key
+    let newGameText = localizationService.getUIText(newGameButtonTextKey, {}, { explicitThemeContext: themeId });
+    if(newGameText === newGameButtonTextKey) { // Fallback to a generic key
+         newGameText = localizationService.getUIText('button_new_game');
+    }
+
+    suggestedActionsManager.displaySuggestedActions([{
+        text: newGameText,
+        isDefeatAction: true,
+    }]);
+
+    // Update backend state to reflect the end of the run
+    if (_userThemeControlsManagerRef) {
+        await _userThemeControlsManagerRef.setThemeAsNotPlaying(themeId);
+    }
+
+    const currentUser = state.getCurrentUser();
+    if (currentUser && currentUser.token) {
+        try {
+            await apiService.deleteGameState(currentUser.token, themeId);
+            log(LOG_LEVEL_INFO, `Game state for theme ${themeId} deleted from backend after defeat.`);
+        } catch (error) {
+            log(LOG_LEVEL_ERROR, `Failed to delete game state for theme ${themeId} after defeat.`, error);
+            // Non-critical, allows user to start a new game anyway which will overwrite.
+        }
+    }
+
+    // Do not clear volatile state here, as theme context is needed for the "New Game" button.
+    // The state will be cleared when the user clicks the new game button.
+}
+
 /**
  * Initializes the GameController with necessary dependencies.
  * @param {object} dependencies - Object containing references to other modules.
@@ -798,6 +856,7 @@ export function initGameController(dependencies) {
  */
 async function _setupNewGameEnvironment(themeId) {
     log(LOG_LEVEL_INFO, `Setting up new game environment for theme: ${themeId}.`);
+    state.setIsRunActive(true); // Ensure the run is marked as active
     state.setCurrentTheme(themeId);
     const dataLoaded = await themeService.ensureThemeDataLoaded(themeId);
     if (!dataLoaded) {
@@ -811,7 +870,6 @@ async function _setupNewGameEnvironment(themeId) {
     await themeService.ensureThemeDataLoaded("master");
     await themeService.getAllPromptsForTheme("master");
     await themeService.fetchAndCachePromptFile(themeId, 'traits');
-
     // Clear and reset UI and volatile state
     state.clearVolatileGameState();
     state.setIsInitialGameLoad(true);
@@ -821,7 +879,6 @@ async function _setupNewGameEnvironment(themeId) {
     suggestedActionsManager.clearSuggestedActions();
     dashboardManager.resetDashboardUI(themeId);
     characterPanelManager.buildCharacterPanel(themeId);
-
     // Load or create progress, then decide the flow
     await _loadOrCreateUserThemeProgress(themeId);
     await _initializeCurrentRunStats();
@@ -830,14 +887,11 @@ async function _setupNewGameEnvironment(themeId) {
     characterPanelManager.showCharacterPanel(true);
     characterPanelManager.showXPBar(true);
     landingPageManager.switchToGameView(themeId);
-
     if (_userThemeControlsManagerRef && typeof _userThemeControlsManagerRef.setThemeAsPlaying === 'function') {
         await _userThemeControlsManagerRef.setThemeAsPlaying(themeId);
     }
-
     const progress = state.getCurrentUserThemeProgress();
     const existingName = progress?.characterName;
-
     if (existingName) {
         // Name exists, skip the name input step and start the game immediately.
         log(LOG_LEVEL_INFO, `Found existing character name '${existingName}'. Starting game directly.`);
@@ -851,30 +905,24 @@ async function _setupNewGameEnvironment(themeId) {
             dom.playerActionInput.dispatchEvent(new Event("input", { bubbles: true }));
             dom.playerActionInput.focus();
         }
-
         const themeDisplayName = themeId
             ? (themeService.getThemeConfig(themeId)?.name_key
                 ? localizationService.getUIText(themeService.getThemeConfig(themeId).name_key, {}, { explicitThemeContext: themeId })
                 : themeId)
             : "Unknown Theme";
-
         const newGameSettings = state.getCurrentNewGameSettings();
         const useEvolvedWorld = newGameSettings ? newGameSettings.useEvolvedWorld : false;
         const initialActionText = `Start game as "${existingName}". Theme: ${themeDisplayName}. Evolved World: ${useEvolvedWorld}.`;
         state.clearCurrentNewGameSettings();
-
         await processPlayerAction(initialActionText, true);
-
     } else {
         // No name exists, proceed with the original flow to ask for one.
         const themeConfig = themeService.getThemeConfig(themeId);
         const defaultNameKey = themeConfig?.default_identifier_key;
         const defaultName = defaultNameKey ? localizationService.getUIText(defaultNameKey, {}, { explicitThemeContext: themeId }) : localizationService.getUIText('unknown');
-
         state.setPlayerIdentifier(defaultName); // Set default name for the panel to show initially
         characterPanelManager.updateCharacterPanel(false); // Update panel to show default name
         state.setPlayerIdentifier(""); // Clear it from state so game knows we still need input
-
         if (dom.nameInputSection) dom.nameInputSection.style.display = "flex";
         if (dom.actionInputSection) dom.actionInputSection.style.display = "none";
         if (dom.playerIdentifierInput) {
@@ -1283,28 +1331,29 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
         storyLogManager.removeLoadingIndicator();
         if (fullAiResponse) {
             const updatesFromAI = fullAiResponse.dashboard_updates || {};
-            // --- START OF NEW LOGIC FOR ICON ANIMATIONS & STATS PROCESSING ---
-            const currentThemeId = state.getCurrentTheme();
-            const themeConfig = themeService.getThemeConfig(currentThemeId); // Declare themeConfig ONCE here.
-
-            // Check for new inventory items and animate inventory icon
-            if (themeConfig && themeConfig.equipment_slots) {
-                const equipmentSlotIds = Object.values(themeConfig.equipment_slots)
-                    .filter(slot => slot.type !== 'money')
-                    .map(slot => slot.id);
-
-                const newItemReceived = Object.keys(updatesFromAI).some(updatedKey => equipmentSlotIds.includes(updatedKey));
-
-                if (newItemReceived) {
+            // --- Handle Special Unlocks & Rewards ---
+            // Check for a unique item generated by the AI
+            if (fullAiResponse.new_item_generated) {
+                const newItem = fullAiResponse.new_item_generated;
+                log(LOG_LEVEL_INFO, "New unique item generated by AI:", newItem);
+                // Validate the item structure before adding it
+                if (newItem && newItem.id && newItem.itemType && newItem.name) {
+                    const currentInventory = state.getCurrentInventory();
+                    state.setCurrentInventory([...currentInventory, newItem]);
                     characterPanelManager.triggerIconAnimation('inventory');
+                    const lang = localizationService.getApplicationLanguage();
+                    const itemName = newItem.name?.[lang] || newItem.name?.['en'] || "a mysterious item";
+                    storyLogManager.addMessageToLog(`Acquired: ${itemName}`, "system system-emphasized");
+                } else {
+                    log(LOG_LEVEL_WARN, "AI provided 'new_item_generated' but it was malformed.", newItem);
                 }
             }
             // Check for new persistent lore unlock and animate lore icon
             if (fullAiResponse.new_persistent_lore_unlock) {
                 characterPanelManager.triggerIconAnimation('lore');
             }
-
-            // 1. Process any special update handlers first, which may modify the updatesFromAI object
+            // --- Process State Updates ---
+            // Process special handlers like 'conditions_update' which modify the main update object
             if (updatesFromAI.conditions_update) {
                 let currentConditions = state.getActiveConditions();
                 const { add = [], remove = [] } = updatesFromAI.conditions_update;
@@ -1318,58 +1367,34 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
                 updatesFromAI.conditions_list = currentConditions.join(', ') || localizationService.getUIText('conditions_none_active');
                 delete updatesFromAI.conditions_update;
             }
-
-            // 2. Update the central state for what needs to be saved. This MUST get the complete object.
+            // Update the central state for what needs to be saved
             state.setLastKnownDashboardUpdates(updatesFromAI);
-
-            // 3. Update the ephemeral run-time state (_currentRunStats) based on the updates received.
-            const topPanelConfig = themeConfig?.dashboard_config?.top_panel || [];
-
-            topPanelConfig.forEach(itemConfig => {
-                const updateKey = itemConfig.id;
-                const statToUpdate = itemConfig.maps_to_run_stat;
-
-                if (updatesFromAI[updateKey] !== undefined && statToUpdate) {
-                    const newValueStr = String(updatesFromAI[updateKey]);
-                    let finalValue;
-
-                    if (itemConfig.type === 'meter') {
-                        const absoluteValue = parseInt(newValueStr, 10);
-                        if (!isNaN(absoluteValue)) {
-                            finalValue = absoluteValue;
-                            // Clamp value to max if it's integrity or willpower
-                            if (statToUpdate === 'currentIntegrity') {
-                                finalValue = Math.min(finalValue, state.getEffectiveMaxIntegrity());
-                            } else if (statToUpdate === 'currentWillpower') {
-                                finalValue = Math.min(finalValue, state.getEffectiveMaxWillpower());
-                            }
-                        }
-                    } else if (itemConfig.type === 'number' || itemConfig.type === 'status_icon') {
-                        const numVal = parseInt(newValueStr, 10);
-                        if (!isNaN(numVal)) {
-                            finalValue = numVal;
-                        }
-                    }
-
-                    if (finalValue !== undefined) {
-                        log(LOG_LEVEL_DEBUG, `Processing AI update for core stat: setting ${statToUpdate} to ${finalValue}`);
-                        state.updateCurrentRunStat(statToUpdate, finalValue);
-                    }
-                }
-            });
-            // --- END OF NEW LOGIC FOR ICON ANIMATIONS & STATS PROCESSING ---
-            // 4. Now, update the UI from the fresh state.
+            // --- Render UI Updates ---
             storyLogManager.renderMessage(fullAiResponse.narrative, "gm");
-            dashboardManager.updateDashboard(updatesFromAI); // Updates side panels
-            characterPanelManager.updateCharacterPanel(); // Updates top panel from fresh runStats
+            // dashboardManager updates side panels AND runStats via its sub-functions
+            dashboardManager.updateDashboard(updatesFromAI);
+            // characterPanelManager updates top panel based on the fresh runStats
+            characterPanelManager.updateCharacterPanel();
             suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
             handleGameStateIndicatorsChange(state.getLastKnownGameStateIndicators());
             if (dom.playerActionInput) {
                 dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder() || localizationService.getUIText("placeholder_command");
             }
+            // --- Handle Post-Turn Logic ---
+            const finalRunStats = state.getCurrentRunStats();
+            if (finalRunStats.currentIntegrity <= 0) {
+                const lastAction = state.getCurrentSuggestedActions()?.[0];
+                if (lastAction?.isDefeatAction) {
+                    log(LOG_LEVEL_DEBUG, "Defeat condition met, but defeat action is already displayed. Skipping handler.");
+                } else {
+                    await _handleCharacterDefeat();
+                    return; // Stop processing, defeat handler cleans up.
+                }
+            }
             if (fullAiResponse.xp_awarded > 0) {
                 await _handleExperienceAndLevelUp(fullAiResponse.xp_awarded);
             }
+            // Save game state unless a boon selection is now pending
             if (!state.getIsBoonSelectionPending()) {
                 await authService.saveCurrentGameState();
             }
@@ -1504,12 +1529,22 @@ export function handleGameStateIndicatorsChange(newIndicators, isInitialBoot = f
         for (const indicatorConfig of dashboardConfig.game_state_indicators) {
             const indicatorId = indicatorConfig.id;
             if (newIndicators[indicatorId] === true) {
-                const promptText = themeService.getLoadedPromptText(currentThemeId, indicatorId);
+                let promptText;
+                let promptTypeToSet;
+
+                if (indicatorId === 'generate_item_reward') {
+                    promptText = themeService.getLoadedPromptText('master', 'master_items');
+                    promptTypeToSet = 'master_items';
+                } else {
+                    promptText = themeService.getLoadedPromptText(currentThemeId, indicatorId);
+                    promptTypeToSet = indicatorId;
+                }
+
                 if (promptText && !promptText.startsWith("ERROR:") && !promptText.startsWith("HELPER_FILE_NOT_FOUND:")) {
                     const priority = indicatorConfig.priority || 0;
                     if (priority > highestPriorityFound) {
                         highestPriorityFound = priority;
-                        newPromptTypeForAI = indicatorId;
+                        newPromptTypeForAI = promptTypeToSet;
                     }
                 } else {
                     log(LOG_LEVEL_DEBUG, `Indicator '${indicatorId}' is true, but no valid prompt file found for it. Defaulting behavior.`);
@@ -1543,6 +1578,7 @@ export async function switchToLanding() {
     state.setCurrentTheme(null);
     state.setIsInitialGameLoad(true);
     state.setIsBoonSelectionPending(false);
+    state.setIsRunActive(true); // Reset run state to active for the landing page
     await landingPageManager.switchToLandingView();
     characterPanelManager.showCharacterPanel(false);
     characterPanelManager.showXPBar(false);

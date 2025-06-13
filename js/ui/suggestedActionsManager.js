@@ -3,7 +3,7 @@
  * @file Manages the display and interaction of AI-suggested action buttons.
  */
 import { suggestedActionsWrapper, playerActionInput } from './domElements.js';
-import { setCurrentSuggestedActions } from '../core/state.js';
+import { setCurrentSuggestedActions, getCurrentTheme } from '../core/state.js';
 import { autoGrowTextarea } from './uiUtils.js';
 import { handleMullOverShardAction } from '../services/aiService.js';
 import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_WARN, LOG_LEVEL_ERROR } from '../core/logger.js';
@@ -27,17 +27,16 @@ const MAX_SUGGESTED_ACTIONS = 4; // Consistent with prompt file requests (2-3 ac
 /**
  * Displays AI-suggested actions as clickable buttons.
  * @param {Array<string|object>} actions - An array of action strings or action objects.
- *                                         Action objects for "Mull Over Shard" should have:
- *                                         `text` (string, button label),
- *                                         `isTemporaryMullOver: true`,
- *                                         `shardData` (object, the shard details).
+ *                                         Special objects include:
+ *                                         - { text, isTemporaryMullOver, shardData } for shard reflections.
+ *                                         - { text, displayText, isBoonChoice, boonId } for boon selections.
+ *                                         - { text, isDefeatAction } for the end-of-run action.
  * @param {object} [options={}] - Optional parameters for display.
  * @param {string} [options.headerText] - Text to display as a header above the buttons.
  */
 export function displaySuggestedActions(actions, options = {}) {
     if (!suggestedActionsWrapper) {
         log(LOG_LEVEL_WARN, "Suggested actions wrapper element not found. Cannot display actions.");
-        // Still update state even if UI element is missing, so game logic is consistent
         setCurrentSuggestedActions(actions && Array.isArray(actions) ? actions.slice(0, MAX_SUGGESTED_ACTIONS) : []);
         return;
     }
@@ -51,12 +50,14 @@ export function displaySuggestedActions(actions, options = {}) {
     let validActionsToStore = [];
     if (actions && Array.isArray(actions) && actions.length > 0) {
         actions.slice(0, MAX_SUGGESTED_ACTIONS).forEach(actionObjOrString => {
-            let actionText; // The full text for processing (e.g., "Trait Name: Description")
-            let buttonDisplayText; // The text to show on the button (e.g., "Trait Name")
-            let tooltipText; // Text for the hover title attribute
+            let actionText;
+            let buttonDisplayText;
+            let tooltipText;
             let isMullOver = false;
             let isBoonOrTrait = false;
+            let isDefeatAction = false; // New flag for defeat action
             let shardData = null;
+
             if (typeof actionObjOrString === 'string') {
                 actionText = actionObjOrString;
                 buttonDisplayText = actionText;
@@ -67,23 +68,36 @@ export function displaySuggestedActions(actions, options = {}) {
                 isMullOver = actionObjOrString.isTemporaryMullOver === true;
                 shardData = actionObjOrString.shardData || null;
                 isBoonOrTrait = actionObjOrString.isBoonChoice === true || actionObjOrString.isTraitChoice === true;
+                isDefeatAction = actionObjOrString.isDefeatAction === true; // Check for defeat action
             } else {
                 log(LOG_LEVEL_WARN, "Invalid action format in suggested actions array:", actionObjOrString);
                 return; // Skip this invalid action
             }
+
             if (actionText && actionText.trim() !== "") {
                 const btn = document.createElement("button");
                 btn.classList.add("ui-button");
                 if (isMullOver) btn.classList.add("mull-over-action");
                 if (isBoonOrTrait) btn.classList.add("boon-action");
+                if (isDefeatAction) btn.classList.add("defeat-action-button"); // Add special class
+
                 btn.textContent = buttonDisplayText;
-                btn.removeAttribute('title'); // Ensure no native tooltip interferes
+                btn.removeAttribute('title');
                 if (tooltipText) {
                     attachTooltip(btn, null, {}, { rawText: tooltipText });
                 }
+
                 btn.addEventListener("click", () => {
-                    hideCurrentTooltip(); // Hide any active tooltip immediately on click
-                    if (isBoonOrTrait) {
+                    hideCurrentTooltip();
+                    if (isDefeatAction) { // Handle defeat action click
+                        const themeId = getCurrentTheme();
+                        if (_gameControllerRef && themeId) {
+                            // The true flag here forces a new game, bypassing the confirmation dialog.
+                            _gameControllerRef.initiateNewGameSessionFlow(themeId, true);
+                        } else {
+                            log(LOG_LEVEL_ERROR, "Cannot start new game from defeat action: GameController or themeId not available.");
+                        }
+                    } else if (isBoonOrTrait) {
                         if (_gameControllerRef && typeof _gameControllerRef.processPlayerAction === 'function') {
                             _gameControllerRef.processPlayerAction(actionText); // Pass the full text for matching
                         } else {

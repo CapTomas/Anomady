@@ -2,7 +2,7 @@
 /**
  * @file Provides general, reusable UI utility functions.
  */
-
+import { getIsRunActive } from '../core/state.js';
 import { UPDATE_HIGHLIGHT_DURATION } from '../core/config.js';
 import {
     gmSpecificActivityIndicator, // Corrected: This ID is from the provided HTML structure for gm-activity-indicator
@@ -143,9 +143,13 @@ export function formatDynamicText(text) {
 
 /**
  * Toggles UI elements to indicate AI processing status.
+ * Also respects the overall run state to keep inputs disabled after character defeat.
  * @param {boolean} isProcessing - True if AI is processing, false otherwise.
  */
 export function setGMActivityIndicator(isProcessing) {
+    const isRunCurrentlyActive = getIsRunActive();
+    const inputGroup = playerActionInput?.closest('.input-group'); // Get the container
+
     if (gmSpecificActivityIndicator) {
         gmSpecificActivityIndicator.style.display = isProcessing ? "inline-flex" : "none";
     }
@@ -153,46 +157,66 @@ export function setGMActivityIndicator(isProcessing) {
         systemStatusIndicator.style.display = isProcessing ? "none" : "inline-flex";
     }
 
+    const shouldMainInputsBeDisabled = isProcessing || !isRunCurrentlyActive;
+
     if (playerActionInput) {
-        playerActionInput.disabled = isProcessing;
+        playerActionInput.disabled = shouldMainInputsBeDisabled;
     }
     if (sendActionButton) {
-        sendActionButton.disabled = isProcessing;
+        sendActionButton.disabled = shouldMainInputsBeDisabled;
     }
 
-    // Disable/enable suggested action buttons
+    // Also manage the container class for visual styling
+    if (inputGroup) {
+        if (shouldMainInputsBeDisabled) {
+            inputGroup.classList.add('input-group-disabled');
+        } else {
+            inputGroup.classList.remove('input-group-disabled');
+        }
+    }
+
+    // Handle suggested action buttons
     const suggestedActionButtons = document.querySelectorAll("#suggested-actions-wrapper .ui-button");
     suggestedActionButtons.forEach(btn => {
-        btn.disabled = isProcessing;
+        // The defeat button is a special case: it should be enabled even if the run is inactive.
+        if (btn.classList.contains('defeat-action-button')) {
+            btn.disabled = false;
+        } else {
+            // Other buttons are disabled if processing OR if the run is inactive.
+            btn.disabled = isProcessing || !isRunCurrentlyActive;
+        }
     });
 
-    if (!isProcessing && actionInputSection && actionInputSection.style.display !== "none" && playerActionInput && document.body.contains(playerActionInput)) {
+    // Only focus if processing is done AND the run is active.
+    if (!isProcessing && isRunCurrentlyActive && actionInputSection && actionInputSection.style.display !== "none" && playerActionInput && document.body.contains(playerActionInput)) {
         playerActionInput.focus();
     }
 }
 
 /**
- * Enables or disables the main player action input area without affecting GM activity indicators.
- * Used for states where user should use suggested actions instead of typing.
+ * Enables or disables the main player action input area, respecting the overall game run state.
+ * Used for states where user should use suggested actions instead of typing (e.g., boon selection) or after defeat.
  * @param {boolean} isEnabled - True to enable, false to disable.
  */
 export function setPlayerInputEnabled(isEnabled) {
-    const inputGroup = playerActionInput?.closest('.input-group');
+    const isRunCurrentlyActive = getIsRunActive();
+    const finalEnabledState = isEnabled && isRunCurrentlyActive;
 
+    const inputGroup = playerActionInput?.closest('.input-group');
     if (playerActionInput) {
-        playerActionInput.disabled = !isEnabled;
+        playerActionInput.disabled = !finalEnabledState;
     }
     if (sendActionButton) {
-        sendActionButton.disabled = !isEnabled;
+        sendActionButton.disabled = !finalEnabledState;
     }
     if (inputGroup) {
-        if (isEnabled) {
+        if (finalEnabledState) {
             inputGroup.classList.remove('input-group-disabled');
         } else {
             inputGroup.classList.add('input-group-disabled');
         }
     }
-    log(LOG_LEVEL_DEBUG, `Player action input set to enabled: ${isEnabled}`);
+    log(LOG_LEVEL_DEBUG, `Player action input set to enabled: ${finalEnabledState}`);
 }
 
 /**

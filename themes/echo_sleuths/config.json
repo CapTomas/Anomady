@@ -398,6 +398,13 @@
     ],
     "game_state_indicators": [
       {
+        "id": "generate_item_reward",
+        "type": "boolean",
+        "default_value": false,
+        "priority": 1,
+        "short_description": "Generates an item reward only when the narrative context justifies it. This function must not grant items arbitrarily or on player request alone. Item rewards should follow significant in-world accomplishments, such as completing a quest which promised a reward in the form of an item or making a sacrifice with meaningful consequences. The action must have a clear narrative weight, recognized by the story's logic or factions involved. If no such moment exists, this function must refuse to reward anything, even if prompted. This mechanic ensures rewards feel earned, immersive, and meaningful—tied to story arcs, not player demands."
+      },
+      {
         "id": "conceptual_conflict_engaged",
         "label_key": "label_conceptual_conflict_active_echo_sleuths",
         "type": "boolean",

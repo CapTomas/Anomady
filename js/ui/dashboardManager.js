@@ -636,18 +636,57 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
     }
     const currentThemeId = getCurrentTheme();
     if (!currentThemeId) return;
+
     const themeConfigFull = getThemeConfig(currentThemeId);
     if (!themeConfigFull || !themeConfigFull.dashboard_config) return;
-    const allItemConfigs = [...(themeConfigFull.dashboard_config.left_panel || []), ...(themeConfigFull.dashboard_config.right_panel || [])]
+
+    // Combine items from all panels (top, left, right)
+    const sidePanelItems = [...(themeConfigFull.dashboard_config.left_panel || []), ...(themeConfigFull.dashboard_config.right_panel || [])]
         .flatMap(panel => panel.items);
+    const topPanelItems = themeConfigFull.dashboard_config.top_panel || [];
+    const allItemConfigs = [...topPanelItems, ...sidePanelItems];
+
     const itemConfig = allItemConfigs.find(item => item.id === itemId);
+
     if (!itemConfig) {
         log(LOG_LEVEL_WARN, `Dashboard item config not found for ID: ${itemId}`);
         return;
     }
+
+    // Persist this update to the central state object that gets saved.
+    // This happens first so the raw value from the AI is always available to other functions.
+    setLastKnownDashboardUpdates({ [itemId]: newValue });
+
+    const isTopPanelItem = topPanelItems.some(item => item.id === itemId);
+    if (isTopPanelItem) {
+        // For top panel items, just update the run stat in the central state.
+        // The characterPanelManager is responsible for reading this state and updating the UI.
+        if (itemConfig.maps_to_run_stat) {
+            const parsedValue = parseInt(String(newValue), 10);
+            if (!isNaN(parsedValue)) {
+                if (itemConfig.type === 'meter') {
+                    // Meter values from AI are percentages (e.g., "90"). Convert to absolute values.
+                    let maxVal = 100; // Fallback
+                    if (itemConfig.maps_to_run_stat === 'currentIntegrity') maxVal = getEffectiveMaxIntegrity();
+                    else if (itemConfig.maps_to_run_stat === 'currentWillpower') maxVal = getEffectiveMaxWillpower();
+
+                    const absoluteValue = Math.round((parsedValue / 100) * maxVal);
+                    updateCurrentRunStat(itemConfig.maps_to_run_stat, absoluteValue);
+                    log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to absolute value ${absoluteValue} from top panel update.`);
+                } else { // 'number' or 'status_icon' types have absolute values
+                    updateCurrentRunStat(itemConfig.maps_to_run_stat, parsedValue);
+                    log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to ${parsedValue} from top panel update.`);
+                }
+            }
+        }
+        return; // UI for top panel is handled by characterPanelManager, so we are done here.
+    }
+
+    // --- Logic for side panel items continues below ---
     const valueElement = document.getElementById(`info-${itemId}`);
     const meterBarElement = document.getElementById(`meter-${itemId}`);
-    const itemContainer = document.getElementById(`info-item-container-${itemId}`); // The parent div of label & value/meter
+    const itemContainer = document.getElementById(`info-item-container-${itemId}`);
+
     if (itemConfig.type === "meter") {
         if (valueElement || meterBarElement) {
             const statusTextId = itemConfig.status_text_id;
@@ -655,7 +694,6 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
             setMeterValue(meterBarElement, valueElement, String(newValue), itemConfig, highlight, newStatusText);
         }
     } else if (itemConfig.type === "status_level") {
-        // Pass the full itemConfig to updateStatusLevelDisplay
         updateStatusLevelDisplay(valueElement, String(newValue), itemConfig, currentThemeId, highlight);
     } else if (itemConfig.type === "text" || itemConfig.type === "text_long" || itemConfig.type === "number_text") {
         if (valueElement) {
@@ -667,19 +705,14 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
                 if (highlight && itemContainer) highlightElementUpdate(itemContainer);
             }
         }
-    } else if (itemConfig.type === "status_text" && valueElement) { // Handle direct status_text updates
+    } else if (itemConfig.type === "status_text" && valueElement) {
          if (valueElement.textContent !== String(newValue)) {
             valueElement.textContent = String(newValue);
-            // For status_text, the highlight is usually managed by its associated meter.
-            // However, if it's updated independently, highlight its container.
-            if (highlight && itemContainer && !itemConfig.meter_type) { // Avoid double highlight if meter is also updating
+            if (highlight && itemContainer && !itemConfig.meter_type) {
                  highlightElementUpdate(itemContainer);
             }
         }
     }
-
-    // Persist this update to the central state object that gets saved.
-    setLastKnownDashboardUpdates({ [itemId]: newValue });
 
     // If an item inside a collapsible panel is updated, ensure the panel expands.
     if (itemContainer && highlight) {
@@ -690,7 +723,6 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
                 animatePanelExpansion(parentPanelBox.id, true, false, false);
             }
         }
-        // If an item inside a collapsible panel is updated, ensure the panel expands.
         if (parentPanelBox && parentPanelBox.classList.contains('is-expanded') && !document.body.classList.contains("landing-page-active")) {
             const panelSide = leftPanel.contains(itemContainer) ? 'left' : (rightPanel.contains(itemContainer) ? 'right' : null);
             if (panelSide) {

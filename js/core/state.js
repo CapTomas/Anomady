@@ -40,6 +40,7 @@ let _lastKnownGameStateIndicators = {};
 let _lastKnownCumulativePlayerSummary = '';
 let _lastKnownEvolvedWorldLore = '';
 let _isInitialGameLoad = true;
+let _isRunActive = true;
 let _isInitialTraitSelectionPending = false;
 let _isBoonSelectionPending = false;
 let _currentTurnUnlockData = null; // Data for a world shard unlocked in the current turn.
@@ -196,6 +197,12 @@ export const getIsInitialGameLoad = () => _isInitialGameLoad;
 export const setIsInitialGameLoad = (isInitial) => {
   _isInitialGameLoad = !!isInitial;
 };
+
+/** @returns {boolean} True if a game run is currently active (not in a defeat state). */
+export const getIsRunActive = () => _isRunActive;
+export const setIsRunActive = (isActive) => {
+  _isRunActive = !!isActive;
+}
 
 /** @returns {boolean} True if the game is awaiting the player's initial trait selection. */
 export const getIsInitialTraitSelectionPending = () => _isInitialTraitSelectionPending;

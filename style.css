@@ -2454,6 +2454,27 @@ button.ui-button.danger:hover {
 	font-size: var(--font-size-sm);
 	white-space: pre-wrap;
 }
+#suggested-actions-wrapper:has(.defeat-action-button) {
+    justify-content: center;
+}
+
+#suggested-actions-wrapper .defeat-action-button {
+    flex-grow: 0;
+    min-width: -webkit-fill-available;
+    padding: var(--spacing-xs) var(--spacing-xs);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-medium);
+    background-color: var(--color-accent-main);
+    color: var(--color-bg-button-default-active);
+    background-image: url(images/app/color_noise.png);
+}
+
+#suggested-actions-wrapper .defeat-action-button:hover {
+    background-color: var(--color-accent-main-light);
+    color: var(--color-bg-button-default-active);
+    background-image: url(images/app/color_noise.png);
+    transform: translateY(-1px);
+}
 @media (min-width: 2000px) {
 	#theme-grid-container {
 		grid-template-columns: repeat(6, 1fr);

@@ -12,6 +12,7 @@ import {
     // setCurrentPromptType, // This is typically managed by gameController based on AI response
     setLastKnownDashboardUpdates,
     setLastKnownGameStateIndicators,
+    getLastKnownGameStateIndicators,
     setCurrentSuggestedActions,
     setCurrentAiPlaceholder,
     setCurrentTurnUnlockData,
@@ -68,31 +69,47 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     const currentThemeId = getCurrentTheme();
     const narrativeLang = getCurrentNarrativeLanguage();
     const playerID = getPlayerIdentifier();
+
+    const lastIndicators = getLastKnownGameStateIndicators();
+    const isGeneratingItem = lastIndicators && lastIndicators.generate_item_reward === true;
+
     const activePromptType = getIsInitialGameLoad() ? "initial" : getCurrentPromptType();
     const themeConfig = getThemeConfig(currentThemeId);
     if (!currentThemeId || !themeConfig || !themeConfig.dashboard_config) {
         log(LOG_LEVEL_ERROR, "getSystemPrompt: Active theme, its configuration, or dashboard_config is missing.");
         return `{"narrative": "SYSTEM ERROR: Active theme configuration is missing for prompt generation.", "dashboard_updates": {}, "suggested_actions": [], "game_state_indicators": {}, "xp_awarded": 0}`;
     }
+
     const dashboardLayoutConfig = themeConfig.dashboard_config;
     const isValidPromptText = (text) => text !== null && text !== undefined && !text.startsWith("ERROR:") && !text.startsWith("HELPER_FILE_NOT_FOUND:");
+
     let basePromptKey;
     if (getIsInitialGameLoad()) {
         basePromptKey = "master_initial";
+    } else if (isGeneratingItem) {
+        basePromptKey = "master_items";
     } else {
         basePromptKey = getCurrentPromptType();
     }
+
     let basePromptText = getLoadedPromptText(currentThemeId, basePromptKey);
-    // Fallback logic if a theme-specific prompt (like combat_active) doesn't exist
+    // Fallback logic
     if (!isValidPromptText(basePromptText)) {
-        log(LOG_LEVEL_DEBUG, `Prompt ${currentThemeId}/${basePromptKey} not valid/found. Falling back to 'master_default'.`);
-        basePromptKey = "master_default";
-        basePromptText = getLoadedPromptText("master", basePromptKey);
+        if (basePromptKey === "master_items") {
+            // master_items is special and only exists in master
+            basePromptText = getLoadedPromptText("master", basePromptKey);
+        } else {
+            log(LOG_LEVEL_DEBUG, `Prompt ${currentThemeId}/${basePromptKey} not valid/found. Falling back to 'master_default'.`);
+            basePromptKey = "master_default";
+            basePromptText = getLoadedPromptText("master", basePromptKey);
+        }
     }
+
     if (!isValidPromptText(basePromptText)) {
         log(LOG_LEVEL_ERROR, `CRITICAL PROMPT FAILURE: No valid default prompt found for key "${basePromptKey}" for theme "${currentThemeId}" or master. Cannot generate system prompt.`);
         return `{"narrative": "SYSTEM ERROR: Core prompt file (type: ${activePromptType}, final key: ${basePromptKey}) is critically missing or invalid.", "dashboard_updates": {}, "suggested_actions": ["Restart Game"], "game_state_indicators": {}, "xp_awarded": 0}`;
     }
+
     // Generate description for the new Top Panel (Core Attributes)
     let generatedTopPanelDescription = "";
     const topPanelItems = dashboardLayoutConfig.top_panel || [];
@@ -103,6 +120,7 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     if (generatedTopPanelDescription.endsWith(",\n")) {
         generatedTopPanelDescription = generatedTopPanelDescription.slice(0, -2);
     }
+
     // Generate description for the side panels (dashboard_updates)
     let generatedDashboardDescription = "";
     const dashboardItems = [...(dashboardLayoutConfig.left_panel || []), ...(dashboardLayoutConfig.right_panel || [])].flatMap(p => p.items);
@@ -119,6 +137,7 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     if (generatedDashboardDescription.endsWith(",\n")) {
         generatedDashboardDescription = generatedDashboardDescription.slice(0, -2);
     }
+
     let generatedGameStateIndicators = "";
     if (dashboardLayoutConfig.game_state_indicators && Array.isArray(dashboardLayoutConfig.game_state_indicators)) {
         dashboardLayoutConfig.game_state_indicators.forEach(indicator => {
@@ -138,11 +157,13 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         generatedGameStateIndicators = `"activity_status": "string (Reflects ongoing activity, in ${narrativeLang.toUpperCase()})",\n` +
                                       `"combat_engaged": "boolean (True if combat starts THIS turn)"`;
     }
+
     const instructionKeyForThemeText = basePromptKey.startsWith("master_") ? basePromptKey : activePromptType;
     let themeSpecificInstructions = getUIText(`theme_instructions_${instructionKeyForThemeText}_${currentThemeId}`, {}, { explicitThemeContext: currentThemeId });
     if (themeSpecificInstructions === `theme_instructions_${instructionKeyForThemeText}_${currentThemeId}` || !themeSpecificInstructions.trim()) {
         themeSpecificInstructions = "No specific instructions provided for this context.";
     }
+
     const helperPlaceholderRegex = /{{HELPER_RANDOM_LINE:([a-zA-Z0-9_]+)}}/g;
     let match;
     while ((match = helperPlaceholderRegex.exec(themeSpecificInstructions)) !== null) {
@@ -159,13 +180,15 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         themeSpecificInstructions = themeSpecificInstructions.replace(fullPlaceholder, replacementText);
         helperPlaceholderRegex.lastIndex = 0;
     }
+
     const narrativeLangInstruction = getThemeNarrativeLangPromptPart(currentThemeId, narrativeLang);
+
     let processedPromptText = basePromptText;
     const playerLevel = getPlayerLevel ? getPlayerLevel() : 1;
     const effMaxIntegrity = getEffectiveMaxIntegrity ? getEffectiveMaxIntegrity() : (themeConfig?.base_attributes?.integrity || 100);
     const effMaxWillpower = getEffectiveMaxWillpower ? getEffectiveMaxWillpower() : (themeConfig?.base_attributes?.willpower || 50);
-    const effAptitude = getEffectiveAptitude ? getEffectiveAptitude() : (themeConfig?.base_attributes?.aptitude || 50);
-    const effResilience = getEffectiveResilience ? getEffectiveResilience() : (themeConfig?.base_attributes?.resilience || 50);
+    const effAptitude = getEffectiveAptitude ? getEffectiveAptitude() : (themeConfig?.base_attributes?.aptitude || 10);
+    const effResilience = getEffectiveResilience ? getEffectiveResilience() : (themeConfig?.base_attributes?.resilience || 10);
     const acquiredTraits = getAcquiredTraitKeys ? getAcquiredTraitKeys() : [];
     const currentStrain = getCurrentStrainLevel ? getCurrentStrainLevel() : 1;
     const activeConditions = getActiveConditions ? getActiveConditions() : [];
@@ -178,7 +201,6 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         } else {
             equippedItemsPayload = "The character is currently equipped with the following:\n";
         }
-
         for (const slotKey in equippedItems) {
             const item = equippedItems[slotKey];
             if (item && item.name) {
@@ -188,6 +210,7 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
             }
         }
     }
+
     const replacements = {
         'narrativeLanguageInstruction': narrativeLangInstruction,
         'currentNameForPrompt': playerID || getUIText("unknown"),
@@ -218,9 +241,11 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         'activeConditionsJSON': JSON.stringify(activeConditions),
         'equippedItemsPayload': equippedItemsPayload,
     };
+
     for (const key in replacements) {
         processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${key}\\}`, "g"), replacements[key]);
     }
+
     if (basePromptKey === "master_initial") {
         const startsContent = getLoadedPromptText(currentThemeId, "starts") || getLoadedPromptText("master", "starts");
         if (startsContent) {
@@ -231,6 +256,7 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
             });
         }
     }
+
     return processedPromptText;
 }
 
@@ -353,10 +379,11 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
             if (!parsedAIResponse || typeof parsedAIResponse.narrative !== "string" ||
                 typeof parsedAIResponse.dashboard_updates !== "object" || parsedAIResponse.dashboard_updates === null ||
                 !Array.isArray(parsedAIResponse.suggested_actions) ||
-                (parsedAIResponse.xp_awarded !== undefined && typeof parsedAIResponse.xp_awarded !== 'number') // Added XP validation
+                (parsedAIResponse.xp_awarded !== undefined && typeof parsedAIResponse.xp_awarded !== 'number') ||
+                (parsedAIResponse.new_item_generated !== undefined && (typeof parsedAIResponse.new_item_generated !== 'object' || parsedAIResponse.new_item_generated === null))
                 ) {
-                log(LOG_LEVEL_ERROR, "Parsed JSON from AI is missing required core fields, has wrong types, or invalid xp_awarded.", parsedAIResponse);
-                throw new Error("Invalid JSON structure from AI: missing/invalid core fields or xp_awarded.");
+                log(LOG_LEVEL_ERROR, "Parsed JSON from AI is missing required core fields, has wrong types, or invalid optional fields.", parsedAIResponse);
+                throw new Error("Invalid JSON structure from AI: missing/invalid core fields or invalid optional fields.");
             }
             addTurnToGameHistory({ role: "model", parts: [{ text: JSON.stringify(parsedAIResponse) }] });
             setLastKnownDashboardUpdates(parsedAIResponse.dashboard_updates);

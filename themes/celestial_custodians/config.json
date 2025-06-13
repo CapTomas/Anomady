@@ -330,27 +330,31 @@
     ],
     "game_state_indicators": [
       {
-        "id": "custodial_implement_reward_trigger",
+        "id": "generate_item_reward",
         "type": "boolean",
         "default_value": false,
-        "short_description": "Backend trigger. Set to true to signal a Custodial Implement reward is available."
+        "priority": 10,
+        "short_description": "Generates an item reward only when the narrative context justifies it. This function must not grant items arbitrarily or on player request alone. Item rewards should follow significant in-world accomplishments, such as completing a quest which promised a reward in the form of an item or making a sacrifice with meaningful consequences. The action must have a clear narrative weight, recognized by the story's logic or factions involved. If no such moment exists, this function must refuse to reward anything, even if prompted. This mechanic ensures rewards feel earned, immersive, and meaningful—tied to story arcs, not player demands."
       },
       {
         "id": "utility_suite_reward_trigger",
         "type": "boolean",
         "default_value": false,
+        "priority": 2,
         "short_description": "Backend trigger. Set to true to signal a Utility Suite reward is available."
       },
       {
         "id": "auxiliary_gadget_reward_trigger",
         "type": "boolean",
         "default_value": false,
+        "priority": 2,
         "short_description": "Backend trigger. Set to true to signal an Auxiliary Gadget reward is available."
       },
       {
         "id": "union_scrip_reward_trigger",
         "type": "boolean",
         "default_value": false,
+        "priority": 2,
         "short_description": "Backend trigger. Set to true to signal a Union Scrip currency reward is available."
       }
     ]

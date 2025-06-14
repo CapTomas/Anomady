@@ -1,56 +1,22 @@
-// js/services/authService.js
 /**
  * @file Manages the user authentication lifecycle, session status, and user profile data.
  * Interacts with apiService.js for backend calls and state.js to update currentUser.
- * Coordinates with ui/authUiManager.js (indirectly, via gameController or app.js).
  */
+
 import * as apiService from '../core/apiService.js';
 import * as state from '../core/state.js';
 import {
-    setCurrentUser,
-    getCurrentUser,
-    setCurrentAppLanguage,
-    getCurrentAppLanguage,
-    setCurrentNarrativeLanguage,
-    setCurrentModelName,
-    clearVolatileGameState,
-    setCurrentTheme,
-    setPlayingThemes,
-    setLikedThemes,
-    setShapedThemeData,
-    setCurrentLandingGridSelection,
-    getCurrentTheme as getStateCurrentTheme,
-    getPlayerIdentifier,
-    getUnsavedHistoryDelta,
-    clearUnsavedHistoryDelta,
-    getLastKnownDashboardUpdates,
-    getLastKnownGameStateIndicators,
-    getCurrentPromptType as getStateCurrentPromptType,
-    getCurrentNarrativeLanguage as getStateCurrentNarrativeLanguage,
-    getCurrentSuggestedActions,
-    getCurrentPanelStates,
-    getCurrentModelName as getStateCurrentModelName,
-    getCurrentTurnUnlockData,
-    setCurrentTurnUnlockData,
-    getIsBoonSelectionPending,
-    getDashboardItemMeta,
-    getCurrentUserThemeProgress,
-    getLastAiSuggestedActions,
-    getEquippedItems,
-    getCurrentInventory,
-} from '../core/state.js';
-import {
-    JWT_STORAGE_KEY,
-    DEFAULT_LANGUAGE,
-    FREE_MODEL_NAME,
-    LANGUAGE_PREFERENCE_STORAGE_KEY,
-    NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY,
-    MODEL_PREFERENCE_STORAGE_KEY,
-    CURRENT_THEME_STORAGE_KEY,
-    LANDING_SELECTED_GRID_THEME_KEY
+  JWT_STORAGE_KEY,
+  DEFAULT_LANGUAGE,
+  FREE_MODEL_NAME,
+  LANGUAGE_PREFERENCE_STORAGE_KEY,
+  NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY,
+  MODEL_PREFERENCE_STORAGE_KEY,
+  CURRENT_THEME_STORAGE_KEY,
+  LANDING_SELECTED_GRID_THEME_KEY,
 } from '../core/config.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
-import { getUIText } from './localizationService.js'; // For error messages potentially
+import { getUIText } from './localizationService.js';
 
 /**
  * Handles the user registration process.
@@ -58,29 +24,24 @@ import { getUIText } from './localizationService.js'; // For error messages pote
  * @param {string} password - User's password.
  * @param {object} [preferences={}] - Initial user preferences.
  * @returns {Promise<object>} The API response (user data and message).
- * @throws {Error} If registration fails.
  */
 export async function handleRegistration(email, password, preferences = {}) {
-    log(LOG_LEVEL_INFO, `Attempting registration for email: ${email}`);
-    try {
-        const response = await apiService.registerUser(email, password, preferences);
-        log(LOG_LEVEL_INFO, `Registration successful for ${email}:`, response.message);
-        return response; // Includes message and user object (without token yet)
-    } catch (error) {
-        log(LOG_LEVEL_ERROR, `Registration failed for ${email}:`, error.message, error.code);
-        // Translate specific error codes for the UI
-        if (error.code === 'USERNAME_ALREADY_EXISTS') {
-            const newError = new Error(getUIText("alert_username_already_exists"));
-            newError.code = error.code; // Preserve original code for potential logic
-            throw newError;
-        }
-        if (error.code === 'INVALID_USERNAME_FORMAT') {
-            const newError = new Error(getUIText("alert_invalid_username_format"));
-            newError.code = error.code;
-            throw newError;
-        }
-        throw error; // Re-throw other errors for UI handling
+  log(LOG_LEVEL_INFO, `Attempting registration for email: ${email}`);
+  try {
+    const response = await apiService.registerUser(email, password, preferences);
+    log(LOG_LEVEL_INFO, `Registration successful for ${email}:`, response.message);
+    return response;
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, `Registration failed for ${email}:`, error.message, error.code);
+    let translatedError = error;
+    if (error.code === 'USERNAME_ALREADY_EXISTS') {
+      translatedError = new Error(getUIText('alert_username_already_exists'));
+    } else if (error.code === 'INVALID_USERNAME_FORMAT') {
+      translatedError = new Error(getUIText('alert_invalid_username_format'));
     }
+    translatedError.code = error.code;
+    throw translatedError;
+  }
 }
 
 /**
@@ -88,180 +49,166 @@ export async function handleRegistration(email, password, preferences = {}) {
  * @param {string} email - User's email.
  * @param {string} password - User's password.
  * @returns {Promise<object>} User data including token.
- * @throws {Error} If login fails.
  */
 export async function handleLogin(email, password) {
-    log(LOG_LEVEL_INFO, `Attempting login for email: ${email}`);
-    try {
-        const response = await apiService.loginUser(email, password);
-        const { token, user: userData } = response;
-        if (token && userData) {
-            const previousUser = getCurrentUser();
-            if (!previousUser) {
-                log(LOG_LEVEL_INFO, "User was anonymous before login. Clearing any volatile anonymous game state.");
-                clearVolatileGameState();
-                setCurrentTheme(null);
-            }
+  log(LOG_LEVEL_INFO, `Attempting login for email: ${email}`);
+  try {
+    const response = await apiService.loginUser(email, password);
+    const { token, user: userData } = response;
 
-            localStorage.setItem(JWT_STORAGE_KEY, token);
-            setCurrentUser({ ...userData, token });
-            log(LOG_LEVEL_INFO, `Login successful for ${userData.email}. Token stored. User state updated.`);
-
-            await loadUserPreferences(true);
-            setPlayingThemes([]);
-            setLikedThemes([]);
-            return userData;
-        } else {
-            throw new Error("Login response missing token or user data.");
-        }
-    } catch (error) {
-        log(LOG_LEVEL_ERROR, `Login failed for ${email}:`, error.message, error.code);
-        throw error;
+    if (!token || !userData) {
+      throw new Error('Login response missing token or user data.');
     }
+
+    const wasAnonymous = !state.getCurrentUser();
+    if (wasAnonymous) {
+      log(LOG_LEVEL_INFO, 'User was anonymous before login. Clearing any volatile anonymous game state.');
+      state.clearVolatileGameState();
+      state.setCurrentTheme(null);
+    }
+
+    localStorage.setItem(JWT_STORAGE_KEY, token);
+    state.setCurrentUser({ ...userData, token });
+    log(LOG_LEVEL_INFO, `Login successful for ${userData.email}. Token stored. User state updated.`);
+
+    await loadUserPreferences();
+    state.setPlayingThemes([]);
+    state.setLikedThemes([]);
+
+    return userData;
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, `Login failed for ${email}:`, error.message, error.code);
+    throw error;
+  }
 }
 
 /**
- * Handles user logout.
+ * Handles user logout by clearing credentials and resetting state to anonymous defaults.
  */
 export function handleLogout() {
-    log(LOG_LEVEL_INFO, `User logging out: ${getCurrentUser()?.email || 'Unknown User'}`);
-    localStorage.removeItem(JWT_STORAGE_KEY);
-    setCurrentUser(null);
-    // Reset to default/localStorage preferences for anonymous state
-    const anonAppLang = localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
-    const anonNarrLang = localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) || anonAppLang;
-    const anonModel = localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME;
-    setCurrentAppLanguage(anonAppLang);
-    setCurrentNarrativeLanguage(anonNarrLang);
-    setCurrentModelName(anonModel);
-    // Clear game-related local storage and state that should not persist across users/logout
-    localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
-    localStorage.removeItem(LANDING_SELECTED_GRID_THEME_KEY);
-    setCurrentTheme(null);
-    setCurrentLandingGridSelection(null);
-    clearVolatileGameState();
-    // Reset theme interactions to empty for anonymous state
-    setPlayingThemes([]);
-    setLikedThemes([]);
-    setShapedThemeData(new Map());
-    log(LOG_LEVEL_INFO, "User logged out. Local session cleared. Anonymous preferences applied.");
+  log(LOG_LEVEL_INFO, `User logging out: ${state.getCurrentUser()?.email || 'Unknown User'}`);
+
+  // Clear authentication token
+  localStorage.removeItem(JWT_STORAGE_KEY);
+  state.setCurrentUser(null);
+
+  // Reset to anonymous preferences from localStorage or defaults
+  const anonAppLang = localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
+  const anonNarrLang = localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) || anonAppLang;
+  const anonModel = localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME;
+
+  state.setCurrentAppLanguage(anonAppLang);
+  state.setCurrentNarrativeLanguage(anonNarrLang);
+  state.setCurrentModelName(anonModel);
+
+  // Clear all game-related session data
+  localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+  localStorage.removeItem(LANDING_SELECTED_GRID_THEME_KEY);
+  state.setCurrentTheme(null);
+  state.setCurrentLandingGridSelection(null);
+  state.clearVolatileGameState();
+
+  // Reset theme interactions
+  state.setPlayingThemes([]);
+  state.setLikedThemes([]);
+  state.setShapedThemeData(new Map());
+
+  log(LOG_LEVEL_INFO, 'User logged out. Local session cleared. Anonymous preferences applied.');
 }
 
 /**
  * Checks authentication status on application load.
- * If a token exists, verifies it and updates user state.
- * @returns {Promise<boolean>} True if user is authenticated, false otherwise.
+ * Verifies stored token and updates user state, or logs out if token is invalid.
+ * @returns {Promise<boolean>} True if user is successfully authenticated, false otherwise.
  */
 export async function checkAuthStatusOnLoad() {
-    const token = localStorage.getItem(JWT_STORAGE_KEY);
-    if (token) {
-        log(LOG_LEVEL_INFO, "Token found. Verifying session...");
-        try {
-            const response = await apiService.fetchCurrentUser(token);
-            const userData = response.user;
-            setCurrentUser({ ...userData, token });
-            log(LOG_LEVEL_INFO, `Session verified for ${userData.email}.`);
-            await loadUserPreferences(true); // Ensure preferences are loaded and applied
-            return true;
-        } catch (error) {
-            log(LOG_LEVEL_WARN, "Token verification failed or token expired. Logging out.", error.message);
-            handleLogout(); // Clear invalid token and reset state
-            return false;
-        }
-    } else {
-        log(LOG_LEVEL_INFO, "No token found. User is not authenticated.");
-        // Ensure anonymous preferences are set correctly
-        const anonAppLang = localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE;
-        const anonNarrLang = localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) || anonAppLang;
-        const anonModel = localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME;
-        setCurrentAppLanguage(anonAppLang);
-        setCurrentNarrativeLanguage(anonNarrLang);
-        setCurrentModelName(anonModel);
-        return false;
+  const token = localStorage.getItem(JWT_STORAGE_KEY);
+  if (token) {
+    log(LOG_LEVEL_INFO, 'Token found. Verifying session...');
+    try {
+      const response = await apiService.fetchCurrentUser(token);
+      const userData = response.user;
+      state.setCurrentUser({ ...userData, token });
+      log(LOG_LEVEL_INFO, `Session verified for ${userData.email}.`);
+      await loadUserPreferences();
+      return true;
+    } catch (error) {
+      log(LOG_LEVEL_WARN, 'Token verification failed or token expired. Logging out.', error.message);
+      handleLogout();
+      return false;
     }
+  }
+
+  log(LOG_LEVEL_INFO, 'No token found. User is not authenticated.');
+  await loadUserPreferences(); // Load anonymous preferences
+  return false;
 }
 
 /**
- * Loads user preferences. If logged in, fetches from backend.
- * Otherwise, loads from localStorage or defaults.
- * @param {boolean} [isUserLoggedIn=false] - Flag indicating if the user is confirmed logged in.
+ * Loads user preferences, fetching from backend if logged in, otherwise from localStorage.
  */
-export async function loadUserPreferences(isUserLoggedIn = false) {
-    const currentUser = getCurrentUser();
-    if (isUserLoggedIn && currentUser && currentUser.token) {
-        log(LOG_LEVEL_INFO, `Fetching preferences for logged-in user: ${currentUser.email}`);
-        try {
-            const prefs = await apiService.fetchUserPreferences(currentUser.token);
-            setCurrentAppLanguage(prefs.preferred_app_language || DEFAULT_LANGUAGE);
-            setCurrentNarrativeLanguage(prefs.preferred_narrative_language || getCurrentAppLanguage());
-            setCurrentModelName(prefs.preferred_model_name || FREE_MODEL_NAME);
-            // Update currentUser object in state with these potentially new/updated preferences
-            setCurrentUser({
-                ...currentUser,
-                preferred_app_language: getCurrentAppLanguage(),
-                preferred_narrative_language: getStateCurrentNarrativeLanguage(),
-                preferred_model_name: getStateCurrentModelName(),
-            });
-            log(LOG_LEVEL_INFO, "User preferences loaded from backend and applied to state.");
-        } catch (error) {
-            log(LOG_LEVEL_ERROR, "Failed to fetch user preferences from backend. Using local/defaults.", error.message);
-            // Fallback to local storage if API fails
-            setCurrentAppLanguage(localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE);
-            setCurrentNarrativeLanguage(localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) || getCurrentAppLanguage());
-            setCurrentModelName(localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME);
-        }
-    } else {
-        log(LOG_LEVEL_INFO, "Loading preferences for anonymous user or fallback.");
-        setCurrentAppLanguage(localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE);
-        setCurrentNarrativeLanguage(localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) || getCurrentAppLanguage());
-        setCurrentModelName(localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME);
+export async function loadUserPreferences() {
+  const currentUser = state.getCurrentUser();
+  if (currentUser?.token) {
+    log(LOG_LEVEL_INFO, `Fetching preferences for logged-in user: ${currentUser.email}`);
+    try {
+      const prefs = await apiService.fetchUserPreferences(currentUser.token);
+      state.setCurrentAppLanguage(prefs.preferred_app_language || DEFAULT_LANGUAGE);
+      state.setCurrentNarrativeLanguage(prefs.preferred_narrative_language || state.getCurrentAppLanguage());
+      state.setCurrentModelName(prefs.preferred_model_name || FREE_MODEL_NAME);
+      state.setCurrentUser({ ...currentUser, ...prefs });
+      log(LOG_LEVEL_INFO, 'User preferences loaded from backend and applied to state.');
+    } catch (error) {
+      log(LOG_LEVEL_ERROR, 'Failed to fetch user preferences. Falling back to local/default settings.', error.message);
+      loadUserPreferences(); // Retry as anonymous
     }
+  } else {
+    log(LOG_LEVEL_INFO, 'Loading preferences for anonymous user.');
+    state.setCurrentAppLanguage(localStorage.getItem(LANGUAGE_PREFERENCE_STORAGE_KEY) || DEFAULT_LANGUAGE);
+    state.setCurrentNarrativeLanguage(localStorage.getItem(NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY) || state.getCurrentAppLanguage());
+    state.setCurrentModelName(localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FREE_MODEL_NAME);
+  }
 }
 
 /**
- * Updates user preferences.
- * @param {object} preferencesToUpdate - Object containing preferences to update (e.g., { preferred_app_language: 'cs' }).
- * @returns {Promise<object>} The updated user object from the API.
- * @throws {Error} If update fails.
+ * Updates user preferences on the backend and in local state.
+ * @param {object} preferencesToUpdate - Object with preference keys and new values.
+ * @returns {Promise<object>} The updated user object from the API or a simulated object for anonymous users.
  */
 export async function updateUserPreferences(preferencesToUpdate) {
-    const currentUser = getCurrentUser();
-    if (!currentUser || !currentUser.token) {
-        log(LOG_LEVEL_WARN, "Cannot update preferences: User not logged in.");
-        // For anonymous users, update localStorage directly and state
-        if (preferencesToUpdate.preferred_app_language) {
-            setCurrentAppLanguage(preferencesToUpdate.preferred_app_language);
-        }
-        if (preferencesToUpdate.preferred_narrative_language) {
-            setCurrentNarrativeLanguage(preferencesToUpdate.preferred_narrative_language);
-        }
-        if (preferencesToUpdate.preferred_model_name) {
-            setCurrentModelName(preferencesToUpdate.preferred_model_name);
-        }
-        return { // Simulate a successful local update structure
-            message: "Local preferences updated.",
-            user: {
-                preferred_app_language: getCurrentAppLanguage(),
-                preferred_narrative_language: getStateCurrentNarrativeLanguage(),
-                preferred_model_name: getStateCurrentModelName(),
-            }
-        };
+  const currentUser = state.getCurrentUser();
+  if (!currentUser?.token) {
+    log(LOG_LEVEL_WARN, 'Cannot update preferences on backend: User not logged in. Updating locally.');
+    if (preferencesToUpdate.preferred_app_language) {
+      state.setCurrentAppLanguage(preferencesToUpdate.preferred_app_language);
     }
-    log(LOG_LEVEL_INFO, `Updating preferences for user ${currentUser.email}:`, preferencesToUpdate);
-    try {
-        const response = await apiService.updateUserPreferences(currentUser.token, preferencesToUpdate);
-        const updatedUser = response.user;
-        // Update state with new preferences from response
-        setCurrentAppLanguage(updatedUser.preferred_app_language);
-        setCurrentNarrativeLanguage(updatedUser.preferred_narrative_language);
-        setCurrentModelName(updatedUser.preferred_model_name);
-        setCurrentUser({ ...currentUser, ...updatedUser }); // Update the user object in state
-        log(LOG_LEVEL_INFO, "User preferences updated successfully on backend and in state.");
-        return updatedUser;
-    } catch (error) {
-        log(LOG_LEVEL_ERROR, `Failed to update user preferences for ${currentUser.email}:`, error.message);
-        throw error;
+    if (preferencesToUpdate.preferred_narrative_language) {
+      state.setCurrentNarrativeLanguage(preferencesToUpdate.preferred_narrative_language);
     }
+    if (preferencesToUpdate.preferred_model_name) {
+      state.setCurrentModelName(preferencesToUpdate.preferred_model_name);
+    }
+    return {
+      message: 'Local preferences updated.',
+      user: {
+        preferred_app_language: state.getCurrentAppLanguage(),
+        preferred_narrative_language: state.getCurrentNarrativeLanguage(),
+        preferred_model_name: state.getCurrentModelName(),
+      },
+    };
+  }
+
+  log(LOG_LEVEL_INFO, `Updating preferences for user ${currentUser.email}:`, preferencesToUpdate);
+  try {
+    const response = await apiService.updateUserPreferences(currentUser.token, preferencesToUpdate);
+    const updatedUser = response.user;
+    state.setCurrentUser({ ...currentUser, ...updatedUser }); // Update the full user object
+    log(LOG_LEVEL_INFO, 'User preferences updated successfully.');
+    return updatedUser;
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, 'Failed to update user preferences:', error.message);
+    throw error;
+  }
 }
 
 /**
@@ -269,81 +216,34 @@ export async function updateUserPreferences(preferencesToUpdate) {
  * @param {string} currentPassword - The user's current password.
  * @param {string} newPassword - The new password.
  * @returns {Promise<object>} API response.
- * @throws {Error} If password change fails.
  */
 export async function handleChangePassword(currentPassword, newPassword) {
-    const currentUser = getCurrentUser();
-    if (!currentUser || !currentUser.token) {
-        log(LOG_LEVEL_ERROR, "Cannot change password: User not logged in.");
-        throw new Error("User not authenticated.");
-    }
-    log(LOG_LEVEL_INFO, `Attempting password change for user ${currentUser.email}`);
-    try {
-        const response = await apiService.changePassword(currentUser.token, currentPassword, newPassword);
-        log(LOG_LEVEL_INFO, "Password changed successfully.");
-        return response;
-    } catch (error) {
-        log(LOG_LEVEL_ERROR, `Password change failed for ${currentUser.email}:`, error.message);
-        throw error;
-    }
+  const currentUser = state.getCurrentUser();
+  if (!currentUser?.token) {
+    throw new Error('User not authenticated.');
+  }
+  log(LOG_LEVEL_INFO, `Attempting password change for user ${currentUser.email}`);
+  try {
+    return await apiService.changePassword(currentUser.token, currentPassword, newPassword);
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, `Password change failed for ${currentUser.email}:`, error.message);
+    throw error;
+  }
 }
 
 /**
- * Handles resending the email confirmation for an authenticated user.
- * @returns {Promise<object>} API response.
- * @throws {Error} If resending fails.
- */
-export async function handleResendConfirmation() {
-    const currentUser = getCurrentUser();
-    if (!currentUser || !currentUser.token) {
-        log(LOG_LEVEL_ERROR, "Cannot resend confirmation: User not logged in.");
-        throw new Error("User not authenticated.");
-    }
-    log(LOG_LEVEL_INFO, `Requesting to resend confirmation email for ${currentUser.email}`);
-    try {
-        const response = await apiService.resendConfirmationEmail(currentUser.token);
-        log(LOG_LEVEL_INFO, "Confirmation email resent request successful.");
-        return response;
-    } catch (error) {
-        log(LOG_LEVEL_ERROR, `Failed to resend confirmation for ${currentUser.email}:`, error.message);
-        throw error;
-    }
-}
-
-/**
- * Handles publicly requesting a resend of the confirmation email (e.g., from login form).
- * @param {string} email - The email address.
- * @returns {Promise<object>} API response.
- * @throws {Error} If request fails.
- */
-export async function handlePublicResendConfirmation(email) {
-    log(LOG_LEVEL_INFO, `Requesting public resend confirmation for email: ${email}`);
-    try {
-        const response = await apiService.publicResendConfirmationEmail(email);
-        log(LOG_LEVEL_INFO, `Public resend confirmation request for ${email} processed.`);
-        return response; // Response message indicates if an email was sent or if already confirmed etc.
-    } catch (error) {
-        log(LOG_LEVEL_ERROR, `Public resend confirmation failed for ${email}:`, error.message);
-        throw error;
-    }
-}
-
-/**
- * Handles initiating the "forgot password" process.
+ * Initiates the "forgot password" process for an email address.
  * @param {string} email - The user's email address.
  * @returns {Promise<object>} API response (typically a generic success message).
- * @throws {Error} If request fails.
  */
 export async function handleForgotPassword(email) {
-    log(LOG_LEVEL_INFO, `Initiating password reset for email: ${email}`);
-    try {
-        const response = await apiService.requestPasswordReset(email);
-        log(LOG_LEVEL_INFO, `Password reset link request processed for ${email}.`);
-        return response;
-    } catch (error) {
-        log(LOG_LEVEL_ERROR, `Forgot password request failed for ${email}:`, error.message);
-        throw error;
-    }
+  log(LOG_LEVEL_INFO, `Initiating password reset for email: ${email}`);
+  try {
+    return await apiService.requestPasswordReset(email);
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, `Forgot password request failed for ${email}:`, error.message);
+    throw error;
+  }
 }
 
 /**
@@ -351,87 +251,115 @@ export async function handleForgotPassword(email) {
  * @param {string} token - The password reset token.
  * @param {string} newPassword - The new password.
  * @returns {Promise<object>} API response.
- * @throws {Error} If password reset fails.
  */
 export async function handleResetPassword(token, newPassword) {
-    log(LOG_LEVEL_INFO, `Attempting to reset password with token (first 10 chars): ${token.substring(0, 10)}...`);
-    try {
-        const response = await apiService.resetPassword(token, newPassword);
-        log(LOG_LEVEL_INFO, "Password reset successful.");
-        return response;
-    } catch (error) {
-        log(LOG_LEVEL_ERROR, `Password reset failed for token ${token.substring(0, 10)}...:`, error.message);
-        throw error;
-    }
+  log(LOG_LEVEL_INFO, `Attempting to reset password with token.`);
+  try {
+    return await apiService.resetPassword(token, newPassword);
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, `Password reset failed:`, error.message);
+    throw error;
+  }
+}
+
+/**
+ * Handles resending the email confirmation for an authenticated user.
+ * @returns {Promise<object>} API response.
+ */
+export async function handleResendConfirmation() {
+  const currentUser = state.getCurrentUser();
+  if (!currentUser?.token) {
+    throw new Error('User not authenticated.');
+  }
+  log(LOG_LEVEL_INFO, `Requesting to resend confirmation email for ${currentUser.email}`);
+  try {
+    return await apiService.resendConfirmationEmail(currentUser.token);
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, `Failed to resend confirmation for ${currentUser.email}:`, error.message);
+    throw error;
+  }
+}
+
+/**
+ * Handles publicly requesting a resend of the confirmation email (e.g., from login form).
+ * @param {string} email - The email address.
+ * @returns {Promise<object>} API response.
+ */
+export async function handlePublicResendConfirmation(email) {
+  log(LOG_LEVEL_INFO, `Requesting public resend confirmation for email: ${email}`);
+  try {
+    return await apiService.publicResendConfirmationEmail(email);
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, `Public resend confirmation failed for ${email}:`, error.message);
+    throw error;
+  }
 }
 
 /**
  * Saves the current game state to the backend if a user is logged in.
- * Gathers all necessary state components and constructs the payload.
- * Sends only the unsaved history turns (delta) to the server.
- * Resets `currentTurnUnlockData` after including it in the payload.
- * Clears the unsaved history delta upon a successful save.
+ * Sends only the unsaved history delta and clears it upon success.
+ * @param {boolean} [forceSave=false] - If true, saves even if there are no new turns.
  */
 export async function saveCurrentGameState(forceSave = false) {
-    const currentUser = getCurrentUser();
-    if (!currentUser || !currentUser.token) {
-        log(LOG_LEVEL_INFO, "User not logged in. Game state not saved to backend.");
-        return;
-    }
-    const currentThemeId = getStateCurrentTheme();
-    if (!currentThemeId) {
-        log(LOG_LEVEL_WARN, "Cannot save game state: currentTheme not set in state.");
-        return;
-    }
-    // Get the delta of unsaved turns.
-    const historyDelta = getUnsavedHistoryDelta();
-    // A save is necessary if there are new turns, a boon selection was just made, OR if explicitly forced.
-    if (historyDelta.length === 0 && !getIsBoonSelectionPending() && !forceSave) {
-        log(LOG_LEVEL_INFO, "No new turns, pending boons, or force flag. Skipping save operation.");
-        return;
-    }
-    log(LOG_LEVEL_INFO, `Attempting to save game state for theme '${currentThemeId}' for user '${currentUser.email}'. Forced: ${forceSave}, Delta: ${historyDelta.length} turns.`);
-    const narrativePlayerIdentifier = getPlayerIdentifier();
-    const turnUnlockData = getCurrentTurnUnlockData();
-    let userThemeProgressForPayload = getCurrentUserThemeProgress(); // Get current progress
-    // Ensure that if userThemeProgressForPayload is an object, its acquiredTraitKeys is an array.
-    if (userThemeProgressForPayload && typeof userThemeProgressForPayload === 'object' && !Array.isArray(userThemeProgressForPayload.acquiredTraitKeys)) {
-        log(LOG_LEVEL_WARN, `authService.saveCurrentGameState: user_theme_progress.acquiredTraitKeys was not an array. Fixing to []. Original value:`, userThemeProgressForPayload.acquiredTraitKeys);
-        // Clone to avoid mutating state._currentUserThemeProgress directly if it's the same object reference from state
-        userThemeProgressForPayload = {
-            ...userThemeProgressForPayload,
-            acquiredTraitKeys: [],
-        };
-    }
-    const gameStatePayload = {
-        theme_id: currentThemeId,
-        player_identifier: narrativePlayerIdentifier || "Unnamed Protagonista", // Fallback, consider localizing or making more generic if needed
-        game_history_delta: historyDelta, // Send only the new turns
-        last_dashboard_updates: getLastKnownDashboardUpdates(),
-        last_game_state_indicators: getLastKnownGameStateIndicators(),
-        current_prompt_type: getStateCurrentPromptType(),
-        current_narrative_language: getStateCurrentNarrativeLanguage(),
-        last_suggested_actions: getCurrentSuggestedActions(),
-        actions_before_boon_selection: getLastAiSuggestedActions(), // Persist actions before boon
-        panel_states: getCurrentPanelStates(),
-        model_name_used: getStateCurrentModelName(),
-        new_persistent_lore_unlock: turnUnlockData, // Include the unlock data
-        dashboard_item_meta: getDashboardItemMeta(),
-        user_theme_progress: userThemeProgressForPayload, // Use the potentially corrected object
-        is_boon_selection_pending: getIsBoonSelectionPending(), // Add the boon pending status
-        session_inventory: getCurrentInventory(),
-        equipped_items: getEquippedItems(),
-    };
-    // Reset currentTurnUnlockData in state after it's been included in the payload
-    setCurrentTurnUnlockData(null);
-    try {
-        const response = await apiService.saveGameState(currentUser.token, gameStatePayload);
-        log(LOG_LEVEL_INFO, "Game state delta saved successfully to backend.", response.message || response);
-        // On successful save, clear the delta buffer.
-        clearUnsavedHistoryDelta();
-    } catch (error) {
-        log(LOG_LEVEL_ERROR, "Error saving game state delta to backend:", error.message, error.code, error.details);
-        // DO NOT clear the delta on error. The unsaved turns will be retried on the next save attempt.
-        throw error; // Re-throw the error so the caller can handle it
-    }
+  const currentUser = state.getCurrentUser();
+  const currentThemeId = state.getCurrentTheme();
+
+  if (!currentUser?.token) {
+    log(LOG_LEVEL_INFO, 'User not logged in. Game state not saved to backend.');
+    return;
+  }
+  if (!currentThemeId) {
+    log(LOG_LEVEL_WARN, 'Cannot save game state: currentTheme not set.');
+    return;
+  }
+
+  const historyDelta = state.getUnsavedHistoryDelta();
+  const isSaveNeeded = historyDelta.length > 0 || state.getIsBoonSelectionPending() || forceSave;
+
+  if (!isSaveNeeded) {
+    log(LOG_LEVEL_DEBUG, 'No new turns, pending boons, or force flag. Skipping save.');
+    return;
+  }
+
+  log(LOG_LEVEL_INFO, `Saving game state for theme '${currentThemeId}'. Delta: ${historyDelta.length} turns.`);
+
+  const userThemeProgress = state.getCurrentUserThemeProgress() || {};
+  // Ensure acquiredTraitKeys is always an array in the payload.
+  if (userThemeProgress && !Array.isArray(userThemeProgress.acquiredTraitKeys)) {
+    userThemeProgress.acquiredTraitKeys = [];
+  }
+
+  const gameStatePayload = {
+    theme_id: currentThemeId,
+    player_identifier: state.getPlayerIdentifier() || 'Protagonist',
+    game_history_delta: historyDelta,
+    last_dashboard_updates: state.getLastKnownDashboardUpdates(),
+    last_game_state_indicators: state.getLastKnownGameStateIndicators(),
+    current_prompt_type: state.getCurrentPromptType(),
+    current_narrative_language: state.getCurrentNarrativeLanguage(),
+    last_suggested_actions: state.getCurrentSuggestedActions(),
+    actions_before_boon_selection: state.getLastAiSuggestedActions(),
+    panel_states: state.getCurrentPanelStates(),
+    model_name_used: state.getCurrentModelName(),
+    new_persistent_lore_unlock: state.getCurrentTurnUnlockData(),
+    dashboard_item_meta: state.getDashboardItemMeta(),
+    user_theme_progress: userThemeProgress,
+    is_boon_selection_pending: state.getIsBoonSelectionPending(),
+    session_inventory: state.getCurrentInventory(),
+    equipped_items: state.getEquippedItems(),
+  };
+
+  // The unlock data is a one-time signal; reset it after including it in the payload.
+  state.setCurrentTurnUnlockData(null);
+
+  try {
+    await apiService.saveGameState(currentUser.token, gameStatePayload);
+    log(LOG_LEVEL_INFO, 'Game state delta saved successfully to backend.');
+    // On successful save, clear the delta buffer.
+    state.clearUnsavedHistoryDelta();
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, 'Error saving game state delta to backend:', error.message, error.code);
+    // DO NOT clear the delta on error. The unsaved turns will be retried on the next save attempt.
+    throw error;
+  }
 }

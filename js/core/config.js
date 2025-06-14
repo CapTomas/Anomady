@@ -25,8 +25,12 @@ export const LANDING_SELECTED_GRID_THEME_KEY = 'anomadyLandingSelectedGridTheme'
 export const LOG_LEVEL_STORAGE_KEY = 'anomadyLogLevel';
 
 // --- AI Model Configuration ---
-export const PAID_MODEL_NAME = 'gemini-1.5-pro-latest';
+/** The model name for standard, free-tier users. */
 export const FREE_MODEL_NAME = 'gemini-1.5-flash-latest';
+/** The model name for logged-in, free-tier users who can access a better model. */
+export const PRO_MODEL_NAME = 'gemini-1.5-pro-latest';
+/** The model name for premium, top-tier users. */
+export const ULTRA_MODEL_NAME = 'gemini-2.5-flash-preview-05-20';
 
 // --- Player Progression ---
 /**

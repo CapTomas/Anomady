@@ -26,6 +26,7 @@ import * as dashboardManager from '../ui/dashboardManager.js';
 import * as characterPanelManager from '../ui/characterPanelManager.js';
 import * as worldShardsModalManager from '../ui/worldShardsModalManager.js';
 import * as suggestedActionsManager from '../ui/suggestedActionsManager.js';
+import * as modelToggleManager from '../ui/modelToggleManager.js';
 
 let _deferredInitialActionText = null;
 let _userThemeControlsManagerRef = null;
@@ -866,6 +867,7 @@ export async function processPlayerAction(actionText, isGameStartingAction = fal
             storyLogManager.renderMessage(fullAiResponse.narrative, "gm");
             dashboardManager.updateDashboard(updatesFromAI);
             characterPanelManager.updateCharacterPanel();
+            modelToggleManager.updateModelToggleButtonAppearance(); // Refresh API usage counters on button
             suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
             handleGameStateIndicatorsChange(state.getLastKnownGameStateIndicators());
             if (dom.playerActionInput) dom.playerActionInput.placeholder = state.getCurrentAiPlaceholder() || localizationService.getUIText("placeholder_command");

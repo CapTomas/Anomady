@@ -41,6 +41,11 @@ const protect = async (req, res, next) => {
           email_confirmed: true,
           created_at: true,
           updated_at: true,
+          tier: true,
+          hourlyApiCalls: true,
+          dailyApiCalls: true,
+          lastHourlyReset: true,
+          lastDailyReset: true,
         },
       });
       if (!user) {
@@ -104,6 +109,11 @@ const authenticateOptionally = async (req, res, next) => {
           email_confirmed: true,
           created_at: true,
           updated_at: true,
+          tier: true,
+          hourlyApiCalls: true,
+          dailyApiCalls: true,
+          lastHourlyReset: true,
+          lastDailyReset: true,
         },
       });
       if (user) {
@@ -121,4 +131,5 @@ const authenticateOptionally = async (req, res, next) => {
   }
   next();
 };
+
 export { protect, authenticateOptionally };

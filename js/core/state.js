@@ -26,6 +26,7 @@ let _currentModelName = localStorage.getItem(MODEL_PREFERENCE_STORAGE_KEY) || FR
 
 // User & Session State
 let _currentUser = null; // Holds the authenticated user object, including the token.
+let _currentUserApiUsage = null; // Holds { hourly: { count, limit }, daily: { count, limit } }
 let _playingThemes = []; // Array of theme IDs the user is currently playing.
 let _likedThemes = []; // Array of theme IDs the user has liked.
 let _shapedThemeData = new Map(); // Map<themeId, { hasShards: boolean, activeShardCount: number }>
@@ -106,6 +107,12 @@ export const setCurrentModelName = (modelName) => {
 export const getCurrentUser = () => _currentUser;
 export const setCurrentUser = (user) => {
   _currentUser = user;
+  if (user && user.api_usage) {
+    setCurrentUserApiUsage(user.api_usage);
+  } else if (!user) {
+    // If logging out or user object doesn't have usage data, clear it.
+    setCurrentUserApiUsage(null);
+  }
 };
 
 /** @returns {string[]} An array of theme IDs the user is currently playing. */
@@ -127,6 +134,13 @@ export const setShapedThemeData = (data) => {
 };
 
 // --- Active Game State Management ---
+
+/** @returns {object | null} The current user's API usage stats. */
+export const getCurrentUserApiUsage = () => _currentUserApiUsage;
+export const setCurrentUserApiUsage = (usage) => {
+  _currentUserApiUsage = usage;
+};
+
 
 /** @returns {object[]} The full game history for the current session. */
 export const getGameHistory = () => _gameHistory;

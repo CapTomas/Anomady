@@ -341,27 +341,22 @@ export function renderLandingPageActionButtons(themeId) {
     log(LOG_LEVEL_WARN, 'Landing theme actions container not found.');
     return;
   }
-
   landingThemeActions.innerHTML = '';
   landingThemeActions.style.flexDirection = 'column';
   landingThemeActions.style.gap = 'var(--spacing-sm)';
-
   const themeConfig = themeService.getThemeConfig(themeId);
   const themeManifestEntry = THEMES_MANIFEST.find(t => t.id === themeId);
   if (!themeConfig || !themeManifestEntry) {
     log(LOG_LEVEL_ERROR, `Cannot render landing actions: Config or manifest entry missing for ${themeId}.`);
     return;
   }
-
   const isThemePlayed = getPlayingThemes().includes(themeId);
   const currentUser = getCurrentUser();
   const progressData = getLandingSelectedThemeProgress();
-
   // Continue & Character Progress Buttons
   if (isThemePlayed && themeManifestEntry.playable) {
     const topActionRow = document.createElement('div');
     topActionRow.className = 'landing-actions-row';
-
     const continueButton = document.createElement('button');
     continueButton.id = 'continue-theme-button';
     continueButton.classList.add('ui-button', 'primary');
@@ -369,7 +364,6 @@ export function renderLandingPageActionButtons(themeId) {
     continueButton.textContent = getUIText('button_continue_game', {}, { explicitThemeContext: themeId, viewContext: 'landing' });
     continueButton.addEventListener('click', () => _gameControllerRef?.changeActiveTheme(themeId, false));
     topActionRow.appendChild(continueButton);
-
     const characterProgressButton = document.createElement('button');
     characterProgressButton.id = 'character-progress-button';
     characterProgressButton.classList.add('ui-button', 'icon-button', 'character-progress-button');
@@ -380,7 +374,6 @@ export function renderLandingPageActionButtons(themeId) {
     characterProgressButton.innerHTML = `<img src="${progressIconSrc}" alt="${progressAltText}" class="character-icon">`;
     characterProgressButton.setAttribute('aria-label', progressAltText);
     attachTooltip(characterProgressButton, progressTooltipKey, {}, { viewContext: 'landing' });
-
     if (currentUser && progressData) {
       characterProgressButton.disabled = false;
       characterProgressButton.addEventListener('click', () => _gameControllerRef?.showCharacterProgressModal(themeId));
@@ -391,16 +384,13 @@ export function renderLandingPageActionButtons(themeId) {
     topActionRow.appendChild(characterProgressButton);
     landingThemeActions.appendChild(topActionRow);
   }
-
   // New Game, Like, Store, Shards Buttons
   const standardActionsRow = document.createElement('div');
   standardActionsRow.className = 'landing-actions-row';
-
   const newGameButton = document.createElement('button');
   newGameButton.id = 'choose-theme-button';
   newGameButton.classList.add('ui-button');
   if (!isThemePlayed) newGameButton.classList.add('primary');
-
   if (themeManifestEntry.playable) {
     const newGameButtonTextKey = themeConfig.new_game_button_text_key || 'landing_choose_theme_button';
     newGameButton.textContent = getUIText(newGameButtonTextKey, {}, { explicitThemeContext: themeId, viewContext: 'landing' });
@@ -411,34 +401,39 @@ export function renderLandingPageActionButtons(themeId) {
     newGameButton.classList.add('disabled');
   }
   standardActionsRow.appendChild(newGameButton);
-
   if (_userThemeControlsManagerRef) {
     const likeButton = document.createElement('button');
     likeButton.id = 'like-theme-button';
     likeButton.classList.add('ui-button', 'icon-button', 'like-theme-button');
-    if (themeManifestEntry.playable) {
+    if (themeManifestEntry.playable && currentUser) {
       const isLiked = getLikedThemes().includes(themeId);
-      likeButton.innerHTML = `<img src="images/app/icon_heart_${isLiked ? 'filled' : 'empty'}.svg" alt="" class="like-icon">`;
+      likeButton.innerHTML = `<img src="images/app/icon_heart_${isLiked ? 'filled' : ''}.svg" alt="" class="like-icon">`;
       const likeAltTextKey = isLiked ? 'aria_label_unlike_theme' : 'aria_label_like_theme';
       likeButton.setAttribute('aria-label', getUIText(likeAltTextKey, {}, { viewContext: 'landing' }));
       attachTooltip(likeButton, likeAltTextKey, {}, { viewContext: 'landing' });
       if (isLiked) likeButton.classList.add('liked');
-      likeButton.addEventListener('click', () => _userThemeControlsManagerRef.handleLikeThemeOnLandingClick(themeId, likeButton));
+      likeButton.addEventListener('click', () => _userThemeControlsManagerRef.handleLikeThemeOnLandingClick(themeId));
     } else {
-      likeButton.innerHTML = `<img src="images/app/icon_heart_disabled.svg" alt="" class="like-icon">`;
-      likeButton.setAttribute('aria-label', getUIText('aria_label_like_theme', {}, { viewContext: 'landing' }));
-      attachTooltip(likeButton, 'coming_soon_button', {}, { viewContext: 'landing' });
+      likeButton.innerHTML = `<img src="images/app/icon_heart.svg" alt="" class="like-icon">`;
+      const tooltipKey = !currentUser ? 'tooltip_like_locked_anon' : 'coming_soon_button';
+      const ariaLabelText = getUIText(tooltipKey, {}, { viewContext: 'landing' });
+      likeButton.setAttribute('aria-label', ariaLabelText);
+      attachTooltip(likeButton, tooltipKey, {}, { viewContext: 'landing' });
       likeButton.disabled = true;
       likeButton.classList.add('disabled');
     }
     standardActionsRow.appendChild(likeButton);
   }
-
   const storeButton = document.createElement('button');
   storeButton.id = 'store-button';
   storeButton.classList.add('ui-button', 'icon-button', 'store-button');
   const canAccessStore = currentUser && progressData && progressData.level >= MIN_LEVEL_FOR_STORE;
-  const storeTooltipKey = canAccessStore ? 'tooltip_store_button' : 'tooltip_store_locked_level';
+  let storeTooltipKey;
+  if (!currentUser) {
+    storeTooltipKey = 'tooltip_store_locked_anon';
+  } else {
+    storeTooltipKey = canAccessStore ? 'tooltip_store_button' : 'tooltip_store_locked_level';
+  }
   const storeAltText = getUIText(storeTooltipKey, { MIN_LEVEL: MIN_LEVEL_FOR_STORE }, { viewContext: 'landing' });
   storeButton.innerHTML = `<img src="images/app/icon_store.svg" alt="${storeAltText}" class="store-icon">`;
   storeButton.setAttribute('aria-label', storeAltText);
@@ -450,13 +445,17 @@ export function renderLandingPageActionButtons(themeId) {
     storeButton.classList.add('disabled');
   }
   standardActionsRow.appendChild(storeButton);
-
   const themeStatus = getShapedThemeData().get(themeId);
   const configureShardsButton = document.createElement('button');
   configureShardsButton.id = 'configure-shards-icon-button';
   configureShardsButton.classList.add('ui-button', 'icon-button', 'configure-shards-button');
   const canConfigureShards = currentUser && themeStatus?.hasShards;
-  const shardTooltipKey = canConfigureShards ? 'tooltip_configure_fragments' : 'tooltip_no_fragments_to_configure';
+  let shardTooltipKey;
+  if (!currentUser) {
+    shardTooltipKey = 'tooltip_shards_locked_anon';
+  } else {
+    shardTooltipKey = canConfigureShards ? 'tooltip_configure_fragments' : 'tooltip_no_fragments_to_configure';
+  }
   const shardAltText = getUIText(shardTooltipKey, {}, { viewContext: 'landing' });
   configureShardsButton.innerHTML = `<img src="images/app/icon_world_shard.svg" alt="${shardAltText}" class="shard-icon">`;
   configureShardsButton.setAttribute('aria-label', shardAltText);

@@ -10,6 +10,8 @@ import * as state from '../core/state.js';
 import * as apiService from '../core/apiService.js';
 import * as themeService from '../services/themeService.js';
 import * as localizationService from '../services/localizationService.js';
+import * as storyLogManager from '../ui/storyLogManager.js';
+
 
 // --- CONSTANTS ---
 const DEFAULT_GENERATION_CONFIG = {
@@ -348,18 +350,15 @@ export function getSystemPromptForDeepDive(shardData) {
  */
 export async function processAiTurn(playerActionText, worldShardsPayloadForInitial = "[]") {
   log(LOG_LEVEL_INFO, `Processing AI turn for player action: "${playerActionText.substring(0, 50)}..."`);
-
   try {
     const systemPromptText = getSystemPrompt(worldShardsPayloadForInitial);
     if (getLogLevel() === 'debug') console.log("--- SYSTEM PROMPT ---", systemPromptText);
-
     const historyForAI = state.getIsInitialGameLoad()
       ? [{ role: 'user', parts: [{ text: playerActionText }] }]
       : state.getGameHistory()
         .filter(turn => turn.role === 'user' || turn.role === 'model')
         .map(turn => ({ role: turn.role, parts: turn.parts.map(part => ({ text: part.text })) }))
         .slice(-RECENT_INTERACTION_WINDOW_SIZE);
-
     const payload = {
       contents: historyForAI,
       generationConfig: DEFAULT_GENERATION_CONFIG,
@@ -367,22 +366,24 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
       systemInstruction: { parts: [{ text: systemPromptText }] },
       modelName: state.getCurrentModelName(),
     };
-
     const token = state.getCurrentUser()?.token || null;
     const responseData = await apiService.callGeminiProxy(payload, token);
+
+    // After a successful API call, check for updated usage stats in the response
+    if (responseData.api_usage) {
+      state.setCurrentUserApiUsage(responseData.api_usage);
+      log(LOG_LEVEL_DEBUG, 'Updated user API usage state from proxy response:', responseData.api_usage);
+    }
 
     if (responseData.promptFeedback?.blockReason) {
       throw new Error(`Content blocked by AI: ${responseData.promptFeedback.blockReason}.`);
     }
-
     const aiText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!aiText) throw new Error("No valid candidate or text found in AI response.");
-
     const parsedAIResponse = _parseJsonResponse(aiText);
     if (!parsedAIResponse?.narrative || typeof parsedAIResponse.dashboard_updates !== 'object' || !Array.isArray(parsedAIResponse.suggested_actions)) {
       throw new Error("Invalid JSON structure from AI: missing core fields.");
     }
-
     state.addTurnToGameHistory({ role: "model", parts: [{ text: JSON.stringify(parsedAIResponse) }] });
     state.setLastKnownDashboardUpdates(parsedAIResponse.dashboard_updates);
     state.setCurrentSuggestedActions(parsedAIResponse.suggested_actions);
@@ -390,16 +391,24 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
     state.setCurrentAiPlaceholder(parsedAIResponse.input_placeholder || localizationService.getUIText("placeholder_command"));
     state.setCurrentTurnUnlockData(parsedAIResponse.new_persistent_lore_unlock || null);
     if (state.getIsInitialGameLoad()) state.setIsInitialGameLoad(false);
-
     return parsedAIResponse;
-
   } catch (error) {
     log(LOG_LEVEL_ERROR, "processAiTurn failed:", error);
+    if (error.code === 'API_LIMIT_EXCEEDED') {
+        storyLogManager.addMessageToLog(
+            localizationService.getUIText("error_api_limit_exceeded"),
+            "system system-error system-emphasized"
+        );
+    } else if (error.code === 'MODEL_NOT_ALLOWED_FOR_TIER') {
+        storyLogManager.addMessageToLog(
+            localizationService.getUIText("error_model_not_allowed"),
+            "system system-error system-emphasized"
+        );
+    }
     state.setCurrentAiPlaceholder(localizationService.getUIText("placeholder_command"));
     throw error;
   }
 }
-
 /**
  * Handles the "Mull Over Shard" action by making a specialized AI call.
  * @param {object} shardData - The data of the World Shard to reflect upon.

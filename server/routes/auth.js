@@ -9,6 +9,7 @@ import {
   generateSecureToken,
   generateTokenExpiry,
 } from "../utils/tokenUtils.js";
+import { USER_TIERS } from '../config.js';
 const router = express.Router();
 const SALT_ROUNDS = 10;
 /**
@@ -120,6 +121,7 @@ router.post("/register", async (req, res) => {
         email_confirmed: false,
         email_confirmation_token: confirmationToken,
         email_confirmation_expires_at: confirmationTokenExpiresAt,
+        // New tier and limit fields will get default values from schema
       },
     });
     logger.info(
@@ -145,6 +147,7 @@ router.post("/register", async (req, res) => {
         preferred_model_name: newUser.preferred_model_name,
         created_at: newUser.created_at,
         email_confirmed: newUser.email_confirmed,
+        tier: newUser.tier,
       },
     });
   } catch (error) {
@@ -265,6 +268,22 @@ router.post("/login", async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
+      select: {
+          id: true,
+          email: true,
+          username: true,
+          password_hash: true,
+          email_confirmed: true,
+          story_preference: true,
+          newsletter_opt_in: true,
+          preferred_app_language: true,
+          preferred_narrative_language: true,
+          preferred_model_name: true,
+          created_at: true,
+          tier: true,
+          hourlyApiCalls: true,
+          dailyApiCalls: true,
+      }
     });
     if (!user) {
       logger.info(`Login attempt for non-existent email: ${email}`);
@@ -325,21 +344,36 @@ router.post("/login", async (req, res) => {
       logger.info(
         `User logged in successfully: ${user.email} (ID: ${user.id})`
       );
+
+      // Add tier limits to the user response object
+      const userTier = user.tier || 'free';
+      const tierLimits = USER_TIERS[userTier] || USER_TIERS.free;
+
+      const userForResponse = {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          story_preference: user.story_preference,
+          newsletter_opt_in: user.newsletter_opt_in,
+          preferred_app_language: user.preferred_app_language,
+          preferred_narrative_language: user.preferred_narrative_language,
+          preferred_model_name: user.preferred_model_name,
+          email_confirmed: user.email_confirmed,
+          created_at: user.created_at,
+          tier: user.tier,
+          api_usage: {
+            hourly: { count: user.hourlyApiCalls, limit: tierLimits.hourlyLimit },
+            daily: { count: user.dailyApiCalls, limit: tierLimits.dailyLimit },
+          }
+      };
+
+      // Remove password hash before sending response
+      delete userForResponse.password_hash;
+
       res.status(200).json({
           message: 'Login successful.',
           token,
-          user: {
-              id: user.id,
-              email: user.email,
-              username: user.username,
-              story_preference: user.story_preference,
-              newsletter_opt_in: user.newsletter_opt_in,
-              preferred_app_language: user.preferred_app_language,
-              preferred_narrative_language: user.preferred_narrative_language,
-              preferred_model_name: user.preferred_model_name,
-              email_confirmed: user.email_confirmed,
-              created_at: user.created_at
-          }
+          user: userForResponse
       });
     });
   } catch (error) {
@@ -373,9 +407,22 @@ router.get("/me", protect, async (req, res) => {
   logger.info(
     `User data requested for /me by: ${req.user.email} (ID: ${req.user.id})`
   );
+
+  // Add tier limits to the user response object
+  const userTier = req.user.tier || 'free';
+  const tierLimits = USER_TIERS[userTier] || USER_TIERS.free;
+
+  const userForResponse = {
+    ...req.user,
+    api_usage: {
+      hourly: { count: req.user.hourlyApiCalls, limit: tierLimits.hourlyLimit },
+      daily: { count: req.user.dailyApiCalls, limit: tierLimits.dailyLimit },
+    }
+  };
+
   res.status(200).json({
     message: "Current user data fetched successfully.",
-    user: req.user,
+    user: userForResponse,
   });
 });
 /**

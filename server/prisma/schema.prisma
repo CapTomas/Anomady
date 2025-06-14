@@ -13,11 +13,19 @@ model User {
   email                          String    @unique
   username                       String    @unique
   password_hash                  String
+  // Preferences
   story_preference               String?
   newsletter_opt_in              Boolean   @default(false)
   preferred_app_language         String?
   preferred_narrative_language   String?
   preferred_model_name           String?
+  // User Tier & Limits
+  tier                           String    @default("free")
+  hourlyApiCalls                 Int       @default(0) @map("hourly_api_calls")
+  dailyApiCalls                  Int       @default(0) @map("daily_api_calls")
+  lastHourlyReset                DateTime  @default(now()) @map("last_hourly_reset")
+  lastDailyReset                 DateTime  @default(now()) @map("last_daily_reset")
+  // Timestamps & Auth Tokens
   created_at                     DateTime  @default(now())
   updated_at                     DateTime  @updatedAt
   email_confirmed                Boolean   @default(false)
@@ -25,6 +33,7 @@ model User {
   email_confirmation_expires_at  DateTime?
   password_reset_token           String?   @unique
   password_reset_expires_at      DateTime?
+  // Relations
   gameStates                     GameState[]
   themeInteractions              UserThemeInteraction[]
   persistedLore                  UserThemePersistedLore[]

@@ -991,18 +991,24 @@ export async function initiateNewGameSessionFlow(themeId, skipConfirmation = fal
  */
 export async function initiateCharacterResetFlow(themeId) {
     log(LOG_LEVEL_INFO, `Initiating character reset for theme: ${themeId}.`);
-    const themeDisplayName = themeService.getThemeConfig(themeId)?.name_key || themeId;
+    const themeNameKey = themeService.getThemeConfig(themeId)?.name_key || themeId;
+    const localizedThemeName = localizationService.getUIText(themeNameKey, {}, { explicitThemeContext: themeId });
+
     const confirmed = await modalManager.showGenericConfirmModal({
         titleKey: "confirm_reset_character_title",
         messageKey: "confirm_reset_character_message",
-        replacements: { THEME_NAME: localizationService.getUIText(themeDisplayName, {}, { explicitThemeContext: themeId }) },
+        replacements: { THEME_NAME: localizedThemeName },
         explicitThemeContext: themeId
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {
+        log(LOG_LEVEL_INFO, "User cancelled character reset.");
+        return;
+    }
 
     modalManager.hideCustomModal();
     const currentUser = state.getCurrentUser();
+
     if (!currentUser?.token) {
         modalManager.showCustomModal({ type: "alert", titleKey: "alert_title_error", messageKey: "error_api_call_failed", replacements: { ERROR_MSG: "You must be logged in." } });
         return;
@@ -1011,11 +1017,12 @@ export async function initiateCharacterResetFlow(themeId) {
     try {
         await apiService.resetCharacterProgress(currentUser.token, themeId);
         log(LOG_LEVEL_INFO, `Character reset successful for theme ${themeId}.`);
+
         modalManager.showCustomModal({
             type: "alert",
             titleKey: "alert_title_notice",
             messageKey: "alert_character_reset_success_message",
-            replacements: { THEME_NAME: themeDisplayName }
+            replacements: { THEME_NAME: localizedThemeName }
         });
 
         // Refresh frontend state
@@ -1186,7 +1193,8 @@ export function handleGameStateIndicatorsChange(newIndicators, isInitialBoot = f
         .forEach(panelCfg => {
             const panelBox = document.getElementById(panelCfg.id);
             if (panelBox) {
-                const shouldShow = !!newIndicators[panelCfg.indicator_key];
+                const indicatorValue = newIndicators[panelCfg.indicator_key];
+                const shouldShow = indicatorValue === true || String(indicatorValue).toLowerCase() === 'true';
                 const isVisible = panelBox.style.display !== "none";
                 if (shouldShow && !isVisible) {
                     const delay = isInitialBoot && panelCfg.boot_delay ? panelCfg.boot_delay : 0;

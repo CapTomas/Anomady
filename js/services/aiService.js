@@ -214,6 +214,18 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
   processedPromptText = _injectRandomLineHelpers(processedPromptText, currentThemeId);
 
   // 3. Define all simple value replacements
+  const userPreference = state.getCurrentUser()?.story_preference;
+    let userPreferenceDescription = 'User has not set a story preference.';
+    if (userPreference) {
+      const descriptionKey = `desc_story_preference_${userPreference}`;
+      // Prompts are built in English, so fetch the 'en' description.
+      const descriptionText = localizationService.getUIText(descriptionKey, {}, { explicitLangForTextItself: 'en', viewContext: 'global' });
+      if (descriptionText && descriptionText !== descriptionKey) {
+          userPreferenceDescription = descriptionText;
+      } else {
+          log(LOG_LEVEL_WARN, `Could not find a description for story preference key: ${descriptionKey}`);
+      }
+    }
   const descriptions = _generateDashboardDescriptions(currentThemeId, narrativeLang);
   const themeInstructionsKey = `theme_instructions_${basePromptKey.replace('master_', '')}_${currentThemeId}`;
   let themeInstructions = localizationService.getUIText(themeInstructionsKey, {}, { explicitThemeContext: currentThemeId });
@@ -231,6 +243,7 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     'theme_inspiration': localizationService.getUIText(themeConfig.inspiration_key || '', {}, { explicitThemeContext: currentThemeId }),
     'theme_concept': localizationService.getUIText(themeConfig.concept_key || '', {}, { explicitThemeContext: currentThemeId }),
     'theme_specific_instructions': themeInstructions,
+    'story_preference_user_description': userPreferenceDescription,
     'generated_top_panel_description': descriptions.topPanel,
     'generated_dashboard_description': descriptions.sidePanels,
     'generated_game_state_indicators': descriptions.indicators,

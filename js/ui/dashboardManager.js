@@ -1,16 +1,16 @@
-// js/ui/dashboardManager.js
 /**
  * @file Responsible for generating, rendering, and updating all dynamic dashboard panels
- * and their items (meters, status levels, text values).
- * Also handles panel expansion/collapse logic and scroll indicators.
+ * and their items (meters, status levels, text values). Also handles panel expansion/collapse
+ * logic and scroll indicators for off-screen updates.
  */
+
 import {
     leftPanel,
     rightPanel,
     leftPanelScrollIndicatorUp,
     leftPanelScrollIndicatorDown,
     rightPanelScrollIndicatorUp,
-    rightPanelScrollIndicatorDown
+    rightPanelScrollIndicatorDown,
 } from './domElements.js';
 import { getThemeConfig } from '../services/themeService.js';
 import { getUIText } from '../services/localizationService.js';
@@ -26,27 +26,24 @@ import {
     getDashboardItemMeta,
     getEffectiveMaxIntegrity,
     getEffectiveMaxWillpower,
-    updateCurrentRunStat
+    updateCurrentRunStat,
 } from '../core/state.js';
 import { SCROLL_INDICATOR_TOLERANCE } from '../core/config.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
 import { attachTooltip } from './tooltipManager.js';
 
+// --- Module State ---
+
 /**
- * Initializes scroll event listeners for the dashboard side panels.
- * This should be called once when the application sets up UI managers.
+ * @private
+ * @description Tracks items that recently changed and are out of view to manage scroll indicators.
  */
-export function initDashboardManagerScrollEvents() {
-    [leftPanel, rightPanel].forEach(panel => {
-        if (panel) {
-            panel.addEventListener('scroll', () => {
-                const panelSide = panel.id === 'left-panel' ? 'left' : 'right';
-                _handleSidebarScroll(panelSide);
-            }, { passive: true });
-        }
-    });
-    log(LOG_LEVEL_DEBUG, "DashboardManager scroll event listeners initialized.");
-}
+const _recentlyChangedOutOfViewItems = {
+    left: { up: new Set(), down: new Set() },
+    right: { up: new Set(), down: new Set() },
+};
+
+// --- Private Helpers ---
 
 /**
  * Handles scroll events on sidebars to update visibility of changed items and their indicators.
@@ -55,7 +52,6 @@ export function initDashboardManagerScrollEvents() {
  */
 function _handleSidebarScroll(panelSide) {
     if (document.body.classList.contains("landing-page-active")) {
-        // No scroll indicator logic on landing page for changed items
         const upIndicator = panelSide === 'left' ? leftPanelScrollIndicatorUp : rightPanelScrollIndicatorUp;
         const downIndicator = panelSide === 'left' ? leftPanelScrollIndicatorDown : rightPanelScrollIndicatorDown;
         if (upIndicator) upIndicator.style.display = 'none';
@@ -119,7 +115,6 @@ function _addChangedItemToScrollTracking(itemContainer, panelSide) {
 
     const sidebarRect = parentSidebar.getBoundingClientRect();
     const elRect = itemContainer.getBoundingClientRect();
-
     let changed = false;
 
     // Check if element is scrolled out of view upwards
@@ -149,23 +144,6 @@ function _addChangedItemToScrollTracking(itemContainer, panelSide) {
     }
 }
 
-// --- Internal State for Scroll Indicators ---
-/**
- * @property {object} _recentlyChangedOutOfViewItems - Tracks items that recently changed and are out of view.
- * @property {object} _recentlyChangedOutOfViewItems.left - Tracking for the left panel.
- * @property {Set<string>} _recentlyChangedOutOfViewItems.left.up - Item IDs out of view upwards in left panel.
- * @property {Set<string>} _recentlyChangedOutOfViewItems.left.down - Item IDs out of view downwards in left panel.
- * @property {object} _recentlyChangedOutOfViewItems.right - Tracking for the right panel.
- * @property {Set<string>} _recentlyChangedOutOfViewItems.right.up - Item IDs out of view upwards in right panel.
- * @property {Set<string>} _recentlyChangedOutOfViewItems.right.down - Item IDs out of view downwards in right panel.
- * @private
- */
-const _recentlyChangedOutOfViewItems = {
-    left: { up: new Set(), down: new Set() },
-    right: { up: new Set(), down: new Set() }
-};
-
-// --- Panel Generation ---
 /**
  * Creates a single dashboard item element.
  * @param {object} itemConfig - Configuration for the item.
@@ -177,19 +155,23 @@ function _createPanelItemElement(itemConfig, themeId) {
     const itemContainer = document.createElement("div");
     itemContainer.id = `info-item-container-${itemConfig.id}`;
     itemContainer.classList.add(itemConfig.type === "meter" ? "info-item-meter" : "info-item");
+
     const commonFullWidthIds = [
         "objective", "current_quest", "location", "environment", "sensorConditions",
         "omen_details", "current_location_desc", "ambient_conditions", "blight_intensity",
         "case_primary_enigma", "flux_event_description", "active_disturbance_sensation",
-        "current_attire_description"
+        "current_attire_description",
     ];
+
     if (itemConfig.type === "text_long" || commonFullWidthIds.includes(itemConfig.id)) {
         itemContainer.classList.add("full-width");
     }
+
     const label = document.createElement("span");
     label.classList.add("label");
     label.textContent = getUIText(itemConfig.label_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
     itemContainer.appendChild(label);
+
     if (itemConfig.type === "meter") {
         const meterContainer = document.createElement("div");
         meterContainer.classList.add("meter-bar-container");
@@ -224,20 +206,83 @@ function _createPanelItemElement(itemConfig, themeId) {
                 detail: { slotKey: slotKey, themeId: themeId }
             }));
         });
-        const clickToOpenText = getUIText("tooltip_open_inventory_for_slot", {}, { explicitThemeContext: themeId });
     }
 
-    // Append the tooltip trigger icon if a tooltip_key is defined in the config
-    if (itemConfig.tooltip_key) { // Also check if it's not an equipment slot to avoid double tooltips
+    if (itemConfig.tooltip_key) {
         const tooltipIcon = document.createElement('span');
         tooltipIcon.className = 'info-tooltip-trigger';
-        // The icon's content is rendered via CSS mask.
         tooltipIcon.setAttribute('role', 'button');
         tooltipIcon.setAttribute('tabindex', '0'); // For accessibility
         attachTooltip(tooltipIcon, itemConfig.tooltip_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
         itemContainer.appendChild(tooltipIcon);
     }
+
     return itemContainer;
+}
+
+/**
+ * Sets initial default values for all dashboard items of a theme.
+ * @param {string} themeId - The ID of the theme.
+ * @private
+ */
+function _initializeDashboardDefaultTexts(themeId) {
+    const themeConfigFull = getThemeConfig(themeId);
+    if (!themeConfigFull || !themeConfigFull.dashboard_config) return;
+
+    const dashboardConfig = themeConfigFull.dashboard_config;
+    const allItemConfigs = [
+        ...(dashboardConfig.left_panel || []),
+        ...(dashboardConfig.right_panel || []),
+    ].flatMap(panel => panel.items);
+
+    allItemConfigs.forEach(itemConfig => {
+        const valueElement = document.getElementById(`info-${itemConfig.id}`);
+        const meterBarElement = document.getElementById(`meter-${itemConfig.id}`);
+        let defaultValueText = itemConfig.default_value !== undefined ?
+            String(itemConfig.default_value) :
+            (itemConfig.default_value_key ? getUIText(itemConfig.default_value_key, {}, { explicitThemeContext: themeId, viewContext: 'game' }) : getUIText("unknown"));
+
+        if (itemConfig.type === "meter") {
+            if (valueElement || meterBarElement) {
+                const defaultStatusText = itemConfig.default_status_key ? getUIText(itemConfig.default_status_key, {}, { explicitThemeContext: themeId, viewContext: 'game' }) : undefined;
+                setMeterValue(meterBarElement, valueElement, defaultValueText, itemConfig, false, defaultStatusText);
+            }
+        } else if (itemConfig.type === "status_level") {
+            if (valueElement && itemConfig.level_mappings) {
+                const defaultAiValue = itemConfig.default_ai_value !== undefined ? String(itemConfig.default_ai_value) : "1";
+                updateStatusLevelDisplay(valueElement, defaultAiValue, itemConfig, themeId, false);
+            }
+        } else if (itemConfig.type === "text" || itemConfig.type === "text_long" || itemConfig.type === "number_text") {
+            if (valueElement) {
+                const suffix = itemConfig.suffix || "";
+                const newText = `${defaultValueText}${suffix}`;
+                valueElement.innerHTML = formatDynamicText(newText);
+            }
+        } else if (itemConfig.type === "status_text" && valueElement) {
+            if (valueElement) { // For status_text, the value IS the text
+                valueElement.textContent = defaultValueText;
+            }
+        }
+    });
+    log(LOG_LEVEL_DEBUG, `Default texts initialized for dashboard of theme: ${themeId}`);
+}
+
+// --- Public API ---
+
+/**
+ * Initializes scroll event listeners for the dashboard side panels.
+ * This should be called once when the application sets up UI managers.
+ */
+export function initDashboardManagerScrollEvents() {
+    [leftPanel, rightPanel].forEach(panel => {
+        if (panel) {
+            panel.addEventListener('scroll', () => {
+                const panelSide = panel.id === 'left-panel' ? 'left' : 'right';
+                _handleSidebarScroll(panelSide);
+            }, { passive: true });
+        }
+    });
+    log(LOG_LEVEL_DEBUG, "DashboardManager scroll event listeners initialized.");
 }
 
 /**
@@ -248,10 +293,9 @@ export function generatePanelsForTheme(themeId) {
     const themeConfigFull = getThemeConfig(themeId);
     if (!themeConfigFull || !themeConfigFull.dashboard_config) {
         log(LOG_LEVEL_ERROR, `Dashboard config not found for theme: ${themeId}. Cannot generate panels.`);
-        // Clear existing game-specific panels if config is missing
         [leftPanel, rightPanel].forEach(panelContainer => {
             if (panelContainer) {
-                 Array.from(panelContainer.querySelectorAll('.panel-box'))
+                Array.from(panelContainer.querySelectorAll('.panel-box'))
                     .filter(box => !box.closest('#landing-theme-description-container') && !box.closest('#landing-theme-details-container'))
                     .forEach(el => el.remove());
             }
@@ -260,16 +304,13 @@ export function generatePanelsForTheme(themeId) {
     }
 
     const dashboardConfig = themeConfigFull.dashboard_config;
-
     const setupSide = (panelContainer, panelConfigs) => {
         if (!panelContainer || !panelConfigs) return;
 
-        // Remove existing game panels, but not landing page panels
         Array.from(panelContainer.querySelectorAll('.panel-box'))
             .filter(box => !box.closest('#landing-theme-description-container') && !box.closest('#landing-theme-details-container'))
             .forEach(el => el.remove());
 
-        // Clear scroll tracking for this side
         const panelSideStr = panelContainer === leftPanel ? 'left' : 'right';
         if (_recentlyChangedOutOfViewItems[panelSideStr]) {
             _recentlyChangedOutOfViewItems[panelSideStr].up.clear();
@@ -277,12 +318,11 @@ export function generatePanelsForTheme(themeId) {
         }
 
         const scrollIndicatorDown = panelContainer.querySelector('.scroll-indicator-down');
-
         panelConfigs.forEach(panelConfig => {
             const panelBox = document.createElement("div");
             panelBox.id = panelConfig.id;
             panelBox.classList.add("panel-box");
-            panelBox.style.display = "flex"; // Ensure it's flex for proper layout
+            panelBox.style.display = "flex";
             panelBox.style.flexDirection = "column";
 
             if (panelConfig.type === "collapsible" || panelConfig.type === "hidden_until_active") {
@@ -316,56 +356,10 @@ export function generatePanelsForTheme(themeId) {
     setupSide(rightPanel, dashboardConfig.right_panel);
 
     log(LOG_LEVEL_INFO, `Dashboard panels generated for theme: ${themeId}`);
-    initializeDashboardDefaultTexts(themeId);
-    initializeCollapsiblePanelBoxes(themeId); // This will also handle initial expansion states
+
+    _initializeDashboardDefaultTexts(themeId);
+    initializeCollapsiblePanelBoxes(themeId);
 }
-
-
-/**
- * Sets initial default values for all dashboard items of a theme.
- * @param {string} themeId - The ID of the theme.
- * @private
- */
-function initializeDashboardDefaultTexts(themeId) {
-    const themeConfigFull = getThemeConfig(themeId);
-    if (!themeConfigFull || !themeConfigFull.dashboard_config) return;
-    const dashboardConfig = themeConfigFull.dashboard_config;
-    const allItemConfigs = [
-        ...(dashboardConfig.left_panel || []),
-        ...(dashboardConfig.right_panel || [])
-    ].flatMap(panel => panel.items);
-    allItemConfigs.forEach(itemConfig => {
-        const valueElement = document.getElementById(`info-${itemConfig.id}`);
-        const meterBarElement = document.getElementById(`meter-${itemConfig.id}`);
-        let defaultValueText = itemConfig.default_value !== undefined ?
-            String(itemConfig.default_value) :
-            (itemConfig.default_value_key ? getUIText(itemConfig.default_value_key, {}, { explicitThemeContext: themeId, viewContext: 'game' }) : getUIText("unknown"));
-        if (itemConfig.type === "meter") {
-            if (valueElement || meterBarElement) {
-                const defaultStatusText = itemConfig.default_status_key ? getUIText(itemConfig.default_status_key, {}, { explicitThemeContext: themeId, viewContext: 'game' }) : undefined;
-                setMeterValue(meterBarElement, valueElement, defaultValueText, itemConfig, false, defaultStatusText);
-            }
-        } else if (itemConfig.type === "status_level") {
-            if (valueElement && itemConfig.level_mappings) {
-                const defaultAiValue = itemConfig.default_ai_value !== undefined ? String(itemConfig.default_ai_value) : "1";
-                updateStatusLevelDisplay(valueElement, defaultAiValue, itemConfig, themeId, false);
-            }
-        } else if (itemConfig.type === "text" || itemConfig.type === "text_long" || itemConfig.type === "number_text") {
-            if (valueElement) {
-                const suffix = itemConfig.suffix || "";
-                const newText = `${defaultValueText}${suffix}`;
-                valueElement.innerHTML = formatDynamicText(newText);
-            }
-        } else if (itemConfig.type === "status_text" && valueElement) {
-             if (valueElement) { // For status_text, the value IS the text
-                valueElement.textContent = defaultValueText;
-            }
-        }
-    });
-    log(LOG_LEVEL_DEBUG, `Default texts initialized for dashboard of theme: ${themeId}`);
-}
-
-// --- Panel Interaction ---
 
 /**
  * Initializes collapsible panel box behavior (click/keydown on headers).
@@ -377,6 +371,7 @@ export function initializeCollapsiblePanelBoxes(themeId) {
         log(LOG_LEVEL_WARN, `Dashboard config missing for theme ${themeId}. Cannot initialize panel boxes.`);
         return;
     }
+
     const dashboardConfig = themeConfigFull.dashboard_config;
     const allPanelConfigs = [...(dashboardConfig.left_panel || []), ...(dashboardConfig.right_panel || [])];
 
@@ -392,18 +387,18 @@ export function initializeCollapsiblePanelBoxes(themeId) {
             log(LOG_LEVEL_DEBUG, `Header not found in panel box ${panelConfig.id}.`);
             return;
         }
-        // Re-attach event listeners by cloning and replacing header if it's already initialized
+
         const newHeader = header.cloneNode(true);
         header.parentNode.replaceChild(newHeader, header);
         header = newHeader;
 
         if (panelConfig.type === "collapsible" || panelConfig.type === "hidden_until_active") {
             header.addEventListener("click", () => {
-                if (panelBox.style.display !== "none" || panelConfig.type === "collapsible") { // Ensure visible for hidden_until_active
+                if (panelBox.style.display !== "none" || panelConfig.type === "collapsible") {
                     animatePanelExpansion(panelConfig.id, !panelBox.classList.contains("is-expanded"), panelConfig.type === "hidden_until_active");
                 }
             });
-            header.setAttribute("tabindex", "0"); // For accessibility
+            header.setAttribute("tabindex", "0");
             header.addEventListener("keydown", (e) => {
                 if ((e.key === "Enter" || e.key === " ") && (panelBox.style.display !== "none" || panelConfig.type === "collapsible")) {
                     e.preventDefault();
@@ -412,85 +407,77 @@ export function initializeCollapsiblePanelBoxes(themeId) {
             });
         }
 
-        // Determine initial expansion state: from saved state or config default
-        // Determine initial expansion state
-        let initialExpandState = getPanelState(panelConfig.id); // Attempt to get from saved user state for this panel
+        let initialExpandState = getPanelState(panelConfig.id);
         const isRestoringThisPanelSpecificSavedState = initialExpandState !== undefined;
-
         if (!isRestoringThisPanelSpecificSavedState) {
             const isGameViewCurrentlyActive = !document.body.classList.contains("landing-page-active");
-
             if (panelConfig.type === "collapsible" && isGameViewCurrentlyActive) {
                 initialExpandState = true;
-            } else if (panelConfig.type === "hidden_until_active") {
-                initialExpandState = panelConfig.initial_expanded || false;
             } else {
                 initialExpandState = panelConfig.initial_expanded || false;
             }
         }
-        const isRestoringStateForAnimate = true;
 
-
-        if (panelConfig.type === "static") { // Always expanded, not collapsible
-            panelBox.style.display = "flex"; panelBox.style.opacity = "1";
-            animatePanelExpansion(panelConfig.id, true, false, isRestoringStateForAnimate);
+        if (panelConfig.type === "static") {
+            panelBox.style.display = "flex";
+            panelBox.style.opacity = "1";
+            animatePanelExpansion(panelConfig.id, true, false, true);
         } else if (panelConfig.type === "hidden_until_active") {
             const contentEl = panelBox.querySelector('.panel-box-content');
-            // Initial visual setup based on initialExpandState for hidden_until_active
             if (initialExpandState) {
                 panelBox.classList.add("is-expanded");
                 if (contentEl) {
-                    contentEl.style.maxHeight = contentEl.scrollHeight + "px"; contentEl.style.opacity = '1';
-                    contentEl.style.paddingTop = ''; contentEl.style.paddingBottom = '';
+                    contentEl.style.maxHeight = contentEl.scrollHeight + "px";
+                    contentEl.style.opacity = '1';
+                    contentEl.style.paddingTop = '';
+                    contentEl.style.paddingBottom = '';
                 }
                 header.setAttribute("aria-expanded", "true");
                 if (contentEl) contentEl.setAttribute("aria-hidden", "false");
             } else {
                 panelBox.classList.remove("is-expanded");
-                 if(contentEl) {
-                    contentEl.style.maxHeight = '0'; contentEl.style.opacity = '0';
-                    contentEl.style.paddingTop = '0'; contentEl.style.paddingBottom = '0';
-                 }
+                if (contentEl) {
+                    contentEl.style.maxHeight = '0';
+                    contentEl.style.opacity = '0';
+                    contentEl.style.paddingTop = '0';
+                    contentEl.style.paddingBottom = '0';
+                }
                 header.setAttribute("aria-expanded", "false");
                 if (contentEl) contentEl.setAttribute("aria-hidden", "true");
             }
 
-            // Determine visibility based on indicator_key from game state
-            const gameStateIndicators = getLastKnownGameStateIndicators(); // From state.js
+            const gameStateIndicators = getLastKnownGameStateIndicators();
             const indicatorKey = panelConfig.indicator_key;
-            let shouldBeVisible = false;
-            if (indicatorKey && gameStateIndicators && gameStateIndicators[indicatorKey] === true) {
-                 shouldBeVisible = true;
-            }
+            const shouldBeVisible = !!(indicatorKey && gameStateIndicators && gameStateIndicators[indicatorKey] === true);
 
             if (shouldBeVisible) {
-                 panelBox.style.display = "flex";
-                 panelBox.style.opacity = "1";
-                 // If it should be visible AND expanded, call animate (handles already expanded case gracefully)
-                 if (initialExpandState) {
-                     animatePanelExpansion(panelConfig.id, true, true, isRestoringStateForAnimate);
-                 }
+                panelBox.style.display = "flex";
+                panelBox.style.opacity = "1";
+                if (initialExpandState) {
+                    animatePanelExpansion(panelConfig.id, true, true, true);
+                }
             } else {
-                 panelBox.style.display = "none";
-                 panelBox.style.opacity = "0";
+                panelBox.style.display = "none";
+                panelBox.style.opacity = "0";
             }
-        } else { // Standard collapsible
-            panelBox.style.display = "flex"; panelBox.style.opacity = "1";
+        } else {
+            panelBox.style.display = "flex";
+            panelBox.style.opacity = "1";
             const delay = panelConfig.boot_delay && !isRestoringThisPanelSpecificSavedState ? panelConfig.boot_delay : 0;
             setTimeout(() => {
-                animatePanelExpansion(panelConfig.id, initialExpandState, false, isRestoringStateForAnimate);
+                animatePanelExpansion(panelConfig.id, initialExpandState, false, true);
             }, delay);
         }
     });
+
     log(LOG_LEVEL_INFO, `Collapsible panel boxes initialized for theme: ${themeId}`);
-    // Initial scroll indicator update after panels are set up
     requestAnimationFrame(() => {
         if (leftPanel && !document.body.classList.contains("landing-page-active")) {
-            _handleSidebarScroll('left'); // Evaluate visibility first
+            _handleSidebarScroll('left');
             updateScrollIndicators('left');
         }
         if (rightPanel && !document.body.classList.contains("landing-page-active")) {
-            _handleSidebarScroll('right'); // Evaluate visibility first
+            _handleSidebarScroll('right');
             updateScrollIndicators('right');
         }
     });
@@ -500,7 +487,7 @@ export function initializeCollapsiblePanelBoxes(themeId) {
  * Animates the expansion or collapse of a panel box and updates scroll tracking.
  * @param {string} panelBoxId - The ID of the panel box element.
  * @param {boolean} shouldExpand - True to expand, false to collapse.
- * @param {boolean} [manageVisibilityViaDisplay=false] - For hidden_until_active, also set display:none.
+ * @param {boolean} [manageVisibilityViaDisplay=false] - For hidden panels, also sets display:none.
  * @param {boolean} [isRestoringState=false] - True if this is part of restoring saved panel states.
  */
 export function animatePanelExpansion(panelBoxId, shouldExpand, manageVisibilityViaDisplay = false, isRestoringState = false) {
@@ -515,70 +502,56 @@ export function animatePanelExpansion(panelBoxId, shouldExpand, manageVisibility
 
     if (shouldExpand) {
         if (manageVisibilityViaDisplay && box.style.display === "none") {
-            box.style.opacity = "0"; // Start transparent if managing display
+            box.style.opacity = "0";
             box.style.display = "flex";
         }
-        // Use requestAnimationFrame to ensure previous style changes (like display:flex) are applied
         requestAnimationFrame(() => {
             box.classList.add("is-expanded");
-            if (manageVisibilityViaDisplay) box.style.opacity = "1"; // Fade in
+            if (manageVisibilityViaDisplay) box.style.opacity = "1";
             header.setAttribute("aria-expanded", "true");
             content.setAttribute("aria-hidden", "false");
-
-            // Set max-height for animation based on current scrollHeight
-            const targetAnimationHeight = content.scrollHeight + "px";
-            content.style.maxHeight = targetAnimationHeight;
+            content.style.maxHeight = content.scrollHeight + "px";
             content.style.opacity = "1";
             content.style.paddingTop = '';
             content.style.paddingBottom = '';
 
-            if (!isRestoringState && !wasExpanded && header.classList.contains('has-recent-update')) {
-                header.classList.remove('has-recent-update');
-            }
-            if (shouldExpand && !isRestoringState && !wasExpanded) {
+            if (!isRestoringState && !wasExpanded) {
+                if (header.classList.contains('has-recent-update')) {
+                    header.classList.remove('has-recent-update');
+                }
                 const itemsInPanel = content.querySelectorAll('.info-item.has-recent-update, .info-item-meter.has-recent-update');
                 itemsInPanel.forEach(itemEl => {
                     const itemId = itemEl.id.replace('info-item-container-', '');
                     if (itemId) {
                         itemEl.classList.remove('has-recent-update');
                         updateDashboardItemMetaEntry(itemId, { hasRecentUpdate: false });
-                        log(LOG_LEVEL_DEBUG, `Cleared 'has-recent-update' (dot) for item ${itemId} in panel ${panelBoxId} due to panel expansion.`);
+                        log(LOG_LEVEL_DEBUG, `Cleared 'has-recent-update' for item ${itemId} in panel ${panelBoxId}.`);
                     }
                 });
             }
 
-            const panelSide = leftPanel && leftPanel.contains(box) ? 'left' : (rightPanel && rightPanel.contains(box) ? 'right' : null);
-
-                const onExpansionTransitionEnd = (event) => {
-                    if (event.target === content && event.propertyName === 'max-height') {
-                        content.removeEventListener("transitionend", onExpansionTransitionEnd);
-                        if (!document.body.classList.contains("landing-page-active")) {
-                            content.style.maxHeight = ''; // Allow natural height after animation
-                        }
-                        if (panelSide) {
-                            // Check items within this panel if they were tracked for scroll indicators
-                            _handleSidebarScroll(panelSide);
-                        }
-                    }
-                };
-                content.addEventListener("transitionend", onExpansionTransitionEnd);
-
-                // Fallback to ensure maxHeight is cleared if transitionend doesn't fire correctly
-                const transitionDurationMs = parseFloat(getComputedStyle(content).transitionDuration) * 1000 || 300;
-                setTimeout(() => {
-                    if (box.classList.contains("is-expanded") &&
-                        !document.body.classList.contains("landing-page-active") &&
-                        content.style.maxHeight !== '' // Check if it's still set to a pixel value
-                    ) {
+            const panelSide = leftPanel?.contains(box) ? 'left' : (rightPanel?.contains(box) ? 'right' : null);
+            const onExpansionTransitionEnd = (event) => {
+                if (event.target === content && event.propertyName === 'max-height') {
+                    content.removeEventListener("transitionend", onExpansionTransitionEnd);
+                    if (!document.body.classList.contains("landing-page-active")) {
                         content.style.maxHeight = '';
                     }
-                    content.removeEventListener("transitionend", onExpansionTransitionEnd); // Clean up listener
-                    if (panelSide) {
-                        _handleSidebarScroll(panelSide); // Re-evaluate scroll state
-                    }
-                }, transitionDurationMs + 100);
+                    if (panelSide) _handleSidebarScroll(panelSide);
+                }
+            };
+            content.addEventListener("transitionend", onExpansionTransitionEnd);
 
+            const transitionDurationMs = parseFloat(getComputedStyle(content).transitionDuration) * 1000 || 300;
+            setTimeout(() => {
+                if (box.classList.contains("is-expanded") && !document.body.classList.contains("landing-page-active") && content.style.maxHeight !== '') {
+                    content.style.maxHeight = '';
+                }
+                content.removeEventListener("transitionend", onExpansionTransitionEnd);
                 if (panelSide) _handleSidebarScroll(panelSide);
+            }, transitionDurationMs + 100);
+
+            if (panelSide) _handleSidebarScroll(panelSide);
         });
     } else { // Collapse
         box.classList.remove("is-expanded");
@@ -599,13 +572,12 @@ export function animatePanelExpansion(panelBoxId, shouldExpand, manageVisibility
             content.addEventListener("transitionend", onTransitionEnd);
             const duration = parseFloat(getComputedStyle(content).transitionDuration) * 1000 || 300;
             setTimeout(() => {
-                 if (!box.classList.contains("is-expanded")) box.style.display = "none";
+                if (!box.classList.contains("is-expanded")) box.style.display = "none";
             }, duration + 50);
         }
 
-        const panelSide = leftPanel && leftPanel.contains(box) ? 'left' : (rightPanel && rightPanel.contains(box) ? 'right' : null);
+        const panelSide = leftPanel?.contains(box) ? 'left' : (rightPanel?.contains(box) ? 'right' : null);
         if (panelSide) {
-            // If collapsing, remove all its items from scroll tracking
             const itemsInPanel = box.querySelectorAll('.info-item, .info-item-meter');
             itemsInPanel.forEach(itemEl => {
                 if (itemEl.id) {
@@ -613,15 +585,14 @@ export function animatePanelExpansion(panelBoxId, shouldExpand, manageVisibility
                     _recentlyChangedOutOfViewItems[panelSide].down.delete(itemEl.id);
                 }
             });
-            updateScrollIndicators(panelSide); // Update indicators as items are no longer relevant
+            updateScrollIndicators(panelSide);
         }
     }
+
     if (!isRestoringState) {
         setPanelState(panelBoxId, shouldExpand);
     }
 }
-
-// --- Dashboard Item Updates ---
 
 /**
  * Updates a specific dashboard item's display.
@@ -634,18 +605,17 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
         log(LOG_LEVEL_DEBUG, `Skipping dashboard update for item '${itemId}' due to empty/null value.`);
         return;
     }
+
     const currentThemeId = getCurrentTheme();
     if (!currentThemeId) return;
 
     const themeConfigFull = getThemeConfig(currentThemeId);
-    if (!themeConfigFull || !themeConfigFull.dashboard_config) return;
+    if (!themeConfigFull?.dashboard_config) return;
 
-    // Combine items from all panels (top, left, right)
     const sidePanelItems = [...(themeConfigFull.dashboard_config.left_panel || []), ...(themeConfigFull.dashboard_config.right_panel || [])]
         .flatMap(panel => panel.items);
     const topPanelItems = themeConfigFull.dashboard_config.top_panel || [];
     const allItemConfigs = [...topPanelItems, ...sidePanelItems];
-
     const itemConfig = allItemConfigs.find(item => item.id === itemId);
 
     if (!itemConfig) {
@@ -653,44 +623,30 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
         return;
     }
 
-    // Persist this update to the central state object that gets saved.
-    // This happens first so the raw value from the AI is always available to other functions.
     setLastKnownDashboardUpdates({ [itemId]: newValue });
 
     const isTopPanelItem = topPanelItems.some(item => item.id === itemId);
     if (isTopPanelItem) {
-        // For top panel items, just update the run stat in the central state.
-        // The characterPanelManager is responsible for reading this state and updating the UI.
         if (itemConfig.maps_to_run_stat) {
             const parsedValue = parseInt(String(newValue), 10);
             if (!isNaN(parsedValue)) {
                 if (itemConfig.type === 'meter') {
-                    // Meter values from AI are percentages (e.g., "90"). Convert to absolute values.
-                    let maxVal;
+                    let maxVal = 100;
                     if (itemConfig.maps_to_run_stat === 'currentIntegrity') maxVal = getEffectiveMaxIntegrity();
                     else if (itemConfig.maps_to_run_stat === 'currentWillpower') maxVal = getEffectiveMaxWillpower();
-                    else maxVal = 100; // Fallback for other meters if any
 
-                    let absoluteValue = Math.round((parsedValue / 100) * maxVal);
-
-                    // --- FIX: Clamp the value to not exceed the maximum ---
-                    if (absoluteValue > maxVal) {
-                        log(LOG_LEVEL_WARN, `AI provided value for ${itemConfig.maps_to_run_stat} (${absoluteValue}) exceeds maximum (${maxVal}). Clamping.`);
-                        absoluteValue = maxVal;
-                    }
-
+                    let absoluteValue = Math.min(Math.round((parsedValue / 100) * maxVal), maxVal);
                     updateCurrentRunStat(itemConfig.maps_to_run_stat, absoluteValue);
                     log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to absolute value ${absoluteValue} from top panel update.`);
-                } else { // 'number' or 'status_icon' types have absolute values
+                } else {
                     updateCurrentRunStat(itemConfig.maps_to_run_stat, parsedValue);
                     log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to ${parsedValue} from top panel update.`);
                 }
             }
         }
-        return; // UI for top panel is handled by characterPanelManager, so we are done here.
+        return; // UI is handled by characterPanelManager
     }
 
-    // --- Logic for side panel items continues below ---
     const valueElement = document.getElementById(`info-${itemId}`);
     const meterBarElement = document.getElementById(`meter-${itemId}`);
     const itemContainer = document.getElementById(`info-item-container-${itemId}`);
@@ -714,31 +670,27 @@ export function updateDashboardItem(itemId, newValue, highlight = true) {
             }
         }
     } else if (itemConfig.type === "status_text" && valueElement) {
-         if (valueElement.textContent !== String(newValue)) {
+        if (valueElement.textContent !== String(newValue)) {
             valueElement.textContent = String(newValue);
             if (highlight && itemContainer && !itemConfig.meter_type) {
-                 highlightElementUpdate(itemContainer);
+                highlightElementUpdate(itemContainer);
             }
         }
     }
 
-    // If an item inside a collapsible panel is updated, ensure the panel expands.
     if (itemContainer && highlight) {
         const parentPanelBox = itemContainer.closest('.panel-box');
-        if (parentPanelBox && parentPanelBox.classList.contains('collapsible')) {
-            if (!parentPanelBox.classList.contains('is-expanded')) {
-                log(LOG_LEVEL_DEBUG, `Item ${itemId} updated in collapsed panel ${parentPanelBox.id}. Auto-expanding.`);
-                animatePanelExpansion(parentPanelBox.id, true, false, false);
-            }
+        if (parentPanelBox?.classList.contains('collapsible') && !parentPanelBox.classList.contains('is-expanded')) {
+            log(LOG_LEVEL_DEBUG, `Item ${itemId} updated in collapsed panel ${parentPanelBox.id}. Auto-expanding.`);
+            animatePanelExpansion(parentPanelBox.id, true, false, false);
         }
-        if (parentPanelBox && parentPanelBox.classList.contains('is-expanded') && !document.body.classList.contains("landing-page-active")) {
+        if (parentPanelBox?.classList.contains('is-expanded') && !document.body.classList.contains("landing-page-active")) {
             const panelSide = leftPanel.contains(itemContainer) ? 'left' : (rightPanel.contains(itemContainer) ? 'right' : null);
-            if (panelSide) {
-                _addChangedItemToScrollTracking(itemContainer, panelSide);
-            }
+            if (panelSide) _addChangedItemToScrollTracking(itemContainer, panelSide);
         }
     }
 }
+
 /**
  * Orchestrates updates for all dashboard items based on AI response.
  * @param {object} updatesFromAI - Object containing key-value pairs of dashboard updates.
@@ -753,12 +705,11 @@ export function updateDashboard(updatesFromAI, highlightChanges = true) {
     log(LOG_LEVEL_DEBUG, "dashboardManager.updateDashboard: Bulk updating dashboard with:", updatesFromAI);
     for (const key in updatesFromAI) {
         if (Object.prototype.hasOwnProperty.call(updatesFromAI, key)) {
-            const value = updatesFromAI[key];
-            // updateDashboardItem will find the item config and apply the update.
-            updateDashboardItem(key, value, highlightChanges);
+            updateDashboardItem(key, updatesFromAI[key], highlightChanges);
         }
     }
 }
+
 /**
  * Sets the value and appearance of a meter bar and its associated text.
  * @param {HTMLElement|null} barEl - The meter bar element.
@@ -766,15 +717,17 @@ export function updateDashboard(updatesFromAI, highlightChanges = true) {
  * @param {string} newPctStr - The new percentage value as a string.
  * @param {object} itemConfig - The configuration object for this meter item.
  * @param {boolean} [highlight=true] - Whether to highlight the update.
- * @param {string} [explicitStatusText] - Explicit status text for meters that have it (e.g., conceptual_cohesion).
+ * @param {string} [explicitStatusText] - Explicit status text for meters that have it.
  */
 export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = true, explicitStatusText = undefined) {
+    if (!barEl && !textEl) return;
+
     let updatedOccurred = false;
     const meterType = itemConfig.meter_type;
-    if (!barEl && !textEl) return;
     let finalPct = 0;
     let newContentForTextEl = "";
     const parsedPct = parseInt(newPctStr, 10);
+
     if (!isNaN(parsedPct)) {
         finalPct = Math.max(0, Math.min(100, parsedPct));
     } else {
@@ -786,25 +739,18 @@ export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = 
             finalPct = (meterType === "shields" || meterType === "conceptual_cohesion" || meterType === "monster_defense" || meterType === "mana") ? 0 : 100;
         }
     }
+
     if (itemConfig.maps_to_run_stat && !isNaN(parsedPct)) {
-        let maxStatValue;
-        if (itemConfig.maps_to_run_stat === 'currentIntegrity') {
-            maxStatValue = getEffectiveMaxIntegrity();
-        } else if (itemConfig.maps_to_run_stat === 'currentWillpower') {
-            maxStatValue = getEffectiveMaxWillpower();
-        }
+        let maxStatValue = 100;
+        if (itemConfig.maps_to_run_stat === 'currentIntegrity') maxStatValue = getEffectiveMaxIntegrity();
+        else if (itemConfig.maps_to_run_stat === 'currentWillpower') maxStatValue = getEffectiveMaxWillpower();
 
         if (maxStatValue !== undefined) {
-            // Calculate absolute value from percentage, clamp it to the max value
-            const calculatedValue = Math.round((finalPct / 100) * maxStatValue);
-            const finalValue = Math.min(calculatedValue, maxStatValue);
-
-            // Update the state with the absolute value
-            updateCurrentRunStat(itemConfig.maps_to_run_stat, finalValue);
-            log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to ${finalValue} (from ${finalPct}% of ${maxStatValue}) via dashboard meter update for item '${itemConfig.id}'.`);
+            const calculatedValue = Math.min(Math.round((finalPct / 100) * maxStatValue), maxStatValue);
+            updateCurrentRunStat(itemConfig.maps_to_run_stat, calculatedValue);
+            log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to ${calculatedValue} via dashboard meter update for item '${itemConfig.id}'.`);
             updatedOccurred = true;
         } else {
-            // Fallback for other stats that might be mapped directly.
             const numericValue = parseInt(newPctStr, 10);
             if (!isNaN(numericValue)) {
                 updateCurrentRunStat(itemConfig.maps_to_run_stat, numericValue);
@@ -813,25 +759,32 @@ export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = 
             }
         }
     }
+
     let statusTextToUse = explicitStatusText;
     if (itemConfig.status_text_id && explicitStatusText === undefined) {
         statusTextToUse = getLastKnownDashboardUpdates()[itemConfig.status_text_id];
     }
-    if (meterType === "shields" || meterType === "conceptual_cohesion" || meterType === "monster_defense" || meterType === "monster_health") {
+
+    const isConceptualMeter = ["shields", "conceptual_cohesion", "monster_defense", "monster_health"].includes(meterType);
+    if (isConceptualMeter) {
         const statusForDisplay = statusTextToUse || (finalPct > 0 ? getUIText("online") : getUIText("offline"));
         newContentForTextEl = `${statusForDisplay}: ${finalPct}%`;
-        if (finalPct === 0 && statusForDisplay.toLowerCase() !== getUIText("offline").toLowerCase() && statusForDisplay.toLowerCase() !== (getUIText(itemConfig.default_status_key, {}, {explicitThemeContext: getCurrentTheme()}) || '').toLowerCase()) {
-             newContentForTextEl = `${getUIText("offline")}: ${finalPct}%`;
+        const offlineText = getUIText("offline").toLowerCase();
+        const defaultText = (getUIText(itemConfig.default_status_key, {}, { explicitThemeContext: getCurrentTheme() }) || '').toLowerCase();
+        if (finalPct === 0 && statusForDisplay.toLowerCase() !== offlineText && statusForDisplay.toLowerCase() !== defaultText) {
+            newContentForTextEl = `${getUIText("offline")}: ${finalPct}%`;
         }
     } else if ((meterType === "mana" || meterType === "stamina") && statusTextToUse) {
         newContentForTextEl = `${statusTextToUse}: ${finalPct}%`;
     } else {
         newContentForTextEl = (newContentForTextEl === "" && !isNaN(parsedPct)) ? `${finalPct}%` : newContentForTextEl || `${finalPct}%`;
     }
+
     if (textEl && textEl.textContent !== newContentForTextEl) {
         textEl.textContent = newContentForTextEl;
         updatedOccurred = true;
     }
+
     if (barEl) {
         if (barEl.style.width !== `${finalPct}%`) {
             barEl.style.width = `${finalPct}%`;
@@ -839,33 +792,30 @@ export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = 
         }
         const currentClasses = Array.from(barEl.classList).filter(cls => cls.startsWith("meter-") && cls !== "meter-bar");
         let newBarClasses = [];
-        const isOfflineStatus = (meterType === "shields" || meterType === "conceptual_cohesion" || meterType === "monster_defense") &&
-                          (statusTextToUse && statusTextToUse.toLowerCase() === getUIText("offline").toLowerCase());
-        if (isOfflineStatus || newContentForTextEl === getUIText("not_available_short") || newContentForTextEl === getUIText("unknown") || newContentForTextEl === "---") {
+        const isOfflineStatus = isConceptualMeter && (statusTextToUse && statusTextToUse.toLowerCase() === getUIText("offline").toLowerCase());
+
+        if (isOfflineStatus || ["---", getUIText("not_available_short"), getUIText("unknown")].includes(newContentForTextEl)) {
             newBarClasses.push("meter-offline");
         } else {
             if (finalPct <= 10) newBarClasses.push("meter-critical");
             else if (finalPct <= 25) newBarClasses.push("meter-low");
             else if (finalPct <= 50) newBarClasses.push("meter-medium");
-            else {
-                newBarClasses.push("meter-full");
-                if (meterType === "health") newBarClasses.push("meter-ok-health");
-                else if (meterType === "shields" || itemConfig.meter_type === "enemy_shields") newBarClasses.push("meter-ok-shield");
-                else if (meterType === "fuel") newBarClasses.push("meter-ok-fuel");
-                else if (meterType === "stamina") newBarClasses.push("meter-ok-stamina");
-                else if (meterType === "mana") newBarClasses.push("meter-ok-mana");
+            else newBarClasses.push("meter-full");
+
+            if (finalPct > 50) {
+                const meterTypeToClassMap = { health: "meter-ok-health", shields: "meter-ok-shield", fuel: "meter-ok-fuel", stamina: "meter-ok-stamina", mana: "meter-ok-mana" };
+                if (meterTypeToClassMap[meterType]) newBarClasses.push(meterTypeToClassMap[meterType]);
             }
         }
-        let classesChanged = newBarClasses.length !== currentClasses.length || !newBarClasses.every(cls => currentClasses.includes(cls));
-        if (classesChanged) {
+        if (newBarClasses.length !== currentClasses.length || !newBarClasses.every(cls => currentClasses.includes(cls))) {
             currentClasses.forEach(cls => barEl.classList.remove(cls));
             newBarClasses.forEach(cls => barEl.classList.add(cls));
             updatedOccurred = true;
         }
-        if (!barEl.classList.contains("meter-bar")) barEl.classList.add("meter-bar");
     }
+
     if (updatedOccurred && highlight) {
-        const container = textEl ? textEl.closest(".info-item, .info-item-meter") : (barEl ? barEl.closest(".info-item, .info-item-meter") : null);
+        const container = textEl?.closest(".info-item, .info-item-meter") || barEl?.closest(".info-item, .info-item-meter");
         if (container) highlightElementUpdate(container);
     }
 }
@@ -874,31 +824,30 @@ export function setMeterValue(barEl, textEl, newPctStr, itemConfig, highlight = 
  * Updates the display of a status level item (e.g., threat level, blight exposure).
  * @param {HTMLElement} valueElement - The element displaying the status text.
  * @param {string} newValue - The new level value (e.g., "1", "2", "high", "low").
- * @param {object} levelMappingsConfig - The theme's config for level_mappings for this item.
+ * @param {object} itemConfig - The configuration for this item.
  * @param {string} themeId - The current theme ID for localization.
  * @param {boolean} [highlight=true] - Whether to visually highlight the update.
  */
 export function updateStatusLevelDisplay(valueElement, newValue, itemConfig, themeId, highlight = true) {
-    if (!valueElement || !itemConfig || !itemConfig.level_mappings) return;
-    const levelMappingsConfig = itemConfig.level_mappings;
-    const levelConfig = levelMappingsConfig[String(newValue)]; // Ensure newValue is string for key lookup
-    let updatedOccurred = false;
+    if (!valueElement || !itemConfig?.level_mappings) return;
 
+    let updatedOccurred = false;
     if (itemConfig.maps_to_run_stat) {
         const numericValue = parseInt(newValue, 10);
         if (!isNaN(numericValue)) {
-            state.updateCurrentRunStat(itemConfig.maps_to_run_stat, numericValue);
+            updateCurrentRunStat(itemConfig.maps_to_run_stat, numericValue);
             log(LOG_LEVEL_DEBUG, `Updated run stat '${itemConfig.maps_to_run_stat}' to ${numericValue} via dashboard status_level update for item '${itemConfig.id}'.`);
             updatedOccurred = true;
         }
     }
 
-    if (levelConfig && levelConfig.display_text_key) {
+    const levelConfig = itemConfig.level_mappings[String(newValue)];
+    if (levelConfig?.display_text_key) {
         const newDisplayText = getUIText(levelConfig.display_text_key, {}, { explicitThemeContext: themeId, viewContext: 'game' });
         const newCssClass = levelConfig.css_class || "status-info";
         if (valueElement.textContent !== newDisplayText || !valueElement.classList.contains(newCssClass)) {
             valueElement.textContent = newDisplayText;
-            Object.values(levelMappingsConfig).forEach(mapping => {
+            Object.values(itemConfig.level_mappings).forEach(mapping => {
                 if (mapping.css_class) valueElement.classList.remove(mapping.css_class);
             });
             valueElement.classList.add(newCssClass);
@@ -909,12 +858,12 @@ export function updateStatusLevelDisplay(valueElement, newValue, itemConfig, the
             valueElement.textContent = getUIText("unknown");
             updatedOccurred = true;
         }
-        Object.values(levelMappingsConfig).forEach(mapping => {
+        Object.values(itemConfig.level_mappings).forEach(mapping => {
             if (mapping.css_class) valueElement.classList.remove(mapping.css_class);
         });
         if (!valueElement.classList.contains("status-info")) {
-             valueElement.classList.add("status-info");
-             updatedOccurred = true;
+            valueElement.classList.add("status-info");
+            updatedOccurred = true;
         }
         log(LOG_LEVEL_WARN, `Status level mapping not found for value "${newValue}" in theme "${themeId}" for item "${itemConfig.id}".`);
     }
@@ -925,8 +874,6 @@ export function updateStatusLevelDisplay(valueElement, newValue, itemConfig, the
     }
 }
 
-// --- Scroll Indicators ---
-
 /**
  * Updates the visibility of scroll indicators for a given panel side based on recently changed items.
  * @param {'left' | 'right'} panelSide - The side of the panel.
@@ -936,29 +883,22 @@ export function updateScrollIndicators(panelSide) {
     const upIndicator = panelSide === 'left' ? leftPanelScrollIndicatorUp : rightPanelScrollIndicatorUp;
     const downIndicator = panelSide === 'left' ? leftPanelScrollIndicatorDown : rightPanelScrollIndicatorDown;
 
-    if (!panelElement) {
-        log(LOG_LEVEL_DEBUG, `Panel element for ${panelSide} side not found. Cannot update scroll indicators.`);
+    if (!panelElement || !upIndicator || !downIndicator) {
+        log(LOG_LEVEL_DEBUG, `Panel elements for ${panelSide} side not found. Cannot update scroll indicators.`);
         if (upIndicator) upIndicator.style.display = 'none';
         if (downIndicator) downIndicator.style.display = 'none';
         return;
     }
 
     if (document.body.classList.contains("landing-page-active")) {
-        if (upIndicator) upIndicator.style.display = 'none';
-        if (downIndicator) downIndicator.style.display = 'none';
-        return;
-    }
-
-    // Ensure indicators exist before trying to use them
-    if (!upIndicator || !downIndicator) {
-        log(LOG_LEVEL_WARN, `Scroll indicators for ${panelSide} panel not found in DOM. Cannot display indicators.`);
+        upIndicator.style.display = 'none';
+        downIndicator.style.display = 'none';
         return;
     }
 
     const isScrollable = panelElement.scrollHeight > panelElement.clientHeight + SCROLL_INDICATOR_TOLERANCE;
     const showUpForChange = _recentlyChangedOutOfViewItems[panelSide].up.size > 0;
     const showDownForChange = _recentlyChangedOutOfViewItems[panelSide].down.size > 0;
-
     const canScrollUp = panelElement.scrollTop > SCROLL_INDICATOR_TOLERANCE;
     const canScrollDown = panelElement.scrollHeight > panelElement.scrollTop + panelElement.clientHeight + SCROLL_INDICATOR_TOLERANCE;
 
@@ -970,7 +910,7 @@ export function updateScrollIndicators(panelSide) {
 
 /**
  * Clears all tracked recently changed items for scroll indicators.
- * Typically called when the view changes significantly (e.g., theme switch, to landing).
+ * Typically called when the view changes significantly (e.g., theme switch).
  */
 export function clearAllChangedItemScrollTracking() {
     _recentlyChangedOutOfViewItems.left.up.clear();
@@ -984,13 +924,10 @@ export function clearAllChangedItemScrollTracking() {
 
 /**
  * Resets the entire dashboard UI for a given theme.
- * This involves clearing old panels, scroll tracking, and generating/initializing new panels.
  * @param {string} themeId - The ID of the theme to set up the dashboard for.
  */
 export function resetDashboardUI(themeId) {
     log(LOG_LEVEL_INFO, `Resetting dashboard UI for theme: ${themeId}`);
-
-    // 1. Clear existing game-specific panel DOM elements
     [leftPanel, rightPanel].forEach(panelContainer => {
         if (panelContainer) {
             Array.from(panelContainer.querySelectorAll('.panel-box'))
@@ -999,15 +936,9 @@ export function resetDashboardUI(themeId) {
             log(LOG_LEVEL_DEBUG, `Cleared game-specific panels from ${panelContainer.id}`);
         }
     });
-
-    // 2. Reset internal scroll tracking state
     clearAllChangedItemScrollTracking();
-
     log(LOG_LEVEL_DEBUG, "Dashboard scroll tracking state reset.");
-
-    // 3. Generate the new panel structure, initialize default texts, and setup collapsible behavior.
     generatePanelsForTheme(themeId);
-
     log(LOG_LEVEL_INFO, `Dashboard UI reset and re-initialized for theme: ${themeId}`);
 }
 
@@ -1016,37 +947,30 @@ export function resetDashboardUI(themeId) {
  * @returns {object} The last known dashboard updates object.
  */
 export function getLastKnownDashboardUpdatesForTranslationsReapply() {
-    // This should ideally get it from state.js to ensure consistency.
-    // Assuming state.js exports getLastKnownDashboardUpdates()
     return getLastKnownDashboardUpdates();
 }
 
 /**
  * Applies persisted dashboard item metadata (e.g., 'has-recent-update' dots) to the UI.
- * This is typically called after the dashboard is generated, when resuming a game.
+ * This is typically called after the dashboard is generated when resuming a game.
  */
 export function applyPersistedItemMeta() {
-    const itemMetaState = getDashboardItemMeta(); // Renamed from itemMeta to avoid conflict
+    const itemMetaState = getDashboardItemMeta();
     if (!itemMetaState || Object.keys(itemMetaState).length === 0) {
         log(LOG_LEVEL_DEBUG, "No persisted dashboard item metadata to apply.");
         return;
     }
-
     log(LOG_LEVEL_INFO, "Applying persisted dashboard item metadata to UI elements.");
     for (const itemId in itemMetaState) {
         if (Object.prototype.hasOwnProperty.call(itemMetaState, itemId)) {
             const meta = itemMetaState[itemId];
             const itemContainer = document.getElementById(`info-item-container-${itemId}`);
-
             if (itemContainer) {
-                if (meta && meta.hasRecentUpdate === true) {
+                if (meta?.hasRecentUpdate === true) {
                     itemContainer.classList.add('has-recent-update');
                     log(LOG_LEVEL_DEBUG, `Applied 'has-recent-update' to item: ${itemId}`);
                 } else {
-                    // Ensure the class is removed if state says it shouldn't be there
-                    // This handles cases where UI might be out of sync before this function runs
                     itemContainer.classList.remove('has-recent-update');
-                    // No log needed for removal unless debugging specific issues with dots not clearing
                 }
             } else {
                 log(LOG_LEVEL_WARN, `Item container 'info-item-container-${itemId}' not found in DOM. Cannot apply persisted meta.`);
@@ -1057,7 +981,6 @@ export function applyPersistedItemMeta() {
 
 /**
  * Clears the 'has-recent-update' class (visual dot) from all dashboard item DOM elements.
- * This is typically called before applying new updates for a turn.
  */
 export function clearAllDashboardItemDotClasses() {
     const allItems = document.querySelectorAll('.info-item.has-recent-update, .info-item-meter.has-recent-update');

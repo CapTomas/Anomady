@@ -179,6 +179,18 @@ export const globalTextData = {
       "alert_confirmation_email_resent_message": "A new confirmation email has been sent to your address. Please check your inbox.",
       "modal_title_email_not_confirmed": "Email Not Confirmed",
       "message_email_not_confirmed_instruction": "Your email address {USER_EMAIL} is not yet confirmed. Please check your inbox (and spam folder) for the confirmation link, or click the button below to resend it.",
+      // --- Registration-specific Preferences ---
+      "label_story_preference": "What kind of stories call to you?",
+      "option_story_preference_default": "Select a preference...",
+      "option_story_preference_explorer": "The Explorer",
+      "option_story_preference_strategist": "The Strategist",
+      "option_story_preference_weaver": "The Weaver",
+      "option_story_preference_chaos": "The Agent of Chaos",
+      "desc_story_preference_explorer": "I seek to uncover forgotten lore, chart the unknown, and understand the deep truths of a world.",
+      "desc_story_preference_strategist": "I thrive on challenge, overcoming complex obstacles through clever tactics and careful planning.",
+      "desc_story_preference_weaver": "I am drawn to character-driven stories, intricate relationships, and emotional depth.",
+      "desc_story_preference_chaos": "I enjoy absurd situations, unpredictable outcomes, and poking things just to see what happens.",
+      "label_newsletter_opt_in": "I would like to receive news and updates via email.",
       // --- World Fragments (Shards) ---
       "tooltip_shaped_world": "This world has been shaped by your actions ({ACTIVE_SHARDS} active fragments).",
       "button_configure_shards": "Configure World Fragments",
@@ -450,6 +462,18 @@ export const globalTextData = {
       "alert_confirmation_email_resent_message": "Na vaši adresu byl odeslán nový potvrzovací e-mail. Zkontrolujte prosím svou schránku.",
       "modal_title_email_not_confirmed": "E-mail Není Potvrzen",
       "message_email_not_confirmed_instruction": "Vaše e-mailová adresa {USER_EMAIL} ještě není potvrzena. Zkontrolujte prosím svou doručenou poštu (i složku se spamem) pro potvrzovací odkaz, nebo klikněte na tlačítko níže pro jeho opětovné zaslání.",
+      // --- Registration-specific Preferences ---
+      "label_story_preference": "Jaké příběhy vás lákají?",
+      "option_story_preference_default": "Zvolte preferenci...",
+      "option_story_preference_explorer": "Průzkumník",
+      "option_story_preference_strategist": "Stratég",
+      "option_story_preference_weaver": "Vypravěč",
+      "option_story_preference_chaos": "Agent Chaosu",
+      "desc_story_preference_explorer": "Chci odhalovat zapomenuté dějiny, mapovat neznámo a chápat hluboké pravdy světa.",
+      "desc_story_preference_strategist": "Vyžívám se ve výzvách, překonávám složité překážky pomocí chytré taktiky a pečlivého plánování.",
+      "desc_story_preference_weaver": "Přitahují mě příběhy zaměřené na postavy, spletité vztahy a emocionální hloubku.",
+      "desc_story_preference_chaos": "Baví mě absurdní situace, nepředvídatelné výsledky a šťouchání do věcí jen tak, abych viděl, co se stane.",
+      "label_newsletter_opt_in": "Chci dostávat novinky a aktualizace e-mailem.",
       // --- World Fragments (Shards) ---
       "tooltip_shaped_world": "Tento svět byl utvářen tvými činy ({ACTIVE_SHARDS} aktivních fragmentů).",
       "button_configure_shards": "Nastavit fragmenty světa",
@@ -568,17 +592,6 @@ export const globalTextData = {
       "alert_select_theme_first": "Please select a theme scenario from the grid first.",
       "aria_label_like_theme": "Add to Favorites",
       "aria_label_unlike_theme": "Remove from Favorites",
-      "label_story_preference": "What kind of stories call to you?",
-      "option_story_preference_default": "Select a preference...",
-      "option_story_preference_explorer": "The Explorer",
-      "option_story_preference_strategist": "The Strategist",
-      "option_story_preference_weaver": "The Weaver",
-      "option_story_preference_chaos": "The Agent of Chaos",
-      "desc_story_preference_explorer": "I seek to uncover forgotten lore, chart the unknown, and understand the deep truths of a world.",
-      "desc_story_preference_strategist": "I thrive on challenge, overcoming complex obstacles through clever tactics and careful planning.",
-      "desc_story_preference_weaver": "I am drawn to character-driven stories, intricate relationships, and emotional depth.",
-      "desc_story_preference_chaos": "I enjoy absurd situations, unpredictable outcomes, and poking things just to see what happens.",
-      "label_newsletter_opt_in": "I would like to receive news and updates via email."
     },
     cs: {
       "toggle_language": "English",
@@ -594,17 +607,6 @@ export const globalTextData = {
       "alert_select_theme_first": "Prosím, nejprve vyberte tématický scénář z mřížky.",
       "aria_label_like_theme": "Přidat k oblíbeným",
       "aria_label_unlike_theme": "Odebrat z oblíbených",
-      "label_story_preference": "Jaké příběhy vás lákají?",
-      "option_story_preference_default": "Zvolte preferenci...",
-      "option_story_preference_explorer": "Průzkumník",
-      "option_story_preference_strategist": "Stratég",
-      "option_story_preference_weaver": "Vypravěč",
-      "option_story_preference_chaos": "Agent Chaosu",
-      "desc_story_preference_explorer": "Chci odhalovat zapomenuté dějiny, mapovat neznámo a chápat hluboké pravdy světa.",
-      "desc_story_preference_strategist": "Vyžívám se ve výzvách, překonávám složité překážky pomocí chytré taktiky a pečlivého plánování.",
-      "desc_story_preference_weaver": "Přitahují mě příběhy zaměřené na postavy, spletité vztahy a emocionální hloubku.",
-      "desc_story_preference_chaos": "Baví mě absurdní situace, nepředvídatelné výsledky a šťouchání do věcí jen tak, abych viděl, co se stane.",
-      "label_newsletter_opt_in": "Chci dostávat novinky a aktualizace e-mailem."
     }
   }
 };

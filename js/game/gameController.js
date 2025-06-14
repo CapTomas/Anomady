@@ -715,43 +715,39 @@ async function _setupNewGameEnvironment(themeId) {
     log(LOG_LEVEL_INFO, `Setting up new game environment for theme: ${themeId}.`);
     state.setIsRunActive(true);
     state.setCurrentTheme(themeId);
-
     const dataLoaded = await themeService.ensureThemeDataLoaded(themeId);
     if (!dataLoaded) {
         modalManager.showCustomModal({ type: "alert", titleKey: "alert_title_error", messageKey: "error_theme_data_load_failed", replacements: { THEME_ID: themeId } });
         await switchToLanding();
         return;
     }
-
     // Preload all necessary text files and data
     await Promise.all([
         themeService.getAllPromptsForTheme(themeId),
         themeService.getAllPromptsForTheme("master"),
         themeService.fetchAndCachePromptFile(themeId, 'traits')
     ]);
-
     state.clearVolatileGameState();
     state.setIsInitialGameLoad(true);
     state.setCurrentPromptType("initial");
-
     storyLogManager.clearStoryLogDOM();
+    if (!state.getCurrentUser()) {
+        storyLogManager.addMessageToLog(localizationService.getUIText("system_anonymous_progress_warning"), "system system-warning");
+    }
     suggestedActionsManager.clearSuggestedActions();
     dashboardManager.resetDashboardUI(themeId);
     characterPanelManager.buildCharacterPanel(themeId);
-
     await _loadOrCreateUserThemeProgress(themeId);
     await _initializeCurrentRunStats();
     await _equipStartingGear(themeId);
-
     characterPanelManager.updateCharacterPanel(false);
     characterPanelManager.showCharacterPanel(true);
     characterPanelManager.showXPBar(true);
     landingPageManager.switchToGameView(themeId);
-
+    uiUtils.updatePlayerActionInputMaxLength();
     if (_userThemeControlsManagerRef) {
         await _userThemeControlsManagerRef.setThemeAsPlaying(themeId);
     }
-
     const progress = state.getCurrentUserThemeProgress();
     if (progress?.characterName) {
         log(LOG_LEVEL_INFO, `Found existing character name '${progress.characterName}'. Starting game.`);
@@ -775,7 +771,6 @@ async function _setupNewGameEnvironment(themeId) {
         state.setPlayerIdentifier(defaultName);
         characterPanelManager.updateCharacterPanel(false);
         state.setPlayerIdentifier("");
-
         if (dom.nameInputSection) dom.nameInputSection.style.display = "flex";
         if (dom.actionInputSection) dom.actionInputSection.style.display = "none";
         if (dom.playerIdentifierInput) {
@@ -1050,25 +1045,21 @@ export async function resumeGameSession(themeId) {
         modalManager.showCustomModal({ type: "alert", titleKey: "alert_title_error", messageKey: "error_theme_data_load_failed", replacements: { THEME_ID: themeId } });
         return switchToLanding();
     }
-
     await Promise.all([
         themeService.getAllPromptsForTheme(themeId),
         themeService.getAllPromptsForTheme("master"),
         themeService.fetchAndCachePromptFile(themeId, 'traits')
     ]);
-
     landingPageManager.switchToGameView(themeId);
+    uiUtils.updatePlayerActionInputMaxLength();
     dashboardManager.generatePanelsForTheme(themeId);
     characterPanelManager.buildCharacterPanel(themeId);
-
     const currentUser = state.getCurrentUser();
     if (!currentUser?.token) {
         return initiateNewGameSessionFlow(themeId, true);
     }
-
     try {
         const loadedData = await apiService.loadGameState(currentUser.token, themeId);
-
         // Rehydrate State
         state.setCurrentUserThemeProgress(loadedData.userThemeProgress || null);
         await _loadOrCreateUserThemeProgress(themeId);
@@ -1089,7 +1080,6 @@ export async function resumeGameSession(themeId) {
         state.setLastKnownEvolvedWorldLore(loadedData.game_history_lore || await themeService.getResolvedBaseThemeLore(themeId, state.getCurrentNarrativeLanguage()));
         state.setIsBoonSelectionPending(!!loadedData.is_boon_selection_pending);
         state.setIsInitialGameLoad(false);
-
         // Repopulate UI
         storyLogManager.clearStoryLogDOM();
         state.getGameHistory().forEach(turn => {
@@ -1108,14 +1098,12 @@ export async function resumeGameSession(themeId) {
         handleGameStateIndicatorsChange(state.getLastKnownGameStateIndicators(), true);
         if (dom.nameInputSection) dom.nameInputSection.style.display = "none";
         if (dom.actionInputSection) dom.actionInputSection.style.display = "flex";
-
         if (state.getIsBoonSelectionPending()) {
             _presentPrimaryBoonChoices();
         } else {
             suggestedActionsManager.displaySuggestedActions(state.getCurrentSuggestedActions());
             if (dom.playerActionInput) dom.playerActionInput.focus();
         }
-
         log(LOG_LEVEL_INFO, `Session resumed for theme ${themeId}.`);
     } catch (error) {
         if (error.code === 'GAME_STATE_NOT_FOUND') {

@@ -6,14 +6,13 @@ import fetch from 'node-fetch';
 import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
-
 import logger from './utils/logger.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import gameStateRoutes from './routes/gamestates.js';
 import themeInteractionRoutes from './routes/themeInteractions.js';
 import worldShardRoutes from './routes/worldShards.js';
-import { protect } from './middleware/authMiddleware.js';
+import { protect, authenticateOptionally } from './middleware/authMiddleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,8 +34,8 @@ const corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200,
 };
-app.use(cors(corsOptions));
 
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -68,7 +67,6 @@ const rateLimitMiddleware = (req, res, next) => {
   if (!req.path.startsWith('/api/')) {
     return next();
   }
-
   const clientId = req.ip;
   const now = Date.now();
   const windowStart = now - rateLimitConfig.windowMs;
@@ -87,9 +85,9 @@ const rateLimitMiddleware = (req, res, next) => {
   res.setHeader('X-RateLimit-Limit', rateLimitConfig.max);
   res.setHeader('X-RateLimit-Remaining', Math.max(0, rateLimitConfig.max - clientTimestamps.length));
   res.setHeader('X-RateLimit-Reset', Math.ceil((windowStart + rateLimitConfig.windowMs) / 1000));
-
   next();
 };
+
 app.use(rateLimitMiddleware);
 
 app.use(express.static(path.join(__dirname, '..'), {
@@ -99,7 +97,6 @@ app.use(express.static(path.join(__dirname, '..'), {
 }));
 
 logger.info('Setting up API routes...');
-
 app.get('/api/health', (req, res) => {
   const healthCheck = {
     uptime: process.uptime(),
@@ -110,7 +107,6 @@ app.get('/api/health', (req, res) => {
   logger.debug('Health check requested');
   res.status(200).json(healthCheck);
 });
-
 app.get('/api/test', (req, res) => {
   logger.debug('GET /api/test hit');
   res.json({
@@ -129,6 +125,7 @@ app.get('/api/test', (req, res) => {
  */
 const validateGeminiRequest = (req, res, next) => {
   const { contents } = req.body;
+
   if (!contents) {
     logger.warn('Missing "contents" in request body for /api/v1/gemini/generate');
     return res.status(400).json({
@@ -159,11 +156,13 @@ function mapGeminiError(status, message) {
     500: 'The AI service is temporarily unavailable. Please try again later.',
     503: 'The AI service is currently under maintenance or overloaded.',
   };
+
   return errorMappings[status] || message || 'An unknown error occurred with the AI service.';
 }
 
-app.post('/api/v1/gemini/generate', protect, validateGeminiRequest, async (req, res) => {
-  logger.info(`POST /api/v1/gemini/generate - Request from User ID: ${req.user?.id}, IP: ${req.ip}`);
+app.post('/api/v1/gemini/generate', authenticateOptionally, validateGeminiRequest, async (req, res) => {
+  logger.info(`POST /api/v1/gemini/generate - Request from User ID: ${req.user?.id || 'Anonymous'}, IP: ${req.ip}`);
+
   const geminiApiKey = process.env.GEMINI_API_KEY;
   if (!geminiApiKey) {
     logger.error('GEMINI_API_KEY is not set in environment variables.');
@@ -183,7 +182,7 @@ app.post('/api/v1/gemini/generate', protect, validateGeminiRequest, async (req, 
     ...(systemInstruction && { systemInstruction }),
   };
 
-  logger.debug(`Proxying request to Gemini. Model: ${effectiveModelName}, User: ${req.user?.id}`);
+  logger.debug(`Proxying request to Gemini. Model: ${effectiveModelName}, User: ${req.user?.id || 'Anonymous'}`);
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), process.env.GEMINI_TIMEOUT || 45000);
 
@@ -200,7 +199,7 @@ app.post('/api/v1/gemini/generate', protect, validateGeminiRequest, async (req, 
 
     const googleResponse = await fetch(GOOGLE_API_URL, fetchOptions);
     clearTimeout(timeoutId);
-    logger.debug(`Gemini API response status: ${googleResponse.status} for User ID: ${req.user?.id}`);
+    logger.debug(`Gemini API response status: ${googleResponse.status} for User ID: ${req.user?.id || 'Anonymous'}`);
 
     const responseText = await googleResponse.text();
     let responseData;
@@ -219,7 +218,7 @@ app.post('/api/v1/gemini/generate', protect, validateGeminiRequest, async (req, 
     }
 
     if (!googleResponse.ok) {
-      logger.error(`Error from Gemini API (Status: ${googleResponse.status}) for User ID: ${req.user?.id}:`, responseData);
+      logger.error(`Error from Gemini API (Status: ${googleResponse.status}) for User ID: ${req.user?.id || 'Anonymous'}:`, responseData);
       const mappedErrorMessage = mapGeminiError(googleResponse.status, responseData?.error?.message);
       return res.status(googleResponse.status).json({
         error: {
@@ -231,18 +230,17 @@ app.post('/api/v1/gemini/generate', protect, validateGeminiRequest, async (req, 
     }
 
     if (!responseData.candidates || !Array.isArray(responseData.candidates) || responseData.candidates.length === 0) {
-      logger.warn('Unexpected Gemini response structure (no candidates):', { user: req.user?.id, responseData });
+      logger.warn('Unexpected Gemini response structure (no candidates):', { user: req.user?.id || 'Anonymous', responseData });
       return res.status(502).json({
         error: { message: 'Unexpected response format from AI service (no candidates).', code: 'INVALID_AI_RESPONSE_STRUCTURE' },
       });
     }
-
-    logger.info(`Successfully processed Gemini request for model ${effectiveModelName}, User ID: ${req.user?.id}`);
+    logger.info(`Successfully processed Gemini request for model ${effectiveModelName}, User ID: ${req.user?.id || 'Anonymous'}`);
     res.status(200).json(responseData);
   } catch (error) {
     clearTimeout(timeoutId); // Ensure timeout is cleared on any error
     logger.error('Error calling Gemini API:', {
-      user: req.user?.id,
+      user: req.user?.id || 'Anonymous',
       message: error.message,
       name: error.name,
       stack: process.env.NODE_ENV !== 'production' ? error.stack : undefined,
@@ -315,7 +313,6 @@ process.on('SIGTERM', () => {
     process.exit(0);
   });
 });
-
 process.on('SIGINT', () => {
   logger.info('SIGINT received. Shutting down gracefully...');
   server.close(() => {
@@ -323,11 +320,9 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
-
 process.on('unhandledRejection', (reason, promise) => {
   logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
-
 process.on('uncaughtException', (error) => {
   logger.error('Uncaught Exception. Shutting down application:', error);
   process.exit(1);

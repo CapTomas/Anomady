@@ -7,7 +7,7 @@
 // --- Core ---
 import * as state from './core/state.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG, setLogLevel as setCoreLogLevel } from './core/logger.js';
-import { MAX_PLAYER_ACTION_INPUT_LENGTH, LOG_LEVEL_STORAGE_KEY, DEFAULT_LANGUAGE } from './core/config.js';
+import { LOG_LEVEL_STORAGE_KEY, DEFAULT_LANGUAGE } from './core/config.js';
 
 // --- Services ---
 import * as themeService from './services/themeService.js';
@@ -170,7 +170,6 @@ async function _initializeApp() {
   }
 
   if (dom.sendActionButton && dom.playerActionInput) {
-    dom.playerActionInput.setAttribute('maxlength', MAX_PLAYER_ACTION_INPUT_LENGTH);
     const submitAction = () => gameController.processPlayerAction(dom.playerActionInput.value);
     dom.sendActionButton.addEventListener('click', submitAction);
     dom.playerActionInput.addEventListener('keypress', (e) => {
@@ -182,7 +181,14 @@ async function _initializeApp() {
     dom.playerActionInput.addEventListener('input', uiUtils.handlePlayerActionInput);
     uiUtils.handlePlayerActionInput({ target: dom.playerActionInput });
   }
-
+  if (dom.storyLog) {
+      dom.storyLog.addEventListener('click', (e) => {
+          if (e.target && e.target.id === 'login-from-warning') {
+              e.preventDefault();
+              authUiManager.showLoginModal();
+          }
+      });
+    }
   window.addEventListener('popstate', async (event) => {
     log(LOG_LEVEL_INFO, 'Popstate event detected. Re-evaluating view.', event.state);
     await _handleUrlChangeOrInitialLoad();

@@ -68,5 +68,7 @@ export const MIN_LEVEL_FOR_STORE = 3;
 // --- Game Logic ---
 /** The number of recent turns to include in the AI prompt context window. */
 export const RECENT_INTERACTION_WINDOW_SIZE = 10;
-/** The maximum character length for the player's action input field. */
-export const MAX_PLAYER_ACTION_INPUT_LENGTH = 600;
+/** The maximum character length for an anonymous user's action input. */
+export const ANONYMOUS_PLAYER_ACTION_INPUT_LENGTH = 200;
+/** The maximum character length for a logged-in user's action input. */
+export const LOGGED_IN_PLAYER_ACTION_INPUT_LENGTH = 600;

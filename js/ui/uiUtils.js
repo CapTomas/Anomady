@@ -6,9 +6,10 @@
 // --- IMPORTS ---
 import {
   UPDATE_HIGHLIGHT_DURATION,
-  MAX_PLAYER_ACTION_INPUT_LENGTH,
+  ANONYMOUS_PLAYER_ACTION_INPUT_LENGTH,
+  LOGGED_IN_PLAYER_ACTION_INPUT_LENGTH,
 } from '../core/config.js';
-import { getIsRunActive, updateDashboardItemMetaEntry } from '../core/state.js';
+import { getIsRunActive, updateDashboardItemMetaEntry, getCurrentUser } from '../core/state.js';
 import {
   gmSpecificActivityIndicator,
   systemStatusIndicator,
@@ -155,27 +156,39 @@ export function handlePlayerActionInput(event) {
   const textareaElement = event.target;
   if (!textareaElement || !playerActionCharCounter) return;
 
+  const maxLength = textareaElement.maxLength;
   let currentValue = textareaElement.value;
 
   // Truncate if pasted content exceeds the max length.
-  if (currentValue.length > MAX_PLAYER_ACTION_INPUT_LENGTH) {
-    textareaElement.value = currentValue.slice(0, MAX_PLAYER_ACTION_INPUT_LENGTH);
+  if (currentValue.length > maxLength) {
+    textareaElement.value = currentValue.slice(0, maxLength);
     currentValue = textareaElement.value;
   }
-
   const currentLength = currentValue.length;
-  playerActionCharCounter.textContent = `${currentLength}/${MAX_PLAYER_ACTION_INPUT_LENGTH}`;
-
+  playerActionCharCounter.textContent = `${currentLength}/${maxLength}`;
   // Update counter color based on length.
-  if (currentLength >= MAX_PLAYER_ACTION_INPUT_LENGTH) {
+  if (currentLength >= maxLength) {
     playerActionCharCounter.style.color = 'var(--color-meter-critical)';
-  } else if (currentLength >= MAX_PLAYER_ACTION_INPUT_LENGTH * 0.9) {
+  } else if (currentLength >= maxLength * 0.9) {
     playerActionCharCounter.style.color = 'var(--color-meter-low)';
   } else {
     playerActionCharCounter.style.color = 'var(--color-text-muted)';
   }
-
   autoGrowTextarea(textareaElement);
+}
+
+/**
+ * Updates the maxlength attribute of the player action input based on auth state.
+ * Also triggers a re-render of the character counter display.
+ */
+export function updatePlayerActionInputMaxLength() {
+    if (!playerActionInput) return;
+    const currentUser = getCurrentUser();
+    const newLimit = currentUser ? LOGGED_IN_PLAYER_ACTION_INPUT_LENGTH : ANONYMOUS_PLAYER_ACTION_INPUT_LENGTH;
+    playerActionInput.maxLength = newLimit;
+    // Trigger a manual update of the counter display
+    handlePlayerActionInput({ target: playerActionInput });
+    log(LOG_LEVEL_DEBUG, `Player action input max length updated to: ${newLimit}`);
 }
 
 // --- UI STATE MANAGEMENT ---

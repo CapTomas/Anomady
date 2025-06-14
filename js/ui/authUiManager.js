@@ -18,6 +18,8 @@ import * as state from '../core/state.js';
 import { getUIText, setApplicationLanguage, setNarrativeLanguage } from '../services/localizationService.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_DEBUG, LOG_LEVEL_ERROR, LOG_LEVEL_WARN } from '../core/logger.js';
 import * as modelToggleManager from './modelToggleManager.js';
+import * as uiUtils from './uiUtils.js';
+
 // --- MODULE-LEVEL DEPENDENCIES ---
 let _authService = null;
 let _modalManager = null;
@@ -62,6 +64,7 @@ export function updateAuthUIState() {
     if (loginButton) loginButton.style.display = isLoggedIn ? "none" : "inline-flex";
     if (userProfileButton) userProfileButton.style.display = isLoggedIn ? "inline-flex" : "none";
     log(LOG_LEVEL_DEBUG, `Auth UI updated. User is ${isLoggedIn ? 'logged in' : 'logged out'}.`);
+    uiUtils.updatePlayerActionInputMaxLength();
 }
 /**
  * Shows an authentication modal (login or register).

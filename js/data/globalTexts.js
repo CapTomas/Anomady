@@ -191,6 +191,7 @@ export const globalTextData = {
       "desc_story_preference_weaver": "I am drawn to character-driven stories, intricate relationships, and emotional depth.",
       "desc_story_preference_chaos": "I enjoy absurd situations, unpredictable outcomes, and poking things just to see what happens.",
       "label_newsletter_opt_in": "I would like to receive news and updates via email.",
+      "system_anonymous_progress_warning": "You are playing as a guest. Your progress, including character level, traits, and unlocked lore, will not be saved. \n<a href=\"#\" id=\"login-from-warning\">Log in or register</a> to save your chronicles.",
       // --- World Fragments (Shards) ---
       "tooltip_shaped_world": "This world has been shaped by your actions ({ACTIVE_SHARDS} active fragments).",
       "button_configure_shards": "Configure World Fragments",
@@ -474,6 +475,7 @@ export const globalTextData = {
       "desc_story_preference_weaver": "Přitahují mě příběhy zaměřené na postavy, spletité vztahy a emocionální hloubku.",
       "desc_story_preference_chaos": "Baví mě absurdní situace, nepředvídatelné výsledky a šťouchání do věcí jen tak, abych viděl, co se stane.",
       "label_newsletter_opt_in": "Chci dostávat novinky a aktualizace e-mailem.",
+      "system_anonymous_progress_warning": "Hrajete jako host. Váš postup, včetně úrovně postavy, rysů a odemčených příběhů, nebude uložen. \n<a href=\"#\" id=\"login-from-warning\">Přihlaste se nebo se zaregistrujte</a> pro uložení vašich kronik.",
       // --- World Fragments (Shards) ---
       "tooltip_shaped_world": "Tento svět byl utvářen tvými činy ({ACTIVE_SHARDS} aktivních fragmentů).",
       "button_configure_shards": "Nastavit fragmenty světa",

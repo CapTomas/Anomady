@@ -10,6 +10,15 @@ Acquired Traits (JSON): ${acquiredTraitsJSON}
 Equipped Items:
 ${equippedItemsPayload}
 
+CORE MECHANICS FOR ITEM GENERATION:
+Use the following mechanical rules to generate a balanced and appropriate item for the player at their current level (${playerLevel}). Adhere to the pricing guidelines and level distribution chances.
+
+Leveling Table Data for Level ${playerLevel}:
+${level_specific_mechanics_payload}
+
+Item Reward Generation Rules:
+${rewardGeneration_mechanics_payload}
+
 GAME WORLD LORE:
 '${game_history_lore}'
 
@@ -46,8 +55,8 @@ GUIDANCE FOR ITEM FIELDS:
 - "attributes": Quantitative stats. Localized.
 - "abilities": Qualitative effects. Localized.
 - "itemEffectDescription": Concise UI string. Localized.
-- "level": The item's level. Should be equal to or slightly above the player's current level: ${playerLevel}.
-- "buyPrice": An estimated value if it were sold in a shop.
+- "level": The item's level. Should be equal to or slightly above the player's current level: ${playerLevel}. Refer to the `levelDistribution` rules.
+- "buyPrice": An estimated value if it were sold in a shop. Refer to `avgItemPrice` for the player's level as a guideline.
 - "sellPrice": An estimated value if the player sells it (usually 20-30% of buyPrice).
 
 TASK 2: WRITE THE NARRATIVE
@@ -99,4 +108,4 @@ FINAL LANGUAGE REMINDER (CRITICAL):
 - The `narrative`, `suggested_actions`, and any new descriptive strings in `dashboard_updates` MUST be in ${currentNarrativeLanguage.toUpperCase()}.
 - The generated item's `name`, `description`, `attributes` keys/values, `abilities`, and `itemEffectDescription` MUST be provided for BOTH "en" and "cs".
 
-Ensure your entire output is valid JSON.
+${validJson_master_texts}

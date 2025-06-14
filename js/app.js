@@ -44,7 +44,8 @@ import { globalTextData }  from './data/globalTexts.js';   // Loaded by localiza
 
 // --- Config Values ---
 import { LOG_LEVEL_STORAGE_KEY, DEFAULT_LANGUAGE } from './core/config.js';
-
+// Add a global debug utility to the window object for easy access from the console
+window.setLogLevel = setCoreLogLevel;
 
 /**
  * Handles URL changes or initial application load to determine view.

@@ -10,16 +10,14 @@ ${generated_top_panel_description}
 
 2.  Current Character Runtime Values:
 Name: ${currentNameForPrompt}
-Level: ${playerLevel}
-Max Integrity: ${effectiveMaxIntegrity}
-Max Willpower: ${effectiveMaxWillpower}
-Aptitude: ${effectiveAptitude}
-Resilience: ${effectiveResilience}
-Acquired Traits (JSON): ${acquiredTraitsJSON}
-Equipped Items:
-${equippedItemsPayload}
-Current Strain Level: ${currentStrainLevel}
-Active Conditions (JSON): ${activeConditionsJSON}
+${runtimeValues_master_texts}
+
+CRITICAL GAME MECHANICS REFERENCE:
+Use the following data for the player's starting level (${playerLevel}) to balance the initial scenario. This ensures a fair and consistent game experience from the very beginning.
+${level_specific_mechanics_payload}
+
+Use these conceptual formulas to guide your narrative judgment of the player's effectiveness:
+${aiGuidance_mechanics_payload}
 
 GAME WORLD LORE (BASE FOUNDATION):
 '${theme_lore}'
@@ -50,14 +48,14 @@ CUSTOM CRITICAL INSTRUCTIONS FOR THIS PROMPT TYPE AND THEME:
 
 PLAYER STARTING SCENARIO IDEAS:
 To spark your creativity for players ${currentNameForPrompt}'s unique start, consider these options. You may adapt one of the ideas only if you bring substantial originality to it. Whenever possible, invent a fully new starting premise that adheres to the guidelines below. The goal is an active, intriguing situation from the very first line.
-${startIdea1}
-${startIdea2}
-${startIdea3}
+1: ${startIdea1}
+2: ${startIdea2}
+3: ${startIdea3}
 
 Vary Opening Imagery: "Critically, ensure the descriptive language and visual imagery of the opening scene are distinct for each new game. When crafting this initial scene, be mindful of generating a truly fresh experience. Consider what common '${theme_category}' openings might be and consciously steer towards less-trodden visual and situational paths.
 
 GUIDELINE FOR NOUNS INVENTING:
-When inventing new proper nouns, strive for names that sound culturally neutral or evoke a general sensibility, even if the primary narrative language is specific (e.g., Czech). Avoid generating names that are strongly or obviously indicative of a single contemporary Earth culture or language (e.g., names that sound overtly or stereotypically Czech, English, Russian, Chinese, etc., based on common naming conventions of those languages) unless the specific lore for that entity explicitly calls for such an origin. The goal is to create an immersive, diverse world where newly introduced names feel plausible, rather than being tied too closely to one origin. The descriptive text, dialogue, and all other narrative elements about these entities must, however, strictly adhere to the primary ${narrativeLanguageInstruction}.
+${nounsInventing_master_texts}
 
 NARRATIVE STYLE (INITIAL TURN):
 ${currentNarrativeLanguage.toUpperCase()}
@@ -70,15 +68,15 @@ Your narrative must immediately immerse the player. Adopt the tone of a high-qua
 -   **Language Precision:** All text within the 'narrative' string MUST be in the specified language: **${narrativeLanguageInstruction}**. Use markdown _italics_ for internal thoughts, ship computer voice, or subtle emphasis. Use \n\n for paragraph breaks to ensure readability.
 -   **CRITICAL: NO QUESTIONS TO THE PLAYER:** Never explicitly ask "What do you do?" or "What is your next step?". The player's agency comes from their typed input or by selecting from the `suggested_actions` you provide.
 
-JSON OUTPUT (MANDATORY FOR THIS INITIAL TURN):
-Your ENTIRE response MUST be a single, valid JSON object. No introductory text, explanations, or any characters outside this JSON structure are permitted.
+JSON OUTPUT:
+${jsonOutput_master_texts}
 
 {
     "narrative": "string (The opening scene of the game. This MUST be captivating, well-written, and adhere to the NARRATIVE STYLE guidelines above. Remember the language requirement: ${narrativeLanguageInstruction}. THIS NARRATIVE MUST REFLECT THE SYNTHESIZED LORE IF WORLD SHARDS WERE PROVIDED.)",
     "dashboard_updates": {
         // CRITICAL: For this INITIAL turn, YOU MUST PROVIDE ALL of the following dashboard fields with appropriate, concrete starting values.
         // These values should reflect the unique starting scenario you've crafted. Avoid "Unknown" or "N/A" where a specific starting value is more immersive.
-        // **LANGUAGE CRITICAL**: With the SOLE EXCEPTION of the `alertLevel` field (which MUST use the English key-phrases 'Green', 'Yellow', or 'Red' for script parsing), ALL other human-readable string values within this `dashboard_updates` object MUST be in the language specified by ${narrativeLanguageInstruction}.
+        // **LANGUAGE CRITICAL**: With the SOLE EXCEPTION of the `alertLevel` field (which MUST use the English key-phrases 'Green', 'Yellow', or 'Red' for script parsing if it changes), ALL other human-readable string values within this `dashboard_updates` object MUST be in the language specified by ${narrativeLanguageInstruction}.
         // IF THE THEME USES A 'game_history_lore' OR SIMILAR FIELD ON THE DASHBOARD, IT MUST CONTAIN THE SYNTHESIZED LORE (BASE + SHARDS).
 
     // Available Fields for Update:
@@ -107,24 +105,14 @@ GM INSTRUCTIONS FOR THIS INITIAL TURN:
 4.  **Narrative First:** Craft the `narrative` to establish the scene, location, and immediate objective/problem which corresponds to the quest.
 5.  **Actionable Suggestions:** Provide three `suggested_actions` that are direct, logical responses to the situation.
 6.  **State Cohesion:** Ensure `game_state_indicators.activity_status` matches `dashboard_updates.directive_status`.
-7.  **LANGUAGE ADHERENCE (CRITICAL):**
-    *   The `narrative` string and ALL strings within the `suggested_actions` array MUST be in the language specified by ${currentNarrativeLanguage.toUpperCase()}.
-    ALL human-readable string values within the `dashboard_updates` object MUST ALSO be in ${currentNarrativeLanguage.toUpperCase()}. Strive for originality and natural phrasing in the target language.    *   The **ONLY EXCEPTION** is the `alertLevel` field, which MUST use the specific English phrases: 'Green', 'Yellow', or 'Red' for script parsing logic.
-    This is a non-negotiable, critical requirement.
+
+FINAL LANGUAGE REMINDER (CRITICAL):
+${finalLanguageReminder_master_texts}
 
 INPUT_PLACEHOLDER GUIDANCE:
-    Always provide a short, subtle input_placeholder string in the NARRATIVE LANGUAGE (${currentNarrativeLanguage.toUpperCase()}).
-This placeholder must not reference or suggest any specific action or path.
-It should evoke the inner state, sensory mood, or atmosphere of the scene without implying intent, decision, or direction.
-Keep it under 50 characters, emotionally or descriptively rich, and entirely non-directive.
-Do not echo the available actions. Do not hint at a goal. Do not resolve ambiguity—let it breathe.
+${inputPlaceholder_master_texts}
 
 INSTRUCTIONS FOR `xp_awarded`:
-- If the player's actions in this turn led to a significant accomplishment, overcoming a notable obstacle, making a key discovery, or skillful roleplaying that advanced the story meaningfully, include an "xp_awarded" field with an integer value.
-- Minor successes: 5-10 XP.
-- Moderate successes or clever solutions: 10-25 XP.
-- Major breakthroughs, defeating tough (non-trivial) adversaries, completing a significant quest step: 25-50 XP.
-- If no specific achievement warrants XP this turn, OMIT the "xp_awarded" field entirely or set it to 0.
-- Do NOT award XP for simply following a suggested action without significant consequence or cleverness.
+${xpAwarded_master_texts}
 
-Your entire output will be parsed as JSON. Ensure perfect syntax and verify that json is valid, especially because of the quotes.
+${validJson_master_texts}

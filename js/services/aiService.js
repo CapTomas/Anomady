@@ -46,6 +46,7 @@ import {
     RECENT_INTERACTION_WINDOW_SIZE,
 } from '../core/config.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
+import { getLogLevel } from '../core/logger.js';
 import { getUIText } from './localizationService.js';
 // AI Interaction Constants
 const DEFAULT_GENERATION_CONFIG = {
@@ -114,18 +115,14 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
     if (generatedTopPanelDescription.endsWith(",\n")) {
         generatedTopPanelDescription = generatedTopPanelDescription.slice(0, -2);
     }
-
     // --- FIX: Filter out equipment slots from the dashboard description provided to the AI ---
     const equipmentSlots = getThemeEquipmentSlots(currentThemeId) || {};
     const equipmentSlotIds = Object.values(equipmentSlots).map(slot => slot.id);
-
     // Generate description for the side panels (dashboard_updates)
     let generatedDashboardDescription = "";
     const dashboardItems = [...(dashboardLayoutConfig.left_panel || []), ...(dashboardLayoutConfig.right_panel || [])].flatMap(p => p.items);
-
     // Filter out items that are controlled by game logic (equipment slots)
     const updatableDashboardItems = dashboardItems.filter(item => !equipmentSlotIds.includes(item.id));
-
     updatableDashboardItems.forEach(item => {
         let description = `// "${item.id}": "string (${item.short_description || "No description available."}`;
         if (item.must_translate) description += ` This value MUST be in ${narrativeLang.toUpperCase()}.`;
@@ -137,7 +134,6 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         generatedDashboardDescription += description;
     });
     // --- END FIX ---
-
     if (generatedDashboardDescription.endsWith(",\n")) {
         generatedDashboardDescription = generatedDashboardDescription.slice(0, -2);
     }
@@ -239,6 +235,100 @@ export function getSystemPrompt(worldShardsPayloadForInitial = "[]") {
         'activeConditionsJSON': JSON.stringify(activeConditions),
         'equippedItemsPayload': equippedItemsPayload,
     };
+    // New logic for core mechanics injection
+    const coreMechanicsText = getLoadedPromptText('master', 'core_mechanics');
+    let coreMechanics = null;
+    if (isValidPromptText(coreMechanicsText)) {
+        try {
+            coreMechanics = JSON.parse(coreMechanicsText);
+        } catch (e) {
+            log(LOG_LEVEL_ERROR, "Failed to parse core_mechanics.json from themeService.", e);
+        }
+    }
+    if (coreMechanics) {
+        // Handle special level-specific payload
+        if (processedPromptText.includes('${level_specific_mechanics_payload}')) {
+            const levelData = coreMechanics.levelingTable?.data?.[playerLevel - 1];
+            let levelPayloadString = "Data for current level not available.";
+            if (levelData) {
+                levelPayloadString = `
+### LEVEL ${levelData.level} BENCHMARKS ###
+- Standard Objective XP: ${levelData.avgXpStdObj}
+- Standard Objective Currency Reward: ${levelData.rewardPerStdObj}
+- Avg. Item Price: ${levelData.avgItemPrice}
+- Avg. Player Action Magnitude (Base): ${levelData.avgItemOutputMagnitude}
+- Common Challenge Difficulty: ${levelData.ccDifficultyResistance}
+- Common Challenge Setback (e.g., Damage): ${levelData.ccSetbackMagnitudeBase}
+- Significant Challenge Difficulty: ${levelData.scDifficultyResistance}
+- Significant Challenge Setback: ${levelData.scSetbackMagnitudeBase}
+- Apex Challenge Difficulty: ${levelData.acDifficultyResistance}
+- Apex Challenge Setback: ${levelData.acSetbackMagnitudeBase}
+`;
+            }
+            processedPromptText = processedPromptText.replace(
+                /\$\{level_specific_mechanics_payload\}/g,
+                levelPayloadString.trim()
+            );
+        }
+        // Handle dynamic mechanics payloads
+        const mechanicsPlaceholderRegex = /\$\{([a-zA-Z0-9_]+)_mechanics_payload\}/g;
+        let dynamicMatch;
+        while ((dynamicMatch = mechanicsPlaceholderRegex.exec(processedPromptText)) !== null) {
+            const fullPlaceholder = dynamicMatch[0];
+            const key = dynamicMatch[1];
+            if (coreMechanics[key]) {
+                const replacementJson = JSON.stringify(coreMechanics[key], null, 2);
+                processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${key}_mechanics_payload\\}`, "g"), replacementJson);
+            } else {
+                log(LOG_LEVEL_WARN, `Mechanics payload key '${key}' not found in core_mechanics.json.`);
+                processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${key}_mechanics_payload\\}`, "g"), `// Mechanics key "${key}" not found.`);
+            }
+        }
+    }
+    // New logic for core_texts injection with distinct master and theme placeholders
+    const masterCoreTextsContent = getLoadedPromptText('master', 'core_texts');
+    const themeCoreTextsContent = getLoadedPromptText(currentThemeId, 'core_texts');
+    let masterCoreTexts = null;
+    let themeCoreTexts = null;
+    if (isValidPromptText(masterCoreTextsContent)) {
+        try { masterCoreTexts = JSON.parse(masterCoreTextsContent); }
+        catch (e) { log(LOG_LEVEL_ERROR, "Failed to parse master core_texts.json.", e); }
+    }
+    if (isValidPromptText(themeCoreTextsContent)) {
+        try { themeCoreTexts = JSON.parse(themeCoreTextsContent); }
+        catch (e) { log(LOG_LEVEL_ERROR, `Failed to parse core_texts.json for theme ${currentThemeId}.`, e); }
+    }
+    // Process master texts
+    if (masterCoreTexts) {
+        const masterTextPlaceholderRegex = /\$\{([a-zA-Z0-9_]+)_master_texts\}/g;
+        let dynamicMatch;
+        while ((dynamicMatch = masterTextPlaceholderRegex.exec(processedPromptText)) !== null) {
+            const key = dynamicMatch[1];
+            let replacementText = `// Master core text key "${key}" not found.`;
+            if (masterCoreTexts[key]) {
+                replacementText = masterCoreTexts[key];
+            } else {
+                log(LOG_LEVEL_WARN, `Master core text key '${key}' not found in master/core_texts.json.`);
+            }
+            processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${key}_master_texts\\}`, "g"), replacementText);
+        }
+    }
+     // Process theme texts
+    if (themeCoreTexts) {
+        const themeTextPlaceholderRegex = /\$\{([a-zA-Z0-9_]+)_theme_texts\}/g;
+        let dynamicMatch;
+        while ((dynamicMatch = themeTextPlaceholderRegex.exec(processedPromptText)) !== null) {
+            const key = dynamicMatch[1];
+            let replacementText = `// Theme core text key "${key}" not found.`;
+            if (themeCoreTexts[key]) {
+                replacementText = themeCoreTexts[key];
+            } else {
+                log(LOG_LEVEL_WARN, `Theme core text key '${key}' not found in ${currentThemeId}/core_texts.json.`);
+            }
+            processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${key}_theme_texts\\}`, "g"), replacementText);
+        }
+    }
+    // Final pass for simple replacements, which might be present in the injected texts
     for (const key in replacements) {
         processedPromptText = processedPromptText.replace(new RegExp(`\\$\\{${key}\\}`, "g"), replacements[key]);
     }
@@ -340,6 +430,11 @@ export async function processAiTurn(playerActionText, worldShardsPayloadForIniti
         }
         return null; // Signal critical error to gameController
     }
+    if (getLogLevel() === 'debug') {
+            console.log("--- START SYSTEM PROMPT ---");
+            console.log(systemPromptText);
+            console.log("--- END SYSTEM PROMPT ---");
+        }
     const currentUser = getCurrentUser();
     const token = currentUser ? currentUser.token : null;
     const payload = {

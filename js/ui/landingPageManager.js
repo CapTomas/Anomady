@@ -407,7 +407,7 @@ export function renderLandingPageActionButtons(themeId) {
     likeButton.classList.add('ui-button', 'icon-button', 'like-theme-button');
     if (themeManifestEntry.playable && currentUser) {
       const isLiked = getLikedThemes().includes(themeId);
-      likeButton.innerHTML = `<img src="images/app/icon_heart_${isLiked ? 'filled' : ''}.svg" alt="" class="like-icon">`;
+      likeButton.innerHTML = `<img src="images/app/icon_heart${isLiked ? '_filled' : ''}.svg" alt="" class="like-icon">`;
       const likeAltTextKey = isLiked ? 'aria_label_unlike_theme' : 'aria_label_like_theme';
       likeButton.setAttribute('aria-label', getUIText(likeAltTextKey, {}, { viewContext: 'landing' }));
       attachTooltip(likeButton, likeAltTextKey, {}, { viewContext: 'landing' });

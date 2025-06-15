@@ -1,5 +1,5 @@
 /**
- * @file Manages the UI for AI model selection and triggers updates to user preferences based on their tier.
+ * @file Manages the UI for AI model selection, cycling through available models based on user tier.
  */
 // --- IMPORTS ---
 import { modelToggleButton, storyLogViewport } from './domElements.js';
@@ -10,31 +10,31 @@ import {
   getCurrentTheme,
   getCurrentUserApiUsage,
 } from '../core/state.js';
-import { PRO_MODEL_NAME, FREE_MODEL_NAME, ULTRA_MODEL_NAME } from '../core/config.js';
+import { PRO_MODEL_NAME, FREE_MODEL_NAME, ULTRA_MODEL_NAME, ANONYMOUS_API_USAGE_LIMITS } from '../core/config.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_DEBUG, LOG_LEVEL_WARN } from '../core/logger.js';
 import * as authService from '../services/authService.js';
 import { getUIText } from '../services/localizationService.js';
-import { attachTooltip } from './tooltipManager.js';
-
+import { attachTooltip, refreshCurrentTooltip } from './tooltipManager.js';
 // --- MODULE-LEVEL STATE ---
 let _storyLogManagerRef = null;
 const LOW_API_CALL_THRESHOLD = 10;
-
-// --- PRIVATE HELPERS ---
 /**
- * Determines the best available model for a user based on their tier.
- * @param {string} userTier - The user's tier ('free', 'tier1', etc.).
- * @returns {{model: string, nameKey: string}} The best model and its localization key.
- * @private
+ * Defines the available models for each user tier in their cycle order.
+ * @constant {object}
  */
-function _getBestAvailableModelForTier(userTier) {
-  if (userTier === 'tier1' || userTier === 'tier2') {
-    return { model: ULTRA_MODEL_NAME, nameKey: 'option_model_ultra' };
-  }
-  // Default for 'free' tier and any other case
-  return { model: PRO_MODEL_NAME, nameKey: 'option_model_pro' };
-}
-
+const MODELS_BY_TIER = {
+  ultra: [
+    { model: FREE_MODEL_NAME, nameKey: 'option_model_free' },
+    { model: PRO_MODEL_NAME, nameKey: 'option_model_pro' },
+    { model: ULTRA_MODEL_NAME, nameKey: 'option_model_ultra' },
+  ],
+  pro: [
+    { model: FREE_MODEL_NAME, nameKey: 'option_model_free' },
+    { model: PRO_MODEL_NAME, nameKey: 'option_model_pro' },
+  ],
+  free: [{ model: FREE_MODEL_NAME, nameKey: 'option_model_free' }],
+  anonymous: [{ model: FREE_MODEL_NAME, nameKey: 'option_model_free' }],
+};
 // --- INITIALIZATION ---
 /**
  * Initializes the ModelToggleManager with optional dependencies.
@@ -47,12 +47,9 @@ export function initModelToggleManager(dependencies = {}) {
   }
   updateModelToggleButtonAppearance();
 }
-
 // --- PUBLIC API ---
 /**
  * Updates the appearance of the AI model toggle button based on the user's tier, current selection, and API usage.
- * For anonymous users, it shows a disabled button with a login prompt.
- * For logged-in users, it shows an active button to toggle between models.
  */
 export function updateModelToggleButtonAppearance() {
   if (!modelToggleButton) {
@@ -61,105 +58,102 @@ export function updateModelToggleButtonAppearance() {
   }
   const currentUser = getCurrentUser();
   modelToggleButton.style.display = 'inline-flex';
+  const apiUsage = getCurrentUserApiUsage() || {};
   if (!currentUser) {
     // --- Anonymous User Logic ---
     modelToggleButton.disabled = true;
-    const proModelShortName = getUIText('option_model_pro');
-    modelToggleButton.textContent = proModelShortName; // Show what they're missing
+    const modelInfo = MODELS_BY_TIER.anonymous[0];
+    const modelName = getUIText(modelInfo.nameKey);
+    modelToggleButton.textContent = modelName;
     const baseTooltipText = getUIText('tooltip_model_toggle_anon_base');
-    let tooltipText = baseTooltipText;
-    const apiUsage = getCurrentUserApiUsage();
-    if (apiUsage) {
-      tooltipText = getUIText('tooltip_model_toggle_usage_anon', {
-        BASE_TEXT: baseTooltipText,
-        DAILY_COUNT: apiUsage.daily.count,
-        DAILY_LIMIT: apiUsage.daily.limit,
-        HOURLY_COUNT: apiUsage.hourly.count,
-        HOURLY_LIMIT: apiUsage.hourly.limit,
-      });
-    }
+    const usageForModel = apiUsage[modelInfo.model] || { daily: { count: 0, limit: 0 }, hourly: { count: 0, limit: 0 } };
+    const anonLimits = ANONYMOUS_API_USAGE_LIMITS[modelInfo.model] || { daily: { limit: 'N/A' }, hourly: { limit: 'N/A' } };
+    const tooltipText = getUIText('tooltip_model_toggle_usage_anon', {
+      BASE_TEXT: baseTooltipText,
+      DAILY_COUNT: usageForModel.daily.count,
+      DAILY_LIMIT: anonLimits.daily.limit,
+      HOURLY_COUNT: usageForModel.hourly.count,
+      HOURLY_LIMIT: anonLimits.hourly.limit,
+    });
     modelToggleButton.setAttribute('aria-label', baseTooltipText);
     attachTooltip(modelToggleButton, null, {}, { rawText: tooltipText });
-    log(LOG_LEVEL_DEBUG, 'Anonymous user, showing disabled model toggle button with login prompt.');
     return;
   }
   // --- Logged-In User Logic ---
   const userTier = currentUser.tier || 'free';
-  const { model: bestAvailableModel, nameKey: bestModelNameKey } = _getBestAvailableModelForTier(userTier);
-  const currentModel = getCurrentModelName();
-  const isUsingFreeModel = currentModel === FREE_MODEL_NAME;
-  const targetModelName = isUsingFreeModel ? bestAvailableModel : FREE_MODEL_NAME;
-  const targetModelShortNameKey = isUsingFreeModel ? bestModelNameKey : 'option_model_free';
-  const targetModelShortName = getUIText(targetModelShortNameKey);
-  const currentModelShortNameKey = isUsingFreeModel ? 'option_model_free' : bestModelNameKey;
-  const currentModelShortName = getUIText(currentModelShortNameKey);
-  let buttonText;
-  let remainingDailyCalls = Infinity;
-  let ariaLabel = getUIText('aria_label_toggle_to_model', { CURRENT_MODEL: currentModelShortName, TARGET_MODEL: targetModelShortName });
-  let tooltipText = ariaLabel;
-  const apiUsage = getCurrentUserApiUsage();
-  if (apiUsage) {
-    const dailyLimit = apiUsage.daily.limit;
-    const dailyCount = apiUsage.daily.count;
-    remainingDailyCalls = dailyLimit - dailyCount;
-    tooltipText = getUIText('tooltip_model_toggle_usage', {
-      DAILY_COUNT: dailyCount,
-      DAILY_LIMIT: dailyLimit,
-      HOURLY_COUNT: apiUsage.hourly.count,
-      HOURLY_LIMIT: apiUsage.hourly.limit,
-      ARIA_LABEL: ariaLabel,
-    });
-    if (remainingDailyCalls <= LOW_API_CALL_THRESHOLD && remainingDailyCalls > 0) {
-      buttonText = getUIText('button_toggle_to_model_with_count', {
-        MODEL_NAME: targetModelShortName,
-        REMAINING_CALLS: remainingDailyCalls,
-      });
-    } else {
-      buttonText = getUIText('button_toggle_to_model', { MODEL_NAME: targetModelShortName });
-    }
-  } else {
-    buttonText = getUIText('button_toggle_to_model', { MODEL_NAME: targetModelShortName });
-  }
-  modelToggleButton.textContent = buttonText;
-  modelToggleButton.setAttribute('aria-label', ariaLabel);
-  attachTooltip(modelToggleButton, null, {}, { rawText: tooltipText });
-  // Disable button if limits are exceeded
-  if (remainingDailyCalls <= 0) {
+  const availableModels = MODELS_BY_TIER[userTier] || MODELS_BY_TIER.free;
+  // Build usage string for tooltip
+  const usageLines = availableModels.map(m => {
+    const usage = apiUsage[m.model] || { daily: { count: 0, limit: 'N/A' } };
+    return `${getUIText(m.nameKey)}: ${usage.daily.count}/${usage.daily.limit}`;
+  });
+  const usageString = `Daily Usage: ${usageLines.join(' | ')}`;
+  if (availableModels.length <= 1) {
+    // User is on a tier with only one model (e.g., 'free')
     modelToggleButton.disabled = true;
-  } else {
-    modelToggleButton.disabled = false;
-  }
-  log(LOG_LEVEL_DEBUG, `Model toggle button updated. Current: ${currentModel}, Tier: ${userTier}. Offers switch to ${targetModelName}. Daily calls left: ${remainingDailyCalls}`);
-}
-
-/**
- * Handles the click event on the AI model toggle button.
- * It switches the model between free and the user's best available, and updates preferences.
- */
-export async function handleModelToggle() {
-  if (!modelToggleButton || modelToggleButton.disabled) {
-    log(LOG_LEVEL_DEBUG, 'Model toggle button is not available or disabled.');
+    const modelInfo = availableModels[0];
+    modelToggleButton.textContent = getUIText(modelInfo.nameKey);
+    const tooltipText = `${usageString}\nUpgrade your plan to access more powerful models.`;
+    attachTooltip(modelToggleButton, null, {}, { rawText: tooltipText });
     return;
   }
-
+  // User is on a tier with multiple models
+  const currentModel = getCurrentModelName();
+  let currentIndex = availableModels.findIndex(m => m.model === currentModel);
+  // If current model isn't in their tier (e.g., after a downgrade), default to the first one
+  if (currentIndex === -1) {
+    log(LOG_LEVEL_WARN, `Current model ${currentModel} not available for tier ${userTier}. Defaulting to first available.`);
+    currentIndex = 0;
+    setCurrentModelName(availableModels[0].model);
+    authService.updateUserPreferences({ preferred_model_name: availableModels[0].model }).catch(err => {
+      log(LOG_LEVEL_ERROR, "Failed to persist model downgrade preference", err);
+    });
+  }
+  const nextIndex = (currentIndex + 1) % availableModels.length;
+  const nextModelInfo = availableModels[nextIndex];
+  const nextModelShortName = getUIText(nextModelInfo.nameKey);
+  // Determine button text and disabled state based on the NEXT model in the cycle
+  const nextModelUsage = apiUsage[nextModelInfo.model] || { daily: { count: 0, limit: 0 } };
+  const remainingCallsForNext = nextModelUsage.daily.limit - nextModelUsage.daily.count;
+  modelToggleButton.disabled = remainingCallsForNext <= 0;
+  if (remainingCallsForNext <= LOW_API_CALL_THRESHOLD && remainingCallsForNext > 0) {
+    modelToggleButton.textContent = getUIText('button_toggle_to_model_with_count', {
+      MODEL_NAME: nextModelShortName,
+      REMAINING_CALLS: remainingCallsForNext,
+    });
+  } else {
+    modelToggleButton.textContent = getUIText('button_toggle_to_model', { MODEL_NAME: nextModelShortName });
+  }
+  const ariaLabel = `Switch to ${nextModelShortName} model.`;
+  attachTooltip(modelToggleButton, null, {}, { rawText: `${usageString}\n${ariaLabel}` });
+  modelToggleButton.setAttribute('aria-label', ariaLabel);
+}
+/**
+ * Handles the click event on the AI model toggle button.
+ * It cycles the model to the next one available for the user's tier and updates preferences.
+ */
+export async function handleModelToggle() {
+  if (!modelToggleButton || modelToggleButton.disabled) return;
   const currentUser = getCurrentUser();
   if (!currentUser) {
     log(LOG_LEVEL_WARN, 'Model toggle attempted by anonymous user. This should not happen.');
     return;
   }
-
   const userTier = currentUser.tier || 'free';
-  const { model: bestAvailableModel, nameKey: bestModelNameKey } = _getBestAvailableModelForTier(userTier);
+  const availableModels = MODELS_BY_TIER[userTier] || MODELS_BY_TIER.free;
+  if (availableModels.length <= 1) {
+    log(LOG_LEVEL_DEBUG, 'Model toggle clicked, but no other models available for this tier.');
+    return;
+  }
   const currentModel = getCurrentModelName();
-  const newModelName = (currentModel === FREE_MODEL_NAME) ? bestAvailableModel : FREE_MODEL_NAME;
-
+  let currentIndex = availableModels.findIndex(m => m.model === currentModel);
+  if (currentIndex === -1) currentIndex = 0;
+  const nextIndex = (currentIndex + 1) % availableModels.length;
+  const nextModelInfo = availableModels[nextIndex];
+  const newModelName = nextModelInfo.model;
   log(LOG_LEVEL_INFO, `User toggled AI model from ${currentModel} to ${newModelName}.`);
-
-  // Update state immediately. This also persists to localStorage via the state setter.
   setCurrentModelName(newModelName);
-
   try {
-    log(LOG_LEVEL_DEBUG, `Updating backend model preference for user ${currentUser.email} to ${newModelName}.`);
     await authService.updateUserPreferences({ preferred_model_name: newModelName });
     log(LOG_LEVEL_INFO, 'Backend model preference updated successfully.');
   } catch (error) {
@@ -171,14 +165,10 @@ export async function handleModelToggle() {
       );
     }
   }
-
-  // Reflect the change in the UI.
   updateModelToggleButtonAppearance();
-
-  // Add a system message to the story log if a game is active.
+  refreshCurrentTooltip(); // This is the crucial addition to update the live tooltip.
   if (_storyLogManagerRef && getCurrentTheme() && storyLogViewport && storyLogViewport.style.display !== 'none') {
-    const newModelShortNameKey = (newModelName === FREE_MODEL_NAME) ? 'option_model_free' : bestModelNameKey;
-    const newModelShortName = getUIText(newModelShortNameKey);
+    const newModelShortName = getUIText(nextModelInfo.nameKey);
     _storyLogManagerRef.addMessageToLog(getUIText('system_model_switched', { MODEL_NAME: newModelShortName }), 'system');
   }
 }

@@ -9,9 +9,10 @@ import {
   generateSecureToken,
   generateTokenExpiry,
 } from "../utils/tokenUtils.js";
-import { USER_TIERS } from '../config.js';
+import { USER_TIERS, constructApiUsageResponse } from '../middleware/usageLimiter.js';
 const router = express.Router();
 const SALT_ROUNDS = 10;
+
 /**
  * @route   POST /api/v1/auth/register
  * @desc    Register a new user and initiate email confirmation.
@@ -121,7 +122,7 @@ router.post("/register", async (req, res) => {
         email_confirmed: false,
         email_confirmation_token: confirmationToken,
         email_confirmation_expires_at: confirmationTokenExpiresAt,
-        // New tier and limit fields will get default values from schema
+        // apiUsage gets default value from schema
       },
     });
     logger.info(
@@ -281,8 +282,7 @@ router.post("/login", async (req, res) => {
           preferred_model_name: true,
           created_at: true,
           tier: true,
-          hourlyApiCalls: true,
-          dailyApiCalls: true,
+          apiUsage: true,
       }
     });
     if (!user) {
@@ -345,10 +345,6 @@ router.post("/login", async (req, res) => {
         `User logged in successfully: ${user.email} (ID: ${user.id})`
       );
 
-      // Add tier limits to the user response object
-      const userTier = user.tier || 'free';
-      const tierLimits = USER_TIERS[userTier] || USER_TIERS.free;
-
       const userForResponse = {
           id: user.id,
           email: user.email,
@@ -361,14 +357,8 @@ router.post("/login", async (req, res) => {
           email_confirmed: user.email_confirmed,
           created_at: user.created_at,
           tier: user.tier,
-          api_usage: {
-            hourly: { count: user.hourlyApiCalls, limit: tierLimits.hourlyLimit },
-            daily: { count: user.dailyApiCalls, limit: tierLimits.dailyLimit },
-          }
+          api_usage: constructApiUsageResponse(user),
       };
-
-      // Remove password hash before sending response
-      delete userForResponse.password_hash;
 
       res.status(200).json({
           message: 'Login successful.',
@@ -408,18 +398,10 @@ router.get("/me", protect, async (req, res) => {
     `User data requested for /me by: ${req.user.email} (ID: ${req.user.id})`
   );
 
-  // Add tier limits to the user response object
-  const userTier = req.user.tier || 'free';
-  const tierLimits = USER_TIERS[userTier] || USER_TIERS.free;
-
   const userForResponse = {
     ...req.user,
-    api_usage: {
-      hourly: { count: req.user.hourlyApiCalls, limit: tierLimits.hourlyLimit },
-      daily: { count: req.user.dailyApiCalls, limit: tierLimits.dailyLimit },
-    }
+    api_usage: constructApiUsageResponse(req.user),
   };
-
   res.status(200).json({
     message: "Current user data fetched successfully.",
     user: userForResponse,

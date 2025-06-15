@@ -21,10 +21,7 @@ model User {
   preferred_model_name           String?
   // User Tier & Limits
   tier                           String    @default("free")
-  hourlyApiCalls                 Int       @default(0) @map("hourly_api_calls")
-  dailyApiCalls                  Int       @default(0) @map("daily_api_calls")
-  lastHourlyReset                DateTime  @default(now()) @map("last_hourly_reset")
-  lastDailyReset                 DateTime  @default(now()) @map("last_daily_reset")
+  apiUsage                       Json      @default("{}") @map("api_usage")
   // Timestamps & Auth Tokens
   created_at                     DateTime  @default(now())
   updated_at                     DateTime  @updatedAt

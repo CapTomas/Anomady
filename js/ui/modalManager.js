@@ -19,6 +19,7 @@ import { getCurrentTheme } from '../core/state.js';
 // --- MODULE STATE ---
 
 let _activeOverlayClickListener = null;
+let _addedModalClass = null;
 let currentModalResolve = null;
 
 const customModalFormContainer = document.createElement('div');
@@ -34,13 +35,15 @@ export function hideCustomModal() {
   if (!customModalOverlay) {
     return;
   }
-
+  if (_addedModalClass && customModal) {
+    customModal.classList.remove(_addedModalClass);
+    _addedModalClass = null;
+  }
   // Clear dynamic content from the modal structure.
   if (customModalTitle) customModalTitle.textContent = '';
   if (customModalMessage) customModalMessage.innerHTML = '';
   if (customModalActions) customModalActions.innerHTML = '';
   if (customModalInput) customModalInput.value = '';
-
   // Ensure standalone containers are also reset.
   if (customModalInputContainer && customModalInputContainer.style.display !== 'none') {
     if (!customModalMessage || !customModalMessage.contains(customModalInputContainer)) {
@@ -52,22 +55,18 @@ export function hideCustomModal() {
       customModalFormContainer.innerHTML = '';
     }
   }
-
   const errorDisplay = customModalMessage ? customModalMessage.querySelector('.modal-error-display') : null;
   if (errorDisplay) {
     errorDisplay.remove();
   }
-
   // Remove the overlay click listener to prevent memory leaks.
   if (_activeOverlayClickListener) {
     customModalOverlay.removeEventListener('click', _activeOverlayClickListener);
     _activeOverlayClickListener = null;
   }
-
   // Start fade-out animation.
   customModalOverlay.classList.remove('active');
   log(LOG_LEVEL_DEBUG, 'Custom modal content cleared and fade-out initiated.');
-
   currentModalResolve = null;
 }
 
@@ -117,19 +116,18 @@ export function displayModalError(messageText, containerElement = customModalMes
  * @param {string|null} [options.explicitThemeContext=null] - Theme context for localization.
  * @param {Function} [options.onSubmit] - Async callback for 'form' type. Receives formData.
  * @param {Array<object>} [options.customActions] - Custom buttons: { textKey, className, onClick(buttonElement) }.
+ * @param {string} [options.modalClass] - An optional CSS class to add to the modal-box for custom styling.
  * @returns {Promise<any>} Resolves with input value (prompt), boolean (confirm), form data, or null (cancel/alert).
  */
 export function showCustomModal(options) {
   return new Promise((resolve) => {
     currentModalResolve = resolve;
-
     const {
       type = 'alert', titleKey, messageKey, htmlContent, formFields,
       replacements = {}, confirmTextKey, cancelTextKey,
       inputPlaceholderKey, defaultValue = '', explicitThemeContext = null,
-      onSubmit, customActions,
+      onSubmit, customActions, modalClass,
     } = options;
-
     if (!customModalOverlay || !customModalTitle || !customModalMessage || !customModalActions) {
       log(LOG_LEVEL_ERROR, 'Custom modal core DOM elements not found! Cannot display modal.');
       if (currentModalResolve) {
@@ -137,34 +135,27 @@ export function showCustomModal(options) {
       }
       return;
     }
-
     const modalThemeContext = explicitThemeContext || getCurrentTheme();
     let confirmBtnRef = null;
-
     let defaultConfirmKey = 'modal_ok_button';
     if (type === 'confirm' || type === 'form') defaultConfirmKey = 'modal_confirm_button';
     else if (type === 'prompt') defaultConfirmKey = 'modal_confirm_button';
-
     const handleConfirm = async () => {
       let modalShouldClose = true;
       let resolveValue;
-
       if (type === 'form' || (formFields && formFields.length > 0)) {
         const formData = {};
         let firstInvalidField = null;
         let isValid = true;
         customModalFormContainer.querySelectorAll('.modal-error-display').forEach(el => el.remove());
-
         formFields.forEach(field => {
           const inputElement = customModalFormContainer.querySelector(`#${field.id}`);
           if (inputElement) {
             formData[field.id] = (inputElement.type === 'checkbox') ? inputElement.checked : inputElement.value;
-
             if (field.required && typeof formData[field.id] === 'string' && !formData[field.id].trim()) {
               isValid = false;
               if (!firstInvalidField) firstInvalidField = inputElement;
             }
-
             if (field.type === 'email' && formData[field.id] && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData[field.id])) {
               isValid = false;
               if (!firstInvalidField) firstInvalidField = inputElement;
@@ -172,7 +163,6 @@ export function showCustomModal(options) {
             }
           }
         });
-
         if (!isValid) {
           if (firstInvalidField) firstInvalidField.focus();
           log(LOG_LEVEL_WARN, 'Modal form validation failed.');
@@ -182,7 +172,6 @@ export function showCustomModal(options) {
           }
           return;
         }
-
         if (onSubmit) {
           try {
             if (confirmBtnRef) {
@@ -219,7 +208,6 @@ export function showCustomModal(options) {
       } else {
         resolveValue = null;
       }
-
       if (currentModalResolve) {
         currentModalResolve(resolveValue);
       }
@@ -227,18 +215,23 @@ export function showCustomModal(options) {
         hideCustomModal();
       }
     };
-
+    if (_addedModalClass && customModal) {
+        customModal.classList.remove(_addedModalClass);
+        _addedModalClass = null;
+    }
+    if (modalClass && customModal) {
+        customModal.classList.add(modalClass);
+        _addedModalClass = modalClass;
+    }
     customModalTitle.textContent = getUIText(titleKey || `modal_default_title_${type}`, replacements, { explicitThemeContext: modalThemeContext });
     customModalMessage.innerHTML = '';
     customModalFormContainer.innerHTML = '';
     if (customModalInputContainer) customModalInputContainer.style.display = 'none';
-
     if (messageKey) {
       const staticMessageP = document.createElement('p');
       staticMessageP.innerHTML = getUIText(messageKey, replacements, { explicitThemeContext: modalThemeContext }).replace(/\n/g, '<br>');
       customModalMessage.appendChild(staticMessageP);
     }
-
     if (htmlContent) {
       if (typeof htmlContent === 'string') {
         customModalMessage.insertAdjacentHTML('beforeend', htmlContent);
@@ -246,13 +239,11 @@ export function showCustomModal(options) {
         customModalMessage.appendChild(htmlContent);
       }
     }
-
     if (type === 'form' || (formFields && formFields.length > 0)) {
       customModalMessage.appendChild(customModalFormContainer);
       formFields.forEach(field => {
         const fieldGroup = document.createElement('div');
         fieldGroup.classList.add('modal-form-group');
-
         switch (field.type) {
           case 'checkbox': {
             fieldGroup.classList.add('modal-form-group-checkbox');
@@ -341,7 +332,6 @@ export function showCustomModal(options) {
         });
       }
     }
-
     customModalActions.innerHTML = '';
     if (customActions && Array.isArray(customActions) && customActions.length > 0) {
       customActions.forEach(actionConfig => {
@@ -367,7 +357,6 @@ export function showCustomModal(options) {
       confirmBtnRef = confirmBtn;
       confirmBtn.addEventListener('click', handleConfirm);
       customModalActions.appendChild(confirmBtn);
-
       if (type === 'confirm' || type === 'prompt' || type === 'form' || (formFields && formFields.length > 0)) {
         const cancelBtn = document.createElement('button');
         cancelBtn.classList.add('ui-button');
@@ -379,13 +368,10 @@ export function showCustomModal(options) {
         customModalActions.appendChild(cancelBtn);
       }
     }
-
     customModalOverlay.classList.add('active');
-
     if (_activeOverlayClickListener) {
       customModalOverlay.removeEventListener('click', _activeOverlayClickListener);
     }
-
     _activeOverlayClickListener = (event) => {
       if (event.target === customModalOverlay) {
         log(LOG_LEVEL_DEBUG, 'Modal overlay clicked, attempting to close modal.');
@@ -396,7 +382,6 @@ export function showCustomModal(options) {
       }
     };
     customModalOverlay.addEventListener('click', _activeOverlayClickListener);
-
     if ((type === 'form' || (formFields && formFields.length > 0)) && customModalFormContainer.querySelector('input:not([type=hidden])')) {
       setTimeout(() => {
         const firstInput = customModalFormContainer.querySelector('input:not([type=hidden])');

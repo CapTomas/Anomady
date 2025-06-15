@@ -28,6 +28,7 @@ import * as suggestedActionsManager from './ui/suggestedActionsManager.js';
 import * as dashboardManager from './ui/dashboardManager.js';
 import * as characterPanelManager from './ui/characterPanelManager.js';
 import * as worldShardsModalManager from './ui/worldShardsModalManager.js';
+import * as billingManager from './ui/billingManager.js';
 import * as tooltipManager from './ui/tooltipManager.js';
 
 // --- Game Orchestration ---
@@ -49,6 +50,7 @@ async function _handleUrlChangeOrInitialLoad() {
   const actionParam = urlParams.get('action');
   const tokenParam = urlParams.get('token');
   const statusParam = urlParams.get('status');
+  const paymentStatus = urlParams.get('payment_status');
 
   // Handle special auth-related pages first
   if (currentPath.endsWith('/email-confirmation-status') && statusParam) {
@@ -56,6 +58,16 @@ async function _handleUrlChangeOrInitialLoad() {
     authUiManager.displayEmailConfirmationStatusPage(statusParam);
     history.replaceState(null, '', '/');
     return;
+  }
+  if (paymentStatus === 'success') {
+    const tier = urlParams.get('tier');
+    const sessionId = urlParams.get('session_id');
+    if (tier && sessionId) {
+      history.replaceState(null, '', '/'); // Clean URL first
+      log(LOG_LEVEL_DEBUG, `Handling successful payment redirect for tier '${tier}'.`);
+      billingManager.handleSuccessfulUpgrade(tier, sessionId);
+    }
+    // Don't return yet, let it fall through to landing page
   }
 
   if (currentPath.endsWith('/reset-password') && tokenParam) {
@@ -105,11 +117,9 @@ async function _handleUrlChangeOrInitialLoad() {
  */
 async function _initializeApp() {
   log(LOG_LEVEL_INFO, 'Anomady Application initializing...');
-
   // 1. Set logger level from localStorage or default
   const storedLogLevel = localStorage.getItem(LOG_LEVEL_STORAGE_KEY);
   setCoreLogLevel(storedLogLevel || (DEFAULT_LANGUAGE === 'cs' ? 'debug' : 'info'));
-
   // 2. Check for critical DOM elements
   if (!dom.appRoot || !dom.leftPanel || !dom.rightPanel || !dom.themeGridContainer || !dom.storyLogViewport) {
     log(LOG_LEVEL_ERROR, 'Critical DOM elements missing. Application cannot start.');
@@ -118,7 +128,6 @@ async function _initializeApp() {
     }
     return;
   }
-
   // 3. Initialize services and UI managers with their dependencies
   const initialThemeDataLoaded = await themeService.loadInitialThemeManifestData();
   if (!initialThemeDataLoaded) {
@@ -129,13 +138,13 @@ async function _initializeApp() {
       messageKey: 'error_initial_theme_data_load_failed',
     });
   }
-
   gameController.initGameController({ userThemeControlsManager });
   landingPageManager.initLandingPageManager(gameController, userThemeControlsManager);
   userThemeControlsManager.initUserThemeControlsManager(gameController, landingPageManager);
   languageManager.initLanguageManager({ storyLogManager, landingPageManager, dashboardManager });
-  authUiManager.initAuthUiManager({ authService, modalManager, gameController, userThemeControlsManager, landingPageManager, languageManager });
+  authUiManager.initAuthUiManager({ authService, modalManager, gameController, userThemeControlsManager, landingPageManager, languageManager, billingManager });
   worldShardsModalManager.initWorldShardsModalManager({ landingPageManager });
+  billingManager.initBillingManager({ authUiManager });
   characterPanelManager.initCharacterPanelManager({ landingPageManager, userThemeControlsManager, gameController });
   suggestedActionsManager.initSuggestedActionsManager({ gameController });
   modelToggleManager.initModelToggleManager({ storyLogManager });
@@ -143,14 +152,12 @@ async function _initializeApp() {
   dashboardManager.initDashboardManagerScrollEvents();
   tooltipManager.initTooltipManager();
   log(LOG_LEVEL_INFO, 'All services and UI managers initialized.');
-
   // 4. Set up global event listeners
   if (dom.applicationLogo) dom.applicationLogo.addEventListener('click', () => gameController.switchToLanding());
   if (dom.languageToggleButton) dom.languageToggleButton.addEventListener('click', () => languageManager.handleLanguageToggle());
   if (dom.modelToggleButton) dom.modelToggleButton.addEventListener('click', () => modelToggleManager.handleModelToggle());
   if (dom.loginButton) dom.loginButton.addEventListener('click', () => authUiManager.showLoginModal());
   if (dom.userProfileButton) dom.userProfileButton.addEventListener('click', () => authUiManager.showUserProfileModal());
-
   if (dom.newGameButton) {
     dom.newGameButton.addEventListener('click', async () => {
       const currentThemeId = state.getCurrentTheme() || state.getCurrentLandingGridSelection();
@@ -162,13 +169,11 @@ async function _initializeApp() {
       }
     });
   }
-
   if (dom.startGameButton && dom.playerIdentifierInput) {
     const submitName = () => gameController.handleIdentifierSubmission(dom.playerIdentifierInput.value);
     dom.startGameButton.addEventListener('click', submitName);
     dom.playerIdentifierInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') submitName(); });
   }
-
   if (dom.sendActionButton && dom.playerActionInput) {
     const submitAction = () => gameController.processPlayerAction(dom.playerActionInput.value);
     dom.sendActionButton.addEventListener('click', submitAction);
@@ -194,7 +199,6 @@ async function _initializeApp() {
     await _handleUrlChangeOrInitialLoad();
   });
   log(LOG_LEVEL_INFO, 'Global event listeners set up.');
-
   // 5. Authentication, data fetching, and initial UI rendering
   await authService.checkAuthStatusOnLoad();
   authUiManager.updateAuthUIState();
@@ -203,7 +207,6 @@ async function _initializeApp() {
   await _handleUrlChangeOrInitialLoad();
   languageManager.applyGlobalUITranslations();
   log(LOG_LEVEL_INFO, 'Initial authentication, data fetch, and view rendering complete.');
-
   // Reveal the fully initialized application UI
   document.body.classList.remove('app-loading');
   log(LOG_LEVEL_DEBUG, 'Application initialized successfully. UI is now visible.');

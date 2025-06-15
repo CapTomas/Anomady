@@ -9,6 +9,8 @@ import {
   JWT_STORAGE_KEY,
   DEFAULT_LANGUAGE,
   FREE_MODEL_NAME,
+  PRO_MODEL_NAME,
+  ULTRA_MODEL_NAME,
   LANGUAGE_PREFERENCE_STORAGE_KEY,
   NARRATIVE_LANGUAGE_PREFERENCE_STORAGE_KEY,
   MODEL_PREFERENCE_STORAGE_KEY,
@@ -17,6 +19,17 @@ import {
 } from '../core/config.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
 import { getUIText } from './localizationService.js';
+
+/**
+ * A map defining which models are available for each user tier.
+ * @private
+ */
+const ALLOWED_MODELS_BY_TIER = {
+  ultra: [FREE_MODEL_NAME, PRO_MODEL_NAME, ULTRA_MODEL_NAME],
+  pro: [FREE_MODEL_NAME, PRO_MODEL_NAME],
+  free: [FREE_MODEL_NAME],
+  anonymous: [FREE_MODEL_NAME],
+};
 
 /**
  * Handles the user registration process.
@@ -146,21 +159,37 @@ export async function checkAuthStatusOnLoad() {
 
 /**
  * Loads user preferences, fetching from backend if logged in, otherwise from localStorage.
+ * Validates the user's preferred model against their tier and sets a valid default if needed.
  */
 export async function loadUserPreferences() {
   const currentUser = state.getCurrentUser();
   if (currentUser?.token) {
     log(LOG_LEVEL_INFO, `Fetching preferences for logged-in user: ${currentUser.email}`);
     try {
-      const prefs = await apiService.fetchUserPreferences(currentUser.token);
-      state.setCurrentAppLanguage(prefs.preferred_app_language || DEFAULT_LANGUAGE);
-      state.setCurrentNarrativeLanguage(prefs.preferred_narrative_language || state.getCurrentAppLanguage());
-      state.setCurrentModelName(prefs.preferred_model_name || FREE_MODEL_NAME);
-      state.setCurrentUser({ ...currentUser, ...prefs });
+      const response = await apiService.fetchUserPreferences(currentUser.token);
+      const userPrefs = response.preferences;
+      if (!userPrefs) {
+        throw new Error("Preferences object not found in API response.");
+      }
+      state.setCurrentAppLanguage(userPrefs.preferred_app_language || DEFAULT_LANGUAGE);
+      state.setCurrentNarrativeLanguage(userPrefs.preferred_narrative_language || state.getCurrentAppLanguage());
+      const userTier = currentUser.tier || 'free';
+      const allowedModels = ALLOWED_MODELS_BY_TIER[userTier] || ALLOWED_MODELS_BY_TIER.free;
+      if (userPrefs.preferred_model_name && allowedModels.includes(userPrefs.preferred_model_name)) {
+        state.setCurrentModelName(userPrefs.preferred_model_name);
+      } else {
+        const defaultModelForTier = allowedModels[0];
+        state.setCurrentModelName(defaultModelForTier);
+        if (userPrefs.preferred_model_name) {
+          log(LOG_LEVEL_WARN, `User's preferred model '${userPrefs.preferred_model_name}' is not allowed for tier '${userTier}'. Defaulting to '${defaultModelForTier}'.`);
+        }
+      }
+      // Update the user object in the state with the fetched preferences
+      state.setCurrentUser({ ...currentUser, ...userPrefs });
       log(LOG_LEVEL_INFO, 'User preferences loaded from backend and applied to state.');
     } catch (error) {
-      log(LOG_LEVEL_ERROR, 'Failed to fetch user preferences. Falling back to local/default settings.', error.message);
-      loadUserPreferences(); // Retry as anonymous
+      log(LOG_LEVEL_ERROR, 'Failed to fetch user preferences. Logging out for safety.', error.message);
+      handleLogout(); // It's safer to log out if preferences can't be fetched, to avoid inconsistent state.
     }
   } else {
     log(LOG_LEVEL_INFO, 'Loading preferences for anonymous user.');
@@ -291,6 +320,60 @@ export async function handlePublicResendConfirmation(email) {
     return await apiService.publicResendConfirmationEmail(email);
   } catch (error) {
     log(LOG_LEVEL_ERROR, `Public resend confirmation failed for ${email}:`, error.message);
+    throw error;
+  }
+}
+
+/**
+ * Initiates the tier upgrade process by creating a checkout session.
+ * @param {string} tier - The target tier ('pro' or 'ultra').
+ * @returns {Promise<void>} Redirects the user to the checkout URL.
+ */
+export async function handleTierUpgrade(tier) {
+  const currentUser = state.getCurrentUser();
+  if (!currentUser?.token) {
+    throw new Error('User must be logged in to upgrade.');
+  }
+  log(LOG_LEVEL_INFO, `User ${currentUser.email} initiating upgrade to tier: ${tier}`);
+  try {
+    const response = await apiService.createCheckoutSession(currentUser.token, tier);
+    if (response.redirectUrl) {
+      log(LOG_LEVEL_INFO, `Redirecting user to simulated checkout: ${response.redirectUrl}`);
+      window.location.href = response.redirectUrl;
+    } else {
+      throw new Error('Checkout session did not return a redirect URL.');
+    }
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, `Tier upgrade initiation failed for tier ${tier}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Finalizes the tier upgrade after the user returns from the "payment" flow.
+ * @param {string} tier - The tier from the URL parameters.
+ * @param {string} sessionId - The session ID from the URL parameters.
+ * @returns {Promise<object>} The updated user object.
+ */
+export async function handleUpgradeFinalization(tier, sessionId) {
+  const currentUser = state.getCurrentUser();
+  if (!currentUser?.token) {
+    throw new Error('User must be logged in to finalize an upgrade.');
+  }
+  log(LOG_LEVEL_INFO, `Finalizing upgrade for user ${currentUser.email} to tier ${tier} with session ${sessionId}`);
+  try {
+    const response = await apiService.finalizeUpgrade(currentUser.token, tier, sessionId);
+    const updatedUser = response.user;
+    if (updatedUser) {
+      log(LOG_LEVEL_INFO, 'Upgrade successful. Updating user state.');
+      state.setCurrentUser({ ...updatedUser, token: currentUser.token });
+      // Re-validate model preference against new tier
+      await loadUserPreferences();
+      return updatedUser;
+    }
+    throw new Error('Upgrade finalization response did not include user data.');
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, `Upgrade finalization failed for tier ${tier}:`, error);
     throw error;
   }
 }

@@ -3,7 +3,10 @@ import express from 'express';
 import prisma from '../db.js';
 import logger from '../utils/logger.js';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+import { generateTokenExpiry } from '../utils/tokenUtils.js';
 import { protect } from '../middleware/authMiddleware.js';
+import { USER_TIERS, constructApiUsageResponse } from '../middleware/usageLimiter.js';
 const router = express.Router();
 const SALT_ROUNDS = 10;
 // --- Preference Endpoints ---
@@ -39,13 +42,9 @@ router.get('/me/preferences', protect, async (req, res) => {
 router.put('/me/preferences', protect, async (req, res) => {
   const { preferred_app_language, preferred_narrative_language, preferred_model_name, story_preference, newsletter_opt_in } = req.body;
   const userId = req.user.id;
+  const userTier = req.user.tier || 'free';
+  const tierConfig = USER_TIERS[userTier] || USER_TIERS.free;
   const allowedLanguages = ['en', 'cs'];
-  const baseAllowedModels = ['gemini-1.5-flash-latest', 'gemini-1.5-pro-latest'];
-  const allowedModels = [...new Set([
-    ...baseAllowedModels,
-    process.env.FREE_MODEL_NAME,
-    process.env.PAID_MODEL_NAME
-  ].filter(Boolean))]; // Filter out undefined/null and ensure uniqueness
   const allowedStoryPreferences = ['explorer', 'strategist', 'weaver', 'chaos', null];
   const updateData = {};
   if (preferred_app_language !== undefined) {
@@ -61,8 +60,8 @@ router.put('/me/preferences', protect, async (req, res) => {
     updateData.preferred_narrative_language = preferred_narrative_language;
   }
   if (preferred_model_name !== undefined) {
-    if (!allowedModels.includes(preferred_model_name)) {
-      return res.status(400).json({ error: { message: `Invalid preferred_model_name. Allowed models: ${allowedModels.join(', ')}`, code: 'INVALID_PREFERENCE_VALUE' }});
+    if (!tierConfig.allowedModels[preferred_model_name]) {
+      return res.status(400).json({ error: { message: `Your current tier does not permit the use of the '${preferred_model_name}' model.`, code: 'MODEL_NOT_ALLOWED_FOR_TIER' } });
     }
     updateData.preferred_model_name = preferred_model_name;
   }
@@ -83,25 +82,26 @@ router.put('/me/preferences', protect, async (req, res) => {
   }
   try {
     logger.info(`Updating preferences for user: ${req.user.email} (ID: ${userId}) with data:`, updateData);
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: updateData,
-      select: { // Select only necessary fields to return, avoid password_hash etc.
-        id: true,
-        email: true,
-        username: true,
-        story_preference: true,
-        newsletter_opt_in: true,
-        preferred_app_language: true,
-        preferred_narrative_language: true,
-        preferred_model_name: true,
-        updated_at: true
-      }
+    const updatedUserRaw = await prisma.user.update({
+        where: { id: userId },
+        data: {
+            tier: tier,
+            password_reset_token: null,
+            password_reset_expires_at: null,
+        },
+        select: {
+            id: true, email: true, username: true, story_preference: true, newsletter_opt_in: true,
+            preferred_app_language: true, preferred_narrative_language: true, preferred_model_name: true,
+            email_confirmed: true, created_at: true, updated_at: true, tier: true, apiUsage: true,
+        }
     });
-    logger.info(`Preferences updated successfully for user: ${updatedUser.email}`);
+    const userForResponse = {
+        ...updatedUserRaw,
+        api_usage: constructApiUsageResponse(updatedUserRaw),
+    };
     res.status(200).json({
-      message: "Preferences updated successfully.",
-      user: updatedUser
+        message: 'User tier upgraded successfully.',
+        user: userForResponse
     });
   } catch (error) {
     logger.error(`Error updating preferences for user ${userId}:`, error);
@@ -185,6 +185,111 @@ router.put('/me/password', protect, async (req, res) => {
       }
     });
   }
+});
+/**
+ * @route   POST /api/v1/users/me/create-checkout-session
+ * @desc    Simulates creating a payment provider checkout session.
+ * @access  Private
+ */
+router.post('/me/create-checkout-session', protect, async (req, res) => {
+    const { tier } = req.body;
+    const userId = req.user.id;
+    const validTiers = ['pro', 'ultra'];
+
+    if (!tier || !validTiers.includes(tier)) {
+        logger.warn(`Invalid tier upgrade request for user ${userId}: ${tier}`);
+        return res.status(400).json({ error: { message: 'Invalid tier specified.', code: 'INVALID_TIER' } });
+    }
+
+    if (req.user.tier === tier) {
+        return res.status(400).json({ error: { message: 'User is already on this tier.', code: 'ALREADY_ON_TIER' } });
+    }
+
+    logger.info(`Simulating checkout session for user ${userId} to upgrade to tier '${tier}'.`);
+
+    // In a real application, you would create a Stripe Checkout Session here.
+    // The session would contain metadata like userId and the target tier.
+    // The success_url would point to your frontend confirmation page.
+    // For now, we simulate this flow.
+    try {
+        const dummySessionId = `sim_session_${crypto.randomBytes(16).toString('hex')}`;
+
+        // Store the intent to upgrade in the DB to verify on success.
+        // This prevents users from just calling the success URL without initiating a "payment".
+        // Using password_reset_token for this simulation is a temporary hack.
+        // A production app should use a dedicated table for payment intents or orders.
+        await prisma.user.update({
+            where: { id: userId },
+            data: {
+                password_reset_token: `upgrade_intent_${tier}_${dummySessionId}`,
+                password_reset_expires_at: generateTokenExpiry(15), // Intent expires in 15 mins
+            }
+        });
+
+        const successUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/?payment_status=success&tier=${tier}&session_id=${dummySessionId}`;
+
+        res.status(200).json({ redirectUrl: successUrl });
+
+    } catch (error) {
+        logger.error(`Error creating simulated checkout for user ${userId}:`, error);
+        res.status(500).json({ error: { message: 'Failed to initiate upgrade process.', code: 'CHECKOUT_CREATION_FAILED' } });
+    }
+});
+
+/**
+ * @route   POST /api/v1/users/me/finalize-upgrade
+ * @desc    Finalizes a tier upgrade after a simulated successful payment. In production, this would be a webhook.
+ * @access  Private
+ */
+router.post('/me/finalize-upgrade', protect, async (req, res) => {
+    const { tier, sessionId } = req.body;
+    const userId = req.user.id;
+    const validTiers = ['pro', 'ultra'];
+
+    if (!tier || !validTiers.includes(tier) || !sessionId) {
+        logger.warn(`Invalid finalize upgrade request for user ${userId}:`, req.body);
+        return res.status(400).json({ error: { message: 'Invalid upgrade parameters.', code: 'INVALID_UPGRADE_PARAMS' } });
+    }
+
+    // In a real application, you would verify the session ID with the payment provider
+    // to confirm the payment was successful. Here, we verify our simulated intent.
+    const expectedIntent = `upgrade_intent_${tier}_${sessionId}`;
+    const userWithIntent = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (
+        !userWithIntent ||
+        userWithIntent.password_reset_token !== expectedIntent ||
+        (userWithIntent.password_reset_expires_at && new Date() > new Date(userWithIntent.password_reset_expires_at))
+    ) {
+        logger.error(`Upgrade finalization failed for user ${userId}. Intent mismatch or expired. Expected: ${expectedIntent}, Found: ${userWithIntent?.password_reset_token}`);
+        return res.status(400).json({ error: { message: 'Invalid or expired upgrade session. Please try again.', code: 'INVALID_UPGRADE_SESSION' } });
+    }
+
+    try {
+        logger.info(`Finalizing tier upgrade for user ${userId} to tier '${tier}'.`);
+        const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: {
+                tier: tier,
+                password_reset_token: null,
+                password_reset_expires_at: null,
+            },
+            select: {
+                id: true, email: true, username: true, story_preference: true, newsletter_opt_in: true,
+                preferred_app_language: true, preferred_narrative_language: true, preferred_model_name: true,
+                email_confirmed: true, created_at: true, updated_at: true, tier: true, apiUsage: true,
+            }
+        });
+
+        res.status(200).json({
+            message: 'User tier upgraded successfully.',
+            user: updatedUser
+        });
+
+    } catch (error) {
+        logger.error(`Error finalizing upgrade for user ${userId}:`, error);
+        res.status(500).json({ error: { message: 'Failed to finalize upgrade.', code: 'UPGRADE_FINALIZATION_FAILED' } });
+    }
 });
 /**
  * @route   GET /api/v1/users/me/shaped-themes-summary
@@ -382,14 +487,11 @@ router.post('/me/themes/:themeId/boon', protect, async (req, res) => {
 router.delete('/me/themes/:themeId/character-reset', protect, async (req, res) => {
   const userId = req.user.id;
   const { themeId } = req.params;
-
   if (!themeId) {
     logger.warn(`Character reset request for user ${userId} with missing themeId.`);
     return res.status(400).json({ error: { message: 'Theme ID is required.', code: 'MISSING_THEME_ID' } });
   }
-
   logger.info(`Initiating complete character reset for user ${userId}, theme ${themeId}`);
-
   try {
     await prisma.$transaction(async (tx) => {
       // 1. Delete UserThemeProgress
@@ -397,19 +499,16 @@ router.delete('/me/themes/:themeId/character-reset', protect, async (req, res) =
         where: { userId: userId, themeId: themeId },
       });
       logger.debug(`[TX] Deleted UserThemeProgress for user ${userId}, theme ${themeId}`);
-
       // 2. Delete all World Shards (UserThemePersistedLore)
       await tx.userThemePersistedLore.deleteMany({
         where: { userId: userId, themeId: themeId },
       });
       logger.debug(`[TX] Deleted UserThemePersistedLore for user ${userId}, theme ${themeId}`);
-
       // 3. Delete GameState
       await tx.gameState.deleteMany({
         where: { userId: userId, theme_id: themeId },
       });
       logger.debug(`[TX] Deleted GameState for user ${userId}, theme ${themeId}`);
-
       // 4. Update UserThemeInteraction to mark as not playing
       await tx.userThemeInteraction.updateMany({
         where: { userId: userId, theme_id: themeId },
@@ -417,16 +516,13 @@ router.delete('/me/themes/:themeId/character-reset', protect, async (req, res) =
       });
       logger.debug(`[TX] Updated UserThemeInteraction for user ${userId}, theme ${themeId}`);
     });
-
     logger.info(`Character reset successful for user ${userId}, theme ${themeId}.`);
     res.status(200).json({ message: 'Character reset successfully. All progress, fragments, and saved games for this theme have been removed.' });
-
   } catch (error) {
     logger.error(`Transaction error during character reset for user ${userId}, theme ${themeId}:`, error);
     res.status(500).json({ error: { message: 'Failed to reset character due to a server error.', code: 'CHARACTER_RESET_TRANSACTION_ERROR' } });
   }
 });
-
 /**
  * @route   PUT /api/v1/users/me/themes/:themeId/progress
  * @desc    Update user's persistent progress for a specific theme (e.g., character name).
@@ -436,26 +532,20 @@ router.put('/me/themes/:themeId/progress', protect, async (req, res) => {
   const userId = req.user.id;
   const { themeId } = req.params;
   const { characterName } = req.body;
-
   logger.info(`Updating UserThemeProgress for user ${userId}, theme ${themeId} with payload:`, req.body);
-
   if (!themeId) {
     return res.status(400).json({ error: { message: 'Theme ID is required.', code: 'MISSING_THEME_ID' } });
   }
-
   const updateData = {};
-
   if (characterName !== undefined) {
     if (typeof characterName !== 'string' || characterName.trim().length < 1 || characterName.trim().length > 50) {
       return res.status(400).json({ error: { message: 'Character name must be a string between 1 and 50 characters.', code: 'INVALID_CHARACTER_NAME' } });
     }
     updateData.characterName = characterName.trim();
   }
-
   if (Object.keys(updateData).length === 0) {
     return res.status(400).json({ error: { message: 'No valid data provided for update.', code: 'NO_UPDATE_DATA' } });
   }
-
   try {
     const updatedProgress = await prisma.userThemeProgress.update({
       where: {
@@ -466,7 +556,6 @@ router.put('/me/themes/:themeId/progress', protect, async (req, res) => {
       },
       data: updateData,
     });
-
     // Also update the player_identifier in any existing GameState for consistency.
     await prisma.gameState.updateMany({
         where: {
@@ -477,7 +566,6 @@ router.put('/me/themes/:themeId/progress', protect, async (req, res) => {
             player_identifier: updateData.characterName,
         }
     });
-
     logger.info(`UserThemeProgress updated successfully for user ${userId}, theme ${themeId}.`);
     res.status(200).json({
       message: 'User theme progress updated successfully.',
@@ -492,5 +580,4 @@ router.put('/me/themes/:themeId/progress', protect, async (req, res) => {
     res.status(500).json({ error: { message: 'Failed to update user theme progress.', code: 'USER_THEME_PROGRESS_UPDATE_ERROR' } });
   }
 });
-
 export default router;

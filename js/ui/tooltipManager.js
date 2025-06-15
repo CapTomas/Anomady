@@ -144,7 +144,8 @@ function _hideTooltipUI() {
 // --- PUBLIC API ---
 
 /**
- * Attaches custom tooltip functionality to an HTML element.
+ * Attaches custom tooltip functionality to an HTML element by storing data on its dataset.
+ * Listeners are attached only once to be efficient and prevent memory leaks.
  * The element's existing `title` attribute will be removed to prevent native tooltips.
  * @param {HTMLElement} element - The element to attach the tooltip to.
  * @param {string | null} textKey - The localization key for the tooltip text. Use null if providing raw text.
@@ -156,24 +157,34 @@ export function attachTooltip(element, textKey, textReplacements = {}, textOptio
     log(LOG_LEVEL_DEBUG, 'attachTooltip: Target element is null.');
     return;
   }
-
   element.removeAttribute('title');
-
-  // Do not attach listeners if there's no text source provided.
-  if (!textKey && !textOptions?.rawText) {
-    return;
+  // Store the data on the element's dataset for easy updating.
+  element.dataset.tooltipKey = textKey || '';
+  element.dataset.tooltipReplacements = JSON.stringify(textReplacements);
+  element.dataset.tooltipOptions = JSON.stringify(textOptions);
+  // If listeners are not already attached, attach them once.
+  if (element.dataset.tooltipAttached) {
+    return; // Listeners are already in place, we just updated the data.
   }
-
+  element.dataset.tooltipAttached = 'true';
+  const readDataAndDisplay = () => {
+    // Ensure data exists before trying to display
+    if (element.dataset.tooltipKey || JSON.parse(element.dataset.tooltipOptions || '{}').rawText) {
+        const key = element.dataset.tooltipKey || null;
+        const replacements = JSON.parse(element.dataset.tooltipReplacements || '{}');
+        const options = JSON.parse(element.dataset.tooltipOptions || '{}');
+        _displayTooltipUI(element, key, replacements, options);
+    }
+  };
   const handleMouseEnter = () => {
     clearTimeout(hideTimeoutId);
     currentHoverTarget = element;
     showTimeoutId = setTimeout(() => {
       if (currentHoverTarget === element && currentFocusTarget !== element) {
-        _displayTooltipUI(element, textKey, textReplacements, textOptions);
+        readDataAndDisplay();
       }
     }, SHOW_DELAY);
   };
-
   const handleMouseLeave = () => {
     clearTimeout(showTimeoutId);
     currentHoverTarget = null;
@@ -181,25 +192,39 @@ export function attachTooltip(element, textKey, textReplacements = {}, textOptio
       hideTimeoutId = setTimeout(_hideTooltipUI, HIDE_DELAY);
     }
   };
-
   const handleFocus = () => {
     clearTimeout(hideTimeoutId);
     clearTimeout(showTimeoutId);
     currentFocusTarget = element;
-    _displayTooltipUI(element, textKey, textReplacements, textOptions); // Show immediately.
+    readDataAndDisplay(); // Show immediately.
   };
-
   const handleBlur = () => {
     currentFocusTarget = null;
     if (currentHoverTarget !== element) {
       _hideTooltipUI();
     }
   };
-
   element.addEventListener('mouseenter', handleMouseEnter);
   element.addEventListener('mouseleave', handleMouseLeave);
   element.addEventListener('focus', handleFocus);
   element.addEventListener('blur', handleBlur);
+}
+
+/**
+ * Refreshes the content of the currently visible tooltip.
+ * Reads the latest data from the target element's dataset and updates the tooltip UI.
+ */
+export function refreshCurrentTooltip() {
+    const target = currentHoverTarget || currentFocusTarget;
+    if (target && tooltipElement && tooltipElement.style.visibility === 'visible') {
+        if (target.dataset.tooltipKey || JSON.parse(target.dataset.tooltipOptions || '{}').rawText) {
+            const key = target.dataset.tooltipKey || null;
+            const replacements = JSON.parse(target.dataset.tooltipReplacements || '{}');
+            const options = JSON.parse(target.dataset.tooltipOptions || '{}');
+            _displayTooltipUI(target, key, replacements, options);
+            log(LOG_LEVEL_DEBUG, "Tooltip content refreshed for active target.");
+        }
+    }
 }
 
 /**

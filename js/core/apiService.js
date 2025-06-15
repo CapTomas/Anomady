@@ -280,6 +280,25 @@ export const applyBoonSelection = (token, themeId, boonPayload) => _callApi(`/ap
  */
 export const updateUserThemeProgress = (token, themeId, progressToUpdate) => _callApi(`/api/v1/users/me/themes/${themeId}/progress`, 'PUT', progressToUpdate, token);
 
+// --- Billing & Subscription Endpoints ---
+
+/**
+ * Creates a simulated checkout session for a tier upgrade.
+ * @param {string} token - The user's JWT.
+ * @param {string} tier - The target tier to upgrade to (e.g., 'pro', 'ultra').
+ * @returns {Promise<object>} The API response, containing a redirectUrl.
+ */
+export const createCheckoutSession = (token, tier) => _callApi('/api/v1/users/me/create-checkout-session', 'POST', { tier }, token);
+
+/**
+ * Finalizes a tier upgrade after a successful simulated payment.
+ * @param {string} token - The user's JWT.
+ * @param {string} tier - The tier that was upgraded to.
+ * @param {string} sessionId - The session ID from the payment flow.
+ * @returns {Promise<object>} The API response, containing the updated user object.
+ */
+export const finalizeUpgrade = (token, tier, sessionId) => _callApi('/api/v1/users/me/finalize-upgrade', 'POST', { tier, sessionId }, token);
+
 // --- AI Proxy Endpoint ---
 
 /**

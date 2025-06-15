@@ -853,6 +853,9 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 	transition: transform 0.3s ease;
 	background-image: url(images/app/background_noise.png);
 }
+.modal-box.tier-selection-modal {
+    max-width: 800px;
+}
 .modal-overlay.active .modal-box {
 	transform: scale(1);
 }
@@ -1413,17 +1416,151 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 	font-size: var(--font-size-sm);
 	font-weight: var(--font-weight-medium);
 }
-.profile-modal-content .change-password-button-container {
-	margin-top: var(--spacing-lg);
-	text-align: center;
+.profile-modal-content hr {
+	margin: var(--spacing-lg) 0;
+	border: none;
+	border-top: 1px solid var(--color-bg-input-field);
 }
-.profile-modal-content .change-password-button-container .ui-button {
-	background-color: var(--color-bg-input-field);
-	background-image: url(images/app/background_noise.png);
+.profile-actions-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
 }
-.profile-modal-content .change-password-button-container .ui-button.disabled {
-	background-color: var(--color-text-muted) !important;
-	opacity: 0.5;
+.profile-actions-container .ui-button {
+    background-color: var(--color-bg-input-field);
+    background-image: url(images/app/background_noise.png);
+}
+.tier-and-manage-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    background-color: var(--color-bg-panel);
+    color: var(--color-text-secondary);
+    background-image: url(images/app/background_noise.png);
+    padding: 10px;
+    border-radius: var(--radius-sm);
+}
+.tier-and-manage-button .ui-button.small {
+    background-color: var(--color-bg-input-field);
+    background-image: url(images/app/background_noise.png);
+}
+.profile-modal-content .user-tier-display {
+    display: inline-block;
+    padding: 2px var(--spacing-sm);
+    border-radius: var(--radius-xs);
+    font-weight: var(--font-weight-semi700);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+}
+.user-tier-display.tier-free {
+    background-color: var(--color-text-muted);
+    color: var(--color-bg-panel);
+}
+.user-tier-display.tier-pro {
+    background-color: var(--color-accent-meter-blue);
+    background-image: url(images/app/color_noise.png);
+    color: white;
+}
+.user-tier-display.tier-ultra {
+    background-color: var(--color-accent-meter-violet);
+    background-image: url(images/app/color_noise.png);
+    color: white;
+}
+
+/* --- Billing & Subscription Tiers --- */
+.tier-selection-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    width: 100%;
+    max-width: 900px; /* Adjust as needed */
+    margin: 0 auto;
+}
+
+.tier-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: var(--spacing-lg);
+    border: 2px solid var(--color-bg-input-field);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-panel);
+    background-image: url(images/app/background_noise.png);
+    transition: all var(--transition-std);
+}
+
+.tier-column:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-text-muted);
+}
+
+.tier-column.current-tier {
+    border-color: var(--color-accent-main);
+    transform: scale(1.02);
+}
+
+.tier-name {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semi700);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.tier-price {
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semi700);
+    color: var(--color-text-primary);
+}
+
+.tier-price .suffix {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-400);
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--spacing-lg) 0;
+    flex-grow: 1;
+    text-align: left;
+}
+
+.features-list li {
+    padding-left: 20px;
+    margin-bottom: var(--spacing-sm);
+    position: relative;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.features-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--color-accent-main);
+    font-weight: var(--font-weight-semi700);
+}
+
+.tier-column .ui-button {
+    width: 100%;
+    margin-top: auto; /* Pushes the button to the bottom */
+}
+
+.tier-column .ui-button.primary {
+	background-color: var(--color-accent-main);
+	background-image: url('images/app/color_noise.png');
+	color: var(--color-bg-button-default-active);
+}
+
+.tier-column .ui-button.primary:hover {
+	background-color: var(--color-accent-main-light);
+	color: var(--color-bg-button-default-hover);
 }
 .profile-modal-content .coming-soon-text {
 	display: block;

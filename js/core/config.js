@@ -31,7 +31,16 @@ export const FREE_MODEL_NAME = 'gemini-1.5-flash-latest';
 export const PRO_MODEL_NAME = 'gemini-1.5-pro-latest';
 /** The model name for premium, top-tier users. */
 export const ULTRA_MODEL_NAME = 'gemini-2.5-flash-preview-05-20';
-
+/**
+ * Defines the API usage limits for anonymous users, mirroring the backend configuration.
+ * Used for displaying limits in the UI when no user is logged in.
+ */
+export const ANONYMOUS_API_USAGE_LIMITS = {
+  [FREE_MODEL_NAME]: {
+    hourly: { limit: 10 },
+    daily: { limit: 25 },
+  },
+};
 // --- Player Progression ---
 /**
  * Defines the total cumulative XP required to reach each level.
@@ -73,6 +82,12 @@ export const MIN_LEVEL_FOR_STORE = 3;
 /** The number of recent turns to include in the AI prompt context window. */
 export const RECENT_INTERACTION_WINDOW_SIZE = 10;
 /** The maximum character length for an anonymous user's action input. */
-export const ANONYMOUS_PLAYER_ACTION_INPUT_LENGTH = 200;
-/** The maximum character length for a logged-in user's action input. */
-export const LOGGED_IN_PLAYER_ACTION_INPUT_LENGTH = 600;
+export const ANONYMOUS_PLAYER_ACTION_INPUT_LENGTH = 150;
+/**
+ * Defines the maximum character length for the player action input based on user tier.
+ */
+export const PLAYER_ACTION_INPUT_LENGTH_BY_TIER = {
+  free: 500,
+  pro: 500,
+  ultra: 1000,
+};

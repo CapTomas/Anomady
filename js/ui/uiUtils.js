@@ -7,7 +7,7 @@
 import {
   UPDATE_HIGHLIGHT_DURATION,
   ANONYMOUS_PLAYER_ACTION_INPUT_LENGTH,
-  LOGGED_IN_PLAYER_ACTION_INPUT_LENGTH,
+  PLAYER_ACTION_INPUT_LENGTH_BY_TIER,
 } from '../core/config.js';
 import { getIsRunActive, updateDashboardItemMetaEntry, getCurrentUser } from '../core/state.js';
 import {
@@ -178,13 +178,19 @@ export function handlePlayerActionInput(event) {
 }
 
 /**
- * Updates the maxlength attribute of the player action input based on auth state.
+ * Updates the maxlength attribute of the player action input based on auth state and tier.
  * Also triggers a re-render of the character counter display.
  */
 export function updatePlayerActionInputMaxLength() {
     if (!playerActionInput) return;
     const currentUser = getCurrentUser();
-    const newLimit = currentUser ? LOGGED_IN_PLAYER_ACTION_INPUT_LENGTH : ANONYMOUS_PLAYER_ACTION_INPUT_LENGTH;
+    let newLimit;
+    if (currentUser) {
+        const userTier = currentUser.tier || 'free';
+        newLimit = PLAYER_ACTION_INPUT_LENGTH_BY_TIER[userTier] || PLAYER_ACTION_INPUT_LENGTH_BY_TIER.free;
+    } else {
+        newLimit = ANONYMOUS_PLAYER_ACTION_INPUT_LENGTH;
+    }
     playerActionInput.maxLength = newLimit;
     // Trigger a manual update of the counter display
     handlePlayerActionInput({ target: playerActionInput });

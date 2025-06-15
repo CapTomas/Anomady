@@ -19,6 +19,8 @@ import { getUIText, setApplicationLanguage, setNarrativeLanguage } from '../serv
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_DEBUG, LOG_LEVEL_ERROR, LOG_LEVEL_WARN } from '../core/logger.js';
 import * as modelToggleManager from './modelToggleManager.js';
 import * as uiUtils from './uiUtils.js';
+import { attachTooltip, hideCurrentTooltip } from './tooltipManager.js';
+
 
 // --- MODULE-LEVEL DEPENDENCIES ---
 let _authService = null;
@@ -27,6 +29,7 @@ let _gameControllerRef = null;
 let _userThemeControlsManagerRef = null;
 let _landingPageManagerRef = null;
 let _languageManagerRef = null;
+let _billingManagerRef = null;
 // --- INITIALIZATION ---
 /**
  * Initializes the AuthUiManager with necessary dependencies.
@@ -49,8 +52,12 @@ export function initAuthUiManager(dependencies) {
     _userThemeControlsManagerRef = dependencies.userThemeControlsManager;
     _landingPageManagerRef = dependencies.landingPageManager;
     _languageManagerRef = dependencies.languageManager;
+    _billingManagerRef = dependencies.billingManager;
     if (!_languageManagerRef) {
         log(LOG_LEVEL_WARN, "AuthUiManager initialized without languageManager. Language switching on pref change will not work.");
+    }
+    if (!_billingManagerRef) {
+        log(LOG_LEVEL_WARN, "AuthUiManager initialized without billingManager. Subscription management will be disabled.");
     }
     log(LOG_LEVEL_INFO, "AuthUiManager initialized with all dependencies.");
 }
@@ -278,6 +285,33 @@ export async function showUserProfileModal() {
             dl.appendChild(dtUsername);
             dl.appendChild(ddUsername);
         }
+        if (currentUser.tier) {
+            const dtTier = document.createElement('dt');
+            dtTier.textContent = getUIText("modal_title_manage_subscription");
+            const ddTier = document.createElement('dd');
+            const tierContainer = document.createElement('div');
+            tierContainer.className = 'tier-and-manage-button';
+            const tierNameSpan = document.createElement('span');
+            tierNameSpan.className = 'user-tier-display';
+            tierNameSpan.textContent = getUIText(`tier_${currentUser.tier}_name`);
+            tierNameSpan.classList.add(`tier-${currentUser.tier}`);
+            tierContainer.appendChild(tierNameSpan);
+            if (_billingManagerRef) {
+                const manageSubButton = document.createElement('button');
+                manageSubButton.className = 'ui-button small';
+                manageSubButton.textContent = getUIText("button_manage_plan");
+                attachTooltip(manageSubButton, 'tooltip_manage_subscription');
+                manageSubButton.addEventListener('click', () => {
+                    hideCurrentTooltip();
+                    _modalManager.hideCustomModal();
+                    _billingManagerRef.showTierSelectionModal();
+                });
+                tierContainer.appendChild(manageSubButton);
+            }
+            ddTier.appendChild(tierContainer);
+            dl.appendChild(dtTier);
+            dl.appendChild(ddTier);
+        }
         if (currentUser.created_at) {
             const dtJoined = document.createElement('dt');
             dtJoined.textContent = getUIText("label_profile_joined_date");
@@ -337,21 +371,18 @@ export async function showUserProfileModal() {
             { value: 'en', textKey: 'option_language_en' },
             { value: 'cs', textKey: 'option_language_cs' },
         ], async (newValue) => {
-            // Set state immediately for UI responsiveness
             setApplicationLanguage(newValue);
             setNarrativeLanguage(newValue);
-            // Persist to backend
             await _authService.updateUserPreferences({
                 preferred_app_language: newValue,
                 preferred_narrative_language: newValue,
             });
-            // Re-render UI with the new language
             if (_languageManagerRef) _languageManagerRef.applyGlobalUITranslations();
             renderProfile();
         }).group);
         formContainer.appendChild(createSelectField('prefModel', 'label_profile_model_select', state.getCurrentModelName(), [
             { value: 'gemini-1.5-flash-latest', textKey: 'option_model_free' },
-            { value: 'gemini-1.5-pro-latest', textKey: 'option_model_paid' },
+            { value: 'gemini-1.5-pro-latest', textKey: 'option_model_pro' },
         ], async (newValue) => {
             await _authService.updateUserPreferences({ preferred_model_name: newValue });
             modelToggleManager.updateModelToggleButtonAppearance();
@@ -382,8 +413,8 @@ export async function showUserProfileModal() {
         }).group);
         // --- Bottom Actions ---
         profileContent.appendChild(document.createElement('hr'));
-        const changePasswordContainer = document.createElement('div');
-        changePasswordContainer.className = 'change-password-button-container';
+        const bottomActionsContainer = document.createElement('div');
+        bottomActionsContainer.className = 'profile-actions-container';
         const changePasswordButton = document.createElement('button');
         changePasswordButton.className = 'ui-button';
         changePasswordButton.textContent = getUIText("button_profile_change_password");
@@ -391,14 +422,15 @@ export async function showUserProfileModal() {
             _modalManager.hideCustomModal();
             showChangePasswordModal();
         });
-        changePasswordContainer.appendChild(changePasswordButton);
-        profileContent.appendChild(changePasswordContainer);
+        bottomActionsContainer.appendChild(changePasswordButton);
+        profileContent.appendChild(bottomActionsContainer);
     };
     renderProfile();
     _modalManager.showCustomModal({
         type: "custom",
         titleKey: "modal_title_user_profile",
         htmlContent: profileContent,
+        modalClass: 'profile-modal',
         customActions: [
             {
                 textKey: "button_profile_logout",

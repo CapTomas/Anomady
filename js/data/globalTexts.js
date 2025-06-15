@@ -196,6 +196,7 @@ export const globalTextData = {
       "desc_story_preference_chaos": "I enjoy absurd situations, unpredictable outcomes, and poking things just to see what happens.",
       "label_newsletter_opt_in": "I would like to receive news and updates via email.",
       "system_anonymous_progress_warning": "You are playing as a guest. Your progress, including character level, traits, and unlocked lore, will not be saved. \n<a href=\"#\" id=\"login-from-warning\">Log in or register</a>",
+      "button_login_to_play": "Login to Play",
       // --- World Fragments (Shards) ---
       "tooltip_shaped_world": "This world has been shaped by your actions ({ACTIVE_SHARDS} active fragments).",
       "button_configure_shards": "Configure World Fragments",
@@ -219,6 +220,7 @@ export const globalTextData = {
       "tooltip_like_locked_anon": "Log in to add themes to your favorites.",
       "tooltip_store_locked_anon": "Log in to access the store.",
       "tooltip_shards_locked_anon": "Log in to unlock and manage World Fragments.",
+      "tooltip_theme_locked_anon": "Log in to play this scenario.",
       "notification_world_shard_unlocked": "WORLD FRAGMENT UNLOCKED: '{TITLE}'... This truth will now resonate through your chronicles...",
       "tooltip_premium_action_locked": "Unlock this action slot by upgrading to a higher tier.",
       "action_mull_over_shard": "'{TITLE}'",
@@ -516,6 +518,7 @@ export const globalTextData = {
       "desc_story_preference_chaos": "Baví mě absurdní situace, nepředvídatelné výsledky a šťouchání do věcí jen tak, abych viděl, co se stane.",
       "label_newsletter_opt_in": "Chci dostávat novinky a aktualizace e-mailem.",
       "system_anonymous_progress_warning": "Hrajete jako host. Váš postup, včetně úrovně postavy, rysů a odemčených příběhů, nebude uložen. \n<a href=\"#\" id=\"login-from-warning\">Přihlaste se nebo se zaregistrujte</a>",
+      "button_login_to_play": "Přihlaste se pro Hraní",
       // --- World Fragments (Shards) ---
       "tooltip_shaped_world": "Tento svět byl utvářen tvými činy ({ACTIVE_SHARDS} aktivních fragmentů).",
       "button_configure_shards": "Nastavit fragmenty světa",
@@ -539,6 +542,7 @@ export const globalTextData = {
       "tooltip_like_locked_anon": "Přihlaste se pro přidání témat do oblíbených.",
       "tooltip_store_locked_anon": "Přihlaste se pro přístup do obchodu.",
       "tooltip_shards_locked_anon": "Přihlaste se pro odemykání a správu fragmentů světa.",
+      "tooltip_theme_locked_anon": "Přihlaste se, abyste mohli hrát tento scénář.",
       "notification_world_shard_unlocked": "ODEMČEN FRAGMENT SVĚTA: '{TITLE}'... Tato pravda bude nyní rezonovat tvými kronikami...",
       "tooltip_premium_action_locked": "Unlock this action slot by upgrading to a higher tier.",
       "action_mull_over_shard": "'{TITLE}'",

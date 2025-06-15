@@ -44,6 +44,7 @@ import { THEMES_MANIFEST } from '../data/themesManifest.js';
 import { log, LOG_LEVEL_INFO, LOG_LEVEL_ERROR, LOG_LEVEL_WARN, LOG_LEVEL_DEBUG } from '../core/logger.js';
 import { formatDynamicText, setGMActivityIndicator } from './uiUtils.js';
 import { attachTooltip } from './tooltipManager.js';
+import { showLoginModal } from './authUiManager.js';
 import { animatePanelExpansion } from './dashboardManager.js';
 
 // --- MODULE-LEVEL DEPENDENCIES ---
@@ -242,31 +243,30 @@ export async function renderThemeGrid() {
   }
   themeGridContainer.innerHTML = '';
   const shapedData = getShapedThemeData();
-
+  const currentUser = getCurrentUser(); // Check for logged-in user
   THEMES_MANIFEST.forEach((themeMeta) => {
     const themeConfig = themeService.getThemeConfig(themeMeta.id);
     if (!themeConfig || !themeMeta.playable) {
       return;
     }
-
+    const isLocked = !currentUser && themeMeta.lockedForAnonymous;
     const button = document.createElement('button');
     button.classList.add('theme-grid-icon');
+    if (isLocked) {
+      button.classList.add('locked');
+    }
     button.dataset.theme = themeConfig.id;
-
     const themeFullNameText = getUIText(themeConfig.name_key, {}, { explicitThemeContext: themeConfig.id, viewContext: 'landing' });
-    button.setAttribute('aria-label', themeFullNameText);
     button.removeAttribute('title');
-
+    button.addEventListener('click', () => handleThemeGridSelection(themeConfig.id));
     const img = document.createElement('img');
     img.src = themeConfig.icon;
     const altTextKey = themeConfig.icon_alt_text_key || `theme_icon_alt_text_default_${themeConfig.id}`;
     img.alt = getUIText(altTextKey, {}, { explicitThemeContext: themeConfig.id, viewContext: 'landing' });
-
     const nameSpan = document.createElement('span');
     nameSpan.classList.add('theme-grid-icon-name');
     const themeShortNameKey = themeConfig.name_short_key || themeConfig.name_key;
     nameSpan.textContent = getUIText(themeShortNameKey, {}, { explicitThemeContext: themeConfig.id, viewContext: 'landing' });
-
     const themeStatus = shapedData.get(themeConfig.id);
     if (themeStatus?.hasShards) {
       button.classList.add('theme-grid-icon-shaped');
@@ -275,13 +275,19 @@ export async function renderThemeGrid() {
       attachTooltip(shardIndicator, 'tooltip_shaped_world', { ACTIVE_SHARDS: themeStatus.activeShardCount }, { viewContext: 'landing' });
       button.appendChild(shardIndicator);
     }
-
+    if (isLocked) {
+      attachTooltip(button, 'tooltip_theme_locked_anon', {}, { viewContext: 'global' });
+      button.setAttribute('aria-label', `${themeFullNameText} (${getUIText('tooltip_theme_locked_anon')})`);
+      const lockIcon = document.createElement('div');
+      lockIcon.className = 'lock-icon-overlay';
+      button.appendChild(lockIcon);
+    } else {
+      button.setAttribute('aria-label', themeFullNameText);
+    }
     button.appendChild(img);
     button.appendChild(nameSpan);
-    button.addEventListener('click', () => handleThemeGridSelection(themeConfig.id));
     themeGridContainer.appendChild(button);
   });
-
   log(LOG_LEVEL_DEBUG, 'Theme grid rendered.');
 }
 
@@ -391,10 +397,17 @@ export function renderLandingPageActionButtons(themeId) {
   newGameButton.id = 'choose-theme-button';
   newGameButton.classList.add('ui-button');
   if (!isThemePlayed) newGameButton.classList.add('primary');
+  const isLockedForAnon = !currentUser && themeManifestEntry.lockedForAnonymous;
   if (themeManifestEntry.playable) {
-    const newGameButtonTextKey = themeConfig.new_game_button_text_key || 'landing_choose_theme_button';
-    newGameButton.textContent = getUIText(newGameButtonTextKey, {}, { explicitThemeContext: themeId, viewContext: 'landing' });
-    newGameButton.addEventListener('click', () => _gameControllerRef?.initiateNewGameSessionFlow(themeId));
+    if (isLockedForAnon) {
+      newGameButton.textContent = getUIText('button_login_to_play', {}, { viewContext: 'global' });
+      newGameButton.addEventListener('click', () => showLoginModal());
+      attachTooltip(newGameButton, 'tooltip_theme_locked_anon', {}, { viewContext: 'global' });
+    } else {
+      const newGameButtonTextKey = themeConfig.new_game_button_text_key || 'landing_choose_theme_button';
+      newGameButton.textContent = getUIText(newGameButtonTextKey, {}, { explicitThemeContext: themeId, viewContext: 'landing' });
+      newGameButton.addEventListener('click', () => _gameControllerRef?.initiateNewGameSessionFlow(themeId));
+    }
   } else {
     newGameButton.textContent = getUIText('coming_soon_button', {}, { viewContext: 'landing' });
     newGameButton.disabled = true;

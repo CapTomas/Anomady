@@ -7,6 +7,7 @@
  * @property {string} path - The relative path from the project root to the theme's directory.
  * @property {boolean} playable - Indicates if the theme is a selectable scenario for gameplay.
  *                                `false` is used for internal/resource themes like 'master'.
+ * @property {boolean} [lockedForAnonymous=false] - If true, the theme is locked for non-logged-in users.
  */
 export const THEMES_MANIFEST = [
   {
@@ -18,6 +19,7 @@ export const THEMES_MANIFEST = [
     id: 'celestial_custodians',
     path: 'themes/celestial_custodians/',
     playable: true,
+    lockedForAnonymous: true,
   },
   {
     id: 'salt_reavers',
@@ -33,5 +35,6 @@ export const THEMES_MANIFEST = [
     id: 'echo_sleuths',
     path: 'themes/echo_sleuths/',
     playable: true,
+    lockedForAnonymous: true,
   },
 ];

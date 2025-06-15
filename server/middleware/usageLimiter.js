@@ -24,13 +24,13 @@ export const USER_TIERS = {
   pro: {
     allowedModels: {
       'gemini-1.5-flash-latest': { hourlyLimit: 25, dailyLimit: 100 },
-      'gemini-1.5-pro-latest': { hourlyLimit: 25, dailyLimit: 50 },
+      'gemini-2.5-flash-preview-04-17': { hourlyLimit: 25, dailyLimit: 50 },
     },
   },
   ultra: {
     allowedModels: {
       'gemini-1.5-flash-latest': { hourlyLimit: 25, dailyLimit: 100 },
-      'gemini-1.5-pro-latest': { hourlyLimit: 25, dailyLimit: 50 },
+      'gemini-2.5-flash-preview-04-17': { hourlyLimit: 25, dailyLimit: 50 },
       'gemini-2.5-flash-preview-05-20': { hourlyLimit: 25, dailyLimit: 50 },
     },
   },
@@ -124,7 +124,12 @@ export const limitApiUsage = async (req, res, next) => {
         where: { id: user.id },
         data: { apiUsage: updatedApiUsage },
       });
-      return { [modelName]: { hourly: { count: newHourlyCount, limit: modelLimits.hourlyLimit }, daily: { count: newDailyCount, limit: modelLimits.dailyLimit } } };
+      // Construct a full response object for all models in the user's tier
+      const tempUserForResponse = {
+        tier: user.tier || 'free',
+        apiUsage: updatedApiUsage,
+      };
+      return constructApiUsageResponse(tempUserForResponse);
     };
   } else {
     // --- Anonymous User Logic ---
@@ -161,7 +166,12 @@ export const limitApiUsage = async (req, res, next) => {
         lastDailyReset: new Date(usageForModel.lastDailyReset) < twentyFourHoursAgo ? now : usageForModel.lastDailyReset,
       };
       anonymousUsage.set(ip, recordToUpdate);
-      return { [modelName]: { hourly: { count: newHourlyCount, limit: modelLimits.hourlyLimit }, daily: { count: newDailyCount, limit: modelLimits.dailyLimit } } };
+      // Construct a full response object for all models available to anonymous users
+      const tempUserForResponse = {
+        tier: 'anonymous',
+        apiUsage: recordToUpdate,
+      };
+      return constructApiUsageResponse(tempUserForResponse);
     };
   }
   next();

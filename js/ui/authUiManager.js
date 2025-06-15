@@ -158,6 +158,7 @@ export function showAuthModal(initialMode = 'login') {
                         const themeActiveBeforeLogin = state.getCurrentTheme();
                         const userData = await _authService.handleLogin(authEmail, authPassword);
                         updateAuthUIState();
+                        modelToggleManager.updateModelToggleButtonAppearance();
                         if (_userThemeControlsManagerRef && _landingPageManagerRef) {
                             log(LOG_LEVEL_INFO, "Login successful, fetching user-specific theme data and updating UI.");
                             await _userThemeControlsManagerRef.loadUserThemeInteractions();
@@ -382,7 +383,7 @@ export async function showUserProfileModal() {
         }).group);
         formContainer.appendChild(createSelectField('prefModel', 'label_profile_model_select', state.getCurrentModelName(), [
             { value: 'gemini-1.5-flash-latest', textKey: 'option_model_free' },
-            { value: 'gemini-1.5-pro-latest', textKey: 'option_model_pro' },
+            { value: 'gemini-2.5-flash-preview-04-17', textKey: 'option_model_pro' },
         ], async (newValue) => {
             await _authService.updateUserPreferences({ preferred_model_name: newValue });
             modelToggleManager.updateModelToggleButtonAppearance();
@@ -439,6 +440,7 @@ export async function showUserProfileModal() {
                     _authService.handleLogout();
                     _modalManager.hideCustomModal();
                     updateAuthUIState();
+                    modelToggleManager.updateModelToggleButtonAppearance();
                     if (_gameControllerRef) await _gameControllerRef.switchToLanding();
                 },
             },

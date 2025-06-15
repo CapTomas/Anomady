@@ -25,7 +25,7 @@ export const USER_TIERS = {
     dailyLimit: parseInt(process.env.LIMIT_FREE_DAILY, 10) || 100,
     allowedModels: [
       process.env.FREE_MODEL_NAME || 'gemini-1.5-flash-latest',
-      process.env.PAID_MODEL_NAME || 'gemini-1.5-pro-latest',
+      process.env.PAID_MODEL_NAME || 'gemini-2.5-flash-preview-04-17',
     ],
   },
   tier1: {
@@ -33,7 +33,7 @@ export const USER_TIERS = {
     dailyLimit: parseInt(process.env.LIMIT_TIER1_DAILY, 10) || 500,
     allowedModels: [
       process.env.FREE_MODEL_NAME || 'gemini-1.5-flash-latest',
-      process.env.PAID_MODEL_NAME || 'gemini-1.5-pro-latest',
+      process.env.PAID_MODEL_NAME || 'gemini-2.5-flash-preview-04-17',
       process.env.ULTRA_MODEL_NAME || 'gemini-2.5-flash-preview-05-20',
     ],
   },
@@ -42,7 +42,7 @@ export const USER_TIERS = {
     dailyLimit: parseInt(process.env.LIMIT_TIER2_DAILY, 10) || 1500,
     allowedModels: [
       process.env.FREE_MODEL_NAME || 'gemini-1.5-flash-latest',
-      process.env.PAID_MODEL_NAME || 'gemini-1.5-pro-latest',
+      process.env.PAID_MODEL_NAME || 'gemini-2.5-flash-preview-04-17',
       process.env.ULTRA_MODEL_NAME || 'gemini-2.5-flash-preview-05-20',
     ],
   },
@@ -56,4 +56,4 @@ export const FREE_MODEL_NAME = process.env.FREE_MODEL_NAME || 'gemini-1.5-flash-
 /**
  * Default model name for paid/pro users.
  */
-export const PAID_MODEL_NAME = process.env.PAID_MODEL_NAME || 'gemini-1.5-pro-latest';
+export const PAID_MODEL_NAME = process.env.PAID_MODEL_NAME || 'gemini-2.5-flash-preview-04-17';

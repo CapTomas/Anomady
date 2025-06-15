@@ -379,6 +379,32 @@ export async function handleUpgradeFinalization(tier, sessionId) {
 }
 
 /**
+ * Handles downgrading the user's subscription to the free tier.
+ * @returns {Promise<object>} The updated user object.
+ */
+export async function handleDowngradeToFree() {
+  const currentUser = state.getCurrentUser();
+  if (!currentUser?.token) {
+    throw new Error('User must be logged in to downgrade.');
+  }
+  log(LOG_LEVEL_INFO, `User ${currentUser.email} initiating downgrade to free tier.`);
+  try {
+    const response = await apiService.downgradeToFree(currentUser.token);
+    const updatedUser = response.user;
+    if (updatedUser) {
+      log(LOG_LEVEL_INFO, 'Downgrade successful. Updating user state.');
+      state.setCurrentUser({ ...updatedUser, token: currentUser.token });
+      await loadUserPreferences(); // Re-validate model preference against new tier
+      return updatedUser;
+    }
+    throw new Error('Downgrade response did not include user data.');
+  } catch (error) {
+    log(LOG_LEVEL_ERROR, `Tier downgrade failed:`, error);
+    throw error;
+  }
+}
+
+/**
  * Saves the current game state to the backend if a user is logged in.
  * Sends only the unsaved history delta and clears it upon success.
  * @param {boolean} [forceSave=false] - If true, saves even if there are no new turns.

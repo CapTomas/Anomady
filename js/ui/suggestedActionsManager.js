@@ -4,7 +4,7 @@
 
 // --- IMPORTS ---
 import { suggestedActionsWrapper, playerActionInput } from './domElements.js';
-import { setCurrentSuggestedActions, getCurrentTheme } from '../core/state.js';
+import { setCurrentSuggestedActions, getCurrentTheme, getCurrentUser } from '../core/state.js';
 import { autoGrowTextarea } from './uiUtils.js';
 import { handleMullOverShardAction } from '../services/aiService.js';
 import { log, LOG_LEVEL_DEBUG, LOG_LEVEL_WARN, LOG_LEVEL_ERROR } from '../core/logger.js';
@@ -51,9 +51,7 @@ export function displaySuggestedActions(actions, options = {}) {
     setCurrentSuggestedActions(actions?.slice(0, MAX_SUGGESTED_ACTIONS) || []);
     return;
   }
-
   suggestedActionsWrapper.innerHTML = ''; // Clear previous actions
-
   if (options.headerText) {
     const header = document.createElement('div');
     header.classList.add('suggested-actions-header');
@@ -61,14 +59,24 @@ export function displaySuggestedActions(actions, options = {}) {
     suggestedActionsWrapper.appendChild(header);
   }
 
+  const currentUser = getCurrentUser();
+  const userTier = currentUser?.tier || 'anonymous';
+  const isPremium = userTier === 'pro' || userTier === 'ultra';
+
+  const displayableActions = actions?.slice(0, MAX_SUGGESTED_ACTIONS) || [];
+  let premiumSlots = 0;
+  if (!isPremium && displayableActions.length >= 3) {
+      premiumSlots = 1;
+  }
+  const actionsToRender = displayableActions.slice(0, displayableActions.length - premiumSlots);
   const validActionsToStore = [];
-  if (actions?.length > 0) {
-    actions.slice(0, MAX_SUGGESTED_ACTIONS).forEach((actionObjOrString) => {
+
+  if (actionsToRender.length > 0) {
+    actionsToRender.forEach((actionObjOrString) => {
       // Determine action properties from string or object
       const isObject = typeof actionObjOrString === 'object' && actionObjOrString !== null;
       const actionText = isObject ? actionObjOrString.text : actionObjOrString;
       const buttonDisplayText = isObject ? actionObjOrString.displayText || actionText : actionText;
-
       const {
         descriptionForTooltip: tooltipText = null,
         isTemporaryMullOver: isMullOver = false,
@@ -77,26 +85,21 @@ export function displaySuggestedActions(actions, options = {}) {
         isTraitChoice = false,
         isDefeatAction = false,
       } = isObject ? actionObjOrString : {};
-
       const isBoonOrTrait = isBoonChoice || isTraitChoice;
-
       if (!actionText?.trim()) {
         log(LOG_LEVEL_WARN, 'Invalid action format in suggested actions array:', actionObjOrString);
         return; // Skip this invalid action
       }
-
       const btn = document.createElement('button');
       btn.classList.add('ui-button');
       if (isMullOver) btn.classList.add('mull-over-action');
       if (isBoonOrTrait) btn.classList.add('boon-action');
       if (isDefeatAction) btn.classList.add('defeat-action-button');
-
       btn.textContent = buttonDisplayText;
       btn.removeAttribute('title');
       if (tooltipText) {
         attachTooltip(btn, null, {}, { rawText: tooltipText });
       }
-
       btn.addEventListener('click', () => {
         hideCurrentTooltip();
         // --- Defeat Action ---
@@ -135,14 +138,28 @@ export function displaySuggestedActions(actions, options = {}) {
           }
         }
       });
-
       suggestedActionsWrapper.appendChild(btn);
       validActionsToStore.push(actionObjOrString);
     });
   }
 
-  setCurrentSuggestedActions(validActionsToStore);
-  log(LOG_LEVEL_DEBUG, `Displayed ${validActionsToStore.length} suggested actions.`);
+  // Add premium locked slots
+  for (let i = 0; i < premiumSlots; i++) {
+      const btn = document.createElement('button');
+      btn.classList.add('ui-button', 'premium-locked');
+      btn.disabled = true;
+
+      const lockIcon = document.createElement('img');
+      lockIcon.src = 'images/app/icon_lock.svg';
+      lockIcon.className = 'premium-lock-icon';
+      btn.appendChild(lockIcon);
+
+      attachTooltip(btn, 'tooltip_premium_action_locked');
+      suggestedActionsWrapper.appendChild(btn);
+  }
+
+  setCurrentSuggestedActions(displayableActions);
+  log(LOG_LEVEL_DEBUG, `Displayed ${actionsToRender.length} suggested actions and ${premiumSlots} locked slots.`);
 }
 
 /**

@@ -31,12 +31,10 @@ function _createTierColumn(tierId, isCurrentTier) {
     const column = document.createElement('div');
     column.className = `tier-column ${isCurrentTier ? 'current-tier' : ''}`;
     column.id = `tier-${tierId}`;
-
     const tierName = document.createElement('h4');
     tierName.className = 'tier-name';
     tierName.textContent = getUIText(`tier_${tierId}_name`);
     column.appendChild(tierName);
-
     const tierPrice = document.createElement('div');
     tierPrice.className = 'tier-price';
     const priceText = getUIText(`billing_price_${tierId}`);
@@ -46,7 +44,6 @@ function _createTierColumn(tierId, isCurrentTier) {
         tierPrice.innerHTML = `<span class="price">${priceText}</span>`;
     }
     column.appendChild(tierPrice);
-
     const featuresList = document.createElement('ul');
     featuresList.className = 'features-list';
     const features = {
@@ -54,19 +51,48 @@ function _createTierColumn(tierId, isCurrentTier) {
         pro: ['feature_api_calls_flash', 'feature_api_calls_pro', 'feature_longer_responses', 'feature_world_shards'],
         ultra: ['feature_api_calls_flash', 'feature_api_calls_pro', 'feature_api_calls_ultra', 'feature_longer_responses', 'feature_world_shards', 'feature_priority_access'],
     };
-
     (features[tierId] || []).forEach(featureKey => {
         const li = document.createElement('li');
         li.textContent = getUIText(featureKey);
         featuresList.appendChild(li);
     });
     column.appendChild(featuresList);
-
     const actionButton = document.createElement('button');
     actionButton.className = 'ui-button';
     if (isCurrentTier) {
         actionButton.textContent = getUIText('button_current_plan');
         actionButton.disabled = true;
+    } else if (tierId === 'free') {
+        actionButton.textContent = getUIText('button_downgrade_plan');
+        actionButton.addEventListener('click', async () => {
+            log(LOG_LEVEL_INFO, `User clicked to downgrade to free`);
+            actionButton.disabled = true;
+            actionButton.textContent = getUIText('system_processing_short');
+            try {
+                await authService.handleDowngradeToFree();
+                modalManager.hideCustomModal();
+                modalManager.showCustomModal({
+                    type: 'alert',
+                    titleKey: 'alert_downgrade_success_title',
+                    messageKey: 'alert_downgrade_success_message',
+                    replacements: { TIER_NAME: getUIText('tier_free_name') }
+                });
+
+                setTimeout(() => {
+                    modalManager.hideCustomModal();
+                    if (_authUiManagerRef?.showUserProfileModal) {
+                        _authUiManagerRef.showUserProfileModal();
+                    }
+                }, 2500);
+
+                modelToggleManager.updateModelToggleButtonAppearance();
+            } catch (error) {
+                log(LOG_LEVEL_ERROR, `Downgrade to free failed: ${error.message}`);
+                modalManager.displayModalError(error.message || getUIText('alert_downgrade_failed_message'));
+                actionButton.disabled = false;
+                actionButton.textContent = getUIText('button_downgrade_plan');
+            }
+        });
     } else {
         actionButton.textContent = getUIText('button_upgrade_plan');
         actionButton.classList.add('primary');
@@ -86,7 +112,6 @@ function _createTierColumn(tierId, isCurrentTier) {
         });
     }
     column.appendChild(actionButton);
-
     return column;
 }
 

@@ -2109,6 +2109,25 @@ body:not(.landing-page-active) .panel-box.is-expanded .panel-box-content {
 	background-color: var(--color-bg-element-hover);
 	color: var(--color-text-primary);
 }
+#suggested-actions-wrapper .ui-button.premium-locked {
+    background-color: var(--color-bg-panel);
+    border: 1px dashed var(--color-text-muted);
+    justify-content: center;
+    opacity: 0.5;
+    cursor: help;
+}
+
+#suggested-actions-wrapper .ui-button.premium-locked:hover {
+    background-color: var(--color-bg-panel);
+    opacity: 0.6;
+    border-style: solid;
+}
+
+.premium-lock-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+}
 .input-group {
 	display: flex;
 	align-items: center;

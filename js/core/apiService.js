@@ -291,6 +291,13 @@ export const updateUserThemeProgress = (token, themeId, progressToUpdate) => _ca
 export const createCheckoutSession = (token, tier) => _callApi('/api/v1/users/me/create-checkout-session', 'POST', { tier }, token);
 
 /**
+ * Downgrades the user's subscription to the free tier.
+ * @param {string} token - The user's JWT.
+ * @returns {Promise<object>} The API response, containing the updated user object.
+ */
+export const downgradeToFree = (token) => _callApi('/api/v1/users/me/downgrade-to-free', 'POST', null, token);
+
+/**
  * Finalizes a tier upgrade after a successful simulated payment.
  * @param {string} token - The user's JWT.
  * @param {string} tier - The tier that was upgraded to.

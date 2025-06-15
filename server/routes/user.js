@@ -80,15 +80,11 @@ router.put('/me/preferences', protect, async (req, res) => {
   if (Object.keys(updateData).length === 0) {
     return res.status(400).json({ error: { message: 'No preference data provided to update.', code: 'NO_PREFERENCE_DATA' } });
   }
-  try {
+    try {
     logger.info(`Updating preferences for user: ${req.user.email} (ID: ${userId}) with data:`, updateData);
     const updatedUserRaw = await prisma.user.update({
         where: { id: userId },
-        data: {
-            tier: tier,
-            password_reset_token: null,
-            password_reset_expires_at: null,
-        },
+        data: updateData,
         select: {
             id: true, email: true, username: true, story_preference: true, newsletter_opt_in: true,
             preferred_app_language: true, preferred_narrative_language: true, preferred_model_name: true,
@@ -100,7 +96,7 @@ router.put('/me/preferences', protect, async (req, res) => {
         api_usage: constructApiUsageResponse(updatedUserRaw),
     };
     res.status(200).json({
-        message: 'User tier upgraded successfully.',
+        message: 'Preferences updated successfully.',
         user: userForResponse
     });
   } catch (error) {
@@ -185,6 +181,50 @@ router.put('/me/password', protect, async (req, res) => {
       }
     });
   }
+});
+/**
+ * @route   POST /api/v1/users/me/downgrade-to-free
+ * @desc    Downgrades a user's subscription to the free tier.
+ * @access  Private
+ */
+router.post('/me/downgrade-to-free', protect, async (req, res) => {
+    const userId = req.user.id;
+    logger.info(`User ${userId} requested downgrade to 'free' tier.`);
+
+    if (req.user.tier === 'free') {
+        logger.warn(`User ${userId} attempted to downgrade to 'free' but is already on that tier.`);
+        return res.status(400).json({ error: { message: 'You are already on the free plan.', code: 'ALREADY_ON_FREE_TIER' } });
+    }
+
+    try {
+        // In a real application, this would interact with a payment provider like Stripe
+        // to cancel the subscription, possibly at the end of the current billing period.
+        // For this simulation, we'll just update the tier directly.
+        const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: {
+                tier: 'free',
+                // Also clear any simulated payment intent tokens
+                password_reset_token: null,
+                password_reset_expires_at: null,
+            },
+            select: {
+                id: true, email: true, username: true, story_preference: true, newsletter_opt_in: true,
+                preferred_app_language: true, preferred_narrative_language: true, preferred_model_name: true,
+                email_confirmed: true, created_at: true, updated_at: true, tier: true, apiUsage: true,
+            }
+        });
+
+        logger.info(`User ${userId} successfully downgraded to 'free' tier.`);
+        res.status(200).json({
+            message: 'Subscription successfully changed to the free plan.',
+            user: updatedUser
+        });
+
+    } catch (error) {
+        logger.error(`Error downgrading user ${userId} to free tier:`, error);
+        res.status(500).json({ error: { message: 'Failed to update subscription.', code: 'DOWNGRADE_FAILED' } });
+    }
 });
 /**
  * @route   POST /api/v1/users/me/create-checkout-session
